@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #fafafa;
+    color: #111;
+}
+
+/* TOPBAR */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+}
+
+.topbar h1 {
+    font-family: 'Playfair Display', serif;
+}
+
+.volver {
+    position: absolute;
+    left: 20px;
+    text-decoration: none;
+    color: #000;
+    font-weight: 500;
+}
+
+/* FEED */
+
+.feed {
+    max-width: 520px;
+    margin: 40px auto;
+}
+
+
+/* POST estilo minimal IG */
+
+.post {
+    background: white;
+    margin-bottom: 50px;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+}
+
+/* Header tipo IG */
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+}
+
+.post-header span {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.post-header button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.2s;
+}
+
+.post-header button:hover {
+    opacity: 1;
+}
+
+/* Imagen protagonista */
+
+.post img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+}
+
+/* Texto descripción */
+
+.post p {
+    padding: 16px 18px 22px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* BOTÓN PUBLICAR */
+
+.btn-publicar {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: black;
+    color: white;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* MODAL */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease;
+}
+
+.modal.activo {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 20px;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-primary {
+    background: black;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #ddd;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+/* LIKE SECTION */
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px 0 18px;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.like-btn:hover {
+    transform: scale(1.2);
+}
+
+.like-count {
+    font-size: 13px;
+    color: #666;
+}
+

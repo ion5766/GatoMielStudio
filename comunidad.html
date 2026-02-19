@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comunidad | Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="comunidad.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <a href="index.html" class="volver">← Volver</a>
+    <h1>Comunidad</h1>
+</header>
+
+<section id="feed" class="feed"></section>
+
+<button class="btn-publicar" onclick="abrirModal()">＋</button>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <h3>Nueva publicación</h3>
+    <input type="password" id="clave" placeholder="Contraseña">
+    <textarea id="descripcion" placeholder="Escribe algo bonito..."></textarea>
+    <input type="file" id="imagen" accept="image/*">
+    <div class="modal-actions">
+        <button type="button" class="btn-primary" onclick="publicar()">Publicar</button>
+        <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  deleteDoc, 
+  doc,
+  query,
+  orderBy,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const modal = document.getElementById("modal");
+const feed = document.getElementById("feed");
+const postsRef = collection(db, "posts");
+const postsQuery = query(postsRef, orderBy("fecha", "desc"));
+
+window.abrirModal = () => {
+  modal.classList.add("activo");
+};
+
+window.cerrarModal = () => {
+  modal.classList.remove("activo");
+};
+
+window.publicar = async () => {
+
+  const claveInput = document.getElementById("clave");
+  const descripcionInput = document.getElementById("descripcion");
+  const imagenInput = document.getElementById("imagen");
+
+  const clave = claveInput.value.trim();
+  const descripcion = descripcionInput.value.trim();
+  const archivo = imagenInput.files[0];
+
+  if (clave !== "Sookie01") return alert("Contraseña incorrecta");
+  if (!archivo) return alert("Selecciona una imagen");
+
+  cerrarModal();
+
+  try {
+
+    const base64 = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(archivo);
+  reader.onload = () => {
+
+    const img = new Image();
+    img.src = reader.result;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const MAX_WIDTH = 800;
+      const scale = MAX_WIDTH / img.width;
+
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const compressed = canvas.toDataURL("image/jpeg", 0.7);
+      resolve(compressed);
+    };
+  };
+  reader.onerror = error => reject(error);
+});
+
+    await addDoc(postsRef, {
+      descripcion,
+      imagen: base64,
+      fecha: new Date(),
+      likes: 0
+    });
+
+    claveInput.value = "";
+    descripcionInput.value = "";
+    imagenInput.value = "";
+
+  } catch (error) {
+    console.error(error);
+    alert("Error al publicar");
+  }
+};
+
+window.borrarPost = async (id) => {
+  const clave = prompt("Contraseña para borrar:");
+  if (clave !== "Sookie01") return alert("Clave incorrecta");
+  await deleteDoc(doc(db, "posts", id));
+};
+
+window.darLike = async (id, likesActuales) => {
+  const postRef = doc(db, "posts", id);
+
+  await updateDoc(postRef, {
+    likes: likesActuales + 1
+  });
+};
+
+onSnapshot(postsQuery, (snapshot) => {
+  feed.innerHTML = "";
+
+  snapshot.forEach((docItem) => {
+    const data = docItem.data();
+
+    const post = document.createElement("article");
+    post.classList.add("post");
+
+    post.innerHTML = `
+      <div class="post-header">
+        <span>Miembro del taller</span>
+        <button onclick="borrarPost('${docItem.id}')">🗑</button>
+      </div>
+
+      <img src="${data.imagen}">
+
+      <div class="post-actions">
+        <button class="like-btn" onclick="darLike('${docItem.id}', ${data.likes || 0})">
+          ❤️
+        </button>
+        <span class="like-count">${data.likes || 0} likes</span>
+      </div>
+
+      <p>${data.descripcion}</p>
+    `;
+
+    feed.appendChild(post);
+  });
+});
+</script>
+
+</body>
+</html>
