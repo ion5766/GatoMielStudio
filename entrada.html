@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bienvenido | Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+overflow:hidden;
+}
+
+/* VIDEO FONDO */
+
+.video-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-2;
+}
+
+/* OVERLAY OSCURO */
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
+z-index:-1;
+}
+
+/* CONTENIDO */
+
+.contenido{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+padding:20px;
+}
+
+.logo{
+font-family:'Playfair Display',serif;
+font-size:48px;
+margin-bottom:20px;
+letter-spacing:2px;
+}
+
+.sub{
+opacity:0.9;
+}
+
+/* BOTONES */
+
+.botones{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin-top:30px;
+}
+
+.btn{
+padding:14px 30px;
+border:none;
+border-radius:6px;
+font-size:15px;
+cursor:pointer;
+transition:0.3s;
+min-width:220px;
+}
+
+.btn-login{
+background:#b88a5a;
+color:white;
+}
+
+.btn-login:hover{
+background:#9f7448;
+}
+
+.btn-registro{
+background:white;
+color:black;
+}
+
+.btn-registro:hover{
+background:#eee;
+}
+
+.btn-invitado{
+background:transparent;
+border:1px solid white;
+color:white;
+}
+
+.btn-invitado:hover{
+background:white;
+color:black;
+}
+
+.btn-google{
+background:#4285F4;
+color:white;
+}
+
+.btn-google:hover{
+background:#3367D6;
+}
+
+input{
+padding:10px;
+border-radius:6px;
+border:none;
+margin-top:10px;
+width:220px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- VIDEO FONDO -->
+
+<video autoplay muted loop class="video-bg">
+<source src="Assets/Video/VideoPresentacion.mp4" type="video/mp4">
+</video>
+
+<div class="overlay"></div>
+
+<div class="contenido">
+
+<div class="logo">Gato Miel Estudio</div>
+
+<p class="sub">Arte cerámico hecho a mano</p>
+
+<input id="email" type="email" placeholder="Correo">
+
+<input id="password" type="password" placeholder="Contraseña">
+
+<div class="botones">
+
+<button class="btn btn-login" onclick="login()">
+Iniciar Sesión
+</button>
+
+<button class="btn btn-registro" onclick="registrarse()">
+Registrarse
+</button>
+
+<button class="btn btn-google" onclick="loginGoogle()">
+Entrar con Google
+</button>
+
+<button class="btn btn-invitado" onclick="entrarInvitado()">
+Entrar como Invitado
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import { 
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+GoogleAuthProvider,
+signInWithPopup,
+sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+authDomain: "gato-miel-estudio.firebaseapp.com",
+projectId: "gato-miel-estudio",
+storageBucket: "gato-miel-estudio.firebasestorage.app",
+messagingSenderId: "150671559458",
+appId: "1:150671559458:web:6daaf4a78150706db0337b",
+measurementId: "G-PL79FSGHX5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+window.location.replace("index.html");
+
+}
+
+});
+
+window.registrarse = async ()=>{
+
+const email = document.getElementById("email").value;
+const pass = document.getElementById("password").value;
+
+try{
+
+const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
+
+await sendEmailVerification(userCredential.user);
+
+alert("Te enviamos un correo para verificar tu cuenta, Verifica el apartado SPAM");
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+window.login = async ()=>{
+
+const email = document.getElementById("email").value;
+const pass = document.getElementById("password").value;
+
+try{
+
+const userCredential = await signInWithEmailAndPassword(auth,email,pass);
+
+const user = userCredential.user;
+
+if(!user.emailVerified){
+
+alert("Debes verificar tu correo antes de entrar.");
+return;
+
+}
+
+sessionStorage.setItem("acceso","true");
+
+window.location.replace("index.html");
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+window.loginGoogle = async ()=>{
+
+const provider = new GoogleAuthProvider();
+
+try{
+
+await signInWithPopup(auth,provider);
+
+sessionStorage.setItem("acceso","true");
+
+window.location.href="index.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+window.entrarInvitado = ()=>{
+
+sessionStorage.setItem("acceso","true");
+
+window.location.href="index.html";
+
+};
+
+</script>
+
+<script type="module" src="JS/src/chat.js"></script>
+```
+
+Y mueve `chat.js` a tu carpeta `JS/` en el proyecto. También necesitas agregar estas reglas en **Firestore** para que funcione:
+```
+match /chats/{uid} {
+  allow read, write: if request.auth != null;
+  match /mensajes/{msgId} {
+    allow read, write: if request.auth != null;
+  }
+}
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talleres – Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+});
+</script>
+
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="ht-hero">
+    <div class="ht-hero-inner">
+      <span class="ht-eyebrow">Gato Miel Estudio</span>
+      <h1>Talleres de<br><em>cerámica</em></h1>
+      <p>Espacios creativos para explorar el barro, aprender con las manos y encontrar tu propio ritmo.</p>
+    </div>
+    <div class="ht-hero-deco">
+      <div class="ht-hero-line"></div>
+    </div>
+  </section>
+
+  <!-- ══ TALLERES ACTUALES ══ -->
+  <section class="ht-seccion" id="actuales">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-activo">Inscripciones abiertas</span>
+      <h2>Talleres actuales</h2>
+    </div>
+    <div class="ht-grid">
+
+      <article class="ht-card">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <span class="ht-badge ht-badge-open">Abierto</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>Arcilla Nocturna</h3>
+          <p>Taller semanal para experimentar técnicas de modelado en un ambiente creativo y relajado.</p>
+          <div class="ht-card-footer">
+            <a href="https://wa.me/51922402608?text=Hola%2C%20quiero%20reservar%20mi%20plaza%20en%20Arcilla%20Nocturna"
+               target="_blank" class="ht-btn-solid">Reservar plaza</a>
+            <button class="ht-btn-outline" onclick="abrirMembresia()">Pagar membresía</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══ DIVISOR ══ -->
+  <div class="ht-divisor"></div>
+
+  <!-- ══ TALLERES PRÓXIMOS ══ -->
+  <section class="ht-seccion ht-seccion-pronto" id="proximos">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-pronto">Próximamente</span>
+      <h2>Talleres por venir</h2>
+    </div>
+    <div class="ht-grid">
+
+      <article class="ht-card ht-card-dim">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno"
+               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <span class="ht-badge ht-badge-soon">Pronto</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>Iniciación al Torno</h3>
+          <p>Curso intensivo para aprender desde cero el trabajo en torno cerámico.</p>
+          <div class="ht-card-footer ht-card-footer-soon">
+            <span class="ht-aviso">Avisarme cuando abra</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- ══ MODAL MEMBRESÍA ══ -->
+<div id="modalMembresia" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-header">
+      <button class="ht-modal-cerrar" onclick="cerrarMembresia()" aria-label="Cerrar">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <h2>Pagar membresía</h2>
+      <p id="horarioSeleccionadoLabel"></p>
+    </div>
+    <div class="ht-modal-body">
+
+      <!-- Paso 1: Horario -->
+      <div id="paso-horario">
+        <p class="ht-step-label">Elige tu horario</p>
+        <div class="ht-horarios">
+          <div class="ht-horario" onclick="elegirHorario(this,'Sábado 7 de marzo · 10:00 AM')">
+            <div class="ht-horario-left">
+              <span class="ht-horario-dia">Sábado</span>
+              <span class="ht-horario-fecha">7 de marzo</span>
+            </div>
+            <span class="ht-horario-hora">10:00 AM</span>
+            <div class="ht-horario-check">✓</div>
+          </div>
+          <div class="ht-horario" onclick="elegirHorario(this,'Domingo 8 de marzo · 6:00 PM')">
+            <div class="ht-horario-left">
+              <span class="ht-horario-dia">Domingo</span>
+              <span class="ht-horario-fecha">8 de marzo</span>
+            </div>
+            <span class="ht-horario-hora">6:00 PM</span>
+            <div class="ht-horario-check">✓</div>
+          </div>
+          <div class="ht-horario" onclick="elegirHorario(this,'Lunes 9 de marzo · 12:00 PM')">
+            <div class="ht-horario-left">
+              <span class="ht-horario-dia">Lunes</span>
+              <span class="ht-horario-fecha">9 de marzo</span>
+            </div>
+            <span class="ht-horario-hora">12:00 PM</span>
+            <div class="ht-horario-check">✓</div>
+          </div>
+        </div>
+        <button class="ht-btn-confirm" onclick="irAPago()"><span>Continuar al pago →</span></button>
+      </div>
+
+      <!-- Paso 2: Pago -->
+      <div id="paso-pago" style="display:none;">
+        <button class="ht-btn-back" onclick="volverHorario()">← Cambiar horario</button>
+        <p class="ht-step-label" style="margin-top:18px;">Método de pago</p>
+        <div class="ht-metodos">
+          <div class="ht-metodo" onclick="seleccionarMetodo(event,'yape')"><img src="Assets/Img/Yape_Icono.png" alt="Yape"></div>
+          <div class="ht-metodo" onclick="seleccionarMetodo(event,'plin')"><img src="Assets/Img/Plin_Icono.png" alt="Plin"></div>
+          <div class="ht-metodo" onclick="seleccionarMetodo(event,'bcp')"><img src="Assets/Img/Bcp_Icono.png" alt="BCP"></div>
+          <div class="ht-metodo" onclick="seleccionarMetodo(event,'interbank')"><img src="Assets/Img/Interbank_Icono.png" alt="Interbank"></div>
+        </div>
+        <div id="ht-pago-yape"      class="ht-pago-detalle"><h4>Escanea con Yape</h4><img src="Assets/Img/yape.jpeg" alt="QR Yape"></div>
+        <div id="ht-pago-plin"      class="ht-pago-detalle"><h4>Escanea con Plin</h4><img src="Assets/Img/plin.jpeg" alt="QR Plin"></div>
+        <div id="ht-pago-bcp"       class="ht-pago-detalle"><h4>Transferencia BCP</h4><img src="Assets/Img/bcp.jpg" alt="BCP"><div class="ht-datos"><p><strong>Cuenta:</strong> 123-456789-0-12</p><p><strong>CCI:</strong> 00212345678901234567</p></div></div>
+        <div id="ht-pago-interbank" class="ht-pago-detalle"><h4>Transferencia Interbank</h4><img src="Assets/Img/interbank.jpg" alt="Interbank"><div class="ht-datos"><p><strong>Cuenta:</strong> 898-1234567890</p><p><strong>CCI:</strong> 00312345678901234567</p></div></div>
+        <button id="btnConfirmarMem" class="ht-btn-confirm"><span>Ya realicé el pago · Confirmar ✔</span></button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PERFIL ══ -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+:root {
+  --gold:  #c48a3a;
+  --ink:   #1a1714;
+  --sand:  #f8f5f1;
+  --warm:  #f3ece3;
+  --muted: #888;
+}
+
+/* ── Eyebrow / label ── */
+.ht-eyebrow {
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold);
+  display: block; margin-bottom: 18px;
+}
+.ht-label {
+  display: inline-block; font-family: 'Inter', sans-serif;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 14px;
+}
+.ht-label-activo { background: rgba(196,138,58,0.12); color: var(--gold); }
+.ht-label-pronto  { background: rgba(0,0,0,0.05);      color: #aaa; }
+
+/* ══ HERO ══ */
+.ht-hero {
+  background: var(--ink); padding: 120px 9% 100px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 40px; min-height: 52vh;
+}
+.ht-hero-inner { max-width: 560px; }
+.ht-hero-inner .ht-eyebrow { color: rgba(196,138,58,0.8); }
+.ht-hero-inner h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 7vw, 86px); font-weight: 400;
+  color: white; line-height: 1.0; letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.ht-hero-inner h1 em { font-style: italic; color: var(--gold); }
+.ht-hero-inner p {
+  font-size: 16px; color: rgba(255,255,255,0.5);
+  font-weight: 300; line-height: 1.75; max-width: 420px;
+}
+.ht-hero-deco { align-self: flex-start; padding-top: 8px; }
+.ht-hero-line {
+  width: 1px; height: 80px;
+  background: linear-gradient(var(--gold), transparent); opacity: 0.5;
+}
+
+/* ══ SECCIONES ══ */
+.ht-seccion { padding: 100px 9%; background: var(--sand); }
+.ht-seccion-pronto { background: white; }
+.ht-seccion-header { margin-bottom: 56px; }
+.ht-seccion-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px); font-weight: 400;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+.ht-divisor {
+  height: 1px; background: linear-gradient(90deg, transparent, #e8d5b7, transparent);
+  margin: 0 9%;
+}
+
+/* ══ GRID ══ */
+.ht-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 360px));
+  gap: 28px;
+}
+
+/* ══ CARD ══ */
+.ht-card {
+  background: white; border-radius: 18px; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  position: relative;
+}
+.ht-card::after {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), #e8b870);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+}
+.ht-card:hover { transform: translateY(-8px); box-shadow: 0 24px 50px rgba(0,0,0,0.11); }
+.ht-card:hover::after { transform: scaleX(1); }
+.ht-card-dim { opacity: 0.68; }
+.ht-card-dim:hover { opacity: 1; }
+
+.ht-card-img {
+  position: relative; height: 230px; overflow: hidden;
+}
+.ht-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(88%);
+  transition: transform 0.6s ease, filter 0.4s ease;
+}
+.ht-card:hover .ht-card-img img {
+  transform: scale(1.06); filter: saturate(100%);
+}
+.ht-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 13px; border-radius: 20px; backdrop-filter: blur(4px);
+}
+.ht-badge-open { background: var(--gold); color: white; }
+.ht-badge-soon { background: rgba(255,255,255,0.88); color: #888; }
+
+.ht-card-body {
+  padding: 24px 22px 26px; flex: 1; display: flex; flex-direction: column;
+}
+.ht-card-body h3 {
+  font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500;
+  color: var(--ink); margin-bottom: 10px;
+}
+.ht-card-body p {
+  font-size: 14px; color: #777; line-height: 1.7;
+  flex: 1; margin-bottom: 20px; font-weight: 300;
+}
+.ht-card-footer {
+  display: flex; flex-direction: column; gap: 10px;
+  padding-top: 16px; border-top: 1px solid #f0ebe4;
+}
+.ht-card-footer-soon { border-color: #f0ebe4; }
+
+.ht-btn-solid {
+  display: block; text-align: center; padding: 12px 20px;
+  background: var(--gold); color: white; text-decoration: none;
+  border-radius: 50px; font-size: 13px; font-weight: 500;
+  letter-spacing: 0.06em; font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease; border: none; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(196,138,58,0.28);
+}
+.ht-btn-solid:hover {
+  background: #a8742f; transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(196,138,58,0.38);
+}
+.ht-btn-outline {
+  display: block; text-align: center; padding: 11px 20px;
+  background: transparent; color: var(--gold); border: 1.5px solid var(--gold);
+  border-radius: 50px; font-size: 13px; font-weight: 500;
+  letter-spacing: 0.06em; font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease; cursor: pointer;
+}
+.ht-btn-outline:hover {
+  background: var(--gold); color: white; transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(196,138,58,0.3);
+}
+.ht-aviso {
+  font-size: 13px; color: #aaa; font-family: 'Inter', sans-serif;
+  letter-spacing: 0.04em; text-align: center; padding: 6px 0;
+}
+
+/* ══ MODAL MEMBRESÍA ══ */
+.ht-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(15,12,9,0.72); backdrop-filter: blur(10px);
+  justify-content: center; align-items: center;
+  z-index: 9999; padding: 20px;
+}
+.ht-modal-box {
+  background: white; width: 100%; max-width: 440px; max-height: 90vh;
+  border-radius: 24px; display: flex; flex-direction: column; overflow: hidden;
+  animation: htModalIn 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+}
+@keyframes htModalIn {
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.ht-modal-header {
+  padding: 26px 26px 0; position: relative;
+  border-bottom: 1px solid #f5f0ea; padding-bottom: 18px;
+}
+.ht-modal-header h2 {
+  font-family: 'Playfair Display', serif; font-size: 20px;
+  font-weight: 500; color: var(--ink); margin-bottom: 3px;
+}
+.ht-modal-header p {
+  font-size: 12px; color: var(--gold); font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: 'Inter', sans-serif; min-height: 16px;
+}
+.ht-modal-cerrar {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: #f5f0ea; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: #666;
+  transition: background 0.2s, transform 0.2s;
+}
+.ht-modal-cerrar:hover { background: var(--gold); color: white; transform: rotate(90deg); }
+.ht-modal-body {
+  padding: 22px 26px 28px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: #e5ddd3 transparent;
+}
+
+.ht-step-label {
+  font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: #bbb;
+  text-align: center; margin-bottom: 16px;
+}
+.ht-horarios { display: flex; flex-direction: column; gap: 10px; }
+.ht-horario {
+  display: flex; align-items: center; gap: 14px; padding: 15px 18px;
+  border-radius: 14px; border: 1.5px solid #f0ebe4; background: #faf7f4;
+  cursor: pointer; transition: all 0.22s ease;
+}
+.ht-horario:hover {
+  border-color: #e8d5b7; background: #fdf6ec;
+  transform: translateY(-2px); box-shadow: 0 6px 16px rgba(196,138,58,0.1);
+}
+.ht-horario.seleccionado {
+  border-color: var(--gold); background: #fdf6ec;
+  box-shadow: 0 6px 20px rgba(196,138,58,0.18);
+}
+.ht-horario-left { display: flex; flex-direction: column; min-width: 72px; }
+.ht-horario-dia  { font-family: 'Playfair Display',serif; font-size: 15px; font-weight: 500; color: var(--ink); }
+.ht-horario-fecha{ font-size: 12px; color: #888; font-family: 'Inter',sans-serif; margin-top: 1px; }
+.ht-horario-hora { font-size: 15px; font-weight: 500; color: var(--gold); font-family: 'Inter',sans-serif; flex: 1; text-align: right; }
+.ht-horario-check {
+  width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #ddd;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: transparent; transition: all 0.2s;
+  flex-shrink: 0;
+}
+.ht-horario.seleccionado .ht-horario-check { background: var(--gold); border-color: var(--gold); color: white; }
+
+.ht-metodos { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 18px; }
+.ht-metodo {
+  background: #faf7f4; border-radius: 14px; padding: 18px 12px;
+  cursor: pointer; border: 1.5px solid transparent;
+  transition: all 0.22s ease; position: relative; overflow: hidden;
+}
+.ht-metodo:hover { transform: translateY(-3px); border-color: #e8d5b7; box-shadow: 0 8px 20px rgba(196,138,58,0.1); }
+.ht-metodo img { width: 100%; max-width: 100px; display: block; margin: auto; }
+.ht-metodo-activo { border-color: var(--gold) !important; background: #fdf6ec; box-shadow: 0 6px 20px rgba(196,138,58,0.2) !important; }
+.ht-metodo-activo::after { content:"✓"; position:absolute; top:8px; right:10px; width:18px; height:18px; background:var(--gold); color:white; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+.ht-pago-detalle {
+  display: none; text-align: center; padding: 18px 0 8px;
+  animation: htFade 0.28s ease;
+}
+@keyframes htFade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.ht-pago-detalle h4 {
+  font-family: 'Playfair Display',serif; font-size: 16px; font-weight: 500;
+  color: var(--ink); margin-bottom: 14px;
+}
+.ht-pago-detalle img {
+  width: 100%; max-width: 190px; margin: 0 auto 14px; border-radius: 14px;
+  display: block; box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+}
+.ht-datos {
+  background: var(--sand); border-radius: 12px; padding: 12px 16px;
+  text-align: left;
+}
+.ht-datos p { font-size: 13px; color: #555; font-family: 'Inter',sans-serif; line-height: 1.8; }
+.ht-datos strong { color: var(--ink); font-weight: 500; }
+
+.ht-btn-confirm {
+  width: 100%; margin-top: 20px; padding: 15px; border: none;
+  background: var(--ink); color: white; border-radius: 50px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.3s ease; font-family: 'Inter',sans-serif;
+  position: relative; overflow: hidden;
+}
+.ht-btn-confirm::before {
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(135deg, var(--gold), #e8b870);
+  opacity:0; transition: opacity 0.35s ease;
+}
+.ht-btn-confirm:hover::before { opacity:1; }
+.ht-btn-confirm span { position:relative; z-index:1; }
+.ht-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(196,138,58,0.38); }
+
+.ht-btn-back {
+  background: none; border: none; font-size: 13px; color: var(--gold);
+  cursor: pointer; padding: 0; font-family: 'Inter',sans-serif;
+  font-weight: 500; letter-spacing: 0.04em; transition: opacity 0.2s;
+}
+.ht-btn-back:hover { opacity: 0.65; }
+
+/* ── Avatar selector ── */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .ht-hero { padding: 90px 7% 70px; flex-direction: column; min-height: auto; }
+  .ht-hero-deco { display: none; }
+  .ht-seccion { padding: 70px 7%; }
+  .ht-divisor { margin: 0 7%; }
+  .ht-grid { grid-template-columns: 1fr; max-width: 380px; }
+}
+</style>
+
+<script>
+let horarioElegido = null;
+let metodoMembresia = "";
+
+function abrirMembresia() {
+  horarioElegido = null; metodoMembresia = "";
+  document.getElementById("horarioSeleccionadoLabel").textContent = "";
+  document.querySelectorAll(".ht-horario").forEach(el => el.classList.remove("seleccionado"));
+  document.getElementById("paso-horario").style.display = "block";
+  document.getElementById("paso-pago").style.display = "none";
+  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
+  document.querySelectorAll(".ht-pago-detalle").forEach(el => el.style.display = "none");
+  document.getElementById("modalMembresia").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function cerrarMembresia() {
+  document.getElementById("modalMembresia").style.display = "none";
+  document.body.style.overflow = "";
+}
+function elegirHorario(el, horario) {
+  document.querySelectorAll(".ht-horario").forEach(h => h.classList.remove("seleccionado"));
+  el.classList.add("seleccionado"); horarioElegido = horario;
+}
+function irAPago() {
+  if (!horarioElegido) { alert("Elige un horario primero."); return; }
+  document.getElementById("horarioSeleccionadoLabel").textContent = horarioElegido;
+  document.getElementById("paso-horario").style.display = "none";
+  document.getElementById("paso-pago").style.display = "block";
+}
+function volverHorario() {
+  document.getElementById("paso-pago").style.display = "none";
+  document.getElementById("paso-horario").style.display = "block";
+  document.getElementById("horarioSeleccionadoLabel").textContent = "";
+  metodoMembresia = "";
+  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
+  document.querySelectorAll(".ht-pago-detalle").forEach(el => el.style.display = "none");
+}
+function seleccionarMetodo(event, metodo) {
+  metodoMembresia = metodo;
+  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
+  event.currentTarget.classList.add("ht-metodo-activo");
+  document.querySelectorAll(".ht-pago-detalle").forEach(op => op.style.display = "none");
+  document.getElementById("ht-pago-" + metodo).style.display = "block";
+}
+document.getElementById("btnConfirmarMem").onclick = function() {
+  if (!metodoMembresia) { alert("Selecciona un método de pago."); return; }
+  const wsp = "51922402608";
+  const msg = encodeURIComponent(`Hola! Acabo de pagar la membresía.\n\n📅 Horario: ${horarioElegido}\n💳 Método: ${metodoMembresia.toUpperCase()}\n\nTe envío la captura ✨`);
+  document.querySelector(".ht-modal-body").innerHTML = `
+    <div style="text-align:center;padding:28px 8px 8px;animation:htFade 0.4s ease;">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;box-shadow:0 8px 24px rgba(196,138,58,0.3);">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:#1a1714;margin-bottom:8px;">¡Membresía casi lista!</h3>
+      <p style="font-size:14px;color:#888;margin-bottom:4px;font-family:'Inter',sans-serif;">Horario reservado:</p>
+      <p style="font-size:15px;font-weight:500;color:#c48a3a;font-family:'Inter',sans-serif;margin-bottom:22px;">${horarioElegido}</p>
+      <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:26px;font-family:'Inter',sans-serif;">Envíanos la captura del pago<br>por WhatsApp para confirmar tu plaza.</p>
+      <a href="https://wa.me/${wsp}?text=${msg}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:10px;padding:14px 26px;background:#25D366;color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;letter-spacing:0.05em;box-shadow:0 8px 20px rgba(37,211,102,0.28);margin-bottom:12px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar captura por WhatsApp
+      </a>
+      <p style="font-size:10px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;">Te confirmaremos en menos de 24h</p>
+    </div>`;
+};
+</script>
+
+<script>
+let avatarSeleccionado = null;
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal  = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex"; avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) { status.textContent = "❌ Error: " + error.message; }
+};
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+
+</body>
+</html>

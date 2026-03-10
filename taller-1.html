@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Inicial | Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="CSS/taller-1.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.replace("entrada.html");
+  } else {
+    await user.reload();
+    const avatar = document.querySelector(".user-avatar");
+    avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  }
+});
+</script>
+
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo Gato Miel" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+
+    <div class="user-menu">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar"
+        onclick="toggleUserMenu()"
+      >
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+
+<main>
+
+  <!-- HERO -->
+  <section class="taller-hero">
+    <p class="hero-etiqueta">Gato Miel Estudio &nbsp;/&nbsp; Talleres &nbsp;/&nbsp; Iniciación</p>
+    <h1>Taller Inicial<br>de Cerámica</h1>
+    <p class="hero-sub">Un primer encuentro con el barro, la calma y tu creatividad.</p>
+  </section>
+
+
+  <!-- INTRO -->
+  <section class="taller-intro">
+    <div class="intro-text">
+      <h2>Conecta con el barro<br>y tu creatividad</h2>
+      <p>
+        Este taller está pensado para quienes desean comenzar desde cero.
+        Aprenderás técnicas básicas de modelado, creación de piezas artesanales
+        y fundamentos esenciales de la cerámica.
+      </p>
+      <ul>
+        <li>Materiales incluidos</li>
+        <li>Quema de piezas</li>
+        <li>Guía personalizada</li>
+        <li>Ambiente creativo y comunitario</li>
+      </ul>
+      <div class="precio">
+        <span>$45</span>
+        <p>4 encuentros · 2 horas cada uno</p>
+      </div>
+      <a
+        href="https://wa.me/51922402608?text=Hola%20quiero%20reservar%20mi%20cupo%20en%20el%20Taller%20Inicial%20de%20Cerámica"
+        target="_blank"
+        class="btn-wsp"
+      >
+        Reservar plaza
+      </a>
+    </div>
+    <div class="intro-img">
+      <img src="Assets/Img/Taller_Proceso.jpg" alt="Proceso creativo en taller">
+    </div>
+  </section>
+
+
+  <!-- GALERÍA -->
+  <div class="separador"><hr></div>
+
+  <section class="taller-galeria">
+    <div class="galeria-header">
+      <h2>Momentos del taller</h2>
+      <span class="galeria-num">02 / Galería</span>
+    </div>
+    <div class="galeria-grid">
+      <img src="Assets/Img/Taller_Pieza.jpg" alt="Detalle pieza cerámica">
+      <img src="Assets/Img/Foto_Final.jpg" alt="Personas modelando cerámica">
+    </div>
+  </section>
+
+
+  <!-- VIDEO -->
+  <div class="separador"><hr></div>
+
+  <section class="taller-video">
+    <div class="video-header">
+      <h2>Vive la experiencia</h2>
+      <span class="galeria-num">03 / Video</span>
+    </div>
+    <div class="reel-wrapper">
+      <div class="reel-texto">
+        <p>
+          Cada sesión es un espacio para desconectarte del ruido y reconectar con algo lento, táctil y presente.
+          El barro no tiene prisa — y en ese tiempo suspendido, algo cambia.
+        </p>
+      </div>
+      <div class="reel-container">
+        <video
+          autoplay muted loop playsinline
+          id="videoTaller"
+          disablepictureinpicture
+          controlslist="nodownload nofullscreen noremoteplayback"
+        >
+          <source src="Assets/Video/trailer-taller1.mp4" type="video/mp4">
+        </video>
+        <button class="sound-btn" id="soundBtn">♪ Activar sonido</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+
+<!-- MODAL PERFIL -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px; color:#888; margin-top:14px; margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
+      <img src="Assets/Img/Avatares/GatoLima.jpg" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px; color:#888; margin-top:8px; min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.avatar-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.avatar-opcion {
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: 0.2s ease;
+}
+.avatar-opcion:hover { transform: scale(1.08); border-color: #c48a3a; }
+.avatar-opcion.seleccionado { border-color: #c48a3a; box-shadow: 0 0 0 3px rgba(196,138,58,0.3); }
+</style>
+
+
+<script>
+let avatarSeleccionado = null;
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) {
+    document.getElementById("userDropdown").style.display = "none";
+  }
+});
+
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+
+// Video sonido
+const video = document.getElementById("videoTaller");
+const button = document.getElementById("soundBtn");
+button.addEventListener("click", function() {
+  video.muted = false;
+  video.play();
+  button.style.display = "none";
+});
+</script>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+
+window.cerrarSesion = async () => {
+  await signOut(auth);
+  window.location.replace("entrada.html");
+};
+
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex";
+  avatarSeleccionado = null;
+  status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user.displayName || "";
+  const fotoActual = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.src === fotoActual || el.getAttribute("src") === fotoActual) el.classList.add("seleccionado");
+  });
+};
+
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) {
+    status.textContent = "❌ Error: " + error.message;
+  }
+};
+</script>
+
+<script type="module" src="JS/src/chat.js"></script>
+```
+
+Y mueve `chat.js` a tu carpeta `JS/` en el proyecto. También necesitas agregar estas reglas en **Firestore** para que funcione:
+```
+match /chats/{uid} {
+  allow read, write: if request.auth != null;
+  match /mensajes/{msgId} {
+    allow read, write: if request.auth != null;
+  }
+}
+
+</body>
+</html>

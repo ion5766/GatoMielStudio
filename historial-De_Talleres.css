@@ -1,0 +1,248 @@
+/* ================= HERO ================= */
+
+.hero-talleres {
+  text-align: center;
+  padding: 110px 8% 80px;
+  background: #f8f5f1;
+  position: relative;
+}
+
+.hero-talleres::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: #c48a3a;
+  margin: 20px auto 0;
+}
+
+.hero-talleres h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.hero-talleres p {
+  font-size: 17px;
+  color: #888;
+  font-weight: 300;
+}
+
+
+/* ================= SECCIONES ================= */
+
+.seccion {
+  padding: 90px 8%;
+}
+
+.seccion h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 50px;
+  text-align: center;
+  color: #1a1714;
+}
+
+.fondo-suave {
+  background: #f3ece3;
+}
+
+
+/* ================= GRID ================= */
+
+.grid-cards {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+
+/* ================= CARDS ================= */
+
+.taller-card {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.taller-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
+/* Barra dorada superior al hover */
+.taller-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #c48a3a, #e8b870);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  z-index: 2;
+}
+
+.taller-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Wrapper imagen */
+.card-img-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+.card-img-wrapper::after {
+  content: attr(data-estado);
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* Badge verde para actuales */
+.card-img-wrapper.actual::after {
+  background: rgba(196,138,58,0.92);
+  color: white;
+}
+
+/* Badge gris para próximos */
+.card-img-wrapper.proximo::after {
+  background: rgba(255,255,255,0.92);
+  color: #555;
+}
+
+.taller-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  filter: contrast(97%) saturate(90%);
+  transition: transform 0.5s ease, filter 0.4s ease;
+  display: block;
+}
+
+.taller-card:hover img {
+  transform: scale(1.05);
+  filter: contrast(100%) saturate(105%);
+}
+
+/* Contenido */
+.card-body {
+  padding: 24px 22px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #1a1714;
+}
+
+.card-body > p {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+/* Badge de estado — ya no se usa inline, queda en el wrapper */
+.estado {
+  display: none;
+}
+
+/* Botones en la card */
+.card-acciones {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #f0ebe4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-body .btn,
+.card-body .btn-membresia {
+  display: inline-block;
+  text-align: center;
+  padding: 11px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+}
+
+/* Botón primario — dorado sólido */
+.card-body .btn {
+  background: #c48a3a;
+  color: white;
+  box-shadow: 0 6px 18px rgba(196,138,58,0.3);
+}
+
+.card-body .btn:hover {
+  background: #a8742f;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(196,138,58,0.4);
+}
+
+/* Botón secundario — dorado outline */
+.card-body .btn-membresia {
+  background: transparent;
+  color: #c48a3a;
+  border: 1.5px solid #c48a3a;
+}
+
+.card-body .btn-membresia:hover {
+  background: #c48a3a;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(196,138,58,0.3);
+}
+
+/* Card "Próximamente" — apagada levemente */
+.taller-card.card-pronto {
+  opacity: 0.75;
+}
+
+.taller-card.card-pronto:hover {
+  opacity: 1;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .taller-card {
+    width: 100%;
+    max-width: 340px;
+  }
+  .hero-talleres h1 {
+    font-size: 32px;
+  }
+}

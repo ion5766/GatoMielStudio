@@ -1,0 +1,541 @@
+/* ================= RESET ================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8f5f1;
+  color: #333;
+  line-height: 1.6;
+}
+
+
+/* ================= CONTAINER GENERAL ================= */
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+
+/* ================= HEADER ================= */
+
+.header {
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+}
+
+.logo-img {
+  height: 90px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.nav a:hover {
+  opacity: 0.7;
+}
+
+
+/* ================= BOTÓN DORADO NAV ================= */
+
+.btn-dorado {
+  background: #c48a3a;
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: 0.3s ease;
+}
+
+.btn-dorado:hover {
+  background: #a8742f;
+}
+
+
+/* ================= HERO VIDEO ================= */
+
+.hero {
+  position: relative;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  padding: 80px 8%;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.45));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+  color: white;
+}
+
+.hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 60px);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 6px 30px rgba(0,0,0,0.55);
+}
+
+.hero-content p {
+  margin-top: 24px;
+  font-size: 19px;
+  font-weight: 300;
+  opacity: 0.95;
+  max-width: 520px;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 32px;
+  padding: 14px 34px;
+  background: #c48a3a;
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+.btn:hover {
+  background: #a8742f;
+  transform: translateY(-4px);
+  box-shadow: 0 22px 45px rgba(0,0,0,0.45);
+}
+
+
+/* ================= SECCIÓN TALLERES ================= */
+
+.talleres {
+  padding: 100px 8%;
+  text-align: center;
+}
+
+.talleres > h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.talleres > h2::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: #c48a3a;
+  margin: 14px auto 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-top: 60px;
+}
+
+
+/* ================= CARDS ================= */
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
+/* Barra dorada superior al hover */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #c48a3a, #e8b870);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  z-index: 2;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Wrapper imagen con zoom */
+.card-img-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+.card-img-wrapper::after {
+  content: attr(data-cupos);
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255,255,255,0.92);
+  color: #c48a3a;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  filter: contrast(97%) saturate(90%);
+  transition: transform 0.5s ease, filter 0.4s ease;
+  display: block;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+  filter: contrast(100%) saturate(105%);
+}
+
+/* Contenido */
+.card-content {
+  padding: 28px 26px 32px;
+  text-align: left;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #1a1714;
+}
+
+.card-content > p {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.precio {
+  font-size: 20px;
+  font-weight: 600;
+  color: #c48a3a;
+  margin-bottom: 4px;
+  display: block;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: -0.02em;
+}
+
+.cupos {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 22px;
+  letter-spacing: 0.04em;
+}
+
+.card-content .btn-secundario {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #f0ebe4;
+}
+
+
+/* ================= BOTÓN SECUNDARIO ================= */
+
+.btn-secundario {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #333;
+  letter-spacing: 0.04em;
+  transition: color 0.3s ease, gap 0.3s ease;
+}
+
+.btn-secundario::after {
+  content: "→";
+  color: #c48a3a;
+  transition: transform 0.3s ease;
+}
+
+.btn-secundario:hover {
+  color: #c48a3a;
+  gap: 10px;
+}
+
+.btn-secundario:hover::after {
+  transform: translateX(3px);
+}
+
+
+/* ================= FOOTER ================= */
+
+.footer {
+  padding: 40px 20px;
+  text-align: center;
+  background: white;
+  margin-top: 80px;
+  font-size: 14px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 60px 20px;
+    justify-content: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+}
+
+
+/* ================= WHATSAPP FLOTANTE ================= */
+
+.wsp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  z-index: 999;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+.wsp-float:hover {
+  transform: scale(1.1);
+}
+
+.wsp-tooltip {
+  position: absolute;
+  right: 75px;
+  background: #111;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: 0.3s ease;
+  white-space: nowrap;
+}
+
+.wsp-float:hover .wsp-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(37,211,102,0.6); }
+  70%  { box-shadow: 0 0 0 15px rgba(37,211,102,0); }
+  100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+}
+
+.wsp-float {
+  animation: pulse 2.5s infinite;
+}
+
+
+/* ================= USER MENU ================= */
+
+.user-menu {
+  position: relative;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid #eee;
+  transition: 0.3s;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  padding: 10px;
+  display: none;
+  min-width: 140px;
+}
+
+.user-dropdown button {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.user-dropdown button:hover {
+  background: #f5f5f5;
+}
+
+
+/* ================= PERFIL MODAL ================= */
+
+.perfil-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.perfil-box {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+}
+
+.perfil-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #eee;
+}
+
+.perfil-box input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.perfil-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-guardar {
+  flex: 1;
+  background: #c48a3a;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.btn-cancelar {
+  flex: 1;
+  border: none;
+  background: #eee;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}

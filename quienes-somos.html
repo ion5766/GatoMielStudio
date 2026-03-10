@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiénes Somos | Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+});
+</script>
+
+</head>
+<body>
+
+<!-- HEADER — idéntico al index.html -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo Gato Miel" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar"
+        onclick="toggleUserMenu()"
+      >
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ── HERO ── -->
+  <section class="qs-hero">
+    <div class="qs-hero-img">
+      <img src="Assets/Img/Quienes_Somos.jpeg" alt="Gato Miel Estudio">
+    </div>
+    <div class="qs-hero-text">
+      <span class="qs-eyebrow">Nuestra historia</span>
+      <h1>Manos.<br>Barro.<br>Intención.</h1>
+      <p>Gato Miel Estudio nace del deseo de volver a lo esencial — crear con las manos, habitar el proceso y encontrar belleza en lo imperfecto.</p>
+    </div>
+  </section>
+
+  <!-- ── MANIFIESTO ── -->
+  <section class="qs-manifiesto">
+    <div class="qs-linea"></div>
+    <blockquote>
+      "Creemos en lo hecho con intención.<br>
+      En el valor de las manos.<br>
+      En el tiempo como parte del proceso."
+    </blockquote>
+    <div class="qs-linea"></div>
+  </section>
+
+  <!-- ── FUNDADORA ── -->
+  <section class="qs-fundadora">
+    <div class="qs-fundadora-foto">
+      <img src="Assets/Img/jessie.jpg" alt="Fundadora">
+    </div>
+    <div class="qs-fundadora-info">
+      <span class="qs-eyebrow">Fundadora & Ceramista</span>
+      <h2>Jessie</h2>
+      <p>Desde pequeña encontró en el barro un refugio creativo. Hoy lidera un espacio donde la estética natural y la creación consciente se convierten en experiencia.</p>
+      <p>Su misión es que cada persona descubra el valor de lo tangible, lo imperfecto y lo auténtico.</p>
+    </div>
+  </section>
+
+  <!-- ── VIDEO ── -->
+  <section class="qs-video">
+    <div class="qs-video-header">
+      <span class="qs-eyebrow">El espacio</span>
+      <h2>Conoce el estudio</h2>
+      <p>Un vistazo íntimo al proceso y la energía que se vive dentro.</p>
+    </div>
+    <div class="qs-video-wrapper">
+      <video id="videoEstudio" autoplay muted loop playsinline disablepictureinpicture>
+        <source src="Assets/video/xd.mp4" type="video/mp4">
+      </video>
+      <button class="qs-btn-sonido" id="btnSonido">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        Activar sonido
+      </button>
+    </div>
+  </section>
+
+  <!-- ── EQUIPO ── -->
+  <section class="qs-equipo">
+    <span class="qs-eyebrow" style="text-align:center;display:block;">Las personas detrás</span>
+    <h2>Nuestro equipo</h2>
+    <div class="qs-equipo-grid">
+      <div class="qs-miembro">
+        <div class="qs-miembro-foto">
+          <img src="Assets/Img/disenador.jpg" alt="Director Creativo">
+        </div>
+        <h3>Director Creativo</h3>
+        <span>Identidad visual & Branding</span>
+      </div>
+      <div class="qs-miembro">
+        <div class="qs-miembro-foto">
+          <img src="Assets/Img/desarrollador.jpg" alt="Desarrollador Web">
+        </div>
+        <h3>Desarrollador Web</h3>
+        <span>Estrategia digital & estructura</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- MODAL PERFIL -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Variables ── */
+:root {
+  --gold: #c48a3a;
+  --ink:  #1a1714;
+  --sand: #f8f5f1;
+  --warm: #f3ece3;
+  --muted: #888;
+}
+
+/* ── Eyebrow labels ── */
+.qs-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════
+   HERO — split layout
+══════════════════════════════════════ */
+.qs-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 90vh;
+}
+.qs-hero-img {
+  overflow: hidden;
+}
+.qs-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(85%);
+  transition: transform 8s ease;
+}
+.qs-hero-img:hover img { transform: scale(1.04); }
+
+.qs-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 9%;
+  background: var(--sand);
+}
+.qs-hero-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 6vw, 88px);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 32px;
+  letter-spacing: -0.01em;
+}
+.qs-hero-text p {
+  font-size: 17px;
+  color: #666;
+  line-height: 1.75;
+  font-weight: 300;
+  max-width: 420px;
+}
+
+/* ══════════════════════════════════════
+   MANIFIESTO
+══════════════════════════════════════ */
+.qs-manifiesto {
+  padding: 100px 12%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+.qs-linea {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+}
+.qs-manifiesto blockquote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.8vw, 30px);
+  line-height: 1.7;
+  color: var(--ink);
+  text-align: center;
+  max-width: 680px;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ══════════════════════════════════════
+   FUNDADORA
+══════════════════════════════════════ */
+.qs-fundadora {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 0;
+  background: var(--warm);
+}
+.qs-fundadora-foto {
+  overflow: hidden;
+  max-height: 620px;
+}
+.qs-fundadora-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 6s ease;
+}
+.qs-fundadora-foto:hover img { transform: scale(1.04); }
+
+.qs-fundadora-info {
+  padding: 90px 9%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.qs-fundadora-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 4vw, 60px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+.qs-fundadora-info p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 480px;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════
+   VIDEO
+══════════════════════════════════════ */
+.qs-video {
+  padding: 110px 9%;
+  background: var(--ink);
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 80px;
+  align-items: center;
+}
+.qs-video-header .qs-eyebrow { color: #c48a3a; opacity: 0.85; }
+.qs-video-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 400;
+  color: white;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.qs-video-header p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.75;
+  font-weight: 300;
+}
+.qs-video-wrapper {
+  position: relative;
+}
+.qs-video-wrapper video {
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.qs-btn-sonido {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.qs-btn-sonido:hover { background: rgba(255,255,255,0.22); }
+
+/* ══════════════════════════════════════
+   EQUIPO
+══════════════════════════════════════ */
+.qs-equipo {
+  padding: 110px 9%;
+  background: white;
+  text-align: center;
+}
+.qs-equipo h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 3.5vw, 48px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 70px;
+  letter-spacing: -0.01em;
+}
+.qs-equipo-grid {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+.qs-miembro { max-width: 240px; }
+.qs-miembro-foto {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 24px;
+  border: 1px solid #f0ebe4;
+}
+.qs-miembro-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.qs-miembro:hover .qs-miembro-foto img { transform: scale(1.08); }
+.qs-miembro h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.qs-miembro span {
+  font-size: 13px;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+/* ══════════════════════════════════════
+   AVATAR SELECTOR (perfil)
+══════════════════════════════════════ */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .qs-hero { grid-template-columns: 1fr; min-height: auto; }
+  .qs-hero-img { height: 55vw; min-height: 280px; }
+  .qs-hero-text { padding: 60px 7%; }
+  .qs-hero-text h1 { font-size: clamp(42px, 10vw, 64px); }
+  .qs-fundadora { grid-template-columns: 1fr; }
+  .qs-fundadora-foto { max-height: 60vw; }
+  .qs-fundadora-info { padding: 60px 7%; }
+  .qs-video { grid-template-columns: 1fr; gap: 40px; padding: 70px 7%; }
+  .qs-equipo { padding: 80px 7%; }
+  .qs-equipo-grid { gap: 50px; }
+  .qs-manifiesto { padding: 70px 7%; }
+}
+</style>
+
+<script>
+let avatarSeleccionado = null;
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+
+// Botón sonido video
+const video = document.getElementById("videoEstudio");
+const btn = document.getElementById("btnSonido");
+btn.addEventListener("click", () => {
+  if (video.muted) {
+    video.muted = false; video.play();
+    btn.querySelector("svg").innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    btn.lastChild.textContent = " Silenciar";
+  } else {
+    video.muted = true;
+    btn.querySelector("svg").innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+    btn.lastChild.textContent = " Activar sonido";
+  }
+});
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal  = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex";
+  avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) {
+    status.textContent = "❌ Error: " + error.message;
+  }
+};
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+
+</body>
+</html>

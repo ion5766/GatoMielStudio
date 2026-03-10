@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colección | Gato Miel Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  // Guardar email del usuario para el pago
+  window._userEmail = user.email || "cliente@gatomiels.com";
+});
+</script>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- ══ HERO ══ -->
+  <section class="cl-hero">
+    <div class="cl-hero-inner">
+      <span class="cl-eyebrow">Gato Miel Estudio</span>
+      <h1>Piezas únicas,<br><em>hechas a mano.</em></h1>
+      <p>Cada pieza nace del barro con intención. Sin repeticiones, sin moldes.</p>
+    </div>
+    <div class="cl-hero-deco"><div class="cl-hero-line"></div></div>
+  </section>
+
+  <!-- ══ GRID PRODUCTOS ══ -->
+  <section class="cl-tienda">
+    <div class="cl-grid">
+
+      <article class="cl-producto">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprar('Taza Arena', 120)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Taza Arena</h3>
+            <span class="cl-precio">S/ 120</span>
+          </div>
+          <p>Cerámica esmaltada en tonos tierra.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
+               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprar('Plato Bruma', 150)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Plato Bruma</h3>
+            <span class="cl-precio">S/ 150</span>
+          </div>
+          <p>Plato decorativo con textura orgánica.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
+               onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprar('Jarrón Eclipse', 240)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Jarrón Eclipse</h3>
+            <span class="cl-precio">S/ 240</span>
+          </div>
+          <p>Pieza única torneada a mano.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprar('Cuenco Alba', 135)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Cuenco Alba</h3>
+            <span class="cl-precio">S/ 135</span>
+          </div>
+          <p>Perfecto para decoración minimalista.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- ══ MODAL PAGO MERCADO PAGO ══ -->
+<div id="modalCompra" class="cl-modal">
+  <div class="cl-modal-box">
+    <div class="cl-modal-header">
+      <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <h2>Finalizar compra</h2>
+      <p id="productoSeleccionado"></p>
+    </div>
+    <div class="cl-modal-body" id="cl-modal-body">
+      <!-- Cargando -->
+      <div id="cl-loading" style="text-align:center;padding:48px 0;">
+        <div class="cl-spinner"></div>
+        <p style="margin-top:16px;font-size:13px;color:#aaa;font-family:'Inter',sans-serif;">Cargando pasarela de pago...</p>
+      </div>
+      <!-- Contenedor del Brick -->
+      <div id="paymentBrick_container" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ÉXITO ══ -->
+<div id="modalExito" class="cl-modal" style="display:none;">
+  <div class="cl-modal-box">
+    <div class="cl-modal-body" style="padding:40px 32px;">
+      <div style="text-align:center;">
+        <div style="width:68px;height:68px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,0.3);">✓</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:500;color:#1a1714;margin-bottom:10px;">¡Pago exitoso!</h3>
+        <p id="exitoDetalle" style="font-size:14px;color:#c48a3a;font-weight:500;font-family:'Inter',sans-serif;margin-bottom:8px;"></p>
+        <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:28px;font-family:'Inter',sans-serif;">Tu pago fue procesado correctamente.<br>Te enviaremos los detalles pronto.</p>
+        <button onclick="cerrarExito()" style="padding:14px 32px;background:#1a1714;color:white;border:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.08em;cursor:pointer;font-family:'Inter',sans-serif;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PENDIENTE (Yape/Plin) ══ -->
+<div id="modalPendiente" class="cl-modal" style="display:none;">
+  <div class="cl-modal-box">
+    <div class="cl-modal-body" style="padding:36px 28px;">
+      <div style="text-align:center;">
+        <div style="width:68px;height:68px;background:#f0f4ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;">⏳</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:#1a1714;margin-bottom:8px;">Pago en proceso</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:20px;font-family:'Inter',sans-serif;line-height:1.6;">Tu pago está siendo procesado.<br>Recibirás una confirmación por correo.</p>
+        <div id="pendienteQR" style="display:none;margin-bottom:20px;">
+          <p style="font-size:12px;color:#aaa;margin-bottom:10px;font-family:'Inter',sans-serif;letter-spacing:0.06em;">ESCANEA PARA COMPLETAR EL PAGO</p>
+          <img id="qrImg" src="" style="width:180px;height:180px;border-radius:12px;border:1px solid #eee;">
+        </div>
+        <button onclick="cerrarPendiente()" style="padding:14px 32px;background:#1a1714;color:white;border:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.08em;cursor:pointer;font-family:'Inter',sans-serif;">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PERFIL ══ -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+:root { --gold:#c48a3a; --ink:#1a1714; --sand:#f8f5f1; --warm:#f3ece3; --muted:#888; }
+
+.cl-eyebrow { font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:rgba(196,138,58,0.8); display:block; margin-bottom:18px; }
+
+.cl-hero { background:var(--ink); padding:120px 9% 100px; display:flex; align-items:flex-end; justify-content:space-between; gap:40px; min-height:50vh; }
+.cl-hero-inner { max-width:580px; }
+.cl-hero-inner h1 { font-family:'Playfair Display',serif; font-size:clamp(50px,7vw,84px); font-weight:400; color:white; line-height:1.05; letter-spacing:-0.02em; margin-bottom:22px; }
+.cl-hero-inner h1 em { font-style:italic; color:var(--gold); }
+.cl-hero-inner p { font-size:16px; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.75; max-width:400px; }
+.cl-hero-deco { align-self:flex-start; padding-top:8px; }
+.cl-hero-line { width:1px; height:80px; background:linear-gradient(var(--gold),transparent); opacity:0.5; }
+
+.cl-tienda { padding:100px 9%; background:var(--sand); }
+.cl-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+
+.cl-producto { background:white; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 2px 16px rgba(0,0,0,0.05); transition:transform 0.35s ease,box-shadow 0.35s ease; position:relative; }
+.cl-producto::after { content:""; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),#e8b870); transform:scaleX(0); transform-origin:left; transition:transform 0.4s ease; }
+.cl-producto:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,0.1); }
+.cl-producto:hover::after { transform:scaleX(1); }
+
+.cl-img { position:relative; height:280px; overflow:hidden; }
+.cl-img img { width:100%; height:100%; object-fit:cover; filter:saturate(85%); transition:transform 0.6s ease,filter 0.4s ease; display:block; }
+.cl-producto:hover .cl-img img { transform:scale(1.06); filter:saturate(100%); }
+.cl-img-overlay { position:absolute; inset:0; background:rgba(26,23,20,0); display:flex; align-items:flex-end; justify-content:center; padding-bottom:22px; opacity:0; transition:opacity 0.3s ease,background 0.3s ease; }
+.cl-producto:hover .cl-img-overlay { opacity:1; background:rgba(26,23,20,0.38); }
+.cl-btn-ver { padding:11px 26px; background:white; color:var(--ink); border:none; border-radius:50px; font-size:12px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; transform:translateY(10px); transition:transform 0.3s ease,background 0.2s; }
+.cl-producto:hover .cl-btn-ver { transform:translateY(0); }
+.cl-btn-ver:hover { background:var(--gold); color:white; }
+
+.cl-info { padding:20px 20px 24px; }
+.cl-info-top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; }
+.cl-info-top h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:500; color:var(--ink); }
+.cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
+.cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
+
+/* ══ MODAL ══ */
+.cl-modal { display:none; position:fixed; inset:0; background:rgba(15,12,9,0.75); backdrop-filter:blur(10px); justify-content:center; align-items:center; z-index:9999; padding:20px; }
+.cl-modal.open { display:flex; }
+.cl-modal-box { background:white; width:100%; max-width:480px; max-height:90vh; border-radius:24px; display:flex; flex-direction:column; overflow:hidden; animation:clModalIn 0.38s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 40px 80px rgba(0,0,0,0.25); }
+@keyframes clModalIn { from{transform:scale(0.88) translateY(20px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+.cl-modal-header { padding:26px 26px 18px; position:relative; border-bottom:1px solid #f5f0ea; flex-shrink:0; }
+.cl-modal-header h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:500; color:var(--ink); margin-bottom:3px; }
+#productoSeleccionado { font-size:12px; color:var(--gold); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; font-family:'Inter',sans-serif; min-height:16px; }
+.cl-modal-cerrar { position:absolute; top:20px; right:20px; width:32px; height:32px; border-radius:50%; border:none; background:#f5f0ea; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#666; transition:background 0.2s,transform 0.2s; }
+.cl-modal-cerrar:hover { background:var(--gold); color:white; transform:rotate(90deg); }
+.cl-modal-body { padding:24px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
+
+/* Spinner */
+.cl-spinner { width:36px; height:36px; border:3px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Avatar selector */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+@media (max-width:1100px) { .cl-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:900px) { .cl-hero { padding:90px 7% 70px; flex-direction:column; min-height:auto; } .cl-hero-deco { display:none; } .cl-tienda { padding:70px 7%; } }
+@media (max-width:600px) { .cl-grid { grid-template-columns:1fr; max-width:380px; } }
+</style>
+
+<!-- SDK Mercado Pago -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<script>
+const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795";
+let mp = null;
+let bricksBuilder = null;
+let paymentBrickController = null;
+let productoActual = { nombre: "", monto: 0 };
+let avatarSeleccionado = null;
+
+// Inicializar MP SDK
+function initMP() {
+  if (!mp) {
+    mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-PE" });
+    bricksBuilder = mp.bricks();
+  }
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+
+async function comprar(nombre, monto) {
+  productoActual = { nombre, monto };
+  document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
+  document.getElementById("cl-loading").style.display = "block";
+  document.getElementById("paymentBrick_container").style.display = "none";
+  document.getElementById("modalCompra").classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  // Destruir brick anterior si existe
+  if (paymentBrickController) {
+    try { await paymentBrickController.unmount(); } catch(e) {}
+    paymentBrickController = null;
+  }
+  document.getElementById("paymentBrick_container").innerHTML = "";
+
+  initMP();
+  await renderBrick();
+}
+
+async function renderBrick() {
+  const settings = {
+    initialization: {
+      amount: productoActual.monto,
+      payer: {
+        email: window._userEmail || ""
+      }
+    },
+    customization: {
+      paymentMethods: {
+        ticket: "all",
+        creditCard: "all",
+        debitCard: "all",
+        mercadoPago: "all"
+      },
+      visual: {
+        style: {
+          theme: "default",
+          customVariables: {
+            baseColor: "#c48a3a",
+            baseColorFirstVariant: "#a8742f",
+            baseColorSecondVariant: "#e8b870",
+            borderRadiusLarge: "14px",
+            borderRadiusMedium: "10px",
+            borderRadiusSmall: "8px",
+            fontSizeExtraSmall: "11px",
+            fontSizeSmall: "13px",
+            formBackgroundColor: "#faf8f5",
+            inputBackgroundColor: "#ffffff",
+            inputFocusedBorderColor: "#c48a3a"
+          }
+        }
+      }
+    },
+    callbacks: {
+      onReady: () => {
+        document.getElementById("cl-loading").style.display = "none";
+        document.getElementById("paymentBrick_container").style.display = "block";
+      },
+      onSubmit: async ({ selectedPaymentMethod, formData }) => {
+        try {
+          const resp = await fetch("/.netlify/functions/pagar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...formData,
+              description: productoActual.nombre,
+              transaction_amount: productoActual.monto
+            })
+          });
+          const data = await resp.json();
+
+          if (!resp.ok) throw new Error(data.error || "Error al procesar");
+
+          cerrarModal();
+
+          if (data.status === "approved") {
+            // Pago aprobado
+            document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto}`;
+            document.getElementById("modalExito").style.display = "flex";
+          } else if (data.status === "pending" || data.status === "in_process") {
+            // Pendiente (Yape, Plin, etc.)
+            const qrData = data.point_of_interaction?.transaction_data;
+            if (qrData?.qr_code_base64) {
+              document.getElementById("qrImg").src = `data:image/png;base64,${qrData.qr_code_base64}`;
+              document.getElementById("pendienteQR").style.display = "block";
+            } else {
+              document.getElementById("pendienteQR").style.display = "none";
+            }
+            document.getElementById("modalPendiente").style.display = "flex";
+          } else {
+            alert(`Estado del pago: ${data.status_detail || data.status}. Intenta nuevamente.`);
+          }
+
+        } catch (err) {
+          console.error(err);
+          alert("Ocurrió un error al procesar el pago. Por favor intenta nuevamente.");
+        }
+      },
+      onError: (error) => {
+        console.error("Brick error:", error);
+      }
+    }
+  };
+
+  try {
+    paymentBrickController = await bricksBuilder.create("payment", "paymentBrick_container", settings);
+  } catch(e) {
+    console.error("Error al crear brick:", e);
+    document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;">Error al cargar el formulario. Recarga la página.</p>`;
+  }
+}
+
+function cerrarModal() {
+  document.getElementById("modalCompra").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function cerrarExito() {
+  document.getElementById("modalExito").style.display = "none";
+}
+function cerrarPendiente() {
+  document.getElementById("modalPendiente").style.display = "none";
+}
+
+// Cerrar modales con Escape
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); }
+});
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex"; window.avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = window.avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) { status.textContent = "❌ Error: " + error.message; }
+};
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+</body>
+</html>

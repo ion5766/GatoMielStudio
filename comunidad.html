@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comunidad | Gato Miel Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const cfg={apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const app = initializeApp(cfg);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  const av = document.querySelector(".user-avatar");
+  if (av) av.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+});
+</script>
+</head>
+<body>
+
+<!-- ══ HEADER — idéntico al index ══ -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ══ HERO — paleta index ══ -->
+<section class="cm-hero">
+  <div class="cm-hero-bg">
+    <img src="Assets/Img/Fondo_Comunidad.jpg" alt="" class="cm-hero-img">
+    <div class="cm-hero-vignette"></div>
+  </div>
+  <div class="cm-hero-content">
+    <span class="cm-eyebrow">Espacio de la comunidad</span>
+    <h1 class="cm-hero-h1">Tu obra<br><em>merece ser vista.</em></h1>
+    <p class="cm-hero-sub">Cada pieza que creas en el taller es única.<br>Compártela aquí y forma parte del mural colectivo.</p>
+    <button class="cm-hero-cta" onclick="abrirModal()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Compartir mi obra de hoy
+    </button>
+  </div>
+  <div class="cm-hero-scroll">
+    <div class="cm-hero-scroll-line"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<!-- ══ STATS BAR ══ -->
+<div class="cm-stats">
+  <div class="cm-stat">
+    <span class="cm-stat-n" id="statPosts">—</span>
+    <span class="cm-stat-l">publicaciones</span>
+  </div>
+  <div class="cm-stat-sep"></div>
+  <div class="cm-stat">
+    <span class="cm-stat-n" id="statLikes">—</span>
+    <span class="cm-stat-l">me gusta</span>
+  </div>
+  <div class="cm-stat-sep"></div>
+  <div class="cm-stat">
+    <span class="cm-stat-n" id="statComs">—</span>
+    <span class="cm-stat-l">comentarios</span>
+  </div>
+</div>
+
+<!-- ══ FEED ══ -->
+<main id="feed" class="cm-feed"></main>
+
+<!-- ══ EMPTY STATE ══ -->
+<div id="cmEmpty" class="cm-empty" style="display:none">
+  <p class="cm-empty-icon">🏺</p>
+  <p class="cm-empty-title">El mural está vacío</p>
+  <p class="cm-empty-sub">Sé la primera en compartir tu obra de hoy.</p>
+  <button class="cm-hero-cta" style="margin-top:24px" onclick="abrirModal()">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Publicar ahora
+  </button>
+</div>
+
+<!-- ══ FAB ══ -->
+<button class="cm-fab" onclick="abrirModal()" aria-label="Compartir obra">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+</button>
+
+<!-- ══ MODAL PUBLICAR ══ -->
+<div id="modal" class="cm-modal">
+  <div class="cm-modal-box">
+    <button class="cm-x" onclick="cerrarModal()">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <p class="cm-modal-eyebrow">Nueva publicación</p>
+    <h2 class="cm-modal-h">Comparte tu obra</h2>
+    <div class="cm-img-wrap">
+      <label for="imagen" class="cm-img-drop" id="cmImgDrop">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Toca para elegir imagen</span>
+      </label>
+      <img id="cmImgPreview" class="cm-img-preview" style="display:none" alt="">
+      <button id="cmImgChange" class="cm-img-change" style="display:none" onclick="document.getElementById('imagen').click()">Cambiar foto</button>
+    </div>
+    <input type="file" id="imagen" accept="image/*" style="display:none">
+    <input type="password" id="clave" class="cm-field" placeholder="Contraseña del taller">
+    <textarea id="descripcion" class="cm-field cm-textarea" placeholder="Cuéntanos sobre esta pieza... (opcional)"></textarea>
+    <div class="cm-modal-row">
+      <button class="cm-pub-btn" onclick="publicar()">Publicar</button>
+      <button class="cm-can-btn" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ZOOM ══ -->
+<div id="modalZoom" class="cm-zoom" onclick="cerrarZoom()">
+  <button class="cm-zoom-x" onclick="cerrarZoom()">
+    <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <img id="imagenZoom" onclick="event.stopPropagation()">
+</div>
+
+<!-- ══ MODAL PERFIL ══ -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+:root {
+  --gold:  #c48a3a;
+  --gold-d:#a8742f;
+  --ink:   #1a1714;
+  --sand:  #f8f5f1;
+  --warm:  #f3ece3;
+  --muted: #888;
+  --bdr:   rgba(26,23,20,0.08);
+}
+
+/* ══ HERO ══ */
+.cm-hero {
+  position: relative; height: calc(100vh - 72px); min-height: 500px;
+  display: flex; align-items: flex-end; padding: 0 9% 10vh; overflow: hidden;
+}
+.cm-hero-bg { position: absolute; inset: 0; }
+.cm-hero-img { width: 100%; height: 100%; object-fit: cover; filter: saturate(70%) brightness(0.55); }
+.cm-hero-vignette {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(248,245,241,0.0) 0%,
+    rgba(15,12,9,0.0)    30%,
+    rgba(15,12,9,0.55)   65%,
+    rgba(15,12,9,0.92)   100%
+  );
+}
+.cm-hero-content { position: relative; z-index: 2; max-width: 620px; }
+.cm-eyebrow {
+  display: block; font-family: 'Inter', sans-serif; font-size: 11px;
+  font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55); margin-bottom: 18px;
+}
+.cm-hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(50px, 7.5vw, 96px); font-weight: 400;
+  color: white; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 20px;
+}
+.cm-hero-h1 em { font-style: italic; color: var(--gold); }
+.cm-hero-sub {
+  font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.6);
+  line-height: 1.75; margin-bottom: 34px; max-width: 420px; letter-spacing: 0.02em;
+}
+.cm-hero-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 30px; background: var(--gold); border: none; border-radius: 50px;
+  color: white; font-family: 'Inter', sans-serif; font-size: 13px;
+  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+  box-shadow: 0 12px 30px rgba(196,138,58,0.35);
+}
+.cm-hero-cta:hover {
+  background: var(--gold-d); transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(196,138,58,0.45);
+}
+.cm-hero-scroll {
+  position: absolute; right: 9%; bottom: 10vh; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.cm-hero-scroll span {
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif; writing-mode: vertical-rl;
+}
+.cm-hero-scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(white, transparent);
+  animation: cmPulse 2.2s ease-in-out infinite;
+}
+@keyframes cmPulse { 0%,100%{opacity:0.3;transform:scaleY(1)}50%{opacity:0.9;transform:scaleY(1.1)} }
+
+/* ══ STATS BAR ══ */
+.cm-stats {
+  background: var(--ink); display: flex; align-items: center;
+  justify-content: center; gap: 48px; padding: 26px 9%;
+}
+.cm-stat { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cm-stat-n {
+  font-family: 'Playfair Display', serif; font-size: 34px;
+  font-weight: 400; color: var(--gold); line-height: 1; letter-spacing: -0.01em;
+}
+.cm-stat-l {
+  font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 400;
+  letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35);
+}
+.cm-stat-sep { width: 1px; height: 36px; background: rgba(255,255,255,0.08); }
+
+/* ══ FEED ══ */
+.cm-feed {
+  background: var(--sand);
+  padding: 40px 16px 120px;
+}
+
+/* ══ POST — columna única, estilo IG/FB ══ */
+.cm-post {
+  max-width: 540px; margin: 0 auto 32px;
+  background: white; border-radius: 14px;
+  border: 1px solid var(--bdr);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+  overflow: hidden;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.cm-post.visible { opacity: 1; transform: translateY(0); }
+
+/* imagen completa, sin recorte, zoom al clic */
+.cm-col-img {
+  position: relative; overflow: hidden;
+  background: #0f0d0b; cursor: zoom-in;
+}
+.cm-post-img {
+  width: 100%; display: block;
+  object-fit: contain;
+  transition: opacity 0.25s ease;
+}
+.cm-col-img:hover .cm-post-img { opacity: 0.93; }
+
+/* info debajo de la imagen */
+.cm-col-info {
+  padding: 16px 18px 20px;
+  background: white;
+}
+
+/* autor */
+.cm-post-autor {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.cm-post-avatar {
+  width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px rgba(196,138,58,0.35);
+}
+.cm-post-autorinfo { flex: 1; }
+.cm-post-nombre {
+  display: block; font-family: 'Inter', sans-serif; font-size: 13px;
+  font-weight: 500; color: var(--ink); letter-spacing: 0.04em;
+}
+.cm-post-role {
+  display: block; font-family: 'Inter', sans-serif; font-size: 10px;
+  font-weight: 300; color: var(--muted); letter-spacing: 0.14em;
+  text-transform: uppercase; margin-top: 3px;
+}
+.cm-btn-del {
+  background: none; border: none; cursor: pointer;
+  color: rgba(26,23,20,0.15); font-size: 16px;
+  transition: color 0.2s; font-family: 'Inter', sans-serif;
+}
+.cm-btn-del:hover { color: #e55; }
+
+/* descripción */
+.cm-post-desc {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(17px, 2vw, 22px); font-weight: 400;
+  color: rgba(26,23,20,0.68); line-height: 1.7; margin-bottom: 26px;
+}
+
+/* like */
+.cm-like-row { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+.cm-like-btn {
+  background: none; border: 1.5px solid #e8d0d0; cursor: pointer;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  transition: border-color 0.25s, background 0.25s, transform 0.15s;
+  line-height: 1;
+}
+.cm-like-btn:hover { border-color: #e55; background: rgba(229,85,85,0.07); }
+.cm-like-btn.liked { border-color: #e55; background: rgba(229,85,85,0.1); }
+.cm-like-btn.liked .cm-heart { filter: none; }
+.cm-like-btn.pop { animation: cmHeartPop 0.35s ease; }
+@keyframes cmHeartPop { 0%{transform:scale(1)}40%{transform:scale(1.55)}100%{transform:scale(1)} }
+.cm-like-btn.disabled { opacity: 0.5; cursor: default; }
+.cm-like-n {
+  font-family: 'Playfair Display', serif; font-size: 20px;
+  font-weight: 400; color: var(--muted);
+}
+.cm-like-label {
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 300;
+  color: var(--muted); letter-spacing: 0.04em;
+}
+
+/* divisor */
+.cm-divider { width: 28px; height: 1px; background: var(--gold); opacity: 0.4; margin-bottom: 20px; }
+
+/* ── Sección comentarios — encabezado claro ── */
+.cm-comments-label {
+  font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.cm-comments-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--bdr);
+}
+
+/* ── Comentarios ── */
+.cm-comments { margin-bottom: 20px; }
+.cm-comment { margin-bottom: 11px; }
+.cm-com-main { display: flex; align-items: flex-start; gap: 9px; }
+.cm-com-av {
+  width: 24px; height: 24px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0; margin-top: 2px;
+}
+.cm-com-txt {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 300;
+  color: #666; line-height: 1.55; flex: 1;
+}
+.cm-com-txt strong { color: var(--ink); font-weight: 500; margin-right: 5px; }
+.cm-com-actions { margin-left: 33px; margin-top: 3px; display: flex; gap: 10px; }
+.cm-reply-btn {
+  font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(196,138,58,0.55); cursor: pointer;
+  background: none; border: none; padding: 0; transition: color 0.2s;
+}
+.cm-reply-btn:hover { color: var(--gold); }
+
+/* replies */
+.cm-replies {
+  display: none; margin-left: 33px; margin-top: 7px;
+  padding-left: 12px; border-left: 1px solid rgba(196,138,58,0.2);
+}
+.cm-replies.open { display: block; }
+.cm-rep { display: flex; gap: 7px; margin-bottom: 7px; }
+.cm-rep-av { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px; }
+.cm-rep-txt { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 300; color: #888; line-height: 1.5; }
+.cm-rep-txt strong { color: var(--ink); font-weight: 400; margin-right: 4px; }
+
+.cm-reply-input { display: none; margin-left: 33px; margin-top: 7px; }
+.cm-reply-input.open { display: flex; gap: 8px; }
+.cm-reply-input input {
+  flex: 1; background: white; border: 1px solid var(--bdr);
+  border-radius: 50px; padding: 7px 14px;
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 300;
+  color: var(--ink); outline: none; transition: border-color 0.2s;
+}
+.cm-reply-input input:focus { border-color: rgba(196,138,58,0.45); }
+.cm-reply-input input::placeholder { color: #bbb; }
+.cm-reply-input button {
+  padding: 7px 16px; background: var(--ink); border: none; border-radius: 50px;
+  color: white; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; cursor: pointer; white-space: nowrap; transition: background 0.2s;
+}
+.cm-reply-input button:hover { background: var(--gold); }
+
+/* ── Input bar mejorada ── */
+.cm-input-section {
+  border-top: 1px solid var(--bdr); padding-top: 16px;
+}
+.cm-input-label {
+  font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px; display: block;
+}
+.cm-input-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: white; border: 1.5px solid #e8e0d8; border-radius: 50px;
+  padding: 6px 6px 6px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cm-input-bar:focus-within {
+  border-color: rgba(196,138,58,0.45);
+  box-shadow: 0 0 0 3px rgba(196,138,58,0.08);
+}
+.cm-input-av { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.cm-input-bar input {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300;
+  color: var(--ink); padding: 6px 0;
+}
+.cm-input-bar input::placeholder { color: #bbb; }
+.cm-send {
+  background: var(--ink); border: none; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.06em; padding: 8px 18px; border-radius: 50px;
+  color: white; transition: background 0.2s; white-space: nowrap;
+  opacity: 0.35; pointer-events: none;
+}
+.cm-send.on { opacity: 1; pointer-events: auto; }
+.cm-send.on:hover { background: var(--gold); }
+
+/* ══ EMPTY STATE ══ */
+.cm-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 120px 20px; text-align: center; background: var(--sand);
+}
+.cm-empty-icon { font-size: 48px; margin-bottom: 20px; opacity: 0.45; }
+.cm-empty-title {
+  font-family: 'Playfair Display', serif; font-size: 28px;
+  font-weight: 400; color: var(--ink); margin-bottom: 10px;
+}
+.cm-empty-sub { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 300; color: var(--muted); }
+
+/* ══ FAB ══ */
+.cm-fab {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--ink); border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 8800; color: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.cm-fab:hover {
+  background: var(--gold); transform: rotate(45deg) scale(1.1);
+  box-shadow: 0 12px 32px rgba(196,138,58,0.4);
+}
+
+/* ══ MODAL PUBLICAR ══ */
+.cm-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(15,12,9,0.7); backdrop-filter: blur(12px);
+  justify-content: center; align-items: center; z-index: 9999; padding: 24px;
+}
+.cm-modal.open { display: flex; }
+.cm-modal-box {
+  background: white; width: 100%; max-width: 420px;
+  border-radius: 20px; padding: 44px 36px 36px;
+  position: relative; overflow-y: auto; max-height: 90vh;
+  animation: cmModalIn 0.38s cubic-bezier(0.34,1.4,0.64,1);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+}
+@keyframes cmModalIn { from{transform:translateY(20px) scale(0.96);opacity:0}to{transform:translateY(0) scale(1);opacity:1} }
+.cm-x {
+  position: absolute; top: 16px; right: 16px;
+  width: 30px; height: 30px; border-radius: 50%; border: none;
+  background: #f5f0ea; cursor: pointer; color: #888;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.25s;
+}
+.cm-x:hover { background: var(--gold); color: white; transform: rotate(90deg); }
+.cm-modal-eyebrow {
+  font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+  margin-bottom: 7px;
+}
+.cm-modal-h {
+  font-family: 'Playfair Display', serif; font-size: 26px;
+  font-weight: 400; color: var(--ink); margin-bottom: 26px;
+}
+.cm-img-wrap { margin-bottom: 18px; }
+.cm-img-drop {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 28px; border: 1.5px dashed #ddd; cursor: pointer;
+  border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 12px;
+  font-weight: 300; color: #aaa; transition: border-color 0.2s, color 0.2s;
+  text-align: center; background: #faf7f4;
+}
+.cm-img-drop:hover { border-color: var(--gold); color: var(--gold); }
+.cm-img-preview { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; }
+.cm-img-change {
+  display: block; width: 100%; margin-top: 8px; background: none;
+  border: 1px solid #e8e0d5; border-radius: 8px; padding: 8px;
+  font-family: 'Inter', sans-serif; font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); cursor: pointer; transition: 0.2s;
+}
+.cm-img-change:hover { border-color: var(--gold); color: var(--gold); }
+.cm-field {
+  width: 100%; background: #faf7f4; border: 1.5px solid #eee;
+  border-radius: 10px; padding: 11px 14px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300;
+  color: var(--ink); outline: none; margin-bottom: 14px;
+  transition: border-color 0.2s; display: block;
+}
+.cm-field::placeholder { color: #bbb; }
+.cm-field:focus { border-color: rgba(196,138,58,0.5); }
+.cm-textarea { min-height: 80px; resize: none; }
+.cm-modal-row { display: flex; gap: 10px; margin-top: 6px; }
+.cm-pub-btn {
+  flex: 1; padding: 13px; background: var(--ink); color: white;
+  border: none; border-radius: 50px; font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.25s;
+}
+.cm-pub-btn:hover { background: var(--gold); }
+.cm-can-btn {
+  flex: 1; padding: 13px; background: #f0ebe4; color: #666;
+  border: none; border-radius: 50px; font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 400; cursor: pointer; transition: background 0.2s;
+}
+.cm-can-btn:hover { background: #e5ddd3; }
+
+/* ══ ZOOM ══ */
+.cm-zoom {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.93); justify-content: center; align-items: center;
+  z-index: 99999; cursor: zoom-out;
+}
+.cm-zoom img {
+  max-width: 88vw; max-height: 88vh; object-fit: contain; cursor: default;
+  border-radius: 8px; box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  animation: cmZoomIn 0.28s cubic-bezier(0.34,1.3,0.64,1);
+}
+@keyframes cmZoomIn { from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1} }
+.cm-zoom-x {
+  position: absolute; top: 18px; right: 18px;
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,0.1); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.cm-zoom-x:hover { background: rgba(255,255,255,0.22); }
+
+/* ── Avatar selector ── */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 600px) {
+  .cm-hero-scroll { display: none; }
+  .cm-feed { padding: 24px 0 100px; }
+  .cm-post { margin: 0 0 16px; border-radius: 0; border-left: none; border-right: none; max-width: 100%; }
+  .cm-stats { gap: 20px; flex-wrap: wrap; padding: 22px 7%; }
+  .cm-hero { padding: 0 7% 10vh; }
+  .cm-hero-h1 { font-size: 44px; }
+  .cm-modal-box { padding: 38px 20px 26px; border-radius: 16px; }
+}
+</style>
+
+<script>
+const FALLBACK = "Assets/Img/Avatares/GatoMiel.jpeg";
+let avatarSeleccionado = null;
+
+function toggleUserMenu(){
+  const m=document.getElementById("userDropdown");
+  m.style.display=m.style.display==="block"?"none":"block";
+}
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display="none";
+});
+function seleccionarAvatar(img){
+  document.querySelectorAll(".avatar-opcion").forEach(el=>el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src=img.src;
+  avatarSeleccionado=img.src;
+}
+
+/* Intersection observer */
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("visible"); observer.unobserve(e.target); } });
+},{threshold:0.08});
+function observePosts(){ document.querySelectorAll(".cm-post:not(.visible)").forEach(p=>observer.observe(p)); }
+
+/* Imagen preview */
+document.getElementById("imagen").addEventListener("change",function(){
+  const file=this.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById("cmImgPreview").src=e.target.result;
+    document.getElementById("cmImgPreview").style.display="block";
+    document.getElementById("cmImgDrop").style.display="none";
+    document.getElementById("cmImgChange").style.display="block";
+  };
+  reader.readAsDataURL(file);
+});
+
+function abrirModal(){ document.getElementById("modal").classList.add("open"); document.body.style.overflow="hidden"; }
+function cerrarModal(){ document.getElementById("modal").classList.remove("open"); document.body.style.overflow=""; }
+function abrirZoom(src){ document.getElementById("imagenZoom").src=src; document.getElementById("modalZoom").style.display="flex"; document.body.style.overflow="hidden"; }
+function cerrarZoom(){ document.getElementById("modalZoom").style.display="none"; document.body.style.overflow=""; }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ cerrarZoom(); cerrarModal(); } });
+
+function toggleReplies(pid,idx){
+  const r=document.getElementById(`cmR-${pid}-${idx}`);
+  const t=document.getElementById(`cmT-${pid}-${idx}`);
+  if(!r) return;
+  r.classList.toggle("open");
+  const n=r.querySelectorAll(".cm-rep").length;
+  t.textContent=r.classList.contains("open")?"Ocultar":`Ver ${n} ${n===1?"respuesta":"respuestas"}`;
+}
+function mostrarInputRespuesta(pid,idx,nombre){
+  document.querySelectorAll(".cm-reply-input").forEach(el=>el.classList.remove("open"));
+  const w=document.getElementById(`cmRI-${pid}-${idx}`);
+  if(!w) return;
+  w.classList.add("open");
+  const inp=w.querySelector("input");
+  inp.value=`@${nombre} `; inp.focus();
+  document.getElementById(`cmR-${pid}-${idx}`)?.classList.add("open");
+}
+function actualizarSend(pid){
+  const inp=document.getElementById(`cmIn-${pid}`);
+  const btn=document.getElementById(`cmSend-${pid}`);
+  if(inp&&btn) btn.classList.toggle("on",inp.value.trim().length>0);
+}
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const cfg={apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const app=getApps().length?getApps()[0]:initializeApp(cfg);
+const db=getFirestore(app);
+const auth=getAuth(app);
+let me=null;
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.replace("entrada.html");return;}
+  await user.reload(); me=auth.currentUser;
+  const foto=me.photoURL||FALLBACK;
+  document.querySelector(".user-avatar").src=foto;
+  document.getElementById("previewAvatar").src=foto;
+  document.getElementById("nuevoNombre").value=me.displayName||"";
+  document.querySelectorAll(".avatar-opcion").forEach(el=>{
+    if(el.src===foto||el.getAttribute("src")===foto) el.classList.add("seleccionado");
+  });
+});
+
+window.cerrarSesion=async()=>{ await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar=()=>{
+  document.getElementById("perfilModal").style.display="flex";
+  avatarSeleccionado=null; document.getElementById("perfilStatus").textContent="";
+};
+window.cerrarPersonalizar=()=>{ document.getElementById("perfilModal").style.display="none"; };
+window.guardarPerfil=async()=>{
+  const u=auth.currentUser;
+  const nombre=document.getElementById("nuevoNombre").value.trim();
+  const s=document.getElementById("perfilStatus");
+  s.textContent="Guardando...";
+  try{
+    const photoURL=avatarSeleccionado||u.photoURL||FALLBACK;
+    await updateProfile(u,{displayName:nombre||u.displayName,photoURL});
+    await u.reload();
+    document.querySelector(".user-avatar").src=photoURL;
+    s.textContent="✨ ¡Perfil actualizado!";
+    setTimeout(()=>cerrarPersonalizar(),1200);
+  }catch(e){s.textContent="❌ "+e.message;}
+};
+
+const feed=document.getElementById("feed");
+const postsRef=collection(db,"posts");
+const postsQ=query(postsRef,orderBy("fecha","desc"));
+
+window.publicar=async()=>{
+  const clave=document.getElementById("clave").value.trim();
+  const desc=document.getElementById("descripcion").value.trim();
+  const file=document.getElementById("imagen").files[0];
+  if(clave!=="Sookie01") return alert("Contraseña incorrecta");
+  if(!file) return alert("Selecciona una imagen");
+  cerrarModal();
+  const b64=await new Promise(res=>{const r=new FileReader();r.readAsDataURL(file);r.onload=()=>res(r.result);});
+  await addDoc(postsRef,{
+    descripcion:desc,imagen:b64,fecha:new Date(),
+    autor:me.displayName||me.email.split("@")[0],
+    autorFoto:me.photoURL||FALLBACK,likes:0,comentarios:[]
+  });
+  ["clave","descripcion"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("imagen").value="";
+  document.getElementById("cmImgPreview").style.display="none";
+  document.getElementById("cmImgDrop").style.display="flex";
+  document.getElementById("cmImgChange").style.display="none";
+};
+
+window.borrarPost=async id=>{
+  if(prompt("Contraseña para borrar:")!=="Sookie01") return alert("Clave incorrecta");
+  await deleteDoc(doc(db,"posts",id));
+};
+
+window.darLike=async(id,btn)=>{
+  if(!me) return;
+  const ref=doc(db,"posts",id);
+  const snap=await getDoc(ref);
+  const data=snap.data();
+  const likedBy=data.likedBy||[];
+  if(likedBy.includes(me.uid)){
+    // ya dio like — no hace nada, solo feedback visual
+    btn.classList.add("pop");
+    setTimeout(()=>btn.classList.remove("pop"),350);
+    return;
+  }
+  btn.classList.add("pop","liked");
+  setTimeout(()=>btn.classList.remove("pop"),350);
+  await updateDoc(ref,{
+    likes:(data.likes||0)+1,
+    likedBy:[...likedBy,me.uid]
+  });
+};
+
+window.enviarComentario=async pid=>{
+  const inp=document.getElementById(`cmIn-${pid}`);
+  const txt=inp.value.trim(); if(!txt) return;
+  const ref=doc(db,"posts",pid);
+  const snap=await getDoc(ref);
+  const coms=snap.data().comentarios||[];
+  await updateDoc(ref,{comentarios:[...coms,{
+    usuario:me.displayName||me.email.split("@")[0],
+    foto:me.photoURL||FALLBACK,texto:txt,respuestas:[]
+  }]});
+  inp.value=""; actualizarSend(pid);
+};
+
+window.enviarRespuesta=async(pid,idx)=>{
+  const w=document.getElementById(`cmRI-${pid}-${idx}`);
+  const inp=w.querySelector("input");
+  const txt=inp.value.trim(); if(!txt) return;
+  const ref=doc(db,"posts",pid);
+  const snap=await getDoc(ref);
+  const coms=[...(snap.data().comentarios||[])];
+  if(!coms[idx].respuestas) coms[idx].respuestas=[];
+  coms[idx].respuestas.push({
+    usuario:me.displayName||me.email.split("@")[0],
+    foto:me.photoURL||FALLBACK,texto:txt
+  });
+  await updateDoc(ref,{comentarios:coms});
+  inp.value=""; w.classList.remove("open");
+};
+
+const NUMS=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX"];
+
+onSnapshot(postsQ,snapshot=>{
+  feed.innerHTML="";
+  const docs=[];
+  snapshot.forEach(d=>docs.push(d));
+
+  let totalLikes=0,totalComs=0;
+  docs.forEach(d=>{ totalLikes+=d.data().likes||0; totalComs+=(d.data().comentarios||[]).length; });
+  const animCount=(el,target)=>{
+    let n=0; const step=Math.max(1,Math.ceil(target/30));
+    const t=setInterval(()=>{ n=Math.min(n+step,target); el.textContent=n; if(n>=target) clearInterval(t); },40);
+  };
+  animCount(document.getElementById("statPosts"),docs.length);
+  animCount(document.getElementById("statLikes"),totalLikes);
+  animCount(document.getElementById("statComs"),totalComs);
+
+  document.getElementById("cmEmpty").style.display=docs.length===0?"flex":"none";
+
+  docs.forEach((docItem,i)=>{
+    const d=docItem.data();
+    const id=docItem.id;
+    const coms=d.comentarios||[];
+
+    const comsHTML=coms.map((c,ci)=>{
+      const reps=c.respuestas||[];
+      const nR=reps.length;
+      const repsHTML=reps.map(r=>`
+        <div class="cm-rep">
+          <img class="cm-rep-av" src="${r.foto||FALLBACK}" onerror="this.src='${FALLBACK}'">
+          <p class="cm-rep-txt"><strong>${r.usuario}</strong>${r.texto}</p>
+        </div>`).join("");
+      return `
+        <div class="cm-comment">
+          <div class="cm-com-main">
+            <img class="cm-com-av" src="${c.foto||FALLBACK}" onerror="this.src='${FALLBACK}'">
+            <p class="cm-com-txt"><strong>${c.usuario}</strong>${c.texto}</p>
+          </div>
+          <div class="cm-com-actions">
+            <button class="cm-reply-btn" onclick="mostrarInputRespuesta('${id}',${ci},'${c.usuario}')">Responder</button>
+            ${nR>0?`<button id="cmT-${id}-${ci}" class="cm-reply-btn" onclick="toggleReplies('${id}',${ci})">Ver ${nR} ${nR===1?"respuesta":"respuestas"}</button>`:""}
+          </div>
+          <div id="cmR-${id}-${ci}" class="cm-replies">${repsHTML}</div>
+          <div id="cmRI-${id}-${ci}" class="cm-reply-input">
+            <input type="text" placeholder="Responde a ${c.usuario}...">
+            <button onclick="enviarRespuesta('${id}',${ci})">Publicar</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    const num=NUMS[i]||String(i+1);
+    const likedBy=d.likedBy||[];
+    const yaLike=likedBy.includes(me?.uid);
+    const heartIcon = yaLike ? "❤️" : "🤍";
+    const likedClass = yaLike ? "liked" : "";
+    const likedTitle = yaLike ? "Ya diste me gusta" : "Me gusta";
+
+    const post=document.createElement("div");
+    post.classList.add("cm-post");
+    post.style.transitionDelay=`${Math.min(i*0.05,0.2)}s`;
+    post.innerHTML=`
+      <div class="cm-col-img" onclick="abrirZoom('${d.imagen}')">
+        <img class="cm-post-img" src="${d.imagen}" alt="Obra de ${d.autor}">
+      </div>
+      <div class="cm-col-info">
+        <div class="cm-post-autor">
+          <img class="cm-post-avatar" src="${d.autorFoto||FALLBACK}" onerror="this.src='${FALLBACK}'">
+          <div class="cm-post-autorinfo">
+            <span class="cm-post-nombre">${d.autor}</span>
+            <span class="cm-post-role">Tallerista</span>
+          </div>
+          <button class="cm-btn-del" onclick="borrarPost('${id}')" title="Borrar publicación">···</button>
+        </div>
+
+        ${d.descripcion ? `
+        <div style="margin-bottom:20px;">
+          <p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Sobre esta pieza</p>
+          <p class="cm-post-desc">${d.descripcion}</p>
+        </div>` : ""}
+
+        <div class="cm-like-row">
+          <button class="cm-like-btn ${likedClass}" onclick="darLike('${id}',this)" title="${likedTitle}">
+            <span class="cm-heart">${heartIcon}</span>
+          </button>
+          <div>
+            <span class="cm-like-n">${d.likes||0}</span>
+            <span class="cm-like-label"> ${(d.likes||0)===1?"me gusta":"me gusta"}</span>
+          </div>
+          ${yaLike ? `<span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(229,85,85,0.7);letter-spacing:0.06em;">· Ya te gustó ✓</span>` : ""}
+        </div>
+
+        <div class="cm-divider"></div>
+
+        ${coms.length>0 ? `<p class="cm-comments-label">${coms.length} ${coms.length===1?"comentario":"comentarios"}</p>` : ""}
+        <div class="cm-comments">${comsHTML}</div>
+
+        <div class="cm-input-section">
+          <span class="cm-input-label">Deja un comentario</span>
+          <div class="cm-input-bar">
+            <img class="cm-input-av" src="${me?.photoURL||FALLBACK}" onerror="this.src='${FALLBACK}'">
+            <input type="text" id="cmIn-${id}" placeholder="Escribe algo sobre esta obra..."
+              oninput="actualizarSend('${id}')"
+              onkeydown="if(event.key==='Enter') enviarComentario('${id}')">
+            <button class="cm-send" id="cmSend-${id}" onclick="enviarComentario('${id}')">Enviar</button>
+          </div>
+        </div>
+      </div>`;
+    feed.appendChild(post);
+  });
+  observePosts();
+});
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+</body>
+</html>

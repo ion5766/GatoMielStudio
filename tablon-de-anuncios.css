@@ -1,0 +1,188 @@
+/* ================= RESET ================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #2b2b2b;
+
+    background-image: url("Assets/Img/tablon-de-anuncios-fondo.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Overlay elegante */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        rgba(255,255,255,0.30),
+        rgba(255,255,255,0.30)
+    );
+    z-index: 0;
+}
+
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ================= CONTENEDOR ================= */
+
+.contenedor {
+    max-width: 950px;
+    margin: 120px auto;
+    padding: 0 24px 80px;
+}
+
+/* ================= TITULOS ================= */
+
+.titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(34px, 5vw, 48px);
+    text-align: center;
+    margin-bottom: 12px;
+    color: #1f1f1f;
+    letter-spacing: 0.5px;
+}
+
+.subtitulo {
+    text-align: center;
+    color: #3d3d3d;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.contador {
+    text-align: center;
+    font-size: 14px;
+    color: #6f6f6f;
+    margin-bottom: 70px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ================= ANUNCIOS ================= */
+
+.anuncios {
+    display: grid;
+    gap: 45px;
+}
+
+/* TARJETAS */
+
+.anuncio {
+    background: rgba(255, 253, 249, 0.95);
+    padding: 40px;
+    border-radius: 16px;
+    backdrop-filter: blur(4px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,0.12),
+        0 8px 20px rgba(0,0,0,0.05);
+
+    transition: all 0.4s ease;
+}
+
+.anuncio:hover {
+    transform: translateY(-10px);
+    box-shadow:
+        0 30px 60px rgba(0,0,0,0.18),
+        0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* DESTACADO */
+
+.destacado {
+    border-left: 6px solid #c58a2c;
+    background: rgba(255, 244, 224, 0.95);
+}
+
+/* ETIQUETAS */
+
+.etiqueta {
+    display: inline-block;
+    padding: 6px 16px;
+    font-size: 12px;
+    border-radius: 30px;
+    margin-bottom: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.urgente {
+    background: #c58a2c;
+    color: white;
+}
+
+.nuevo {
+    background: #2f7a55;
+    color: white;
+}
+
+/* FECHA PUBLICACION */
+
+.fecha-publicacion {
+    display: block;
+    font-size: 13px;
+    color: #8a8a8a;
+    margin-bottom: 10px;
+}
+
+/* TITULO ANUNCIO */
+
+.anuncio h3 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 16px;
+    font-size: 25px;
+    color: #222;
+}
+
+/* TEXTO */
+
+.anuncio p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #3a3a3a;
+}
+
+/* FECHA FINAL */
+
+.fecha {
+    display: block;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #6f6f6f;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:768px){
+
+    .anuncio {
+        padding: 28px;
+    }
+
+}
+
+/* ================= ANIMACIÓN EDITORIAL SUAVE ================= */
+
+.anuncio {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.anuncio.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

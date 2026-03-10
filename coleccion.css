@@ -1,0 +1,455 @@
+/* ================= HERO ================= */
+
+.hero-coleccion {
+  text-align: center;
+  padding: 110px 8% 80px;
+  background: #f8f5f1;
+  position: relative;
+}
+
+.hero-coleccion::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: #c48a3a;
+  margin: 20px auto 0;
+}
+
+.hero-coleccion h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.hero-coleccion p {
+  font-size: 17px;
+  color: #888;
+  font-weight: 300;
+}
+
+
+/* ================= TIENDA ================= */
+
+.tienda {
+  padding: 90px 8% 100px;
+  background: #f3ece3;
+}
+
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+
+
+/* ================= PRODUCTO CARD ================= */
+
+.producto {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
+/* Barra dorada al hover */
+.producto::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #c48a3a, #e8b870);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+  z-index: 2;
+}
+
+.producto:hover::before {
+  transform: scaleX(1);
+}
+
+/* Wrapper imagen con zoom */
+.producto-img-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+.producto img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  filter: contrast(97%) saturate(90%);
+  transition: transform 0.5s ease, filter 0.4s ease;
+  display: block;
+}
+
+.producto:hover img {
+  transform: scale(1.05);
+  filter: contrast(100%) saturate(105%);
+}
+
+/* Info */
+.producto-info {
+  padding: 24px 22px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #1a1714;
+}
+
+.producto-info > p {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.precio {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #c48a3a;
+  letter-spacing: -0.02em;
+  display: block;
+  margin-bottom: 18px;
+}
+
+/* Divider */
+.btn-comprar {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f0ebe4;
+  display: inline-block;
+  width: 100%;
+  padding: 13px 20px;
+  background: #1a1714;
+  color: white;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-comprar:hover {
+  background: #c48a3a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(196,138,58,0.35);
+}
+
+
+/* ================= BLOQUEAR SCROLL ================= */
+
+body.modal-abierto {
+  overflow: hidden;
+}
+
+
+/* ================= MODAL COMPRA ================= */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,12,9,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-contenido {
+  background: #ffffff;
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalEntrar 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.04),
+    0 24px 48px rgba(0,0,0,0.18),
+    0 8px 16px rgba(0,0,0,0.08);
+}
+
+@keyframes modalEntrar {
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ---- HEADER ---- */
+.modal-header {
+  padding: 26px 26px 18px;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 21px;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+
+#productoSeleccionado {
+  font-size: 12px;
+  color: #c48a3a;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Separador header */
+.modal-header::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, #f0ebe4, transparent);
+  margin-top: 18px;
+}
+
+/* ---- CERRAR ---- */
+.cerrar {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 34px;
+  height: 34px;
+  background: #f5f0ea;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  color: #555;
+  line-height: 1;
+  font-style: normal;
+}
+
+.cerrar:hover {
+  background: #c48a3a;
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* ---- BODY ---- */
+.modal-body {
+  padding: 20px 26px 28px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e5ddd3 transparent;
+}
+
+/* ---- TÍTULO MÉTODO ---- */
+.titulo-metodo {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #bbb;
+  font-weight: 400;
+  margin-bottom: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---- GRID MÉTODOS ---- */
+.metodos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.metodo-item {
+  background: #faf7f4;
+  border-radius: 14px;
+  padding: 18px 14px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  border: 1.5px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.metodo-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(196,138,58,0.08), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.metodo-item:hover {
+  transform: translateY(-3px);
+  border-color: #e8d5b7;
+  box-shadow: 0 8px 20px rgba(196,138,58,0.12);
+}
+
+.metodo-item:hover::before {
+  opacity: 1;
+}
+
+.metodo-item img {
+  width: 100%;
+  max-width: 100px;
+  display: block;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.metodo-activo {
+  border-color: #c48a3a !important;
+  background: #fdf6ec;
+  box-shadow: 0 6px 20px rgba(196,138,58,0.2) !important;
+}
+
+/* Check en método activo */
+.metodo-activo::after {
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background: #c48a3a;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ---- INFO PAGO ---- */
+.pago-opcion {
+  display: none;
+  text-align: center;
+  padding: 22px 0 6px;
+  animation: fadeSlide 0.28s ease;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pago-opcion h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #1a1714;
+}
+
+/* QR */
+.pago-opcion img {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  display: block;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.06),
+    0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* Datos bancarios */
+.datos-banco {
+  background: #f8f5f1;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 4px 0;
+  text-align: left;
+}
+
+.datos-banco p {
+  font-size: 13px;
+  color: #555;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.8;
+}
+
+.datos-banco strong {
+  color: #1a1714;
+  font-weight: 500;
+}
+
+/* ---- BOTÓN CONFIRMAR ---- */
+.btn-confirmar {
+  width: 100%;
+  margin-top: 22px;
+  padding: 15px;
+  background: #1a1714;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-confirmar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #c48a3a, #e8b870);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.btn-confirmar:hover::before {
+  opacity: 1;
+}
+
+.btn-confirmar span {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-confirmar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(196,138,58,0.4);
+}

@@ -1,0 +1,118 @@
+/* =============================== */
+/*      DISEÑO APP SOLO MOVIL     */
+/* =============================== */
+
+@media (max-width: 768px) {
+
+    body {
+        background: linear-gradient(180deg, #f6f7fb 0%, #e9ecf5 100%) !important;
+        background-attachment: scroll !important;
+    }
+
+    .contenedor,
+    .container,
+    main {
+        padding: 20px 16px 100px !important;
+    }
+
+    section {
+        margin-bottom: 25px !important;
+    }
+
+    .card,
+    .taller-card,
+    .miembro,
+    .video-wrapper {
+        border-radius: 24px !important;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08) !important;
+        overflow: hidden;
+        background: white;
+    }
+
+    img {
+        border-radius: 20px !important;
+    }
+
+    h1, h2, h3 {
+        letter-spacing: -0.5px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    /* Fondo tipo app */
+    body {
+        background: linear-gradient(180deg, #f6f7fb 0%, #e9ecf5 100%) !important;
+        background-attachment: scroll !important;
+    }
+
+    body::before {
+        display: none !important;
+    }
+
+    /* Contenedores principales */
+    .contenedor,
+    .container,
+    main {
+        padding: 20px 16px 100px !important;
+        margin: 0 !important;
+    }
+
+    /* Todas las tarjetas */
+    .anuncio,
+    .card,
+    .tarjeta,
+    section,
+    article {
+        background: white !important;
+        border-radius: 24px !important;
+        padding: 24px !important;
+        box-shadow: 
+            0 8px 20px rgba(0,0,0,0.06),
+            0 2px 6px rgba(0,0,0,0.04) !important;
+        margin-bottom: 20px !important;
+        transform: none !important;
+    }
+
+    /* Quitar efectos hover en móvil */
+    .anuncio:hover,
+    .card:hover {
+        transform: none !important;
+        box-shadow: 
+            0 8px 20px rgba(0,0,0,0.06),
+            0 2px 6px rgba(0,0,0,0.04) !important;
+    }
+
+    /* Titulos estilo app */
+    h1, .titulo {
+        font-size: 26px !important;
+        text-align: center;
+        margin-bottom: 10px !important;
+    }
+
+    h2, .subtitulo {
+        font-size: 16px !important;
+        text-align: center;
+        opacity: 0.7;
+    }
+
+    /* Botones tipo app */
+    button,
+    .btn,
+    .boton {
+        border-radius: 18px !important;
+        padding: 14px 20px !important;
+        font-weight: 600;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        border: none;
+    }
+
+    /* Etiquetas redondeadas */
+    .etiqueta {
+        border-radius: 50px !important;
+        padding: 6px 14px !important;
+        font-size: 11px !important;
+    }
+
+}

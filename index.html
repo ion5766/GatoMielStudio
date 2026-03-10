@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gato Miel Estudio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+});
+</script>
+
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="Comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="ix-hero">
+  <video autoplay muted loop playsinline disablepictureinpicture class="ix-hero-video">
+    <source src="Assets/Video/hero-video.mp4" type="video/mp4">
+  </video>
+  <div class="ix-hero-overlay"></div>
+  <div class="ix-hero-content">
+    <span class="ix-eyebrow">Cerámica artesanal · Lima</span>
+    <h1>
+      Arte en<br>
+      <em>cerámica.</em><br>
+      Manos en<br>
+      la tierra.
+    </h1>
+    <p>Talleres y piezas hechas a mano con alma artesanal.</p>
+    <a href="#talleres" class="ix-btn-hero">Ver Talleres</a>
+  </div>
+  <div class="ix-hero-scroll">
+    <div class="ix-scroll-line"></div>
+    <span>Explorar</span>
+  </div>
+</section>
+
+<!-- ══ STRIP SEPARADOR ══ -->
+<div class="ix-strip">
+  <span>Cerámica hecha a mano</span>
+  <div class="ix-strip-dot"></div>
+  <span>Talleres presenciales</span>
+  <div class="ix-strip-dot"></div>
+  <span>Colección única</span>
+  <div class="ix-strip-dot"></div>
+  <span>Comunidad creativa</span>
+</div>
+
+<!-- ══ TALLERES ══ -->
+<section class="ix-talleres" id="talleres">
+  <div class="ix-talleres-header">
+    <span class="ix-eyebrow ix-eyebrow-dark">Nuestros talleres</span>
+    <h2>Aprende a crear<br>con tus manos</h2>
+    <p>Talleres presenciales en pequeño grupo, para todos los niveles.</p>
+  </div>
+
+  <div class="ix-cards">
+
+    <article class="ix-card">
+      <div class="ix-card-img">
+        <img src="Assets/Img/Escultura1.jpg" alt="Iniciación a la cerámica"
+             onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80'">
+        <span class="ix-card-badge">6 cupos</span>
+      </div>
+      <div class="ix-card-body">
+        <h3>Iniciación a la cerámica</h3>
+        <p>Bases del torneado y el modelado a mano. Ideal para quienes se acercan por primera vez al barro.</p>
+        <div class="ix-card-footer">
+          <span class="ix-precio">$45.000 CLP</span>
+          <a href="taller-1.html" class="ix-link">Ver más →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ix-card">
+      <div class="ix-card-img">
+        <img src="Assets/Img/Escultura2.jpg" alt="Esmaltes y acabados"
+             onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=600&q=80'">
+        <span class="ix-card-badge">8 cupos</span>
+      </div>
+      <div class="ix-card-body">
+        <h3>Esmaltes y acabados</h3>
+        <p>Descubre el universo del color en cerámica. Aprende a esmaltar y decorar tus piezas con técnicas artesanales.</p>
+        <div class="ix-card-footer">
+          <span class="ix-precio">$38.000 CLP</span>
+          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ix-card">
+      <div class="ix-card-img">
+        <img src="Assets/Img/Escultura3.jpg" alt="Taller libre"
+             onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=600&q=80'">
+        <span class="ix-card-badge">10 cupos</span>
+      </div>
+      <div class="ix-card-body">
+        <h3>Taller libre</h3>
+        <p>Ven a crear con total libertad. Acceso al estudio, materiales y acompañamiento para hacer lo que quieras.</p>
+        <div class="ix-card-footer">
+          <span class="ix-precio">$25.000 CLP</span>
+          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ══ CTA CENTRAL ══ -->
+<section class="ix-cta">
+  <span class="ix-eyebrow">Colección</span>
+  <h2>Piezas únicas,<br><em>hechas para durar.</em></h2>
+  <a href="coleccion.html" class="ix-btn-cta">Ver colección</a>
+</section>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- MODAL PERFIL -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Botón panel admin -->
+<a id="btn-panel-admin" href="panel-admin.html" style="
+  display:none; position:fixed; bottom:28px; right:28px;
+  background:#1a1714; color:white; text-decoration:none;
+  padding:13px 20px; border-radius:50px; font-family:'Inter',sans-serif;
+  font-size:13px; font-weight:500; letter-spacing:0.06em;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25); z-index:8887;
+  align-items:center; gap:8px; transition:background 0.2s,transform 0.2s;"
+  onmouseover="this.style.background='#c48a3a';this.style.transform='translateY(-2px)'"
+  onmouseout="this.style.background='#1a1714';this.style.transform='none'">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  Panel de mensajes
+</a>
+
+<style>
+/* ── Variables ── */
+:root {
+  --gold:  #c48a3a;
+  --ink:   #1a1714;
+  --sand:  #f8f5f1;
+  --warm:  #f3ece3;
+  --muted: #888;
+}
+
+/* ── Eyebrow ── */
+.ix-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  display: block; margin-bottom: 20px;
+}
+.ix-eyebrow-dark { color: var(--gold); }
+
+/* ══ HERO ══ */
+.ix-hero {
+  position: relative; height: 100vh;
+  display: flex; align-items: flex-end;
+  padding: 0 9% 10vh;
+  overflow: hidden;
+}
+.ix-hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; z-index: 0;
+}
+.ix-hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(
+    160deg,
+    rgba(0,0,0,0.1) 0%,
+    rgba(15,12,9,0.65) 60%,
+    rgba(15,12,9,0.85) 100%
+  );
+}
+.ix-hero-content {
+  position: relative; z-index: 2;
+  max-width: 700px;
+}
+.ix-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(54px, 8vw, 100px);
+  font-weight: 400; line-height: 1.0;
+  color: white; letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+.ix-hero-content h1 em {
+  font-style: italic; color: var(--gold);
+}
+.ix-hero-content p {
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  font-weight: 300; margin-bottom: 36px;
+  max-width: 420px; line-height: 1.7;
+}
+.ix-btn-hero {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 32px; background: var(--gold); color: white;
+  text-decoration: none; border-radius: 50px;
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 30px rgba(196,138,58,0.35);
+}
+.ix-btn-hero:hover {
+  background: #a8742f; transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(196,138,58,0.45);
+}
+.ix-hero-scroll {
+  position: absolute; right: 9%; bottom: 10vh; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.ix-scroll-line {
+  width: 1px; height: 60px;
+  background: linear-gradient(white, transparent);
+  animation: scrollPulse 2s ease infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: 0.3; transform: scaleY(1); }
+  50%      { opacity: 0.9; transform: scaleY(1.1); }
+}
+.ix-hero-scroll span {
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif;
+  writing-mode: vertical-rl;
+}
+
+/* ══ STRIP ══ */
+.ix-strip {
+  background: var(--ink); color: rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+  gap: 28px; padding: 18px 8%;
+  font-family: 'Inter', sans-serif; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  flex-wrap: wrap;
+}
+.ix-strip-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+
+/* ══ TALLERES ══ */
+.ix-talleres {
+  padding: 110px 9%; background: var(--sand);
+}
+.ix-talleres-header {
+  max-width: 560px; margin-bottom: 70px;
+}
+.ix-talleres-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 4.5vw, 56px); font-weight: 400;
+  color: var(--ink); line-height: 1.1;
+  letter-spacing: -0.01em; margin-bottom: 16px;
+}
+.ix-talleres-header p {
+  font-size: 16px; color: var(--muted);
+  font-weight: 300; line-height: 1.7;
+}
+
+.ix-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.ix-card {
+  background: white; border-radius: 16px; overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.ix-card::after {
+  content: ""; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: linear-gradient(90deg, var(--gold), #e8b870);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+}
+.ix-card:hover { transform: translateY(-8px); box-shadow: 0 24px 50px rgba(0,0,0,0.11); }
+.ix-card:hover::after { transform: scaleX(1); }
+
+.ix-card-img {
+  overflow: hidden; position: relative; height: 240px;
+}
+.ix-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease, filter 0.4s ease;
+  filter: saturate(88%);
+}
+.ix-card:hover .ix-card-img img {
+  transform: scale(1.06); filter: saturate(100%);
+}
+.ix-card-badge {
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
+  color: var(--gold); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; padding: 5px 12px; border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.ix-card-body {
+  padding: 26px 24px 28px; flex: 1;
+  display: flex; flex-direction: column;
+}
+.ix-card-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 500;
+  color: var(--ink); margin-bottom: 10px;
+}
+.ix-card-body p {
+  font-size: 14px; color: #777; line-height: 1.7;
+  flex: 1; margin-bottom: 22px; font-weight: 300;
+}
+.ix-card-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding-top: 16px; border-top: 1px solid #f0ebe4;
+}
+.ix-precio {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 500; color: var(--gold);
+}
+.ix-link {
+  font-size: 13px; font-weight: 500; color: #333;
+  text-decoration: none; letter-spacing: 0.04em;
+  transition: color 0.2s, letter-spacing 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.ix-link:hover { color: var(--gold); letter-spacing: 0.08em; }
+
+/* ══ CTA ══ */
+.ix-cta {
+  background: var(--ink); padding: 120px 9%;
+  text-align: center;
+}
+.ix-cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 5vw, 66px); font-weight: 400;
+  color: white; line-height: 1.1;
+  letter-spacing: -0.01em; margin-bottom: 44px;
+}
+.ix-cta h2 em { font-style: italic; color: var(--gold); }
+.ix-btn-cta {
+  display: inline-flex; align-items: center;
+  padding: 15px 40px; border: 1px solid rgba(255,255,255,0.25);
+  color: white; text-decoration: none; border-radius: 50px;
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.ix-btn-cta:hover {
+  background: var(--gold); border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(196,138,58,0.4);
+}
+
+/* ── Avatar selector ── */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .ix-hero { padding: 0 7% 12vh; }
+  .ix-hero-scroll { display: none; }
+  .ix-hero-content h1 { font-size: clamp(44px, 12vw, 68px); }
+  .ix-talleres { padding: 80px 7%; }
+  .ix-cards { grid-template-columns: 1fr; max-width: 440px; }
+  .ix-cta { padding: 80px 7%; }
+  .ix-strip { gap: 18px; }
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .ix-cards { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<script>
+let avatarSeleccionado = null;
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal  = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex"; avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) { status.textContent = "❌ Error: " + error.message; }
+};
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const ADMIN_EMAIL = "jhonanibal576@gmail.com";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (user && user.email === ADMIN_EMAIL) {
+    const btn = document.getElementById("btn-panel-admin");
+    btn.style.display = "flex";
+    const q = query(collection(db, "chats"), where("noLeidosAdmin", "==", true));
+    onSnapshot(q, (snap) => {
+      const ex = document.getElementById("admin-badge");
+      if (ex) ex.remove();
+      if (!snap.empty) {
+        const badge = document.createElement("span");
+        badge.id = "admin-badge";
+        badge.textContent = snap.size;
+        badge.style.cssText = "background:#e74c3c;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;";
+        btn.appendChild(badge);
+      }
+    });
+  }
+});
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+
+</body>
+</html>
