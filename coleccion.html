@@ -931,7 +931,7 @@ function comprarDesdeCard(btn) {
   comprar(nombre, monto);
 }
 
-
+function initMP() {
   if (!mp) {
     mp = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", { locale: "es-PE" });
     bricksBuilder = mp.bricks();
@@ -1234,5 +1234,3 @@ window.guardarPerfil = async () => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
-
-
