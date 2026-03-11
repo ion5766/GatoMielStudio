@@ -1,307 +1,178 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Bienvenido | Gato Miel Estudio</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-font-family:'Inter',sans-serif;
-overflow:hidden;
-}
-
-/* VIDEO FONDO */
-
-.video-bg{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-object-fit:cover;
-z-index:-2;
-}
-
-/* OVERLAY OSCURO */
-
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.55);
-z-index:-1;
-}
-
-/* CONTENIDO */
-
-.contenido{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-color:white;
-padding:20px;
-}
-
-.logo{
-font-family:'Playfair Display',serif;
-font-size:48px;
-margin-bottom:20px;
-letter-spacing:2px;
-}
-
-.sub{
-opacity:0.9;
-}
-
-/* BOTONES */
-
-.botones{
-display:flex;
-flex-direction:column;
-gap:15px;
-margin-top:30px;
-}
-
-.btn{
-padding:14px 30px;
-border:none;
-border-radius:6px;
-font-size:15px;
-cursor:pointer;
-transition:0.3s;
-min-width:220px;
-}
-
-.btn-login{
-background:#b88a5a;
-color:white;
-}
-
-.btn-login:hover{
-background:#9f7448;
-}
-
-.btn-registro{
-background:white;
-color:black;
-}
-
-.btn-registro:hover{
-background:#eee;
-}
-
-.btn-invitado{
-background:transparent;
-border:1px solid white;
-color:white;
-}
-
-.btn-invitado:hover{
-background:white;
-color:black;
-}
-
-.btn-google{
-background:#4285F4;
-color:white;
-}
-
-.btn-google:hover{
-background:#3367D6;
-}
-
-input{
-padding:10px;
-border-radius:6px;
-border:none;
-margin-top:10px;
-width:220px;
-}
-
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ font-family:'Inter',sans-serif; overflow:hidden; }
+.video-bg{ position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; }
+.overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:-1; }
+.contenido{ height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; padding:20px; }
+.logo{ font-family:'Playfair Display',serif; font-size:clamp(32px,6vw,52px); margin-bottom:8px; letter-spacing:2px; }
+.sub{ opacity:0.75; font-size:14px; margin-bottom:28px; letter-spacing:.05em; }
+.card{ background:rgba(255,255,255,0.07); backdrop-filter:blur(18px); border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:32px 28px 28px; width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
+input{ padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:14px; font-family:'Inter',sans-serif; outline:none; transition:.2s; width:100%; }
+input::placeholder{ color:rgba(255,255,255,0.5); }
+input:focus{ border-color:#c48a3a; background:rgba(255,255,255,0.15); }
+.btn{ padding:13px 20px; border:none; border-radius:10px; font-size:14px; font-family:'Inter',sans-serif; font-weight:500; cursor:pointer; transition:.25s; letter-spacing:.03em; width:100%; }
+.btn-login{ background:#c48a3a; color:white; }
+.btn-login:hover{ background:#a8742f; }
+.btn-registro{ background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.2); }
+.btn-registro:hover{ background:rgba(255,255,255,0.22); }
+.btn-google{ background:#4285F4; color:white; display:flex; align-items:center; justify-content:center; gap:10px; }
+.btn-google:hover{ background:#3367D6; }
+.btn-invitado{ background:transparent; border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.65); font-size:13px; }
+.btn-invitado:hover{ background:rgba(255,255,255,0.08); color:white; }
+.divider{ display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.3); font-size:11px; }
+.divider::before,.divider::after{ content:''; flex:1; height:1px; background:rgba(255,255,255,0.15); }
+#msg{ font-size:12px; min-height:16px; text-align:center; color:#f8d978; font-family:'Inter',sans-serif; }
+#spinner{ position:fixed; inset:0; background:rgba(8,6,4,0.7); z-index:999; display:flex; align-items:center; justify-content:center; }
+.spin-ring{ width:40px; height:40px; border:3px solid rgba(255,255,255,0.15); border-top-color:#c48a3a; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
-
 </head>
-
 <body>
 
-<!-- VIDEO FONDO -->
-
-<video autoplay muted loop class="video-bg">
-<source src="Assets/Video/VideoPresentacion.mp4" type="video/mp4">
+<video autoplay muted loop playsinline class="video-bg">
+  <source src="Assets/Video/VideoPresentacion.mp4" type="video/mp4">
 </video>
-
 <div class="overlay"></div>
 
-<div class="contenido">
+<div id="spinner"><div class="spin-ring"></div></div>
 
-<div class="logo">Gato Miel Estudio</div>
-
-<p class="sub">Arte cerámico hecho a mano</p>
-
-<input id="email" type="email" placeholder="Correo">
-
-<input id="password" type="password" placeholder="Contraseña">
-
-<div class="botones">
-
-<button class="btn btn-login" onclick="login()">
-Iniciar Sesión
-</button>
-
-<button class="btn btn-registro" onclick="registrarse()">
-Registrarse
-</button>
-
-<button class="btn btn-google" onclick="loginGoogle()">
-Entrar con Google
-</button>
-
-<button class="btn btn-invitado" onclick="entrarInvitado()">
-Entrar como Invitado
-</button>
-
-</div>
-
+<div class="contenido" id="contenido" style="display:none;">
+  <div class="logo">Gato Miel Estudio</div>
+  <p class="sub">Arte cerámico hecho a mano</p>
+  <div class="card">
+    <input id="email" type="email" placeholder="Correo electrónico" autocomplete="email">
+    <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password">
+    <p id="msg"></p>
+    <button class="btn btn-login" onclick="login()">Iniciar sesión</button>
+    <button class="btn btn-registro" onclick="registrarse()">Crear cuenta</button>
+    <div class="divider">o</div>
+    <button class="btn btn-google" onclick="loginGoogle()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFF" d="M44.5 20H24v8.5h11.7C34.1 33.7 29.6 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 6 1.1 8.1 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.8 0 20-7.8 20-21 0-1.4-.1-2.7-.5-4z"/></svg>
+      Entrar con Google
+    </button>
+    <button class="btn btn-invitado" onclick="entrarInvitado()">Continuar como invitado</button>
+  </div>
 </div>
 
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import { 
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-GoogleAuthProvider,
-signInWithPopup,
-sendEmailVerification
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  GoogleAuthProvider, signInWithPopup,
+  signOut, sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-authDomain: "gato-miel-estudio.firebaseapp.com",
-projectId: "gato-miel-estudio",
-storageBucket: "gato-miel-estudio.firebasestorage.app",
-messagingSenderId: "150671559458",
-appId: "1:150671559458:web:6daaf4a78150706db0337b",
-measurementId: "G-PL79FSGHX5"
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
 };
 
-const app = initializeApp(firebaseConfig);
+const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const spinner   = document.getElementById("spinner");
+const contenido = document.getElementById("contenido");
+const msg       = document.getElementById("msg");
+let _redirigiendo = false;
 
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+function mostrarMsg(txt, color="#f8d978"){
+  msg.style.color = color;
+  msg.textContent = txt;
+}
 
-onAuthStateChanged(auth,(user)=>{
-  // Solo redirige si email verificado O es Google (siempre verificado)
-  if(user && (user.emailVerified || user.providerData?.[0]?.providerId === "google.com")){
-    window.location.replace("index.html");
+// Solo se ejecuta UNA vez al cargar la página
+onAuthStateChanged(auth, async (user) => {
+  if (_redirigiendo) return;
+  if (user) {
+    await user.reload().catch(()=>{});
+    const esGoogle   = user.providerData?.[0]?.providerId === "google.com";
+    const verificado = user.emailVerified || esGoogle;
+    if (verificado) {
+      _redirigiendo = true;
+      window.location.replace("index.html");
+      return;
+    }
+    // Sesión sin verificar — limpiar y mostrar formulario
+    await signOut(auth);
+    mostrarMsg("⚠️ Verifica tu correo antes de entrar.");
   }
+  spinner.style.display = "none";
+  contenido.style.display = "flex";
 });
 
-window.registrarse = async ()=>{
+window.login = async () => {
   const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value;
-  if(!email || !pass){ alert("Ingresa correo y contraseña."); return; }
-  try{
-    const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
-    await sendEmailVerification(userCredential.user);
-    // Cerrar sesión inmediatamente — el usuario debe verificar antes de entrar
-    await userCredential.user.auth.signOut();
-    alert("✉️ Te enviamos un correo de verificación.\nRevisa tu bandeja de entrada y SPAM.\nUna vez verificado, inicia sesión.");
-  }catch(error){
-    alert(error.message);
+  const pass  = document.getElementById("password").value;
+  if (!email || !pass){ mostrarMsg("Ingresa correo y contraseña."); return; }
+  mostrarMsg("Ingresando...", "rgba(255,255,255,.5)");
+  try {
+    const { user } = await signInWithEmailAndPassword(auth, email, pass);
+    if (!user.emailVerified) {
+      await signOut(auth);
+      mostrarMsg("⚠️ Debes verificar tu correo antes de entrar.");
+      return;
+    }
+    _redirigiendo = true;
+    window.location.replace("index.html");
+  } catch(e){ mostrarMsg(tradErr(e.code)); }
+};
+
+window.registrarse = async () => {
+  const email = document.getElementById("email").value.trim();
+  const pass  = document.getElementById("password").value;
+  if (!email || !pass){ mostrarMsg("Ingresa correo y contraseña."); return; }
+  if (pass.length < 6){ mostrarMsg("La contraseña debe tener al menos 6 caracteres."); return; }
+  mostrarMsg("Creando cuenta...", "rgba(255,255,255,.5)");
+  try {
+    const { user } = await createUserWithEmailAndPassword(auth, email, pass);
+    await sendEmailVerification(user);
+    await signOut(auth); // No entra hasta verificar
+    mostrarMsg("✉️ Revisa tu correo (incluye SPAM) para verificar tu cuenta.", "#a8f0a8");
+    document.getElementById("password").value = "";
+  } catch(e){ mostrarMsg(tradErr(e.code)); }
+};
+
+window.loginGoogle = async () => {
+  mostrarMsg("Abriendo Google...", "rgba(255,255,255,.5)");
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    _redirigiendo = true;
+    window.location.replace("index.html");
+  } catch(e){
+    mostrarMsg(e.code === "auth/popup-closed-by-user" ? "" : tradErr(e.code));
   }
 };
 
-window.login = async ()=>{
-
-const email = document.getElementById("email").value;
-const pass = document.getElementById("password").value;
-
-try{
-
-const userCredential = await signInWithEmailAndPassword(auth,email,pass);
-
-const user = userCredential.user;
-
-if(!user.emailVerified){
-
-alert("Debes verificar tu correo antes de entrar.");
-return;
-
-}
-
-sessionStorage.setItem("acceso","true");
-
-window.location.replace("index.html");
-
-}catch(error){
-
-alert(error.message);
-
-}
-
+window.entrarInvitado = () => {
+  sessionStorage.setItem("invitado","true");
+  _redirigiendo = true;
+  window.location.replace("index.html");
 };
 
-window.loginGoogle = async ()=>{
-
-const provider = new GoogleAuthProvider();
-
-try{
-
-await signInWithPopup(auth,provider);
-
-sessionStorage.setItem("acceso","true");
-
-window.location.href="index.html";
-
-}catch(error){
-
-alert(error.message);
-
+function tradErr(code){
+  return ({
+    "auth/invalid-email":        "Correo no válido.",
+    "auth/user-not-found":       "No existe una cuenta con ese correo.",
+    "auth/wrong-password":       "Contraseña incorrecta.",
+    "auth/email-already-in-use": "Ese correo ya tiene una cuenta.",
+    "auth/weak-password":        "Contraseña muy corta (mín. 6 caracteres).",
+    "auth/invalid-credential":   "Correo o contraseña incorrectos.",
+    "auth/too-many-requests":    "Demasiados intentos. Espera un momento.",
+    "auth/network-request-failed":"Sin conexión. Revisa tu internet.",
+  })[code] || "Error: "+code;
 }
-
-};
-
-window.entrarInvitado = ()=>{
-
-sessionStorage.setItem("acceso","true");
-
-window.location.href="index.html";
-
-};
-
 </script>
-
-<script type="module" src="JS/src/chat.js"></script>
-```
-
-Y mueve `chat.js` a tu carpeta `JS/` en el proyecto. También necesitas agregar estas reglas en **Firestore** para que funcione:
-```
-match /chats/{uid} {
-  allow read, write: if request.auth != null;
-  match /mensajes/{msgId} {
-    allow read, write: if request.auth != null;
-  }
-}
 
 </body>
 </html>
