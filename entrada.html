@@ -10,27 +10,27 @@
 body{ font-family:'Inter',sans-serif; overflow:hidden; }
 .video-bg{ position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; }
 .overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:-1; }
-.contenido{ height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; padding:20px; }
-.logo{ font-family:'Playfair Display',serif; font-size:clamp(32px,6vw,52px); margin-bottom:8px; letter-spacing:2px; }
-.sub{ opacity:0.75; font-size:14px; margin-bottom:28px; letter-spacing:.05em; }
-.card{ background:rgba(255,255,255,0.07); backdrop-filter:blur(18px); border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:32px 28px 28px; width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
-input{ padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:14px; font-family:'Inter',sans-serif; outline:none; transition:.2s; width:100%; }
-input::placeholder{ color:rgba(255,255,255,0.5); }
+.contenido{ height:100vh; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; padding:20px; }
+.logo{ font-family:'Playfair Display',serif; font-size:clamp(32px,6vw,52px); margin-bottom:6px; letter-spacing:2px; }
+.sub{ opacity:0.7; font-size:14px; margin-bottom:28px; }
+.card{ background:rgba(255,255,255,0.07); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.15); border-radius:22px; padding:32px 28px 28px; width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
+input{ padding:13px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; font-size:14px; font-family:'Inter',sans-serif; outline:none; transition:.2s; width:100%; }
+input::placeholder{ color:rgba(255,255,255,0.45); }
 input:focus{ border-color:#c48a3a; background:rgba(255,255,255,0.15); }
-.btn{ padding:13px 20px; border:none; border-radius:10px; font-size:14px; font-family:'Inter',sans-serif; font-weight:500; cursor:pointer; transition:.25s; letter-spacing:.03em; width:100%; }
-.btn-login{ background:#c48a3a; color:white; }
-.btn-login:hover{ background:#a8742f; }
-.btn-registro{ background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.2); }
-.btn-registro:hover{ background:rgba(255,255,255,0.22); }
+.btn{ padding:13px 20px; border:none; border-radius:10px; font-size:14px; font-family:'Inter',sans-serif; font-weight:500; cursor:pointer; transition:.25s; width:100%; }
+.btn-primary{ background:#c48a3a; color:white; }
+.btn-primary:hover{ background:#a8742f; }
+.btn-secondary{ background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); }
+.btn-secondary:hover{ background:rgba(255,255,255,0.2); }
 .btn-google{ background:#4285F4; color:white; display:flex; align-items:center; justify-content:center; gap:10px; }
 .btn-google:hover{ background:#3367D6; }
-.btn-invitado{ background:transparent; border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.65); font-size:13px; }
-.btn-invitado:hover{ background:rgba(255,255,255,0.08); color:white; }
-.divider{ display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.3); font-size:11px; }
-.divider::before,.divider::after{ content:''; flex:1; height:1px; background:rgba(255,255,255,0.15); }
-#msg{ font-size:12px; min-height:16px; text-align:center; color:#f8d978; font-family:'Inter',sans-serif; }
-#spinner{ position:fixed; inset:0; background:rgba(8,6,4,0.7); z-index:999; display:flex; align-items:center; justify-content:center; }
-.spin-ring{ width:40px; height:40px; border:3px solid rgba(255,255,255,0.15); border-top-color:#c48a3a; border-radius:50%; animation:spin .7s linear infinite; }
+.btn-guest{ background:transparent; border:1px solid rgba(255,255,255,0.22); color:rgba(255,255,255,0.6); font-size:13px; }
+.btn-guest:hover{ background:rgba(255,255,255,0.07); color:white; }
+.divider{ display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.28); font-size:11px; }
+.divider::before,.divider::after{ content:''; flex:1; height:1px; background:rgba(255,255,255,0.13); }
+#msg{ font-size:12px; min-height:16px; font-family:'Inter',sans-serif; }
+#spinner{ position:fixed; inset:0; background:rgba(8,6,4,0.75); z-index:999; display:flex; align-items:center; justify-content:center; }
+.ring{ width:40px; height:40px; border:3px solid rgba(255,255,255,0.12); border-top-color:#c48a3a; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
 </head>
@@ -41,23 +41,23 @@ input:focus{ border-color:#c48a3a; background:rgba(255,255,255,0.15); }
 </video>
 <div class="overlay"></div>
 
-<div id="spinner"><div class="spin-ring"></div></div>
+<div id="spinner"><div class="ring"></div></div>
 
-<div class="contenido" id="contenido" style="display:none;">
+<div class="contenido" id="contenido">
   <div class="logo">Gato Miel Estudio</div>
   <p class="sub">Arte cerámico hecho a mano</p>
   <div class="card">
     <input id="email" type="email" placeholder="Correo electrónico" autocomplete="email">
     <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password">
-    <p id="msg"></p>
-    <button class="btn btn-login" onclick="login()">Iniciar sesión</button>
-    <button class="btn btn-registro" onclick="registrarse()">Crear cuenta</button>
+    <p id="msg" style="color:#f8d978;text-align:center;"></p>
+    <button class="btn btn-primary" onclick="login()">Iniciar sesión</button>
+    <button class="btn btn-secondary" onclick="registrarse()">Crear cuenta</button>
     <div class="divider">o</div>
     <button class="btn btn-google" onclick="loginGoogle()">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFF" d="M44.5 20H24v8.5h11.7C34.1 33.7 29.6 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 6 1.1 8.1 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.8 0 20-7.8 20-21 0-1.4-.1-2.7-.5-4z"/></svg>
       Entrar con Google
     </button>
-    <button class="btn btn-invitado" onclick="entrarInvitado()">Continuar como invitado</button>
+    <button class="btn btn-guest" onclick="entrarInvitado()">Explorar como invitado 🐾</button>
   </div>
 </div>
 
@@ -70,100 +70,101 @@ import {
   signOut, sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+const fc = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-
-const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const app  = getApps().length ? getApps()[0] : initializeApp(fc);
 const auth = getAuth(app);
+
 const spinner   = document.getElementById("spinner");
 const contenido = document.getElementById("contenido");
 const msg       = document.getElementById("msg");
-let _redirigiendo = false;
+let   _going    = false; // flag para no disparar doble redirect
 
-function mostrarMsg(txt, color="#f8d978"){
-  msg.style.color = color;
-  msg.textContent = txt;
-}
+function showMsg(t, c="#f8d978"){ msg.style.color=c; msg.textContent=t; }
 
-// Solo se ejecuta UNA vez al cargar la página
-onAuthStateChanged(auth, async (user) => {
-  if (_redirigiendo) return;
-  if (user) {
-    await user.reload().catch(()=>{});
-    const esGoogle   = user.providerData?.[0]?.providerId === "google.com";
-    const verificado = user.emailVerified || esGoogle;
-    if (verificado) {
-      _redirigiendo = true;
+// ─── Verificar sesión activa al cargar ───────────────────────────────────
+// Se ejecuta solo UNA vez. Si ya tiene sesión válida → va a index.
+// Si no → muestra el formulario.
+const unsub = onAuthStateChanged(auth, async user => {
+  unsub(); // desuscribir INMEDIATAMENTE — solo necesitamos el estado inicial
+  if (user && !_going) {
+    const esGoogle = user.providerData?.[0]?.providerId === "google.com";
+    if (user.emailVerified || esGoogle) {
+      _going = true;
       window.location.replace("index.html");
       return;
     }
-    // Sesión sin verificar — limpiar y mostrar formulario
-    await signOut(auth);
-    mostrarMsg("⚠️ Verifica tu correo antes de entrar.");
+    // Sesión sin verificar — cerrar y mostrar formulario con aviso
+    await signOut(auth).catch(()=>{});
+    showMsg("⚠️ Verifica tu correo antes de entrar.");
   }
   spinner.style.display = "none";
   contenido.style.display = "flex";
 });
 
+// ─── Login ───────────────────────────────────────────────────────────────
 window.login = async () => {
   const email = document.getElementById("email").value.trim();
   const pass  = document.getElementById("password").value;
-  if (!email || !pass){ mostrarMsg("Ingresa correo y contraseña."); return; }
-  mostrarMsg("Ingresando...", "rgba(255,255,255,.5)");
+  if (!email||!pass){ showMsg("Ingresa correo y contraseña."); return; }
+  showMsg("Ingresando...", "rgba(255,255,255,.5)");
   try {
-    const { user } = await signInWithEmailAndPassword(auth, email, pass);
+    const {user} = await signInWithEmailAndPassword(auth, email, pass);
     if (!user.emailVerified) {
       await signOut(auth);
-      mostrarMsg("⚠️ Debes verificar tu correo antes de entrar.");
+      showMsg("⚠️ Debes verificar tu correo primero.");
       return;
     }
-    _redirigiendo = true;
+    _going = true;
     window.location.replace("index.html");
-  } catch(e){ mostrarMsg(tradErr(e.code)); }
+  } catch(e){ showMsg(err(e.code)); }
 };
 
+// ─── Registro ────────────────────────────────────────────────────────────
 window.registrarse = async () => {
   const email = document.getElementById("email").value.trim();
   const pass  = document.getElementById("password").value;
-  if (!email || !pass){ mostrarMsg("Ingresa correo y contraseña."); return; }
-  if (pass.length < 6){ mostrarMsg("La contraseña debe tener al menos 6 caracteres."); return; }
-  mostrarMsg("Creando cuenta...", "rgba(255,255,255,.5)");
+  if (!email||!pass){ showMsg("Ingresa correo y contraseña."); return; }
+  if (pass.length<6){ showMsg("Contraseña mínimo 6 caracteres."); return; }
+  showMsg("Creando cuenta...", "rgba(255,255,255,.5)");
   try {
-    const { user } = await createUserWithEmailAndPassword(auth, email, pass);
+    const {user} = await createUserWithEmailAndPassword(auth, email, pass);
     await sendEmailVerification(user);
-    await signOut(auth); // No entra hasta verificar
-    mostrarMsg("✉️ Revisa tu correo (incluye SPAM) para verificar tu cuenta.", "#a8f0a8");
+    await signOut(auth); // no entra hasta verificar
+    showMsg("✉️ Revisa tu correo (y SPAM) para verificar tu cuenta.", "#a8f0a8");
     document.getElementById("password").value = "";
-  } catch(e){ mostrarMsg(tradErr(e.code)); }
+  } catch(e){ showMsg(err(e.code)); }
 };
 
+// ─── Google ───────────────────────────────────────────────────────────────
 window.loginGoogle = async () => {
-  mostrarMsg("Abriendo Google...", "rgba(255,255,255,.5)");
+  showMsg("Abriendo Google...", "rgba(255,255,255,.5)");
   try {
     await signInWithPopup(auth, new GoogleAuthProvider());
-    _redirigiendo = true;
+    _going = true;
     window.location.replace("index.html");
   } catch(e){
-    mostrarMsg(e.code === "auth/popup-closed-by-user" ? "" : tradErr(e.code));
+    showMsg(e.code==="auth/popup-closed-by-user" ? "" : err(e.code));
   }
 };
 
+// ─── Invitado — va directo a index sin sesión ─────────────────────────────
 window.entrarInvitado = () => {
-  sessionStorage.setItem("invitado","true");
-  _redirigiendo = true;
+  _going = true;
   window.location.replace("index.html");
 };
 
-function tradErr(code){
+// ─── Traducir errores ─────────────────────────────────────────────────────
+function err(code){
   return ({
     "auth/invalid-email":        "Correo no válido.",
-    "auth/user-not-found":       "No existe una cuenta con ese correo.",
+    "auth/user-not-found":       "No existe cuenta con ese correo.",
     "auth/wrong-password":       "Contraseña incorrecta.",
     "auth/email-already-in-use": "Ese correo ya tiene una cuenta.",
     "auth/weak-password":        "Contraseña muy corta (mín. 6 caracteres).",
@@ -176,3 +177,4 @@ function tradErr(code){
 
 </body>
 </html>
+
