@@ -334,34 +334,70 @@ onAuthStateChanged(auth, async (user) => {
   </div>
 </div>
 
-<!-- ══ MODAL ÉXITO ══ -->
+<!-- ══ MODAL ÉXITO / VALIDACIÓN ══ -->
 <div id="modalExito" class="cl-modal" style="display:none;">
-  <div class="cl-modal-box">
-    <div class="cl-modal-body" style="padding:40px 32px;">
-      <div style="text-align:center;">
-        <div style="width:68px;height:68px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,0.3);">✓</div>
-        <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:500;color:#1a1714;margin-bottom:10px;">¡Pago exitoso!</h3>
-        <p id="exitoDetalle" style="font-size:14px;color:#c48a3a;font-weight:500;font-family:'Inter',sans-serif;margin-bottom:8px;"></p>
-        <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:28px;font-family:'Inter',sans-serif;">Tu pago fue procesado correctamente.<br>Te enviaremos los detalles pronto.</p>
-        <button onclick="cerrarExito()" style="padding:14px 32px;background:#1a1714;color:white;border:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.08em;cursor:pointer;font-family:'Inter',sans-serif;">Cerrar</button>
+  <div class="cl-modal-box cl-exito-box">
+
+    <!-- Icono animado -->
+    <div class="cl-exito-icon-wrap">
+      <div class="cl-exito-ring cl-exito-ring-1"></div>
+      <div class="cl-exito-ring cl-exito-ring-2"></div>
+      <div class="cl-exito-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" class="cl-check-path"/></svg>
       </div>
     </div>
+
+    <!-- Textos -->
+    <div class="cl-exito-body">
+      <h3 class="cl-exito-title">Estamos validando<br>tu pago</h3>
+      <p id="exitoDetalle" class="cl-exito-detalle"></p>
+
+      <!-- Separador decorativo -->
+      <div class="cl-exito-sep">
+        <div></div><span>mientras tanto</span><div></div>
+      </div>
+
+      <p class="cl-exito-msg">
+        Vamos coordinando el envío de tu pieza.<br>
+        <strong>Escríbenos y envíanos el comprobante:</strong>
+      </p>
+
+      <!-- Número destacado -->
+      <div class="cl-exito-numero">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 11.29 19.79 19.79 0 01.67 2.68 2 2 0 012.66.5h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8a16 16 0 006.06 6.06l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        922 402 608
+      </div>
+
+      <!-- Botones -->
+      <a id="btnWspComprobante" href="#" target="_blank" class="cl-exito-btn-wsp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        Enviar comprobante por WhatsApp
+      </a>
+
+      <button onclick="cerrarExito()" class="cl-exito-btn-cerrar">
+        Ya lo envié · Cerrar
+      </button>
+    </div>
+
   </div>
 </div>
 
-<!-- ══ MODAL PENDIENTE (Yape/Plin) ══ -->
-<div id="modalPendiente" class="cl-modal" style="display:none;">
-  <div class="cl-modal-box">
-    <div class="cl-modal-body" style="padding:36px 28px;">
-      <div style="text-align:center;">
-        <div style="width:68px;height:68px;background:#f0f4ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;">⏳</div>
-        <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:#1a1714;margin-bottom:8px;">Pago en proceso</h3>
-        <p style="font-size:13px;color:#888;margin-bottom:20px;font-family:'Inter',sans-serif;line-height:1.6;">Tu pago está siendo procesado.<br>Recibirás una confirmación por correo.</p>
-        <div id="pendienteQR" style="display:none;margin-bottom:20px;">
-          <p style="font-size:12px;color:#aaa;margin-bottom:10px;font-family:'Inter',sans-serif;letter-spacing:0.06em;">ESCANEA PARA COMPLETAR EL PAGO</p>
-          <img id="qrImg" src="" style="width:180px;height:180px;border-radius:12px;border:1px solid #eee;">
-        </div>
-        <button onclick="cerrarPendiente()" style="padding:14px 32px;background:#1a1714;color:white;border:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.08em;cursor:pointer;font-family:'Inter',sans-serif;">Entendido</button>
+<!-- ══ MODAL HISTORIAL ══ -->
+<div id="modalHistorial" class="cl-modal" style="display:none;">
+  <div class="cl-modal-box cl-hist-box">
+    <div class="cl-hist-header">
+      <div>
+        <span class="cl-hist-eyebrow">Gato Miel Estudio</span>
+        <h3 class="cl-hist-title">Mis pedidos</h3>
+      </div>
+      <button onclick="cerrarHistorial()" class="cl-hist-cerrar">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="historialLista" class="cl-hist-lista">
+      <div class="cl-hist-loading">
+        <div class="cl-spinner"></div>
+        <p>Cargando pedidos...</p>
       </div>
     </div>
   </div>
@@ -683,6 +719,186 @@ onAuthStateChanged(auth, async (user) => {
 .avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
 .avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
 
+/* ══ MODAL ÉXITO ══ */
+.cl-exito-box {
+  max-width:380px !important;
+  animation:clModalIn 0.5s cubic-bezier(0.34,1.4,0.64,1) !important;
+  overflow:visible !important;
+}
+.cl-exito-icon-wrap {
+  position:relative; width:80px; height:80px;
+  margin:-40px auto 0; z-index:2; flex-shrink:0;
+}
+.cl-exito-ring {
+  position:absolute; border-radius:50%;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation:exitoRing 2.5s ease-in-out infinite;
+}
+.cl-exito-ring-1 { width:80px; height:80px; border:1.5px solid rgba(196,138,58,0.25); animation-delay:0s; }
+.cl-exito-ring-2 { width:100px; height:100px; border:1px solid rgba(196,138,58,0.12); animation-delay:0.4s; }
+@keyframes exitoRing {
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  50%{transform:translate(-50%,-50%) scale(1.08);opacity:0.5}
+}
+.cl-exito-icon {
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg,#c48a3a,#e8b870);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 12px 32px rgba(196,138,58,0.4);
+  position:relative; z-index:1;
+  animation:iconPop 0.6s cubic-bezier(0.34,1.6,0.64,1) 0.1s both;
+}
+@keyframes iconPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+.cl-check-path {
+  stroke-dasharray:30; stroke-dashoffset:30;
+  animation:checkDraw 0.5s ease 0.5s forwards;
+}
+@keyframes checkDraw { to{stroke-dashoffset:0} }
+
+.cl-exito-body {
+  padding:24px 28px 28px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.cl-exito-title {
+  font-family:'Playfair Display',serif; font-size:22px; font-weight:400;
+  color:var(--ink); line-height:1.2;
+  animation:fadeUp 0.4s ease 0.3s both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.cl-exito-detalle {
+  font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  color:var(--gold); letter-spacing:0.02em;
+}
+.cl-exito-sep {
+  display:flex; align-items:center; gap:10px; width:100%; margin:4px 0;
+}
+.cl-exito-sep div { flex:1; height:1px; background:#f0ebe3; }
+.cl-exito-sep span {
+  font-family:'Inter',sans-serif; font-size:9px; color:#ccc;
+  letter-spacing:0.15em; text-transform:uppercase; white-space:nowrap;
+}
+.cl-exito-msg {
+  font-family:'Inter',sans-serif; font-size:13px; color:#888;
+  line-height:1.7; margin:0;
+}
+.cl-exito-msg strong { color:var(--ink); }
+.cl-exito-numero {
+  display:flex; align-items:center; gap:8px;
+  background:#f8f5f1; border:1px solid #ede8de;
+  border-radius:12px; padding:10px 20px;
+  font-family:'Inter',sans-serif; font-size:18px; font-weight:600;
+  color:var(--ink); letter-spacing:0.06em;
+  width:100%; justify-content:center;
+}
+.cl-exito-btn-wsp {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:14px; border-radius:14px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white; font-family:'Inter',sans-serif; font-size:13px;
+  font-weight:600; letter-spacing:0.04em; text-decoration:none;
+  box-shadow:0 6px 20px rgba(34,197,94,0.3);
+  transition:opacity 0.2s,transform 0.15s;
+}
+.cl-exito-btn-wsp:hover { opacity:0.9; transform:translateY(-1px); }
+.cl-exito-btn-cerrar {
+  background:none; border:none; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:12px; color:#bbb;
+  padding:4px 16px; letter-spacing:0.04em;
+  transition:color 0.2s;
+}
+.cl-exito-btn-cerrar:hover { color:var(--ink); }
+
+/* ══ MODAL HISTORIAL ══ */
+.cl-hist-box {
+  max-width:440px !important; max-height:80vh !important;
+  display:flex !important; flex-direction:column !important;
+}
+.cl-hist-header {
+  background:linear-gradient(135deg,#100d0a,#1e1610);
+  padding:20px 22px; display:flex; align-items:flex-start;
+  justify-content:space-between; flex-shrink:0;
+}
+.cl-hist-eyebrow {
+  display:block; font-family:'Inter',sans-serif; font-size:9px;
+  font-weight:500; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(196,138,58,0.6); margin-bottom:5px;
+}
+.cl-hist-title {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
+  color:white; margin:0;
+}
+.cl-hist-cerrar {
+  width:26px; height:26px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.08); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.4); transition:all 0.2s; flex-shrink:0;
+}
+.cl-hist-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg); }
+.cl-hist-lista {
+  flex:1; overflow-y:auto; padding:16px;
+  scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent;
+  display:flex; flex-direction:column; gap:10px;
+}
+.cl-hist-loading {
+  text-align:center; padding:40px 0; color:#bbb;
+  font-family:'Inter',sans-serif; font-size:13px;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.cl-hist-vacio {
+  text-align:center; padding:50px 20px;
+  font-family:'Playfair Display',serif; font-size:18px;
+  color:#ccc; font-style:italic;
+}
+.cl-hist-item {
+  background:#faf8f5; border:1px solid #ede8de;
+  border-radius:14px; padding:14px 16px;
+  display:flex; align-items:flex-start; gap:12px;
+  animation:fadeUp 0.3s ease both;
+}
+.cl-hist-item-icon {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,#1a1714,#2d2419);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+}
+.cl-hist-item-info { flex:1; min-width:0; }
+.cl-hist-item-nombre {
+  font-family:'Playfair Display',serif; font-size:15px;
+  font-weight:500; color:var(--ink); margin-bottom:3px;
+}
+.cl-hist-item-meta {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.cl-hist-item-monto {
+  font-family:'Inter',sans-serif; font-size:13px;
+  font-weight:600; color:var(--gold);
+}
+.cl-hist-item-metodo {
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
+  padding:2px 8px; border-radius:20px; letter-spacing:0.04em;
+}
+.cl-hist-metodo-yape { background:#f0e6fa; color:#6c2fa5; }
+.cl-hist-metodo-plin { background:#e0f4fc; color:#0077aa; }
+.cl-hist-metodo-tarjeta { background:#f5f5f5; color:#555; }
+.cl-hist-metodo-agencia { background:#f0f4e8; color:#5a7a2a; }
+.cl-hist-item-fecha {
+  font-family:'Inter',sans-serif; font-size:10px; color:#bbb;
+}
+.cl-hist-item-estado {
+  display:flex; align-items:center; gap:4px;
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
+}
+.cl-hist-estado-pendiente { color:#e8a020; }
+.cl-hist-estado-confirmado { color:#22c55e; }
+.cl-hist-item-wsp {
+  display:flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white; text-decoration:none;
+  transition:transform 0.2s, opacity 0.2s;
+}
+.cl-hist-item-wsp:hover { transform:scale(1.1); opacity:0.9; }
+
 @media (max-width:1100px) { .cl-grid { grid-template-columns:repeat(2,1fr); } }
 @media (max-width:900px) { .cl-hero { padding:90px 7% 70px; flex-direction:column; min-height:auto; } .cl-hero-deco { display:none; } .cl-tienda { padding:70px 7%; } }
 @media (max-width:600px) { .cl-grid { grid-template-columns:1fr; max-width:380px; } }
@@ -792,8 +1008,8 @@ async function renderBrick() {
           const data = await resp.json();
           if (!resp.ok) throw new Error(data.error || "Error al procesar");
           cerrarModal();
-          document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto}`;
-          document.getElementById("modalExito").style.display = "flex";
+          mostrarModalExito(productoActual.nombre, productoActual.monto, "Tarjeta");
+          window.guardarPedido && window.guardarPedido(productoActual.nombre, productoActual.monto, "Tarjeta");
         } catch (err) {
           alert("Error al procesar el pago. Por favor intenta nuevamente.");
         }
@@ -823,12 +1039,16 @@ function copiarCCI() {
 
 function confirmarPagoQR(metodo) {
   cerrarModal();
-  document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto} via ${metodo}`;
-  const modal = document.getElementById("modalExito");
-  modal.style.display = "flex";
-  // Cambiar texto del modal éxito para QR
-  modal.querySelector("h3").textContent = "¡Gracias por tu pago!";
-  modal.querySelector("p:not(#exitoDetalle)").textContent = "Verificaremos tu pago y nos comunicaremos contigo pronto por WhatsApp.";
+  mostrarModalExito(productoActual.nombre, productoActual.monto, metodo);
+  guardarPedido(productoActual.nombre, productoActual.monto, metodo);
+}
+
+function mostrarModalExito(nombre, monto, metodo) {
+  document.getElementById("exitoDetalle").textContent = `${nombre} · S/ ${monto} via ${metodo}`;
+  // Link WhatsApp con info del pedido
+  const texto = encodeURIComponent(`Hola! 🐱 Acabo de pagar *${nombre} - S/ ${monto}* via *${metodo}*. Te envío el comprobante.`);
+  document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
+  document.getElementById("modalExito").style.display = "flex";
 }
 
 function cerrarModal() {
@@ -839,16 +1059,23 @@ function cerrarExito() {
   document.getElementById("modalExito").style.display = "none";
 }
 function cerrarPendiente() {
-  document.getElementById("modalPendiente").style.display = "none";
+  const m = document.getElementById("modalPendiente");
+  if (m) m.style.display = "none";
 }
+function cerrarHistorial() {
+  document.getElementById("modalHistorial").style.display = "none";
+}
+window.cerrarHistorial = cerrarHistorial;
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); }
+  if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); cerrarHistorial(); }
 });
 </script>
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
   authDomain: "gato-miel-estudio.firebaseapp.com",
@@ -859,8 +1086,99 @@ const firebaseConfig = {
 };
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const modal = document.getElementById("perfilModal");
+const db   = getFirestore(app);
+
+const modal  = document.getElementById("perfilModal");
 const status = document.getElementById("perfilStatus");
+
+// ── Dropdown: agregar botón historial ──
+const dropdown = document.getElementById("userDropdown");
+const btnHist = document.createElement("button");
+btnHist.textContent = "🛍 Mis pedidos";
+btnHist.onclick = () => { dropdown.style.display = "none"; abrirHistorial(); };
+dropdown.insertBefore(btnHist, dropdown.firstChild);
+
+// ── Guardar pedido en Firestore ──
+window.guardarPedido = async (nombre, monto, metodo) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await addDoc(collection(db, "pedidos"), {
+      uid: user.uid,
+      email: user.email,
+      nombre: user.displayName || user.email,
+      producto: nombre,
+      monto: monto,
+      metodo: metodo,
+      estado: "pendiente",
+      fecha: serverTimestamp()
+    });
+  } catch(e) { console.error("Error guardando pedido:", e); }
+};
+
+// ── Abrir historial ──
+window.abrirHistorial = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+  document.getElementById("modalHistorial").style.display = "flex";
+  const lista = document.getElementById("historialLista");
+  lista.innerHTML = `<div class="cl-hist-loading"><div class="cl-spinner"></div><p>Cargando pedidos...</p></div>`;
+
+  try {
+    const q = query(
+      collection(db, "pedidos"),
+      where("uid", "==", user.uid),
+      orderBy("fecha", "desc")
+    );
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      lista.innerHTML = `<div class="cl-hist-vacio">Aún no tienes pedidos 🐱</div>`;
+      return;
+    }
+
+    lista.innerHTML = "";
+    snap.forEach((doc) => {
+      const d = doc.data();
+      const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE", { day:"2-digit", month:"short", year:"numeric" }) : "—";
+      const metodoClass = `cl-hist-metodo-${(d.metodo || "").toLowerCase().replace(/ /g,"")}`;
+      const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
+      const estadoIcon  = d.estado === "confirmado" ? "✓" : "⏳";
+      const estadoText  = d.estado === "confirmado" ? "Confirmado" : "Validando pago";
+      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
+
+      const item = document.createElement("div");
+      item.className = "cl-hist-item";
+      item.innerHTML = `
+        <div class="cl-hist-item-icon">🛍</div>
+        <div class="cl-hist-item-info">
+          <div class="cl-hist-item-nombre">${d.producto}</div>
+          <div class="cl-hist-item-meta">
+            <span class="cl-hist-item-monto">S/ ${d.monto}</span>
+            <span class="cl-hist-item-metodo ${metodoClass}">${d.metodo}</span>
+            <span class="cl-hist-item-fecha">${fecha}</span>
+          </div>
+          <div class="cl-hist-item-estado ${estadoClass}">${estadoIcon} ${estadoText}</div>
+        </div>
+        <a href="https://wa.me/51922402608?text=${wspText}" target="_blank" class="cl-hist-item-wsp" title="Consultar por WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        </a>
+      `;
+      lista.appendChild(item);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div class="cl-hist-vacio" style="color:#e55;font-style:normal;">Error al cargar pedidos</div>`;
+    console.error(e);
+  }
+};
+
+// ── También guardar cuando se paga con tarjeta (MP Bricks) ──
+window._guardarPedidoTarjeta = () => {
+  if (window.productoActual?.nombre) {
+    window.guardarPedido(window.productoActual.nombre, window.productoActual.monto, "Tarjeta");
+  }
+};
+
 window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
 window.abrirPersonalizar = () => {
   modal.style.display = "flex"; window.avatarSeleccionado = null; status.textContent = "";
@@ -892,3 +1210,4 @@ window.guardarPerfil = async () => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
+
