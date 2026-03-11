@@ -13,23 +13,31 @@
 <link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+const _fc = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.replace("entrada.html"); return; }
-  await user.reload();
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _auth = getAuth(_app);
+onAuthStateChanged(_auth, (user) => {
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  const avatar   = document.querySelector(".user-avatar");
+  if (user) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  } else {
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
+  }
 });
 </script>
 
@@ -40,7 +48,7 @@ onAuthStateChanged(auth, async (user) => {
 <header class="header">
   <div class="logo">
     <span>Gato Miel Estudio</span>
-    <img src="Assets/Img/Logo.jpg" alt="Logo Gato Miel" class="logo-img">
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
   </div>
   <nav class="nav">
     <a href="index.html">Inicio</a>
@@ -49,13 +57,14 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
-      <img
-        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
-        class="user-avatar"
-        onclick="toggleUserMenu()"
-      >
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
+      🐾 Iniciar sesión
+    </a>
+    <div class="user-menu" style="display:none;">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
+        <button onclick="window.location.href='coleccion.html'">🛍 Mis pedidos</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
@@ -537,3 +546,4 @@ window.guardarPerfil = async () => {
 </body>
 
 </html>
+
