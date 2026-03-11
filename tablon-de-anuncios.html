@@ -974,6 +974,14 @@ window.guardarAnuncio = async () => {
     if (imgFile) {
       st.textContent = "Procesando imagen…";
       imgB64 = await comprimir(imgFile, 800, .75);
+      // Si sigue muy grande para Firestore (~900KB), recomprimir más
+      if (imgB64.length > 900000) {
+        st.textContent = "Optimizando imagen…";
+        imgB64 = await comprimir(imgFile, 600, .55);
+      }
+      if (imgB64.length > 900000) {
+        throw new Error("La imagen es demasiado grande. Prueba con una foto más pequeña.");
+      }
     } else if (_editId) {
       // Conservar imagen anterior
       const prev = window._anuncios.find(x => x.id === _editId);
@@ -1003,14 +1011,17 @@ window.guardarAnuncio = async () => {
 
 // ── Comprimir imagen ──
 function comprimir(file, maxW, q) {
-  return new Promise(res => {
+  return new Promise((res, rej) => {
     const r = new FileReader();
+    r.onerror = () => rej(new Error("No se pudo leer el archivo."));
     r.onload = e => {
       const img = new Image();
+      img.onerror = () => rej(new Error("No se pudo procesar la imagen."));
       img.onload = () => {
         const ratio = Math.min(maxW / img.width, 1);
         const c = document.createElement("canvas");
-        c.width = img.width * ratio; c.height = img.height * ratio;
+        c.width  = Math.round(img.width  * ratio);
+        c.height = Math.round(img.height * ratio);
         c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
         res(c.toDataURL("image/jpeg", q));
       };
@@ -1039,3 +1050,4 @@ onAuthStateChanged(auth, user => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
+
