@@ -30,7 +30,8 @@ const auth    = getAuth(app);
 const db      = getFirestore(app);
 
 const ADMIN_EMAILS    = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
-const ADMIN_EMAIL     = ADMIN_EMAILS[0]; // email principal (compatibilidad)
+const ADMIN_EMAIL     = ADMIN_EMAILS[0];
+const esAdmin = (email) => email && ADMIN_EMAILS.includes(email.toLowerCase());
 const MSG_SALUDO      = "Hola 🐾 bienvenid@ a Gato Miel Estudio! Te respondemos muy pronto ✨";
 const MSG_DESPEDIDA   = "Parece que te fuiste 😊 No te preocupes, aquí estaremos cuando nos necesites 🐾";
 const INACTIVIDAD_MS  = 5 * 60 * 1000; // 5 minutos
@@ -415,7 +416,7 @@ window._toggleChat = function() {
 onAuthStateChanged(auth, async (user) => {
   _currentUser = user;
 
-  if (user && ADMIN_EMAILS.includes(user.email)) {
+  if (user && esAdmin(user.email)) {
     document.getElementById("chat-fab").style.display = "none";
     return;
   }
