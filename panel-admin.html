@@ -556,7 +556,8 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const ADMIN_EMAIL = "jhonanibal576@gmail.com";
+const ADMIN_EMAILS = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
+const ADMIN_EMAIL  = ADMIN_EMAILS[0]; // compatibilidad
 const MAX_CHATS_ABIERTOS = 4;
 
 const firebaseConfig = {
@@ -592,7 +593,7 @@ onAuthStateChanged(auth, (user) => {
     return;
   }
 
-  if (user.email !== ADMIN_EMAIL) {
+  if (!ADMIN_EMAILS.includes(user.email)) {
     sinAcceso.innerHTML = `
       <span style="font-size:44px;">🚫</span>
       <h2>Sin acceso</h2>
