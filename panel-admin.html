@@ -262,6 +262,45 @@ body {
 }
 .btn-reabrir-chat:hover { background: #e0f7e0; }
 
+/* ── Timer de inactividad ── */
+#timer-container {
+  display: flex; align-items: center; gap: 8px;
+  background: #fdf8f2; border: 1px solid #f0e4cc;
+  border-radius: 20px; padding: 4px 12px 4px 10px;
+}
+#timer-bar-wrap {
+  width: 60px; height: 5px; background: #f0ebe4;
+  border-radius: 10px; overflow: hidden;
+}
+#timer-bar {
+  height: 100%; border-radius: 10px;
+  background: #c48a3a;
+  transition: width 1s linear, background 0.5s;
+}
+#timer-label {
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  font-weight: 600; color: #c48a3a; min-width: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Etiqueta de quién escribió (admin) ── */
+.admin-msg-label {
+  font-family: 'Inter', sans-serif; font-size: 10px;
+  color: #c48a3a; letter-spacing: 0.05em;
+  text-align: right; padding: 6px 4px 2px;
+  opacity: 0.7;
+}
+
+/* ── Tag admin en sidebar ── */
+.tag-admin-resp {
+  display: inline-block;
+  background: #fdf0dd; color: #c48a3a;
+  font-size: 9px; font-weight: 600;
+  padding: 1px 6px; border-radius: 8px;
+  letter-spacing: 0.04em; margin-left: 4px;
+  vertical-align: middle;
+}
+
 /* Aviso chat cerrado */
 .chat-cerrado-aviso {
   background: #faf7f4;
@@ -557,8 +596,491 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
-const ADMIN_EMAIL  = ADMIN_EMAILS[0]; // compatibilidad
 const MAX_CHATS_ABIERTOS = 4;
+const MSG_AVISO     = "¿Sigues ahí? 🐾";
+const MSG_DESPEDIDA = "Parece que te fuiste 😊 No te preocupes, aquí estaremos cuando nos necesites 🐾";
+const TIMER_TOTAL   = 5 * 60 * 1000;  // 5 min
+const TIMER_AVISO   = 3 * 60 * 1000;  // 3 min → mensaje ¿Sigues ahí?
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
+};
+
+const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let salaActiva     = null;
+let salaActivaData = null;
+let unsubMensajes  = null;
+let unsubSala      = null;   // para escuchar cambios de la sala activa
+let tabActual      = "abiertos";
+let todasLasSalas  = [];
+let adminEmail     = "";
+
+// ── Timers por sala: { uid: { timerAviso, timerCierre, intervalo, inicio } }
+const _timers = {};
+
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+onAuthStateChanged(auth, (user) => {
+  const sinAcceso = document.getElementById("sin-acceso");
+  const panel     = document.getElementById("panel");
+
+  if (!user) {
+    sinAcceso.innerHTML = `<span style="font-size:44px">🔒</span><h2>Acceso restringido</h2><p>Inicia sesión como administradora.</p><a href="entrada.html">Iniciar sesión →</a>`;
+    return;
+  }
+  if (!ADMIN_EMAILS.includes(user.email?.toLowerCase())) {
+    sinAcceso.innerHTML = `<span style="font-size:44px">🚫</span><h2>Sin acceso</h2><p>Esta página es solo para las administradoras.</p><a href="index.html">← Volver al inicio</a>`;
+    return;
+  }
+  adminEmail = user.email?.toLowerCase();
+  sinAcceso.style.display = "none";
+  panel.style.display     = "flex";
+  cargarConversaciones();
+});
+
+// ══════════════════════════════════════════
+//  SIDEBAR
+// ══════════════════════════════════════════
+function cargarConversaciones() {
+  const q = query(collection(db,"chats"), orderBy("ultimaFecha","desc"));
+  onSnapshot(q, snap => {
+    todasLasSalas = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderSidebar();
+    actualizarBadges();
+  });
+}
+
+function renderSidebar() {
+  const lista = document.getElementById("sidebar-list");
+  let filtradas = todasLasSalas;
+  if (tabActual === "abiertos") filtradas = todasLasSalas.filter(s => s.estado !== "cerrado");
+  if (tabActual === "cerrados") filtradas = todasLasSalas.filter(s => s.estado === "cerrado");
+
+  if (!filtradas.length) {
+    lista.innerHTML = `<div class="sidebar-empty">${tabActual==="abiertos"?"No hay chats abiertos 🐱":tabActual==="cerrados"?"No hay chats cerrados":"Sin conversaciones"}</div>`;
+    return;
+  }
+  lista.innerHTML = "";
+  filtradas.forEach(sala => {
+    const cerrado = sala.estado === "cerrado";
+    const div = document.createElement("div");
+    div.className = `user-item${salaActiva===sala.id?" activo":""}${cerrado?" cerrado":""}`;
+    div.onclick = () => abrirConversacion(sala.id, sala);
+
+    // Etiqueta: quién respondió por última vez (admin)
+    const ultimoAdmin = sala.ultimoAdmin
+      ? `<span class="tag-admin-resp" title="${sala.ultimoAdmin}">${sala.ultimoAdmin === "jhonanibal576@gmail.com" ? "Jhon" : "GatoMiel"}</span>`
+      : "";
+
+    div.innerHTML = `
+      <img src="${sala.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+      <div class="user-item-info">
+        <div class="user-item-name">${sala.nombreUsuario||sala.email||"Usuario"} ${ultimoAdmin}</div>
+        <div class="user-item-preview">${sala.ultimoMensaje||"Sin mensajes"}</div>
+      </div>
+      <div class="user-item-meta">
+        ${sala.noLeidosAdmin&&!cerrado?'<div class="unread-dot"></div>':""}
+        <span class="estado-tag ${cerrado?"cerrado":"abierto"}">${cerrado?"Cerrado":"Abierto"}</span>
+      </div>`;
+    lista.appendChild(div);
+  });
+}
+
+function actualizarBadges() {
+  const n = todasLasSalas.filter(s => s.noLeidosAdmin && s.estado !== "cerrado").length;
+  const b = document.getElementById("badge-abiertos");
+  b.style.display = n > 0 ? "inline-flex" : "none";
+  if (n > 0) b.textContent = n;
+}
+
+window.cambiarTab = function(tab, btn) {
+  tabActual = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+  btn.classList.add("activo");
+  renderSidebar();
+};
+
+// ══════════════════════════════════════════
+//  ABRIR CONVERSACIÓN
+// ══════════════════════════════════════════
+function abrirConversacion(uid, data) {
+  salaActiva     = uid;
+  salaActivaData = data;
+  if (data.noLeidosAdmin) updateDoc(doc(db,"chats",uid), { noLeidosAdmin:false });
+  renderSidebar();
+
+  // Detener escucha anterior de sala
+  if (unsubSala) { unsubSala(); unsubSala = null; }
+
+  const cerrado = data.estado === "cerrado";
+  const area = document.getElementById("chat-area");
+
+  area.innerHTML = `
+    <div class="chat-top">
+      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+      <div class="chat-top-info">
+        <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
+        <div class="chat-top-email">${data.email||""}</div>
+      </div>
+      <div class="chat-acciones">
+        <div id="timer-container" style="display:none">
+          <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
+          <span id="timer-label">5:00</span>
+        </div>
+        ${cerrado
+          ? `<button class="btn-accion btn-reabrir-chat" onclick="cambiarEstadoChat('abierto')">↩ Reabrir</button>`
+          : `<button class="btn-accion btn-cerrar-chat" onclick="cambiarEstadoChat('cerrado')">✕ Cerrar chat</button>`
+        }
+      </div>
+    </div>
+
+    <div id="admin-messages"></div>
+
+    <div id="admin-emoji-picker" class="admin-emoji-picker">
+      <div class="emoji-picker-title">🐱 Gato Miel</div>
+      <div class="emoji-grid">
+        <span class="emoji-section-label">Gatitos</span>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🐱')">🐱</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🐈')">🐈</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('😺')">😺</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('😸')">😸</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('😻')">😻</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🐾')">🐾</button>
+        <span class="emoji-section-label">Cerámica & arte</span>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🏺')">🏺</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🌿')">🌿</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('✨')">✨</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🎨')">🎨</button>
+        <span class="emoji-section-label">Caras & corazones</span>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🥰')">🥰</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('😊')">😊</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('💛')">💛</button>
+        <button class="emoji-btn" onclick="insertEmojiAdmin('🫶')">🫶</button>
+      </div>
+    </div>
+
+    <div id="admin-preview" class="admin-preview">
+      <img id="admin-preview-img" src="" style="display:none;">
+      <span id="admin-preview-name"></span>
+      <button class="admin-preview-cancel" onclick="cancelarArchivoAdmin()">✕</button>
+    </div>
+    <div class="chat-bottom">
+      <button class="admin-attach-btn" title="Emojis" onclick="toggleEmojiAdmin(event)">😊</button>
+      <button class="admin-attach-btn" title="Enviar imagen" onclick="document.getElementById('admin-file-input').click()">🖼</button>
+      <textarea id="admin-input" placeholder="Responder..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarRespuesta()}"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+      ></textarea>
+      <button class="btn-enviar-admin" onclick="enviarRespuesta()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+          <line x1="22" y1="2" x2="11" y2="13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white"/>
+        </svg>
+      </button>
+    </div>`;
+
+  // Escuchar mensajes
+  if (unsubMensajes) unsubMensajes();
+  const q = query(collection(db,"chats",uid,"mensajes"), orderBy("fecha","asc"));
+  unsubMensajes = onSnapshot(q, snap => {
+    const container = document.getElementById("admin-messages");
+    if (!container) return;
+    container.innerHTML = "";
+    if (snap.empty) {
+      container.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;">Sin mensajes aún</div>`;
+      return;
+    }
+
+    let prevAdmin = null; // para mostrar etiqueta de admin que escribió
+    snap.forEach(docSnap => {
+      const m = docSnap.data();
+      const esAdmin = m.rol === "admin";
+      const esBot   = m.rol === "bot";
+      const hora    = m.fecha?.toDate ? m.fecha.toDate().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"}) : "";
+
+      // ── Etiqueta encima del mensaje si es admin y cambió quién escribe
+      if (esAdmin && m.adminEmail && m.adminEmail !== prevAdmin) {
+        prevAdmin = m.adminEmail;
+        const label = document.createElement("div");
+        label.className = "admin-msg-label";
+        label.textContent = `✍ ${m.adminEmail === "jhonanibal576@gmail.com" ? "Jhon" : "Gato Miel"} (${m.adminEmail})`;
+        container.appendChild(label);
+      } else if (!esAdmin) {
+        prevAdmin = null; // reset cuando habla el cliente
+      }
+
+      const div = document.createElement("div");
+      div.className = `chat-msg ${esBot?"bot-msg":esAdmin?"admin":"usuario"}`;
+
+      if (m.tipo === "imagen") {
+        div.innerHTML = `<img src="${m.url}" style="max-width:100%;border-radius:10px;cursor:pointer;max-height:200px;object-fit:cover;display:block;margin-bottom:4px;" onclick="window.open('${m.url}','_blank')"><span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
+      } else if (m.tipo === "audio") {
+        div.innerHTML = `<audio controls src="${m.url}" style="max-width:220px;border-radius:8px;"></audio><span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
+      } else {
+        div.innerHTML = `${m.texto}<span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
+      }
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+
+    // Si el cliente responde → pausar/cancelar timer de esta sala
+    const msgs = snap.docs.map(d => d.data());
+    const ultimo = msgs[msgs.length - 1];
+    if (ultimo?.rol === "usuario") {
+      _cancelarTimer(uid);
+      _ocultarTimer();
+    }
+  });
+
+  // Escuchar estado de sala para actualizar botón cerrar/reabrir en tiempo real
+  unsubSala = onSnapshot(doc(db,"chats",uid), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    salaActivaData = { id: uid, ...d };
+    const cerrado = d.estado === "cerrado";
+    const acciones = document.querySelector(".chat-acciones");
+    if (!acciones) return;
+    const btnExistente = acciones.querySelector(".btn-cerrar-chat, .btn-reabrir-chat");
+    if (btnExistente) {
+      btnExistente.className = `btn-accion ${cerrado?"btn-reabrir-chat":"btn-cerrar-chat"}`;
+      btnExistente.textContent = cerrado ? "↩ Reabrir" : "✕ Cerrar chat";
+      btnExistente.onclick = () => cambiarEstadoChat(cerrado ? "abierto" : "cerrado");
+    }
+    if (cerrado) { _cancelarTimer(uid); _ocultarTimer(); }
+  });
+
+  // Si hay timer activo para esta sala, mostrar el countdown
+  if (_timers[uid]?.intervalo) _mostrarTimer(uid);
+}
+
+// ══════════════════════════════════════════
+//  ENVIAR RESPUESTA
+// ══════════════════════════════════════════
+window.enviarRespuesta = async function() {
+  if (!salaActiva) return;
+
+  if (_archivoAdmin) {
+    const archivo = _archivoAdmin;
+    window.cancelarArchivoAdmin();
+    const base64 = await new Promise((res,rej) => {
+      const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej;
+      r.readAsDataURL(archivo);
+    });
+    await addDoc(collection(db,"chats",salaActiva,"mensajes"), {
+      url:base64, rol:"admin", adminEmail, nombre:"Gato Miel",
+      fecha:serverTimestamp(), leido:false, tipo:"imagen"
+    });
+    await updateDoc(doc(db,"chats",salaActiva), {
+      ultimoMensaje:"Tú: 🖼 Imagen", ultimaFecha:serverTimestamp(),
+      noLeidosAdmin:false, ultimoAdmin:adminEmail
+    });
+    _iniciarTimer(salaActiva);
+    return;
+  }
+
+  const input = document.getElementById("admin-input");
+  if (!input) return;
+  const texto = input.value.trim();
+  if (!texto) return;
+  input.value = ""; input.style.height = "auto";
+
+  await addDoc(collection(db,"chats",salaActiva,"mensajes"), {
+    texto, rol:"admin", adminEmail, nombre:"Gato Miel",
+    fecha:serverTimestamp(), leido:false, tipo:"texto"
+  });
+  await updateDoc(doc(db,"chats",salaActiva), {
+    ultimoMensaje:`Tú: ${texto}`, ultimaFecha:serverTimestamp(),
+    noLeidosAdmin:false, ultimoAdmin:adminEmail
+  });
+
+  _iniciarTimer(salaActiva);
+};
+
+// ══════════════════════════════════════════
+//  CERRAR / REABRIR CHAT
+// ══════════════════════════════════════════
+window.cambiarEstadoChat = async function(nuevoEstado) {
+  if (!salaActiva) return;
+
+  if (nuevoEstado === "cerrado") {
+    // Cierre MANUAL → NO enviar bot de despedida (el admin ya se despidió)
+    _cancelarTimer(salaActiva);
+    _ocultarTimer();
+    await updateDoc(doc(db,"chats",salaActiva), {
+      estado:"cerrado", ultimaFecha:serverTimestamp(), noLeidosAdmin:false
+    });
+  } else {
+    const abiertos = todasLasSalas.filter(s => s.estado !== "cerrado").length;
+    if (abiertos >= MAX_CHATS_ABIERTOS) {
+      const aviso = document.getElementById("limite-aviso");
+      aviso.style.display = "block";
+      setTimeout(() => aviso.style.display = "none", 4000);
+      return;
+    }
+    await updateDoc(doc(db,"chats",salaActiva), { estado:"abierto" });
+  }
+};
+
+// ══════════════════════════════════════════
+//  TIMER DE INACTIVIDAD (5 min)
+//  Solo visible para el admin en la sala activa
+// ══════════════════════════════════════════
+function _iniciarTimer(uid) {
+  _cancelarTimer(uid); // reiniciar si ya había uno
+
+  const inicio = Date.now();
+  let avisoEnviado = false;
+
+  // Intervalo que actualiza la barra cada segundo
+  const intervalo = setInterval(() => {
+    const elapsed = Date.now() - inicio;
+    const restante = TIMER_TOTAL - elapsed;
+
+    if (restante <= 0) { clearInterval(intervalo); return; }
+
+    // Mostrar timer solo si esta sala está activa
+    if (salaActiva === uid) _actualizarTimer(restante, TIMER_TOTAL);
+
+    // A los 3 min → enviar "¿Sigues ahí?"
+    if (!avisoEnviado && elapsed >= TIMER_AVISO) {
+      avisoEnviado = true;
+      addDoc(collection(db,"chats",uid,"mensajes"), {
+        texto:MSG_AVISO, rol:"bot", nombre:"Gato Miel Bot",
+        fecha:serverTimestamp(), leido:false, tipo:"texto"
+      });
+    }
+  }, 1000);
+
+  // A los 5 min → cerrar y enviar despedida
+  const timerCierre = setTimeout(async () => {
+    clearInterval(intervalo);
+    if (_timers[uid]) delete _timers[uid];
+    if (salaActiva === uid) _ocultarTimer();
+
+    // Verificar que el último mensaje siga siendo del admin (no respondió)
+    const snap = await getDocs(query(collection(db,"chats",uid,"mensajes"), orderBy("fecha","desc")));
+    const ultimo = snap.docs[0]?.data();
+    if (ultimo && ultimo.rol === "usuario") return; // cliente respondió, no cerrar
+
+    await addDoc(collection(db,"chats",uid,"mensajes"), {
+      texto:MSG_DESPEDIDA, rol:"bot", nombre:"Gato Miel Bot",
+      fecha:serverTimestamp(), leido:false, tipo:"texto"
+    });
+    await updateDoc(doc(db,"chats",uid), {
+      estado:"cerrado", ultimaFecha:serverTimestamp(), noLeidosAdmin:false
+    });
+  }, TIMER_TOTAL);
+
+  _timers[uid] = { intervalo, timerCierre, inicio };
+
+  // Mostrar timer si la sala activa es esta
+  if (salaActiva === uid) {
+    const tc = document.getElementById("timer-container");
+    if (tc) tc.style.display = "flex";
+  }
+}
+
+function _cancelarTimer(uid) {
+  if (!_timers[uid]) return;
+  clearInterval(_timers[uid].intervalo);
+  clearTimeout(_timers[uid].timerCierre);
+  delete _timers[uid];
+}
+
+function _mostrarTimer(uid) {
+  const tc = document.getElementById("timer-container");
+  if (!tc || !_timers[uid]) return;
+  tc.style.display = "flex";
+  const elapsed  = Date.now() - _timers[uid].inicio;
+  const restante = TIMER_TOTAL - elapsed;
+  _actualizarTimer(restante, TIMER_TOTAL);
+}
+
+function _ocultarTimer() {
+  const tc = document.getElementById("timer-container");
+  if (tc) tc.style.display = "none";
+}
+
+function _actualizarTimer(restante, total) {
+  const label = document.getElementById("timer-label");
+  const bar   = document.getElementById("timer-bar");
+  if (!label || !bar) return;
+  const seg   = Math.ceil(restante / 1000);
+  const min   = Math.floor(seg / 60);
+  const s     = seg % 60;
+  label.textContent = `${min}:${String(s).padStart(2,"0")}`;
+  const pct = (restante / total) * 100;
+  bar.style.width   = pct + "%";
+  bar.style.background = pct > 50 ? "#c48a3a" : pct > 20 ? "#e8a020" : "#e55";
+}
+
+// ══════════════════════════════════════════
+//  CERRAR SESIÓN
+// ══════════════════════════════════════════
+window.cerrarSesionAdmin = async () => {
+  await signOut(auth);
+  window.location.replace("entrada.html");
+};
+
+// ══════════════════════════════════════════
+//  EMOJI PICKER
+// ══════════════════════════════════════════
+window.toggleEmojiAdmin = function(e) {
+  e.stopPropagation();
+  const picker = document.getElementById("admin-emoji-picker");
+  if (!picker) return;
+  if (picker.classList.contains("visible")) { picker.classList.remove("visible"); return; }
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pw = 290;
+  picker.style.left   = Math.max(8, Math.min(rect.left, window.innerWidth - pw - 8)) + "px";
+  picker.style.bottom = (window.innerHeight - rect.top + 6) + "px";
+  picker.classList.add("visible");
+};
+window.insertEmojiAdmin = function(emoji) {
+  const input = document.getElementById("admin-input");
+  if (!input) return;
+  const s = input.selectionStart, e2 = input.selectionEnd;
+  input.value = input.value.slice(0,s) + emoji + input.value.slice(e2);
+  input.selectionStart = input.selectionEnd = s + emoji.length;
+  input.focus();
+  input.style.height = "auto";
+  input.style.height = input.scrollHeight + "px";
+};
+document.addEventListener("click", () => {
+  const p = document.getElementById("admin-emoji-picker");
+  if (p) p.classList.remove("visible");
+});
+
+// ══════════════════════════════════════════
+//  ARCHIVO ADMIN
+// ══════════════════════════════════════════
+let _archivoAdmin = null;
+document.getElementById("admin-file-input").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  _archivoAdmin = file;
+  const preview = document.getElementById("admin-preview");
+  const img     = document.getElementById("admin-preview-img");
+  const name    = document.getElementById("admin-preview-name");
+  if (preview) { img.src = URL.createObjectURL(file); img.style.display="block"; name.textContent=file.name; preview.style.display="flex"; }
+  e.target.value = "";
+});
+window.cancelarArchivoAdmin = function() {
+  _archivoAdmin = null;
+  const p = document.getElementById("admin-preview");
+  if (p) { p.style.display="none"; document.getElementById("admin-preview-img").src=""; document.getElementById("admin-preview-name").textContent=""; }
+};
+
+</script>
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
