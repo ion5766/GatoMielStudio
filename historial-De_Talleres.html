@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="CSS/Styles.css">
 <link rel="stylesheet" href="movil-ui.css">
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
+const _fc = {
   apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
   authDomain:"gato-miel-estudio.firebaseapp.com",
   projectId:"gato-miel-estudio",
@@ -18,13 +18,21 @@ const firebaseConfig = {
   messagingSenderId:"150671559458",
   appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.replace("entrada.html"); return; }
-  await user.reload();
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _auth = getAuth(_app);
+onAuthStateChanged(_auth, (user) => {
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  const avatar   = document.querySelector(".user-avatar");
+  if (user) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  } else {
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
+  }
 });
 </script>
 </head>
@@ -42,7 +50,10 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
+      🐾 Iniciar sesión
+    </a>
+    <div class="user-menu" style="display:none;">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
@@ -134,7 +145,7 @@ onAuthStateChanged(auth, async (user) => {
       <div id="paso-horario">
         <p class="ht-step-label">Elige tu horario</p>
         <div class="ht-horarios" id="lista-horarios"></div>
-        <button class="ht-btn-confirm" onclick="irAPago()"><span>Continuar al pago →</span></button>
+        <button class="ht-btn-confirm" onclick="window.irAPagoTaller()"><span>Continuar al pago →</span></button>
       </div>
       <div id="paso-pago" style="display:none;">
         <button class="ht-btn-back" onclick="volverHorario()">← Cambiar horario</button>
@@ -169,6 +180,122 @@ onAuthStateChanged(auth, async (user) => {
         <!-- Botón confirmar (Yape/Plin) — oculto para tarjeta que paga directamente -->
         <button id="btnConfirmarMem" class="ht-btn-confirm" style="display:none;"><span>Ya realicé el pago · Confirmar ✔</span></button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ POP-UP: NECESITA LOGIN ═══ -->
+<div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);animation:htFade .35s ease;">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3);">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;" id="popupLoginTitulo">Inicia sesión para continuar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;" id="popupLoginMsg">Para reservar un taller necesitas una cuenta.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">Iniciar sesión / Crear cuenta</a>
+    <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL PAGO UNIFICADO (igual a colección) ═══ -->
+<div id="modalPagoTaller" class="ht-modal" style="z-index:9999;">
+  <div class="ht-modal-box">
+    <div class="ht-modal-header">
+      <button class="ht-modal-cerrar" onclick="cerrarPagoTaller()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <h2>Pagar membresía</h2>
+      <p id="pagoTallerHorarioLabel" style="font-size:12px;color:#c48a3a;font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-family:'Inter',sans-serif;min-height:16px;"></p>
+    </div>
+    <div class="ht-modal-body" id="pagoTallerBody">
+
+      <!-- PASO 1: ELEGIR MÉTODO -->
+      <div id="pt-paso-metodo">
+        <p class="ht-step-label">Elige cómo pagar</p>
+        <div class="ht-metodos" style="grid-template-columns:repeat(2,1fr);gap:10px;">
+          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'yape')">
+            <img src="Assets/Img/yape.jpeg" alt="Yape" style="max-width:72px;height:52px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 4px;">
+            <span class="ht-metodo-label">Yape</span>
+          </div>
+          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'plin')">
+            <img src="Assets/Img/plin.jpeg" alt="Plin" style="max-width:72px;height:52px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 4px;">
+            <span class="ht-metodo-label">Plin</span>
+          </div>
+          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'tarjeta')">
+            <div style="display:flex;gap:4px;justify-content:center;align-items:center;height:52px;">
+              <svg width="30" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/><rect x="2" y="12" width="8" height="2" rx="1" fill="white" opacity=".7"/></svg>
+              <svg width="30" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
+            </div>
+            <span class="ht-metodo-label">Tarjeta</span>
+          </div>
+          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'agencia')">
+            <div style="font-size:26px;text-align:center;line-height:52px;">🏦</div>
+            <span class="ht-metodo-label">Agencia</span>
+          </div>
+        </div>
+        <button class="ht-btn-confirm" onclick="ptIrDetalle()" style="margin-top:6px;"><span>Continuar →</span></button>
+      </div>
+
+      <!-- PASO 2: DETALLE DE PAGO -->
+      <div id="pt-paso-detalle" style="display:none;">
+        <button class="ht-btn-back" onclick="ptVolverMetodo()">← Cambiar método</button>
+
+        <!-- Yape -->
+        <div id="pt-det-yape" class="ht-pago-detalle" style="display:none;">
+          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:10px;">Escanea con Yape</h4>
+          <img src="Assets/Img/yape.jpeg" alt="QR Yape" style="max-width:160px;border-radius:12px;display:block;margin:0 auto 16px;">
+          <p class="ht-comp-titulo">📎 Adjunta tu comprobante</p>
+          <div class="ht-comp-zona" id="zona-yape" onclick="document.getElementById('pt-file-yape').click()">
+            <div id="ph-yape" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir captura</span></div>
+            <div id="pr-yape" style="display:none;width:100%;text-align:center;"></div>
+          </div>
+          <input type="file" id="pt-file-yape" accept="image/*" style="display:none" onchange="ptPreview('yape',this)">
+        </div>
+
+        <!-- Plin -->
+        <div id="pt-det-plin" class="ht-pago-detalle" style="display:none;">
+          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:10px;">Escanea con Plin</h4>
+          <img src="Assets/Img/plin.jpeg" alt="QR Plin" style="max-width:160px;border-radius:12px;display:block;margin:0 auto 16px;">
+          <p class="ht-comp-titulo">📎 Adjunta tu comprobante</p>
+          <div class="ht-comp-zona" id="zona-plin" onclick="document.getElementById('pt-file-plin').click()">
+            <div id="ph-plin" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir captura</span></div>
+            <div id="pr-plin" style="display:none;width:100%;text-align:center;"></div>
+          </div>
+          <input type="file" id="pt-file-plin" accept="image/*" style="display:none" onchange="ptPreview('plin',this)">
+        </div>
+
+        <!-- Tarjeta MP Brick -->
+        <div id="pt-det-tarjeta" class="ht-pago-detalle" style="display:none;">
+          <div id="pt-loading-tarjeta" style="text-align:center;padding:24px;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
+            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin 0.8s linear infinite;margin:0 auto 10px;"></div>
+            Cargando formulario...
+          </div>
+          <div id="ptCardBrick_container"></div>
+        </div>
+
+        <!-- Agencia BCP -->
+        <div id="pt-det-agencia" class="ht-pago-detalle" style="display:none;">
+          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:16px;">Depósito en Agencia BCP</h4>
+          <div style="background:#faf7f4;border-radius:14px;padding:18px;font-family:'Inter',sans-serif;font-size:13px;color:#555;line-height:2;border:1px solid #f0ebe4;">
+            <strong style="color:#1a1714">Titular:</strong> Gato Miel Estudio<br>
+            <strong style="color:#1a1714">Banco:</strong> BCP<br>
+            <strong style="color:#1a1714">Cuenta:</strong> 000-000000-0-00 <span style="color:#ccc;font-size:11px;">(actualizar)</span><br>
+            <strong style="color:#1a1714">CCI:</strong> 00200000000000000000 <span style="color:#ccc;font-size:11px;">(actualizar)</span>
+          </div>
+          <p style="font-size:12px;color:#aaa;text-align:center;margin-top:10px;font-family:'Inter',sans-serif;">Realiza el depósito y adjunta el voucher</p>
+          <p class="ht-comp-titulo" style="margin-top:14px;">📎 Adjunta tu comprobante</p>
+          <div class="ht-comp-zona" id="zona-agencia" onclick="document.getElementById('pt-file-agencia').click()">
+            <div id="ph-agencia" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir voucher</span></div>
+            <div id="pr-agencia" style="display:none;width:100%;text-align:center;"></div>
+          </div>
+          <input type="file" id="pt-file-agencia" accept="image/*" style="display:none" onchange="ptPreview('agencia',this)">
+        </div>
+
+        <!-- Botón confirmar (solo para Yape/Plin/Agencia) -->
+        <button id="pt-btn-confirmar" class="ht-btn-confirm" style="display:none;margin-top:14px;" onclick="ptConfirmar()">
+          <span>Ya realicé el pago · Confirmar ✔</span>
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -317,14 +444,10 @@ onAuthStateChanged(auth, async (user) => {
 .ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:4px}
 .ht-comp-zona:hover,.ht-comp-zona.lista{border-color:var(--gold);background:#fdf6ec}
 .ht-comp-placeholder{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
-.ht-comp-preview-wrap{width:100%;text-align:center}
-.ht-comp-preview-wrap img{max-width:100%;max-height:150px;border-radius:10px;object-fit:contain}
 .ht-comp-check{position:absolute;top:8px;right:8px;background:var(--gold);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
-/* Admin: imagen comprobante */
 .adm-comp-img{width:100%;max-height:150px;object-fit:contain;border-radius:10px;margin-top:8px;border:1px solid #f0ebe4;cursor:zoom-in;display:block}
-/* Lightbox simple */
 #ht-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out}
-#ht-lightbox img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#ht-lightbox img{max-width:92vw;max-height:88vh;border-radius:14px}
 
 @keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes htSpin{to{transform:rotate(360deg)}}
@@ -405,26 +528,6 @@ function seleccionarMetodo(event,metodo){
   }
 }
 let avatarSeleccionado=null;
-let _comprobanteFile = null;
-
-function previewComprobante(metodo, input) {
-  const file = input.files[0];
-  if (!file) return;
-  _comprobanteFile = file;
-  const zona = document.getElementById("zona-" + metodo);
-  const placeholder = document.getElementById("placeholder-" + metodo);
-  const previewWrap = document.getElementById("preview-" + metodo);
-  const url = URL.createObjectURL(file);
-  previewWrap.innerHTML = '<img src="' + url + '"><div class="ht-comp-check">✓</div>';
-  previewWrap.style.display = "block";
-  placeholder.style.display = "none";
-  zona.classList.add("lista");
-}
-
-function abrirLightbox(src) {
-  document.getElementById("ht-lightbox-img").src = src;
-  document.getElementById("ht-lightbox").style.display = "flex";
-}
 function toggleUserMenu(){ const m=document.getElementById("userDropdown"); m.style.display=m.style.display==="block"?"none":"block"; }
 document.addEventListener("click",(e)=>{ if(!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display="none"; });
 function seleccionarAvatar(img){ document.querySelectorAll(".avatar-opcion").forEach(el=>el.classList.remove("seleccionado")); img.classList.add("seleccionado"); document.getElementById("previewAvatar").src=img.src; avatarSeleccionado=img.src; }
@@ -439,7 +542,6 @@ import {
   getFirestore, collection, addDoc, doc, updateDoc, setDoc,
   onSnapshot, query, orderBy, getDoc, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref as storRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
@@ -453,8 +555,7 @@ const HORARIOS = [
 const firebaseConfig={apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
 const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db      = getFirestore(app);
-const storage = getStorage(app);
+const db   = getFirestore(app);
 
 let currentUser = null;
 let esAdmin = false;
@@ -556,9 +657,202 @@ function _elegirHorario(el, h) {
 }
 
 // ── ABRIR MODAL ──────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════
+//  NUEVO MODAL DE PAGO DE TALLER (pt = pago taller)
+// ════════════════════════════════════════════════════
+let ptMetodo = "";
+let ptFile   = null;
+let _ptMp    = null, _ptBuilder = null, _ptBrick = null, _ptBrickInited = false;
+
+// Abre el flujo: primero verifica login, luego muestra el modal de horarios existente
+window.abrirPagoTaller = function() {
+  if (!window._firebaseUser) {
+    // No hay sesión → mostrar pop-up de login
+    document.getElementById("popupLogin").style.display = "flex";
+    return;
+  }
+  // Tiene sesión → abrir modal de horarios (el flujo existente)
+  window.abrirMembresia();
+};
+
+// Cuando el usuario elige horario y llega al paso de pago, 
+// en vez de usar el viejo modal, usamos el nuevo modal unificado
+window.irAPagoTaller = function() {
+  // Validar que hay horario elegido
+  if (!horarioElegidoId) { alert("Selecciona un horario primero."); return; }
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario no tiene cupos disponibles."); return; }
+  // Cerrar modal de horarios y abrir modal de pago
+  document.getElementById("modalMembresia").style.display = "none";
+  ptMetodo = ""; ptFile = null; _ptBrickInited = false;
+  if (_ptBrick) { try { _ptBrick.unmount(); } catch(e){} _ptBrick = null; }
+  // Reset UI
+  ["yape","plin","agencia"].forEach(m => {
+    const zona = document.getElementById("zona-"+m);
+    const ph   = document.getElementById("ph-"+m);
+    const pr   = document.getElementById("pr-"+m);
+    const inp  = document.getElementById("pt-file-"+m);
+    if (zona) zona.classList.remove("lista");
+    if (ph)   ph.style.display = "flex";
+    if (pr)   { pr.style.display = "none"; pr.innerHTML = ""; }
+    if (inp)  inp.value = "";
+  });
+  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
+  document.getElementById("pt-paso-metodo").style.display = "block";
+  document.getElementById("pt-paso-detalle").style.display = "none";
+  document.getElementById("pt-btn-confirmar").style.display = "none";
+  document.getElementById("pagoTallerHorarioLabel").textContent = horarioElegido || "";
+  document.getElementById("modalPagoTaller").style.display = "flex";
+  document.body.style.overflow = "hidden";
+};
+
+window.cerrarPagoTaller = function() {
+  document.getElementById("modalPagoTaller").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+window.ptSeleccionarMetodo = function(event, metodo) {
+  ptMetodo = metodo;
+  document.querySelectorAll("#pt-paso-metodo .ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
+  event.currentTarget.classList.add("ht-metodo-activo");
+};
+
+window.ptVolverMetodo = function() {
+  document.getElementById("pt-paso-detalle").style.display = "none";
+  document.getElementById("pt-paso-metodo").style.display  = "block";
+};
+
+window.ptIrDetalle = function() {
+  if (!ptMetodo) { alert("Selecciona un método de pago."); return; }
+  document.getElementById("pt-paso-metodo").style.display  = "none";
+  document.getElementById("pt-paso-detalle").style.display = "block";
+  // Mostrar sección del método elegido
+  ["yape","plin","tarjeta","agencia"].forEach(m => {
+    document.getElementById("pt-det-"+m).style.display = m === ptMetodo ? "block" : "none";
+  });
+  // Botón confirmar: visible solo para Yape/Plin/Agencia
+  const btn = document.getElementById("pt-btn-confirmar");
+  if (ptMetodo === "tarjeta") {
+    btn.style.display = "none";
+    if (!_ptBrickInited) { _ptBrickInited = true; _initPtCard(); }
+  } else {
+    btn.style.display = "block";
+  }
+};
+
+window.ptPreview = function(metodo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  ptFile = file;
+  const ph   = document.getElementById("ph-"+metodo);
+  const pr   = document.getElementById("pr-"+metodo);
+  const zona = document.getElementById("zona-"+metodo);
+  const url  = URL.createObjectURL(file);
+  pr.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:140px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>';
+  pr.style.display = "block";
+  ph.style.display = "none";
+  zona.classList.add("lista");
+};
+
+window.ptConfirmar = async function() {
+  if (!ptFile) { alert("Por favor adjunta el comprobante de pago."); return; }
+  const btn = document.getElementById("pt-btn-confirmar");
+  btn.disabled = true;
+  btn.querySelector("span").textContent = "Enviando...";
+  await _ptRegistrar(ptMetodo.toUpperCase());
+  btn.disabled = false;
+};
+
+async function _ptRegistrar(metodoLabel) {
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Sin cupos disponibles."); return; }
+  let comprobanteURL = "";
+  if (ptFile) {
+    try {
+      const ext  = ptFile.name.split(".").pop() || "jpg";
+      const ruta = storRef(storage, "comprobantes/"+Date.now()+"_"+currentUser.uid+"."+ext);
+      const snap = await uploadBytes(ruta, ptFile);
+      comprobanteURL = await getDownloadURL(snap.ref);
+    } catch(e) { console.warn("Error subiendo comprobante:", e); }
+  }
+  const docRef = await addDoc(collection(db,"membresias"), {
+    usuarioEmail:  currentUser.email,
+    usuarioNombre: currentUser.displayName || currentUser.email,
+    usuarioAvatar: currentUser.photoURL || "",
+    horarioId:     horarioElegidoId,
+    horarioLabel:  horarioElegido,
+    metodo:        metodoLabel,
+    comprobanteURL,
+    estado:        "pendiente",
+    fecha:         serverTimestamp(),
+    tallerId:      TALLER_ID,
+  });
+  const ref = docRef.id.slice(0,8).toUpperCase();
+  // Pop-up de éxito
+  document.getElementById("pagoTallerBody").innerHTML = `
+    <div style="text-align:center;padding:36px 16px 24px;animation:htFade .4s ease">
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3)">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px">¡Gracias! Estamos validando tu pago</h3>
+      <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;font-family:'Inter',sans-serif">Recibimos tu comprobante.<br>Las administradoras lo revisarán pronto 🐾</p>
+      <div style="background:#faf7f4;border-radius:16px;padding:16px;margin:0 0 24px;text-align:left;border:1px solid #f0ebe4;">
+        <p style="font-size:12px;color:#999;font-family:'Inter',sans-serif;line-height:2;margin:0">
+          <strong style="color:#1a1714">📅 Horario:</strong> ${horarioElegido}<br>
+          <strong style="color:#1a1714">💳 Método:</strong> ${metodoLabel}<br>
+          <strong style="color:#1a1714">🆔 Ref:</strong> ${ref}<br>
+          <strong style="color:#1a1714">📋 Estado:</strong>
+          <span style="color:#92712a;font-weight:600;background:#fef9ee;padding:2px 8px;border-radius:20px;font-size:11px;margin-left:4px">Pendiente de validación</span>
+        </p>
+      </div>
+      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase">Te confirmaremos en menos de 24h</p>
+      <button onclick="cerrarPagoTaller()" style="margin-top:18px;background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 24px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
+    </div>`;
+  ptFile = null;
+}
+
+async function _initPtCard() {
+  const loading   = document.getElementById("pt-loading-tarjeta");
+  const container = document.getElementById("ptCardBrick_container");
+  if (!container) return;
+  try {
+    if (!window.MercadoPago) {
+      await new Promise((res,rej) => {
+        const s = document.createElement("script");
+        s.src = "https://sdk.mercadopago.com/js/v2";
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    if (!_ptMp) {
+      _ptMp      = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", {locale:"es-PE"});
+      _ptBuilder = _ptMp.bricks();
+    }
+    if (_ptBrick) { try { await _ptBrick.unmount(); } catch(e){} }
+    container.innerHTML = "";
+    if (loading) loading.style.display = "none";
+    _ptBrick = await _ptBuilder.create("payment","ptCardBrick_container", {
+      initialization: { amount: 150, payer: { email: currentUser?.email || "" } },
+      customization: {
+        paymentMethods: { creditCard:"all", debitCard:"all", ticket:"none", bankTransfer:"none", atm:"none", onboarding_credits:"none", wallet_purchase:"none" },
+        visual: { style: { theme:"default", customVariables: { baseColor:"#c48a3a" } } }
+      },
+      callbacks: {
+        onReady: () => { if (loading) loading.style.display = "none"; },
+        onError: (e) => console.error("MP Error:",e),
+        onSubmit: async () => {
+          try { await _ptRegistrar("TARJETA"); } catch(e){ console.error(e); }
+          return Promise.resolve();
+        }
+      }
+    });
+  } catch(e) {
+    if (loading) loading.style.display = "none";
+    container.innerHTML = '<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:Inter,sans-serif">Error al cargar tarjeta. Usa Yape, Plin o Agencia.</p>';
+  }
+}
+
+
 window.abrirMembresia = function() {
   horarioElegido = null; horarioElegidoId = null; metodoMembresia = "";
-  window._comprobanteFile = null;
   window._memCardInicializada = false;
   if (window._mpBrickControllerMem) { try { window._mpBrickControllerMem.unmount(); } catch(e){} window._mpBrickControllerMem = null; }
   document.getElementById("horarioSeleccionadoLabel").textContent = "";
@@ -567,17 +861,6 @@ window.abrirMembresia = function() {
   document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
   document.querySelectorAll(".ht-pago-detalle").forEach(el => el.style.display = "none");
   document.getElementById("btnConfirmarMem").style.display = "none";
-  // Limpiar previews de comprobante
-  ["yape","plin"].forEach(m => {
-    const pl = document.getElementById("placeholder-"+m);
-    const pr = document.getElementById("preview-"+m);
-    const zona = document.getElementById("zona-"+m);
-    const inp = document.getElementById("file-"+m);
-    if(pl) pl.style.display="flex";
-    if(pr) { pr.style.display="none"; pr.innerHTML=""; }
-    if(zona) zona.classList.remove("lista");
-    if(inp) inp.value="";
-  });
   document.getElementById("modalMembresia").style.display = "flex";
   document.body.style.overflow = "hidden";
   renderHorarios();
@@ -589,16 +872,7 @@ async function confirmarPago() {
   if (!currentUser)     { alert("Debes iniciar sesión."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0)      { alert("Este horario ya no tiene cupos disponibles."); return; }
-  if (!window._comprobanteFile) {
-    alert("Por favor adjunta la captura de tu comprobante de pago antes de confirmar.");
-    return;
-  }
-  // Deshabilitar botón mientras procesa
-  const btn = document.getElementById("btnConfirmarMem");
-  btn.disabled = true;
-  btn.querySelector("span").textContent = "Subiendo comprobante...";
   await _registrarMembresia(metodoMembresia.toUpperCase());
-  btn.disabled = false;
 }
 
 // ── REGISTRAR MEMBRESÍA EN FIRESTORE Y MOSTRAR POP-UP ───────────────────
@@ -606,21 +880,7 @@ async function _registrarMembresia(metodoLabel) {
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
 
-  // Subir comprobante a Firebase Storage si existe
-  let comprobanteURL = "";
-  if (window._comprobanteFile) {
-    try {
-      const ext  = window._comprobanteFile.name.split(".").pop() || "jpg";
-      const ruta = storRef(storage, `comprobantes/${Date.now()}_${currentUser.uid}.${ext}`);
-      const snap = await uploadBytes(ruta, window._comprobanteFile);
-      comprobanteURL = await getDownloadURL(snap.ref);
-    } catch(e) {
-      console.warn("Error subiendo comprobante:", e);
-    }
-  }
-
   const docRef = await addDoc(collection(db,"membresias"), {
-    comprobanteURL,
     usuarioEmail:  currentUser.email,
     usuarioNombre: currentUser.displayName || currentUser.email,
     usuarioAvatar: currentUser.photoURL || "",
@@ -635,32 +895,37 @@ async function _registrarMembresia(metodoLabel) {
   const ref = docRef.id.slice(0,8).toUpperCase();
   const esTarjeta = metodoLabel === "TARJETA";
 
-  // Pop-up de éxito — limpio, con estado de validación
+  // Pop-up de éxito — diferente para tarjeta vs QR
   document.getElementById("modalMembresiaBody").innerHTML = `
-    <div style="text-align:center;padding:36px 20px 24px;animation:htFade .4s ease">
-      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.35)">✓</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:500;color:#1a1714;margin-bottom:10px">
-        ${esTarjeta ? "¡Pago recibido!" : "¡Gracias! Estamos validando tu pago"}
+    <div style="text-align:center;padding:28px 12px 8px;animation:htFade .4s ease">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3)">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:8px">
+        ${esTarjeta ? "¡Pago recibido!" : "¡Solicitud enviada!"}
       </h3>
-      <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;font-family:'Inter',sans-serif">
-        ${esTarjeta
-          ? "Revisaremos tu pago y te confirmaremos<br>en menos de 24 horas 🐾"
-          : "Recibimos tu comprobante.<br>Las administradoras lo revisarán pronto 🐾"}
+      <p style="font-size:14px;color:#888;margin-bottom:4px;font-family:'Inter',sans-serif">
+        ${esTarjeta ? "Estamos validando tu pago" : "Estamos validando tu comprobante"}
       </p>
-      <div style="background:#faf7f4;border-radius:16px;padding:16px 18px;margin:0 0 24px;text-align:left;border:1px solid #f0ebe4;">
-        <p style="font-size:12px;color:#999;font-family:'Inter',sans-serif;line-height:2;margin:0">
-          <strong style="color:#1a1714;font-weight:600">📅 Horario:</strong> ${horarioElegido}<br>
-          <strong style="color:#1a1714;font-weight:600">💳 Método:</strong> ${metodoLabel}<br>
-          <strong style="color:#1a1714;font-weight:600">🆔 Ref:</strong> ${ref}<br>
-          <strong style="color:#1a1714;font-weight:600">📋 Estado:</strong>
-          <span style="color:#92712a;font-weight:600;background:#fef9ee;padding:2px 8px;border-radius:20px;font-size:11px;margin-left:4px">Pendiente de validación</span>
+      <p style="font-size:15px;font-weight:500;color:#c48a3a;font-family:'Inter',sans-serif;margin-bottom:6px">${horarioElegido}</p>
+      <div style="background:#faf7f4;border-radius:14px;padding:14px;margin:0 0 20px;text-align:left;">
+        <p style="font-size:12px;color:#888;font-family:'Inter',sans-serif;line-height:1.9;margin:0">
+          <strong style="color:#1a1714">Método:</strong> ${metodoLabel}<br>
+          <strong style="color:#1a1714">Ref:</strong> ${ref}<br>
+          <strong style="color:#1a1714">Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>
         </p>
       </div>
-      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase">Recibirás confirmación en menos de 24h</p>
-      <button onclick="cerrarMembresia()" style="margin-top:18px;background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 24px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;letter-spacing:.06em">Cerrar</button>
+      <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:${esTarjeta?'20px':'22px'};font-family:'Inter',sans-serif">
+        ${esTarjeta
+          ? "Las administradoras revisarán tu pago.<br>Te confirmaremos en menos de 24 horas 🐾"
+          : "Envíanos la captura del pago por WhatsApp<br>para confirmar tu plaza más rápido 🐾"}
+      </p>
+      ${!esTarjeta ? `
+      <a href="https://wa.me/51922402608?text=${encodeURIComponent(`Hola! Acabo de pagar la membresía.\n\n📅 Horario: ${horarioElegido}\n💳 Método: ${metodoLabel}\n🆔 Ref: ${ref}\n\nTe envío la captura ✨`)}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px;background:#25D366;color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;letter-spacing:.05em;box-shadow:0 8px 20px rgba(37,211,102,.28);margin-bottom:14px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar captura por WhatsApp
+      </a>` : ""}
+      <p style="font-size:10px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase">Te confirmaremos en menos de 24h</p>
     </div>`;
-  // Limpiar archivo de comprobante
-  window._comprobanteFile = null;
 }
 
 // ── MERCADO PAGO BRICK (TARJETA) ─────────────────────────────────────────
@@ -766,7 +1031,6 @@ function renderPanelAdmin() {
         <strong>Método:</strong> ${m.metodo}<br>
         <strong>Ref:</strong> ${m.id.slice(0,8).toUpperCase()}<br>
         <strong>Fecha:</strong> ${fecha}
-        ${m.comprobanteURL ? `<br><strong>Comprobante:</strong><br><img class="adm-comp-img" src="${m.comprobanteURL}" alt="Comprobante" onclick="abrirLightbox('${m.comprobanteURL}')">` : '<br><span style="font-size:11px;color:#ccc">Sin comprobante adjunto</span>'}
       </div>
       ${m.estado==="pendiente"?`
       <div class="adm-acciones">
@@ -839,11 +1103,6 @@ window.guardarPerfil = async () => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
-
-<!-- Lightbox comprobante -->
-<div id="ht-lightbox" onclick="this.style.display='none'">
-  <img id="ht-lightbox-img" src="" alt="Comprobante">
-</div>
 </body>
 </html>
 
