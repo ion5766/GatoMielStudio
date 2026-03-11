@@ -27,6 +27,14 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.replace("entrada.html"); return; }
   await user.reload();
+  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e) {}
+  }
   const avatar = document.querySelector(".user-avatar");
   if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
 });
@@ -600,7 +608,7 @@ onAuthStateChanged(auth, (user) => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs", authDomain: "gato-miel-estudio.firebaseapp.com",
   projectId: "gato-miel-estudio", storageBucket: "gato-miel-estudio.firebasestorage.app",
@@ -625,12 +633,15 @@ async function abrirHistorialIndex() {
   const user = auth.currentUser;
   if (!user) { lista.innerHTML = `<p style="text-align:center;padding:30px;color:#bbb;font-family:'Inter',sans-serif;">Inicia sesión para ver tus pedidos.</p>`; return; }
   try {
-    const q = query(collection(db,"pedidos"), where("uid","==",user.uid), orderBy("fecha","desc"));
+    const q = query(collection(db,"pedidos"), where("uid","==",user.uid));
     const snap = await getDocs(q);
     if (snap.empty) { lista.innerHTML = `<p style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes pedidos 🐱</p>`; return; }
+    // ordenar por fecha desc en cliente
+    const docs = [];
+    snap.forEach(d => docs.push(d.data()));
+    docs.sort((a,b) => { const ta=a.fecha?.toMillis?a.fecha.toMillis():0; const tb=b.fecha?.toMillis?b.fecha.toMillis():0; return tb-ta; });
     lista.innerHTML = "";
-    snap.forEach(doc => {
-      const d = doc.data();
+    docs.forEach(d => {
       const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
       const m = (d.metodo||"").toLowerCase();
       const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
