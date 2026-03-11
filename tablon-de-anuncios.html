@@ -794,6 +794,9 @@ import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc,
   doc, onSnapshot, orderBy, query, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytes, getDownloadURL, deleteObject
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const cfg = {
   apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -804,9 +807,10 @@ const cfg = {
   appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
 const ADMIN = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
-const app   = getApps().length ? getApps()[0] : initializeApp(cfg);
-const auth  = getAuth(app);
-const db    = getFirestore(app);
+const app     = getApps().length ? getApps()[0] : initializeApp(cfg);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
 let isAdmin = false;
 window._anuncios = [];
@@ -895,8 +899,8 @@ window.renderCards = function() {
         </button>
       </div>` : "";
 
-    const imgHtml = a.imagenBase64
-      ? `<div class="tb-card-img"><img src="${a.imagenBase64}" alt="${a.titulo}" loading="lazy"></div>`
+    const imgHtml = (a.imagenURL || a.imagenBase64)
+      ? `<div class="tb-card-img"><img src="${a.imagenURL || a.imagenBase64}" alt="${a.titulo}" loading="lazy"></div>`
       : "";
 
     const limitHtml = a.fechaLimite
@@ -945,10 +949,10 @@ window.editarCard = id => {
   document.getElementById("f-btn-txt").value  = a.linkTexto || "";
   document.getElementById("f-btn-url").value  = a.linkUrl   || "";
   document.getElementById("f-chars").textContent = `${(a.cuerpo||"").length} / 500`;
-  if (a.imagenBase64) {
+  if (a.imagenURL || a.imagenBase64) {
     const p = document.getElementById("f-img-prev");
-    p.src = a.imagenBase64; p.style.display = "block";
-    document.getElementById("f-img-lbl").textContent = "Imagen actual";
+    p.src = a.imagenURL || a.imagenBase64; p.style.display = "block";
+    document.getElementById("f-img-lbl").textContent = "Imagen actual (subir nueva para reemplazar)";
   }
   abrirModal(id);
 };
@@ -970,29 +974,28 @@ window.guardarAnuncio = async () => {
   btn.disabled = true; st.textContent = "Guardando…";
 
   try {
-    let imgB64 = null;
+    let imagenURL = null;
+
     if (imgFile) {
-      st.textContent = "Procesando imagen…";
-      imgB64 = await comprimir(imgFile, 800, .75);
-      // Si sigue muy grande para Firestore (~900KB), recomprimir más
-      if (imgB64.length > 900000) {
-        st.textContent = "Optimizando imagen…";
-        imgB64 = await comprimir(imgFile, 600, .55);
-      }
-      if (imgB64.length > 900000) {
-        throw new Error("La imagen es demasiado grande. Prueba con una foto más pequeña.");
-      }
+      st.textContent = "Subiendo imagen…";
+      // Comprimir antes de subir a Storage
+      const blob = await comprimirABlob(imgFile, 1200, 0.8);
+      const nombreArchivo = `anuncios/${Date.now()}_${imgFile.name.replace(/[^a-zA-Z0-9.]/g,"_")}`;
+      const storageRef = ref(storage, nombreArchivo);
+      await uploadBytes(storageRef, blob);
+      imagenURL = await getDownloadURL(storageRef);
+      st.textContent = "Guardando…";
     } else if (_editId) {
       // Conservar imagen anterior
       const prev = window._anuncios.find(x => x.id === _editId);
-      imgB64 = prev?.imagenBase64 || null;
+      imagenURL = prev?.imagenURL || null;
     }
 
     const datos = {
       titulo, cuerpo, categoria: cat, destaca: dest,
       fechaLimite: hasta || null,
       linkTexto: btnTxt || null, linkUrl: btnUrl || null,
-      imagenBase64: imgB64,
+      imagenURL,           // URL de Storage (no base64)
       autor: auth.currentUser?.email,
       fecha: serverTimestamp()
     };
@@ -1005,29 +1008,36 @@ window.guardarAnuncio = async () => {
       st.textContent = "✅ Publicado";
     }
     setTimeout(() => cerrarModal(), 900);
-  } catch(e) { st.textContent = "❌ " + e.message; }
-  finally { btn.disabled = false; }
+  } catch(e) {
+    console.error("Error publicando:", e);
+    st.textContent = "❌ " + e.message;
+  } finally {
+    btn.disabled = false;
+  }
 };
 
-// ── Comprimir imagen ──
-function comprimir(file, maxW, q) {
+// ── Comprimir imagen a Blob para subir a Storage ──
+function comprimirABlob(file, maxW, quality) {
   return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onerror = () => rej(new Error("No se pudo leer el archivo."));
-    r.onload = e => {
+    const reader = new FileReader();
+    reader.onerror = () => rej(new Error("No se pudo leer el archivo."));
+    reader.onload = e => {
       const img = new Image();
       img.onerror = () => rej(new Error("No se pudo procesar la imagen."));
       img.onload = () => {
         const ratio = Math.min(maxW / img.width, 1);
-        const c = document.createElement("canvas");
-        c.width  = Math.round(img.width  * ratio);
-        c.height = Math.round(img.height * ratio);
-        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-        res(c.toDataURL("image/jpeg", q));
+        const canvas = document.createElement("canvas");
+        canvas.width  = Math.round(img.width  * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          if (!blob) { rej(new Error("No se pudo comprimir la imagen.")); return; }
+          res(blob);
+        }, "image/jpeg", quality);
       };
       img.src = e.target.result;
     };
-    r.readAsDataURL(file);
+    reader.readAsDataURL(file);
   });
 }
 
@@ -1050,4 +1060,3 @@ onAuthStateChanged(auth, user => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
-
