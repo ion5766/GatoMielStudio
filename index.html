@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -22,31 +22,33 @@ const firebaseConfig = {
   messagingSenderId: "150671559458",
   appId: "1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// Web pública — NO redirigir si no hay usuario
 onAuthStateChanged(auth, async (user) => {
-  // Permitir invitados (sessionStorage flag)
-  if (!user) {
-    if (sessionStorage.getItem("invitado") === "true") {
-      // Ocultar cosas que requieren login (chat, perfil)
-      const adminBtn = document.getElementById("btn-panel-admin");
-      if (adminBtn) adminBtn.style.display = "none";
-      return;
+  const avatar    = document.querySelector(".user-avatar");
+  const loginBtn  = document.getElementById("btn-login-header");
+  const userMenu  = document.querySelector(".user-menu");
+  if (user) {
+    await user.reload().catch(()=>{});
+    if (!user.photoURL) {
+      try {
+        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+        await user.reload();
+      } catch(e) {}
     }
-    window.location.replace("entrada.html");
-    return;
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+  } else {
+    // Invitado: mostrar botón login, ocultar menú de usuario
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
+    if (avatar)   avatar.src = "Assets/Img/Avatares/GatoMiel.jpeg";
   }
-  await user.reload();
-  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
-  if (!user.photoURL) {
-    try {
-      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-      await user.reload();
-    } catch(e) {}
-  }
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  // Exponer usuario globalmente para que otras partes del page lo lean
+  window._firebaseUser = user || null;
 });
 </script>
 
@@ -66,9 +68,12 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
-      <img
-        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+    <!-- Botón para invitados -->
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
+      🐾 Iniciar sesión
+    </a>
+    <div class="user-menu" style="display:none;">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
         <button onclick="window.location.href='coleccion.html'">🛍 Mis pedidos</button>
