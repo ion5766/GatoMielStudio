@@ -24,6 +24,14 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.replace("entrada.html"); return; }
   await user.reload();
+  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e) {}
+  }
   const avatar = document.querySelector(".user-avatar");
   if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
   // Guardar email del usuario para el pago
@@ -72,12 +80,12 @@ onAuthStateChanged(auth, async (user) => {
   <section class="cl-tienda">
     <div class="cl-grid">
 
-      <article class="cl-producto">
+      <article class="cl-producto" data-nombre="Taza Arena" data-precio="120">
         <div class="cl-img">
           <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
                onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
           <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprar('Taza Arena', 120)">Comprar</button>
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
           </div>
         </div>
         <div class="cl-info">
@@ -89,12 +97,12 @@ onAuthStateChanged(auth, async (user) => {
         </div>
       </article>
 
-      <article class="cl-producto">
+      <article class="cl-producto" data-nombre="Plato Bruma" data-precio="150">
         <div class="cl-img">
           <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
                onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
           <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprar('Plato Bruma', 150)">Comprar</button>
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
           </div>
         </div>
         <div class="cl-info">
@@ -106,12 +114,12 @@ onAuthStateChanged(auth, async (user) => {
         </div>
       </article>
 
-      <article class="cl-producto">
+      <article class="cl-producto" data-nombre="Jarrón Eclipse" data-precio="240">
         <div class="cl-img">
           <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
                onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
           <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprar('Jarrón Eclipse', 240)">Comprar</button>
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
           </div>
         </div>
         <div class="cl-info">
@@ -123,12 +131,12 @@ onAuthStateChanged(auth, async (user) => {
         </div>
       </article>
 
-      <article class="cl-producto">
+      <article class="cl-producto" data-nombre="Cuenco Alba" data-precio="135">
         <div class="cl-img">
           <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
                onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
           <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprar('Cuenco Alba', 135)">Comprar</button>
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
           </div>
         </div>
         <div class="cl-info">
@@ -278,7 +286,7 @@ onAuthStateChanged(auth, async (user) => {
             <div class="cl-cci-fields">
               <div class="cl-cci-field">
                 <span class="cl-cci-field-label">Titular</span>
-                <span class="cl-cci-field-val">Jhon Anibal RUIZ SILVA</span>
+                <span class="cl-cci-field-val">Jhon Anibal Ramirez</span>
               </div>
               <div class="cl-cci-field">
                 <span class="cl-cci-field-label">N° Cuenta</span>
@@ -915,7 +923,15 @@ let productoActual = { nombre: "", monto: 0 };
 let avatarSeleccionado = null;
 let tarjetaInicializada = false;
 
-function initMP() {
+// Lee nombre y precio directamente del data-attribute del article padre
+function comprarDesdeCard(btn) {
+  const card = btn.closest(".cl-producto");
+  const nombre = card.dataset.nombre;
+  const monto  = parseInt(card.dataset.precio, 10);
+  comprar(nombre, monto);
+}
+
+
   if (!mp) {
     mp = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", { locale: "es-PE" });
     bricksBuilder = mp.bricks();
@@ -1074,7 +1090,7 @@ document.addEventListener("keydown", e => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -1125,10 +1141,10 @@ window.abrirHistorial = async () => {
   lista.innerHTML = `<div class="cl-hist-loading"><div class="cl-spinner"></div><p>Cargando pedidos...</p></div>`;
 
   try {
+    // Sin orderBy para evitar índice compuesto — ordenamos en JS
     const q = query(
       collection(db, "pedidos"),
-      where("uid", "==", user.uid),
-      orderBy("fecha", "desc")
+      where("uid", "==", user.uid)
     );
     const snap = await getDocs(q);
 
@@ -1137,9 +1153,17 @@ window.abrirHistorial = async () => {
       return;
     }
 
+    // Ordenar por fecha desc en el cliente
+    const docs = [];
+    snap.forEach(d => docs.push(d.data()));
+    docs.sort((a,b) => {
+      const ta = a.fecha?.toMillis ? a.fecha.toMillis() : 0;
+      const tb = b.fecha?.toMillis ? b.fecha.toMillis() : 0;
+      return tb - ta;
+    });
+
     lista.innerHTML = "";
-    snap.forEach((doc) => {
-      const d = doc.data();
+    docs.forEach((d) => {
       const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE", { day:"2-digit", month:"short", year:"numeric" }) : "—";
       const metodoClass = `cl-hist-metodo-${(d.metodo || "").toLowerCase().replace(/ /g,"")}`;
       const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
@@ -1210,5 +1234,4 @@ window.guardarPerfil = async () => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
-
 
