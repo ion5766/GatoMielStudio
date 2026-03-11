@@ -155,8 +155,8 @@ onAuthStateChanged(auth, async (user) => {
     <!-- Barra superior oscura -->
     <div class="cl-modal-topbar">
       <div class="cl-topbar-left">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span>PAGO SEGURO</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Pago seguro</span>
       </div>
       <div class="cl-topbar-dots"><span></span><span></span><span></span></div>
     </div>
@@ -184,7 +184,10 @@ onAuthStateChanged(auth, async (user) => {
         <span class="cl-tab-icon cl-tab-plin">P</span> Plin
       </button>
       <button class="cl-tab" onclick="switchTab('tarjeta', this)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Tarjeta
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Tarjeta
+      </button>
+      <button class="cl-tab" onclick="switchTab('agencia', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Agencia
       </button>
     </div>
 
@@ -199,8 +202,9 @@ onAuthStateChanged(auth, async (user) => {
           <div class="cl-qr-wrap cl-qr-wrap-yape">
             <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
             <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
-            <img src="Assets/Img/QR-Yape.png" alt="QR Yape" class="cl-qr-img"
-              onerror="this.outerHTML='<div class=cl-qr-placeholder><div class=cl-qr-grid></div><p>QR de Yape</p></div>'">
+            <img src="Assets/Img/yape.jpg" alt="QR Yape" class="cl-qr-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="cl-qr-placeholder" style="display:none"><div class="cl-qr-grid"></div><p>QR de Yape</p></div>
           </div>
           <div class="cl-qr-monto-box">
             <span class="cl-qr-monto-label">Monto a pagar</span>
@@ -225,8 +229,9 @@ onAuthStateChanged(auth, async (user) => {
           <div class="cl-qr-wrap cl-qr-wrap-plin">
             <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
             <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
-            <img src="Assets/Img/QR-Plin.png" alt="QR Plin" class="cl-qr-img"
-              onerror="this.outerHTML='<div class=cl-qr-placeholder><div class=cl-qr-grid></div><p>QR de Plin</p></div>'">
+            <img src="Assets/Img/plin.jpg" alt="QR Plin" class="cl-qr-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="cl-qr-placeholder" style="display:none"><div class="cl-qr-grid"></div><p>QR de Plin</p></div>
           </div>
           <div class="cl-qr-monto-box">
             <span class="cl-qr-monto-label">Monto a pagar</span>
@@ -249,7 +254,68 @@ onAuthStateChanged(auth, async (user) => {
           <div class="cl-spinner"></div>
           <p style="margin-top:14px;font-size:12px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:0.05em;">Cargando formulario seguro...</p>
         </div>
-        <div id="paymentBrick_container"></div>
+        <div id="paymentBrick_container" style="padding:12px 4px 4px;"></div>
+      </div>
+
+      <!-- TAB AGENCIA -->
+      <div id="tab-agencia" class="cl-tab-content">
+        <div class="cl-agencia-section">
+          <div class="cl-qr-badge cl-qr-badge-agencia">Depósito / Transferencia</div>
+          <p class="cl-qr-instruccion">Deposita o transfiere el monto exacto a esta cuenta y envíanos el comprobante por WhatsApp.</p>
+
+          <div class="cl-cci-box">
+            <div class="cl-cci-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              <span>Datos bancarios</span>
+            </div>
+            <div class="cl-cci-row">
+              <span class="cl-cci-label">Banco</span>
+              <span class="cl-cci-val">BCP</span>
+            </div>
+            <div class="cl-cci-row">
+              <span class="cl-cci-label">Titular</span>
+              <span class="cl-cci-val">Jhon Anibal Ramirez</span>
+            </div>
+            <div class="cl-cci-row">
+              <span class="cl-cci-label">N° de cuenta</span>
+              <span class="cl-cci-val cl-cci-mono">000-00000000-0-00</span>
+            </div>
+            <div class="cl-cci-row cl-cci-row-highlight">
+              <span class="cl-cci-label">CCI</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="cl-cci-val cl-cci-mono" id="cci-numero">00200000000000000000</span>
+                <button class="cl-cci-copy" onclick="copiarCCI()" title="Copiar CCI">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="cl-cci-row">
+              <span class="cl-cci-label">Monto exacto</span>
+              <span class="cl-cci-val cl-cci-monto" id="agencia-monto">S/ —</span>
+            </div>
+          </div>
+
+          <div class="cl-agencia-pasos">
+            <div class="cl-agencia-paso">
+              <div class="cl-paso-num">1</div>
+              <p>Deposita o transfiere el monto exacto usando el CCI</p>
+            </div>
+            <div class="cl-agencia-paso">
+              <div class="cl-paso-num">2</div>
+              <p>Toma una foto o captura del comprobante</p>
+            </div>
+            <div class="cl-agencia-paso">
+              <div class="cl-paso-num">3</div>
+              <p>Envíala por WhatsApp al <strong>+51 922 402 608</strong></p>
+            </div>
+          </div>
+
+          <a href="https://wa.me/51922402608?text=Hola!%20Realicé%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
+             target="_blank" class="cl-btn-whatsapp">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Enviar comprobante por WhatsApp
+          </a>
+        </div>
       </div>
 
     </div>
@@ -368,12 +434,12 @@ onAuthStateChanged(auth, async (user) => {
 
 /* Topbar */
 .cl-modal-topbar {
-  background:linear-gradient(90deg,#161210,#231a10,#161210);
-  padding:9px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+  background:linear-gradient(90deg,#14100d,#1e1610,#14100d);
+  padding:8px 18px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
 }
-.cl-topbar-left { display:flex; align-items:center; gap:7px; color:rgba(196,138,58,0.85); font-family:'Inter',sans-serif; font-size:10px; font-weight:600; letter-spacing:0.14em; }
+.cl-topbar-left { display:flex; align-items:center; gap:6px; color:rgba(196,138,58,0.75); font-family:'Inter',sans-serif; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:lowercase; }
 .cl-topbar-dots { display:flex; gap:5px; }
-.cl-topbar-dots span { width:8px; height:8px; border-radius:50%; }
+.cl-topbar-dots span { width:7px; height:7px; border-radius:50%; }
 .cl-topbar-dots span:nth-child(1){ background:#ff5f57; }
 .cl-topbar-dots span:nth-child(2){ background:#febc2e; }
 .cl-topbar-dots span:nth-child(3){ background:#28c840; }
@@ -495,6 +561,57 @@ onAuthStateChanged(auth, async (user) => {
 .cl-spinner { width:32px; height:32px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
+/* Agencia / CCI */
+.cl-agencia-section { padding:18px 20px 20px; }
+.cl-qr-badge-agencia { background:#f0f4e8; color:#5a7a2a; }
+.cl-cci-box {
+  background:#faf8f5; border-radius:16px; overflow:hidden;
+  border:1px solid #ede8e0; margin-bottom:16px;
+}
+.cl-cci-header {
+  background:linear-gradient(135deg,#1a1714,#2d2419);
+  padding:10px 16px; display:flex; align-items:center; gap:8px;
+  color:rgba(196,138,58,0.9); font-family:'Inter',sans-serif;
+  font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+}
+.cl-cci-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 16px; border-bottom:1px solid #f0ebe3;
+}
+.cl-cci-row:last-child { border-bottom:none; }
+.cl-cci-row-highlight { background:rgba(196,138,58,0.05); }
+.cl-cci-label { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; font-weight:400; }
+.cl-cci-val { font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); font-weight:500; }
+.cl-cci-mono { font-family:monospace; letter-spacing:0.05em; font-size:13px; }
+.cl-cci-monto { color:var(--gold); font-family:'Playfair Display',serif; font-size:16px; }
+.cl-cci-copy {
+  width:24px; height:24px; border:none; background:#f0ebe4;
+  border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  color:#888; transition:background 0.2s, color 0.2s;
+}
+.cl-cci-copy:hover { background:var(--gold); color:white; }
+
+.cl-agencia-pasos { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.cl-agencia-paso { display:flex; align-items:flex-start; gap:12px; }
+.cl-paso-num {
+  width:22px; height:22px; border-radius:50%; background:var(--ink);
+  color:white; font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+}
+.cl-agencia-paso p { font-family:'Inter',sans-serif; font-size:12px; color:#666; line-height:1.5; }
+.cl-agencia-paso strong { color:var(--ink); font-weight:600; }
+
+.cl-btn-whatsapp {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:13px; border-radius:50px;
+  background:linear-gradient(135deg,#25D366,#1da851);
+  color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:0.04em; text-decoration:none;
+  box-shadow:0 4px 16px rgba(37,211,102,0.3);
+  transition:opacity 0.2s, transform 0.15s;
+}
+.cl-btn-whatsapp:hover { opacity:0.92; transform:translateY(-1px); }
+
 /* Avatar selector */
 .avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
 .avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
@@ -571,6 +688,7 @@ async function comprar(nombre, monto) {
   document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
   document.getElementById("yape-monto").textContent = `S/ ${monto}`;
   document.getElementById("plin-monto").textContent = `S/ ${monto}`;
+  document.getElementById("agencia-monto").textContent = `S/ ${monto}`;
 
   document.getElementById("modalCompra").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -625,6 +743,19 @@ async function renderBrick() {
   } catch(e) {
     document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;padding:20px;">Error al cargar el formulario. Recarga la página.</p>`;
   }
+}
+
+function copiarCCI() {
+  const cci = document.getElementById("cci-numero").textContent;
+  navigator.clipboard.writeText(cci).then(() => {
+    const btn = document.querySelector(".cl-cci-copy");
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+    btn.style.background = "#28c840"; btn.style.color = "white";
+    setTimeout(() => {
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+      btn.style.background = ""; btn.style.color = "";
+    }, 2000);
+  });
 }
 
 function confirmarPagoQR(metodo) {
