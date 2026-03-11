@@ -151,24 +151,56 @@ onAuthStateChanged(auth, async (user) => {
 <!-- ══ MODAL PAGO MERCADO PAGO ══ -->
 <div id="modalCompra" class="cl-modal">
   <div class="cl-modal-box">
+
+    <!-- Franja dorada superior -->
+    <div class="cl-modal-stripe">
+      <div class="cl-modal-stripe-inner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        <span>Pago 100% seguro</span>
+        <div class="cl-modal-stripe-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
     <div class="cl-modal-header">
       <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
-      <h2>Finalizar compra</h2>
-      <p id="productoSeleccionado"></p>
+      <div class="cl-modal-header-inner">
+        <div class="cl-modal-icon">🛍</div>
+        <div>
+          <h2>Finalizar compra</h2>
+          <p id="productoSeleccionado"></p>
+        </div>
+      </div>
+      <!-- Métodos aceptados -->
+      <div class="cl-modal-metodos-icons">
+        <span class="cl-metodo-chip">💳 Tarjeta</span>
+        <span class="cl-metodo-chip">📱 Yape</span>
+        <span class="cl-metodo-chip">💜 Plin</span>
+        <span class="cl-metodo-chip">🏦 Débito</span>
+      </div>
     </div>
+
     <div class="cl-modal-body" id="cl-modal-body">
       <!-- Cargando -->
-      <div id="cl-loading" style="text-align:center;padding:48px 0;">
+      <div id="cl-loading" style="text-align:center;padding:52px 0;">
         <div class="cl-spinner"></div>
-        <p style="margin-top:16px;font-size:13px;color:#aaa;font-family:'Inter',sans-serif;">Cargando pasarela de pago...</p>
+        <p style="margin-top:16px;font-size:13px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:0.04em;">Preparando tu pago seguro...</p>
       </div>
       <!-- Contenedor del Brick -->
       <div id="paymentBrick_container" style="display:none;"></div>
     </div>
+
+    <!-- Footer del modal -->
+    <div class="cl-modal-footer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Procesado por Mercado Pago · Encriptación SSL</span>
+    </div>
+
   </div>
 </div>
 
@@ -264,17 +296,91 @@ onAuthStateChanged(auth, async (user) => {
 .cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
 .cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
 
-/* ══ MODAL ══ */
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(15,12,9,0.75); backdrop-filter:blur(10px); justify-content:center; align-items:center; z-index:9999; padding:20px; }
+/* ══ MODAL PREMIUM ══ */
+.cl-modal { display:none; position:fixed; inset:0; background:rgba(10,8,6,0.82); backdrop-filter:blur(14px); justify-content:center; align-items:center; z-index:9999; padding:20px; }
 .cl-modal.open { display:flex; }
-.cl-modal-box { background:white; width:100%; max-width:480px; max-height:90vh; border-radius:24px; display:flex; flex-direction:column; overflow:hidden; animation:clModalIn 0.38s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 40px 80px rgba(0,0,0,0.25); }
-@keyframes clModalIn { from{transform:scale(0.88) translateY(20px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
-.cl-modal-header { padding:26px 26px 18px; position:relative; border-bottom:1px solid #f5f0ea; flex-shrink:0; }
-.cl-modal-header h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:500; color:var(--ink); margin-bottom:3px; }
-#productoSeleccionado { font-size:12px; color:var(--gold); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; font-family:'Inter',sans-serif; min-height:16px; }
-.cl-modal-cerrar { position:absolute; top:20px; right:20px; width:32px; height:32px; border-radius:50%; border:none; background:#f5f0ea; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#666; transition:background 0.2s,transform 0.2s; }
+.cl-modal-box {
+  background:white; width:100%; max-width:500px; max-height:92vh;
+  border-radius:28px; display:flex; flex-direction:column; overflow:hidden;
+  animation:clModalIn 0.42s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 50px 100px rgba(0,0,0,0.35), 0 0 0 1px rgba(196,138,58,0.15);
+}
+@keyframes clModalIn { from{transform:scale(0.85) translateY(30px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+
+/* Franja dorada */
+.cl-modal-stripe {
+  background: linear-gradient(135deg, #1a1714 0%, #2a2118 50%, #1a1714 100%);
+  padding: 10px 22px;
+  flex-shrink: 0;
+}
+.cl-modal-stripe-inner {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(196,138,58,0.9);
+}
+.cl-modal-stripe-dots { display:flex; gap:4px; margin-left:auto; }
+.cl-modal-stripe-dots span {
+  width:6px; height:6px; border-radius:50%;
+  background: rgba(196,138,58,0.4);
+}
+.cl-modal-stripe-dots span:nth-child(1) { background: #4CAF50; }
+.cl-modal-stripe-dots span:nth-child(2) { background: rgba(196,138,58,0.7); }
+.cl-modal-stripe-dots span:nth-child(3) { background: rgba(196,138,58,0.4); }
+
+/* Header */
+.cl-modal-header {
+  padding: 22px 24px 16px; position: relative;
+  border-bottom: 1px solid #f5f0ea; flex-shrink: 0;
+  background: linear-gradient(180deg, #fdfaf7 0%, #fff 100%);
+}
+.cl-modal-header-inner { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.cl-modal-icon {
+  width:44px; height:44px; background:linear-gradient(135deg,#1a1714,#2d2419);
+  border-radius:14px; display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.cl-modal-header h2 {
+  font-family:'Playfair Display',serif; font-size:19px;
+  font-weight:500; color:var(--ink); margin-bottom:2px; line-height:1.2;
+}
+#productoSeleccionado {
+  font-size:12px; color:var(--gold); font-weight:500;
+  letter-spacing:0.06em; font-family:'Inter',sans-serif; min-height:16px;
+}
+.cl-modal-cerrar {
+  position:absolute; top:18px; right:18px;
+  width:30px; height:30px; border-radius:50%; border:none;
+  background:#f0ebe4; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:#999; transition:background 0.2s,transform 0.25s,color 0.2s;
+}
 .cl-modal-cerrar:hover { background:var(--gold); color:white; transform:rotate(90deg); }
-.cl-modal-body { padding:24px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
+
+/* Chips de métodos */
+.cl-modal-metodos-icons {
+  display:flex; gap:6px; flex-wrap:wrap;
+}
+.cl-metodo-chip {
+  background:#f5f0ea; border-radius:20px;
+  padding:5px 10px; font-size:11px; font-weight:500;
+  color:#666; font-family:'Inter',sans-serif;
+  letter-spacing:0.03em;
+  border: 1px solid rgba(196,138,58,0.15);
+}
+
+/* Body */
+.cl-modal-body { padding:20px 22px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; flex:1; }
+
+/* Footer */
+.cl-modal-footer {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  padding:10px 22px; background:#faf7f4;
+  border-top:1px solid #f0ebe4; flex-shrink:0;
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:400;
+  color:#bbb; letter-spacing:0.08em;
+}
 
 /* Spinner */
 .cl-spinner { width:36px; height:36px; border:3px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
