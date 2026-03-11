@@ -4,676 +4,304 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gato Miel Estudio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Bienvenido | Gato Miel Estudio</title>
 
-<link rel="stylesheet" href="CSS/Styles.css">
-<link rel="stylesheet" href="movil-ui.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.replace("entrada.html"); return; }
-  await user.reload();
-  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
-  if (!user.photoURL) {
-    try {
-      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-      await user.reload();
-    } catch(e) {}
-  }
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-});
-</script>
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+overflow:hidden;
+}
+
+/* VIDEO FONDO */
+
+.video-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-2;
+}
+
+/* OVERLAY OSCURO */
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
+z-index:-1;
+}
+
+/* CONTENIDO */
+
+.contenido{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+padding:20px;
+}
+
+.logo{
+font-family:'Playfair Display',serif;
+font-size:48px;
+margin-bottom:20px;
+letter-spacing:2px;
+}
+
+.sub{
+opacity:0.9;
+}
+
+/* BOTONES */
+
+.botones{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin-top:30px;
+}
+
+.btn{
+padding:14px 30px;
+border:none;
+border-radius:6px;
+font-size:15px;
+cursor:pointer;
+transition:0.3s;
+min-width:220px;
+}
+
+.btn-login{
+background:#b88a5a;
+color:white;
+}
+
+.btn-login:hover{
+background:#9f7448;
+}
+
+.btn-registro{
+background:white;
+color:black;
+}
+
+.btn-registro:hover{
+background:#eee;
+}
+
+.btn-invitado{
+background:transparent;
+border:1px solid white;
+color:white;
+}
+
+.btn-invitado:hover{
+background:white;
+color:black;
+}
+
+.btn-google{
+background:#4285F4;
+color:white;
+}
+
+.btn-google:hover{
+background:#3367D6;
+}
+
+input{
+padding:10px;
+border-radius:6px;
+border:none;
+margin-top:10px;
+width:220px;
+}
+
+</style>
 
 </head>
+
 <body>
 
-<!-- ══ HEADER ══ -->
-<header class="header">
-  <div class="logo">
-    <span>Gato Miel Estudio</span>
-    <img src="Assets/Img/Logo.jpg" class="logo-img">
-  </div>
-  <nav class="nav">
-    <a href="index.html">Inicio</a>
-    <a href="historial-De_Talleres.html">Talleres</a>
-    <a href="coleccion.html">Colección</a>
-    <a href="comunidad.html">Comunidad</a>
-    <a href="quienes-somos.html">Quiénes somos</a>
-    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
-      <img
-        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
-        class="user-avatar" onclick="toggleUserMenu()">
-      <div id="userDropdown" class="user-dropdown">
-        <button onclick="window.location.href='coleccion.html'">🛍 Mis pedidos</button>
-        <button onclick="abrirPersonalizar()">Personalizar</button>
-        <button onclick="cerrarSesion()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
-</header>
+<!-- VIDEO FONDO -->
 
-<!-- ══ HERO ══ -->
-<section class="ix-hero">
-  <video autoplay muted loop playsinline disablepictureinpicture class="ix-hero-video">
-    <source src="Assets/Video/hero-video.mp4" type="video/mp4">
-  </video>
-  <div class="ix-hero-overlay"></div>
-  <div class="ix-hero-content">
-    <span class="ix-eyebrow">Cerámica artesanal · Lima</span>
-    <h1>
-      Arte en<br>
-      <em>cerámica.</em><br>
-      Manos en<br>
-      la tierra.
-    </h1>
-    <p>Talleres y piezas hechas a mano con alma artesanal.</p>
-    <a href="#talleres" class="ix-btn-hero">Ver Talleres</a>
-  </div>
-  <div class="ix-hero-scroll">
-    <div class="ix-scroll-line"></div>
-    <span>Explorar</span>
-  </div>
-</section>
+<video autoplay muted loop class="video-bg">
+<source src="Assets/Video/VideoPresentacion.mp4" type="video/mp4">
+</video>
 
-<!-- ══ STRIP SEPARADOR ══ -->
-<div class="ix-strip">
-  <span>Cerámica hecha a mano</span>
-  <div class="ix-strip-dot"></div>
-  <span>Talleres presenciales</span>
-  <div class="ix-strip-dot"></div>
-  <span>Colección única</span>
-  <div class="ix-strip-dot"></div>
-  <span>Comunidad creativa</span>
+<div class="overlay"></div>
+
+<div class="contenido">
+
+<div class="logo">Gato Miel Estudio</div>
+
+<p class="sub">Arte cerámico hecho a mano</p>
+
+<input id="email" type="email" placeholder="Correo">
+
+<input id="password" type="password" placeholder="Contraseña">
+
+<div class="botones">
+
+<button class="btn btn-login" onclick="login()">
+Iniciar Sesión
+</button>
+
+<button class="btn btn-registro" onclick="registrarse()">
+Registrarse
+</button>
+
+<button class="btn btn-google" onclick="loginGoogle()">
+Entrar con Google
+</button>
+
+<button class="btn btn-invitado" onclick="entrarInvitado()">
+Entrar como Invitado
+</button>
+
 </div>
 
-<!-- ══ TALLERES ══ -->
-<section class="ix-talleres" id="talleres">
-  <div class="ix-talleres-header">
-    <span class="ix-eyebrow ix-eyebrow-dark">Nuestros talleres</span>
-    <h2>Aprende a crear<br>con tus manos</h2>
-    <p>Talleres presenciales en pequeño grupo, para todos los niveles.</p>
-  </div>
-
-  <div class="ix-cards">
-
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura1.jpg" alt="Iniciación a la cerámica"
-             onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80'">
-        <span class="ix-card-badge">6 cupos</span>
-      </div>
-      <div class="ix-card-body">
-        <h3>Iniciación a la cerámica</h3>
-        <p>Bases del torneado y el modelado a mano. Ideal para quienes se acercan por primera vez al barro.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$45.000 CLP</span>
-          <a href="taller-1.html" class="ix-link">Ver más →</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura2.jpg" alt="Esmaltes y acabados"
-             onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=600&q=80'">
-        <span class="ix-card-badge">8 cupos</span>
-      </div>
-      <div class="ix-card-body">
-        <h3>Esmaltes y acabados</h3>
-        <p>Descubre el universo del color en cerámica. Aprende a esmaltar y decorar tus piezas con técnicas artesanales.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$38.000 CLP</span>
-          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura3.jpg" alt="Taller libre"
-             onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=600&q=80'">
-        <span class="ix-card-badge">10 cupos</span>
-      </div>
-      <div class="ix-card-body">
-        <h3>Taller libre</h3>
-        <p>Ven a crear con total libertad. Acceso al estudio, materiales y acompañamiento para hacer lo que quieras.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$25.000 CLP</span>
-          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
-        </div>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- ══ CTA CENTRAL ══ -->
-<section class="ix-cta">
-  <span class="ix-eyebrow">Colección</span>
-  <h2>Piezas únicas,<br><em>hechas para durar.</em></h2>
-  <a href="coleccion.html" class="ix-btn-cta">Ver colección</a>
-</section>
-
-<footer class="footer">
-  <p>© 2026 Gato Miel Estudio</p>
-</footer>
-
-<!-- MODAL PERFIL -->
-<div id="perfilModal" class="perfil-modal">
-  <div class="perfil-box">
-    <h3>Personalizar perfil</h3>
-    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
-    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
-    <div class="avatar-selector">
-      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
-      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
-      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
-      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
-      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
-      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
-    </div>
-    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
-    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
-    <div class="perfil-actions">
-      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
-      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
-    </div>
-  </div>
 </div>
 
-<!-- Botón panel admin -->
-<a id="btn-panel-admin" href="panel-admin.html" style="
-  display:none; position:fixed; bottom:28px; right:28px;
-  background:#1a1714; color:white; text-decoration:none;
-  padding:13px 20px; border-radius:50px; font-family:'Inter',sans-serif;
-  font-size:13px; font-weight:500; letter-spacing:0.06em;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25); z-index:8887;
-  align-items:center; gap:8px; transition:background 0.2s,transform 0.2s;"
-  onmouseover="this.style.background='#c48a3a';this.style.transform='translateY(-2px)'"
-  onmouseout="this.style.background='#1a1714';this.style.transform='none'">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  </svg>
-  Panel de mensajes
-</a>
-
-<style>
-/* ── Variables ── */
-:root {
-  --gold:  #c48a3a;
-  --ink:   #1a1714;
-  --sand:  #f8f5f1;
-  --warm:  #f3ece3;
-  --muted: #888;
-}
-
-/* ── Eyebrow ── */
-.ix-eyebrow {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  display: block; margin-bottom: 20px;
-}
-.ix-eyebrow-dark { color: var(--gold); }
-
-/* ══ HERO ══ */
-.ix-hero {
-  position: relative; height: 100vh;
-  display: flex; align-items: flex-end;
-  padding: 0 9% 10vh;
-  overflow: hidden;
-}
-.ix-hero-video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; z-index: 0;
-}
-.ix-hero-overlay {
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(
-    160deg,
-    rgba(0,0,0,0.1) 0%,
-    rgba(15,12,9,0.65) 60%,
-    rgba(15,12,9,0.85) 100%
-  );
-}
-.ix-hero-content {
-  position: relative; z-index: 2;
-  max-width: 700px;
-}
-.ix-hero-content h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(54px, 8vw, 100px);
-  font-weight: 400; line-height: 1.0;
-  color: white; letter-spacing: -0.02em;
-  margin-bottom: 28px;
-}
-.ix-hero-content h1 em {
-  font-style: italic; color: var(--gold);
-}
-.ix-hero-content p {
-  font-size: 17px; color: rgba(255,255,255,0.65);
-  font-weight: 300; margin-bottom: 36px;
-  max-width: 420px; line-height: 1.7;
-}
-.ix-btn-hero {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 15px 32px; background: var(--gold); color: white;
-  text-decoration: none; border-radius: 50px;
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-  transition: all 0.3s ease;
-  box-shadow: 0 12px 30px rgba(196,138,58,0.35);
-}
-.ix-btn-hero:hover {
-  background: #a8742f; transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(196,138,58,0.45);
-}
-.ix-hero-scroll {
-  position: absolute; right: 9%; bottom: 10vh; z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
-.ix-scroll-line {
-  width: 1px; height: 60px;
-  background: linear-gradient(white, transparent);
-  animation: scrollPulse 2s ease infinite;
-}
-@keyframes scrollPulse {
-  0%,100% { opacity: 0.3; transform: scaleY(1); }
-  50%      { opacity: 0.9; transform: scaleY(1.1); }
-}
-.ix-hero-scroll span {
-  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif;
-  writing-mode: vertical-rl;
-}
-
-/* ══ STRIP ══ */
-.ix-strip {
-  background: var(--ink); color: rgba(255,255,255,0.5);
-  display: flex; align-items: center; justify-content: center;
-  gap: 28px; padding: 18px 8%;
-  font-family: 'Inter', sans-serif; font-size: 11px;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  flex-wrap: wrap;
-}
-.ix-strip-dot {
-  width: 3px; height: 3px; border-radius: 50%;
-  background: var(--gold); flex-shrink: 0;
-}
-
-/* ══ TALLERES ══ */
-.ix-talleres {
-  padding: 110px 9%; background: var(--sand);
-}
-.ix-talleres-header {
-  max-width: 560px; margin-bottom: 70px;
-}
-.ix-talleres-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(36px, 4.5vw, 56px); font-weight: 400;
-  color: var(--ink); line-height: 1.1;
-  letter-spacing: -0.01em; margin-bottom: 16px;
-}
-.ix-talleres-header p {
-  font-size: 16px; color: var(--muted);
-  font-weight: 300; line-height: 1.7;
-}
-
-.ix-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.ix-card {
-  background: white; border-radius: 16px; overflow: hidden;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-  display: flex; flex-direction: column;
-  position: relative;
-}
-.ix-card::after {
-  content: ""; position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; background: linear-gradient(90deg, var(--gold), #e8b870);
-  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
-}
-.ix-card:hover { transform: translateY(-8px); box-shadow: 0 24px 50px rgba(0,0,0,0.11); }
-.ix-card:hover::after { transform: scaleX(1); }
-
-.ix-card-img {
-  overflow: hidden; position: relative; height: 240px;
-}
-.ix-card-img img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.6s ease, filter 0.4s ease;
-  filter: saturate(88%);
-}
-.ix-card:hover .ix-card-img img {
-  transform: scale(1.06); filter: saturate(100%);
-}
-.ix-card-badge {
-  position: absolute; top: 14px; right: 14px;
-  background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
-  color: var(--gold); font-size: 10px; font-weight: 500;
-  letter-spacing: 0.08em; padding: 5px 12px; border-radius: 20px;
-  font-family: 'Inter', sans-serif;
-}
-
-.ix-card-body {
-  padding: 26px 24px 28px; flex: 1;
-  display: flex; flex-direction: column;
-}
-.ix-card-body h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px; font-weight: 500;
-  color: var(--ink); margin-bottom: 10px;
-}
-.ix-card-body p {
-  font-size: 14px; color: #777; line-height: 1.7;
-  flex: 1; margin-bottom: 22px; font-weight: 300;
-}
-.ix-card-footer {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding-top: 16px; border-top: 1px solid #f0ebe4;
-}
-.ix-precio {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px; font-weight: 500; color: var(--gold);
-}
-.ix-link {
-  font-size: 13px; font-weight: 500; color: #333;
-  text-decoration: none; letter-spacing: 0.04em;
-  transition: color 0.2s, letter-spacing 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-.ix-link:hover { color: var(--gold); letter-spacing: 0.08em; }
-
-/* ══ CTA ══ */
-.ix-cta {
-  background: var(--ink); padding: 120px 9%;
-  text-align: center;
-}
-.ix-cta h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(38px, 5vw, 66px); font-weight: 400;
-  color: white; line-height: 1.1;
-  letter-spacing: -0.01em; margin-bottom: 44px;
-}
-.ix-cta h2 em { font-style: italic; color: var(--gold); }
-.ix-btn-cta {
-  display: inline-flex; align-items: center;
-  padding: 15px 40px; border: 1px solid rgba(255,255,255,0.25);
-  color: white; text-decoration: none; border-radius: 50px;
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
-  transition: all 0.3s ease;
-}
-.ix-btn-cta:hover {
-  background: var(--gold); border-color: var(--gold);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(196,138,58,0.4);
-}
-
-/* ── Avatar selector ── */
-.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
-.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
-.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
-.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .ix-hero { padding: 0 7% 12vh; }
-  .ix-hero-scroll { display: none; }
-  .ix-hero-content h1 { font-size: clamp(44px, 12vw, 68px); }
-  .ix-talleres { padding: 80px 7%; }
-  .ix-cards { grid-template-columns: 1fr; max-width: 440px; }
-  .ix-cta { padding: 80px 7%; }
-  .ix-strip { gap: 18px; }
-}
-@media (max-width: 1100px) and (min-width: 901px) {
-  .ix-cards { grid-template-columns: repeat(2, 1fr); }
-}
-</style>
-
-<script>
-let avatarSeleccionado = null;
-
-function toggleUserMenu() {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
-});
-function seleccionarAvatar(img) {
-  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
-  img.classList.add("seleccionado");
-  document.getElementById("previewAvatar").src = img.src;
-  avatarSeleccionado = img.src;
-}
-</script>
-
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import { 
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+GoogleAuthProvider,
+signInWithPopup,
+sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+authDomain: "gato-miel-estudio.firebaseapp.com",
+projectId: "gato-miel-estudio",
+storageBucket: "gato-miel-estudio.firebasestorage.app",
+messagingSenderId: "150671559458",
+appId: "1:150671559458:web:6daaf4a78150706db0337b",
+measurementId: "G-PL79FSGHX5"
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const modal  = document.getElementById("perfilModal");
-const status = document.getElementById("perfilStatus");
 
-window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-window.abrirPersonalizar = () => {
-  modal.style.display = "flex"; avatarSeleccionado = null; status.textContent = "";
-  const user = auth.currentUser;
-  document.getElementById("nuevoNombre").value = user?.displayName || "";
-  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-  document.getElementById("previewAvatar").src = fotoActual;
-  document.querySelectorAll(".avatar-opcion").forEach(el => {
-    el.classList.remove("seleccionado");
-    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
-  });
-};
-window.cerrarPersonalizar = () => { modal.style.display = "none"; };
-window.guardarPerfil = async () => {
-  const user = auth.currentUser;
-  const nombre = document.getElementById("nuevoNombre").value.trim();
-  status.textContent = "Guardando...";
-  try {
-    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
-    await user.reload();
-    document.querySelector(".user-avatar").src = photoURL;
-    status.textContent = "✨ ¡Perfil actualizado!";
-    setTimeout(() => cerrarPersonalizar(), 1200);
-  } catch (error) { status.textContent = "❌ Error: " + error.message; }
-};
-</script>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const ADMIN_EMAIL = "jhonanibal576@gmail.com";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, (user) => {
-  if (user && user.email === ADMIN_EMAIL) {
-    const btn = document.getElementById("btn-panel-admin");
-    btn.style.display = "flex";
-    const q = query(collection(db, "chats"), where("noLeidosAdmin", "==", true));
-    onSnapshot(q, (snap) => {
-      const ex = document.getElementById("admin-badge");
-      if (ex) ex.remove();
-      if (!snap.empty) {
-        const badge = document.createElement("span");
-        badge.id = "admin-badge";
-        badge.textContent = snap.size;
-        badge.style.cssText = "background:#e74c3c;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;";
-        btn.appendChild(badge);
-      }
-    });
+onAuthStateChanged(auth,(user)=>{
+  // Solo redirige si email verificado O es Google (siempre verificado)
+  if(user && (user.emailVerified || user.providerData?.[0]?.providerId === "google.com")){
+    window.location.replace("index.html");
   }
 });
-</script>
 
-<!-- ══ MODAL HISTORIAL ══ -->
-<div id="modalHistorial" class="cl-modal ix-hist-modal" style="display:none;">
-  <div class="cl-modal-box ix-hist-box">
-    <div class="ix-hist-header">
-      <div>
-        <span class="ix-hist-eyebrow">Gato Miel Estudio</span>
-        <h3 class="ix-hist-title">Mis pedidos</h3>
-      </div>
-      <button onclick="document.getElementById('modalHistorial').style.display='none'" class="ix-hist-cerrar">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div id="historialLista" class="ix-hist-lista">
-      <div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;">Cargando...</div>
-    </div>
-  </div>
-</div>
-
-<style>
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
-.cl-modal.open,.ix-hist-modal[style*="flex"] { display:flex !important; }
-.ix-hist-box { background:#fff; width:100%; max-width:440px; max-height:80vh; border-radius:24px; display:flex; flex-direction:column; overflow:hidden; animation:clModalIn 0.4s cubic-bezier(0.34,1.4,0.64,1); box-shadow:0 50px 120px rgba(0,0,0,0.5); }
-@keyframes clModalIn { from{transform:scale(0.86) translateY(32px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
-.ix-hist-header { background:linear-gradient(135deg,#100d0a,#1e1610); padding:20px 22px; display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0; }
-.ix-hist-eyebrow { display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:rgba(196,138,58,0.6); margin-bottom:5px; }
-.ix-hist-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:400; color:white; margin:0; }
-.ix-hist-cerrar { width:26px; height:26px; border-radius:50%; border:none; background:rgba(255,255,255,0.08); cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.2s; }
-.ix-hist-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg); }
-.ix-hist-lista { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin; }
-.ix-hist-item { background:#faf8f5; border:1px solid #ede8de; border-radius:14px; padding:14px 16px; display:flex; align-items:flex-start; gap:12px; animation:fadeUp 0.3s ease both; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.ix-hist-icon { width:36px; height:36px; border-radius:10px; flex-shrink:0; background:linear-gradient(135deg,#1a1714,#2d2419); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.ix-hist-info { flex:1; min-width:0; }
-.ix-hist-nombre { font-family:'Playfair Display',serif; font-size:15px; font-weight:500; color:#1a1714; margin-bottom:3px; }
-.ix-hist-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
-.ix-hist-monto { font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#c48a3a; }
-.ix-hist-badge { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px; }
-.ix-hist-yape { background:#f0e6fa; color:#6c2fa5; }
-.ix-hist-plin  { background:#e0f4fc; color:#0077aa; }
-.ix-hist-tarjeta { background:#f5f5f5; color:#555; }
-.ix-hist-agencia { background:#f0f4e8; color:#5a7a2a; }
-.ix-hist-fecha { font-family:'Inter',sans-serif; font-size:10px; color:#bbb; }
-.ix-hist-estado { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; }
-.ix-hist-pendiente { color:#e8a020; }
-.ix-hist-confirmado { color:#22c55e; }
-.ix-hist-wsp { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; flex-shrink:0; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; text-decoration:none; transition:transform 0.2s; }
-.ix-hist-wsp:hover { transform:scale(1.1); }
-</style>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs", authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio", storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458", appId: "1:150671559458:web:6daaf4a78150706db0337b"
+window.registrarse = async ()=>{
+  const email = document.getElementById("email").value.trim();
+  const pass = document.getElementById("password").value;
+  if(!email || !pass){ alert("Ingresa correo y contraseña."); return; }
+  try{
+    const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
+    await sendEmailVerification(userCredential.user);
+    // Cerrar sesión inmediatamente — el usuario debe verificar antes de entrar
+    await userCredential.user.auth.signOut();
+    alert("✉️ Te enviamos un correo de verificación.\nRevisa tu bandeja de entrada y SPAM.\nUna vez verificado, inicia sesión.");
+  }catch(error){
+    alert(error.message);
+  }
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
-// Helper: esperar a que Firebase Auth resuelva el usuario actual
-function esperarUsuario() {
-  return new Promise(resolve => {
-    if (auth.currentUser !== null) { resolve(auth.currentUser); return; }
-    const unsub = onAuthStateChanged(auth, user => { unsub(); resolve(user); });
-  });
+window.login = async ()=>{
+
+const email = document.getElementById("email").value;
+const pass = document.getElementById("password").value;
+
+try{
+
+const userCredential = await signInWithEmailAndPassword(auth,email,pass);
+
+const user = userCredential.user;
+
+if(!user.emailVerified){
+
+alert("Debes verificar tu correo antes de entrar.");
+return;
+
 }
 
-// Reemplazar botón "Mis pedidos" para abrir modal
-document.addEventListener("DOMContentLoaded", () => {
-  const btns = document.querySelectorAll("#userDropdown button");
-  btns.forEach(b => { if(b.textContent.includes("pedidos")) b.onclick = abrirHistorialIndex; });
-});
+sessionStorage.setItem("acceso","true");
 
-async function abrirHistorialIndex() {
-  document.getElementById("userDropdown").style.display = "none";
-  const modal = document.getElementById("modalHistorial");
-  modal.style.display = "flex";
-  const lista = document.getElementById("historialLista");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:28px;height:28px;border:2.5px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin 0.7s linear infinite;"></div><span>Cargando pedidos...</span></div>`;
-  const user = await esperarUsuario();
-  if (!user) { lista.innerHTML = `<p style="text-align:center;padding:30px;color:#bbb;font-family:'Inter',sans-serif;">Inicia sesión para ver tus pedidos.</p>`; return; }
-  try {
-    const q = query(collection(db,"pedidos"), where("uid","==",user.uid));
-    const snap = await getDocs(q);
-    if (snap.empty) { lista.innerHTML = `<p style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes pedidos 🐱</p>`; return; }
-    // ordenar por fecha desc en cliente
-    const docs = [];
-    snap.forEach(d => docs.push(d.data()));
-    docs.sort((a,b) => { const ta=a.fecha?.toMillis?a.fecha.toMillis():0; const tb=b.fecha?.toMillis?b.fecha.toMillis():0; return tb-ta; });
-    lista.innerHTML = "";
-    docs.forEach(d => {
-      const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const m = (d.metodo||"").toLowerCase();
-      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
-      const el = document.createElement("div");
-      el.className = "ix-hist-item";
-      el.innerHTML = `
-        <div class="ix-hist-icon">🛍</div>
-        <div class="ix-hist-info">
-          <div class="ix-hist-nombre">${d.producto}</div>
-          <div class="ix-hist-meta">
-            <span class="ix-hist-monto">S/ ${d.monto}</span>
-            <span class="ix-hist-badge ix-hist-${m}">${d.metodo}</span>
-            <span class="ix-hist-fecha">${fecha}</span>
-          </div>
-          <div class="ix-hist-estado ${d.estado==='confirmado'?'ix-hist-confirmado':'ix-hist-pendiente'}">${d.estado==='confirmado'?'✓ Confirmado':'⏳ Validando pago'}</div>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspText}" target="_blank" class="ix-hist-wsp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(el);
-    });
-  } catch(e) { console.error("Error pedidos:", e); lista.innerHTML = `<p style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`; }
+window.location.replace("index.html");
+
+}catch(error){
+
+alert(error.message);
+
 }
+
+};
+
+window.loginGoogle = async ()=>{
+
+const provider = new GoogleAuthProvider();
+
+try{
+
+await signInWithPopup(auth,provider);
+
+sessionStorage.setItem("acceso","true");
+
+window.location.href="index.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+window.entrarInvitado = ()=>{
+
+sessionStorage.setItem("acceso","true");
+
+window.location.href="index.html";
+
+};
+
 </script>
 
-<script type="module" src="Js/src/chat.js"></script>
-</body></html>
+<script type="module" src="JS/src/chat.js"></script>
+```
+
+Y mueve `chat.js` a tu carpeta `JS/` en el proyecto. También necesitas agregar estas reglas en **Firestore** para que funcione:
+```
+match /chats/{uid} {
+  allow read, write: if request.auth != null;
+  match /mensajes/{msgId} {
+    allow read, write: if request.auth != null;
+  }
+}
+
+</body>
+</html>
