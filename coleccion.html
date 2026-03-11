@@ -157,19 +157,23 @@ onAuthStateChanged(auth, async (user) => {
       <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
         <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <div class="cl-modal-hero-text">
-        <span class="cl-modal-hero-eyebrow">Gato Miel Estudio</span>
-        <h2 class="cl-modal-hero-title" id="productoSeleccionado">—</h2>
-        <span class="cl-modal-hero-sub">hecha a mano · pieza única</span>
+
+      <!-- Logo + nombre -->
+      <div class="cl-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="cl-modal-logo">
+        <div class="cl-modal-hero-text">
+          <span class="cl-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="cl-modal-hero-title" id="productoSeleccionado">—</h2>
+          <span class="cl-modal-hero-sub">hecha a mano · pieza única</span>
+        </div>
       </div>
+
+      <!-- Deco animado -->
       <div class="cl-modal-hero-deco">
-        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="40" cy="40" r="38" stroke="rgba(196,138,58,0.15)" stroke-width="1"/>
-          <circle cx="40" cy="40" r="28" stroke="rgba(196,138,58,0.1)" stroke-width="1"/>
-          <circle cx="40" cy="40" r="4" fill="rgba(196,138,58,0.3)"/>
-          <path d="M40 2 L40 78 M2 40 L78 40" stroke="rgba(196,138,58,0.08)" stroke-width="1"/>
-          <path d="M14 14 L66 66 M66 14 L14 66" stroke="rgba(196,138,58,0.06)" stroke-width="1"/>
-        </svg>
+        <div class="cl-deco-ring cl-deco-ring-1"></div>
+        <div class="cl-deco-ring cl-deco-ring-2"></div>
+        <div class="cl-deco-ring cl-deco-ring-3"></div>
+        <div class="cl-deco-dot"></div>
       </div>
     </div>
 
@@ -200,7 +204,7 @@ onAuthStateChanged(auth, async (user) => {
       <div id="tab-yape" class="cl-tab-content active">
         <div class="cl-qr-pane">
           <div class="cl-qr-frame cl-qr-frame-yape">
-            <img src="Assets/Img/yape.jpg" alt="QR Yape" class="cl-qr-img"
+            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="cl-qr-img"
               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="cl-qr-empty" style="display:none">
               <div class="cl-qr-grid-bg"></div>
@@ -229,7 +233,7 @@ onAuthStateChanged(auth, async (user) => {
       <div id="tab-plin" class="cl-tab-content">
         <div class="cl-qr-pane">
           <div class="cl-qr-frame cl-qr-frame-plin">
-            <img src="Assets/Img/plin.jpg" alt="QR Plin" class="cl-qr-img"
+            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="cl-qr-img"
               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="cl-qr-empty" style="display:none">
               <div class="cl-qr-grid-bg"></div>
@@ -436,81 +440,128 @@ onAuthStateChanged(auth, async (user) => {
 /* Hero header inmersivo */
 .cl-modal-hero {
   background: linear-gradient(160deg, #100d0a 0%, #1e1610 50%, #0f0c09 100%);
-  padding: 28px 24px 24px;
+  padding: 22px 20px 20px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  animation: heroSlideIn 0.5s cubic-bezier(0.34,1.2,0.64,1) both;
 }
+@keyframes heroSlideIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
 .cl-modal-hero::before {
   content:'';
   position:absolute; inset:0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(196,138,58,0.08) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 85% 40%, rgba(196,138,58,0.12) 0%, transparent 60%);
   pointer-events:none;
 }
 .cl-modal-cerrar {
-  position:absolute; top:14px; right:14px; z-index:2;
+  position:absolute; top:12px; right:12px; z-index:2;
   width:26px; height:26px; border-radius:50%; border:none;
-  background:rgba(255,255,255,0.08); cursor:pointer;
+  background:rgba(255,255,255,0.07); cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  color:rgba(255,255,255,0.5); transition:background 0.2s, color 0.2s, transform 0.25s;
+  color:rgba(255,255,255,0.4); transition:background 0.2s, color 0.2s, transform 0.3s;
 }
-.cl-modal-cerrar:hover { background:rgba(196,138,58,0.3); color:white; transform:rotate(90deg); }
+.cl-modal-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg) scale(1.1); }
+
+/* Brand row */
+.cl-modal-hero-brand { display:flex; align-items:center; gap:14px; position:relative; z-index:1; }
+.cl-modal-logo {
+  width:46px; height:46px; border-radius:12px; object-fit:cover; flex-shrink:0;
+  border:1.5px solid rgba(196,138,58,0.25);
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  animation: logoPop 0.55s cubic-bezier(0.34,1.5,0.64,1) 0.1s both;
+}
+@keyframes logoPop { from{transform:scale(0.7) rotate(-8deg);opacity:0} to{transform:scale(1) rotate(0deg);opacity:1} }
 .cl-modal-hero-eyebrow {
   display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500;
   letter-spacing:0.22em; text-transform:uppercase;
-  color:rgba(196,138,58,0.6); margin-bottom:8px;
+  color:rgba(196,138,58,0.6); margin-bottom:5px;
 }
 .cl-modal-hero-title {
-  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
-  color:white; line-height:1.2; margin-bottom:5px;
+  font-family:'Playfair Display',serif; font-size:18px; font-weight:400;
+  color:white; line-height:1.2; margin-bottom:4px;
   letter-spacing:-0.01em;
+  animation: titleSlide 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.15s both;
 }
+@keyframes titleSlide { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 .cl-modal-hero-sub {
   display:block; font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
-  color:rgba(255,255,255,0.3); letter-spacing:0.12em;
+  color:rgba(255,255,255,0.25); letter-spacing:0.1em;
   font-style:italic;
 }
+
+/* Deco animado */
 .cl-modal-hero-deco {
-  position:absolute; right:-10px; top:50%; transform:translateY(-50%);
-  width:90px; height:90px; opacity:0.6; pointer-events:none;
+  position:absolute; right:-20px; top:50%; transform:translateY(-50%);
+  width:100px; height:100px; pointer-events:none;
 }
-.cl-modal-hero-deco svg { width:100%; height:100%; }
+.cl-deco-ring {
+  position:absolute; border-radius:50%; border:1px solid rgba(196,138,58,0.12);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+.cl-deco-ring-1 { width:60px; height:60px; animation-delay:0s; }
+.cl-deco-ring-2 { width:80px; height:80px; animation-delay:0.6s; border-color:rgba(196,138,58,0.07); }
+.cl-deco-ring-3 { width:100px; height:100px; animation-delay:1.2s; border-color:rgba(196,138,58,0.04); }
+@keyframes ringPulse {
+  0%,100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
+  50% { transform:translate(-50%,-50%) scale(1.08); opacity:0.6; }
+}
+.cl-deco-dot {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(196,138,58,0.5);
+  animation: dotGlow 2s ease-in-out infinite;
+}
+@keyframes dotGlow {
+  0%,100% { box-shadow:0 0 0 0 rgba(196,138,58,0.4); }
+  50% { box-shadow:0 0 0 6px rgba(196,138,58,0); }
+}
 
 /* Pills selector de método */
 .cl-metodo-selector {
-  display:flex; gap:6px; padding:14px 16px 12px;
+  display:flex; gap:6px; padding:12px 16px 10px;
   background:#faf8f5; border-bottom:1px solid #f0ebe3;
   flex-shrink:0; overflow-x:auto; scrollbar-width:none;
+  animation: pillsSlide 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.2s both;
 }
+@keyframes pillsSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .cl-metodo-selector::-webkit-scrollbar { display:none; }
 .cl-metodo-pill {
   display:flex; align-items:center; gap:5px;
   padding:7px 14px; border-radius:50px; border:1.5px solid #ede8e0;
   background:white; cursor:pointer; white-space:nowrap;
   font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#999;
-  transition:all 0.2s ease; flex-shrink:0;
+  transition:all 0.25s cubic-bezier(0.34,1.3,0.64,1); flex-shrink:0;
 }
-.cl-metodo-pill:hover { border-color:#c48a3a; color:var(--ink); }
+.cl-metodo-pill:hover { border-color:var(--gold); color:var(--ink); transform:translateY(-1px); box-shadow:0 4px 12px rgba(196,138,58,0.15); }
 .cl-metodo-pill.active {
   background:var(--ink); border-color:var(--ink); color:white;
-  box-shadow:0 4px 12px rgba(26,23,20,0.25);
+  box-shadow:0 4px 14px rgba(26,23,20,0.3);
+  transform:translateY(-1px);
 }
-.cl-metodo-pill.active .cl-pill-dot { opacity:1; }
-.cl-pill-dot { width:7px; height:7px; border-radius:50%; opacity:0.7; flex-shrink:0; }
+.cl-pill-dot { width:7px; height:7px; border-radius:50%; opacity:0.8; flex-shrink:0; }
 
 /* Body */
 .cl-modal-body { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
 .cl-tab-content { display:none; }
-.cl-tab-content.active { display:block; }
+.cl-tab-content.active { display:block; animation: tabFadeIn 0.3s ease both; }
+@keyframes tabFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
 /* QR pane — Yape / Plin */
-.cl-qr-pane { padding:20px 20px 18px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+.cl-qr-pane { padding:18px 18px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
 
 .cl-qr-frame {
-  position:relative; width:190px; height:190px;
+  position:relative; width:195px; height:195px;
   border-radius:20px; overflow:hidden;
-  box-shadow:0 8px 32px rgba(0,0,0,0.12);
+  box-shadow:0 10px 40px rgba(0,0,0,0.14);
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+  animation: qrFloat 4s ease-in-out infinite;
 }
+@keyframes qrFloat {
+  0%,100% { transform:translateY(0px); }
+  50% { transform:translateY(-4px); }
+}
+.cl-qr-frame:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 16px 50px rgba(0,0,0,0.18); }
 .cl-qr-frame-yape { background:linear-gradient(135deg,rgba(108,47,165,0.06),rgba(108,47,165,0.02)); border:1.5px solid rgba(108,47,165,0.15); }
 .cl-qr-frame-plin  { background:linear-gradient(135deg,rgba(0,163,224,0.06),rgba(0,163,224,0.02)); border:1.5px solid rgba(0,163,224,0.15); }
 .cl-qr-img { width:100%; height:100%; object-fit:contain; padding:10px; }
@@ -656,7 +707,7 @@ function initMP() {
 }
 
 function switchTab(tab, btn) {
-  document.querySelectorAll(".cl-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".cl-metodo-pill").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".cl-tab-content").forEach(c => c.classList.remove("active"));
   btn.classList.add("active");
   document.getElementById("tab-" + tab).classList.add("active");
@@ -688,7 +739,7 @@ async function comprar(nombre, monto) {
   productoActual = { nombre, monto };
 
   // Reset tabs al abrir
-  document.querySelectorAll(".cl-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+  document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
   document.querySelectorAll(".cl-tab-content").forEach((c,i) => c.classList.toggle("active", i===0));
   tarjetaInicializada = false;
   if (paymentBrickController) {
