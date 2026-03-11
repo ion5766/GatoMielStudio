@@ -1,64 +1,481 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tablón de Anuncios | Gato Miel Estudio</title>
-
-<meta name="description" content="Noticias y anuncios importantes de Gato Miel Estudio.">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
+<title>Tablón · Gato Miel Estudio</title>
+<meta name="description" content="Novedades, descuentos y noticias de Gato Miel Estudio.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/Styles.css">
-<link rel="stylesheet" href="tablon-de-anuncios.css">
 <link rel="stylesheet" href="movil-ui.css">
 
+<!-- ═══════════════════════════════════════════ ESTILOS ══ -->
+<style>
+:root {
+  --gold:   #c48a3a;
+  --gold2:  #e8b870;
+  --ink:    #1a1714;
+  --ink2:   #111009;
+  --sand:   #f8f5f1;
+  --warm:   #f3ece3;
+  --muted:  #9a9189;
+  --line:   #e8e2da;
+  --ff-display: 'Cormorant Garamond', Georgia, serif;
+  --ff-body:    'DM Sans', sans-serif;
+}
+
+/* ── Reset local ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Hero editorial ── */
+.tb-hero {
+  background: var(--ink2);
+  padding: 130px 8% 80px;
+  position: relative; overflow: hidden;
+}
+.tb-hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 700px 400px at 0% 120%, rgba(196,138,58,.09) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 300px at 100% 0%, rgba(196,138,58,.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+/* línea decorativa vertical izquierda */
+.tb-hero::after {
+  content: '';
+  position: absolute; top: 60px; left: calc(8% - 28px);
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, transparent, rgba(196,138,58,.4), transparent);
+}
+
+.tb-hero-inner {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end; gap: 48px;
+}
+
+.tb-eyebrow {
+  font-family: var(--ff-body);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(196,138,58,.65); margin-bottom: 22px;
+  display: flex; align-items: center; gap: 12px;
+  animation: tbUp .5s ease both;
+}
+.tb-eyebrow::before {
+  content: ''; display: inline-block;
+  width: 28px; height: 1px; background: rgba(196,138,58,.4);
+}
+
+.tb-title {
+  font-family: var(--ff-display);
+  font-size: clamp(58px, 8vw, 102px);
+  font-weight: 300; line-height: .94;
+  color: #fff; letter-spacing: -.01em; margin: 0;
+  animation: tbUp .55s ease .07s both;
+}
+.tb-title em {
+  font-style: italic; color: var(--gold);
+  font-weight: 300;
+}
+
+.tb-hero-meta {
+  text-align: right;
+  animation: tbUp .55s ease .14s both;
+}
+.tb-hero-desc {
+  font-family: var(--ff-body);
+  font-size: 13px; font-weight: 300;
+  color: rgba(255,255,255,.3); line-height: 1.85;
+  max-width: 260px; margin: 0 0 22px auto;
+}
+.tb-hero-sep {
+  width: 80px; height: 1px; margin-left: auto;
+  background: linear-gradient(to left, rgba(196,138,58,.5), transparent);
+  margin-bottom: 14px;
+}
+.tb-hero-counter {
+  font-family: var(--ff-display);
+  font-size: 32px; font-style: italic; font-weight: 300;
+  color: var(--gold); letter-spacing: -.01em;
+}
+.tb-hero-counter sub {
+  font-family: var(--ff-body);
+  font-size: 10px; font-style: normal;
+  color: rgba(255,255,255,.25); letter-spacing: .12em;
+  vertical-align: middle; margin-left: 4px;
+}
+
+@keyframes tbUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Filtros ── */
+.tb-nav {
+  background: var(--sand);
+  border-bottom: 1px solid var(--line);
+  padding: 0 8%;
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.tb-nav::-webkit-scrollbar { display: none; }
+.tb-fil {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  font-family: var(--ff-body); font-size: 11.5px; font-weight: 400;
+  color: var(--muted); letter-spacing: .05em;
+  border: none; background: none; cursor: pointer;
+  position: relative; transition: color .2s;
+  display: flex; align-items: center; gap: 7px;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tb-fil:hover { color: var(--ink); }
+.tb-fil.active { color: var(--ink); border-bottom-color: var(--gold); font-weight: 500; }
+.tb-fil-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0; opacity: .75;
+}
+
+/* ── Grid principal ── */
+.tb-wrap {
+  background: var(--sand);
+  padding: 56px 8% 100px;
+  min-height: 60vh;
+}
+
+.tb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Card ── */
+.tb-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  position: relative;
+  transition: transform .35s cubic-bezier(.22,.68,0,1.1),
+              box-shadow .35s ease;
+  animation: cardIn .5s cubic-bezier(.34,1.15,.64,1) both;
+}
+@keyframes cardIn {
+  from { opacity:0; transform: translateY(14px) scale(.98); }
+  to   { opacity:1; transform: translateY(0)    scale(1);   }
+}
+.tb-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 44px rgba(26,23,20,.1);
+}
+
+/* Borde top de color según categoría */
+.tb-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  transition: opacity .2s;
+}
+.tb-card[data-cat="descuento"]::before { background: linear-gradient(90deg,#e8a020,#f0c050); }
+.tb-card[data-cat="novedad"]::before   { background: linear-gradient(90deg,#7c3fa8,#b06ad4); }
+.tb-card[data-cat="taller"]::before    { background: linear-gradient(90deg,#c48a3a,#e8b870); }
+.tb-card[data-cat="urgente"]::before   { background: linear-gradient(90deg,#dc3a3a,#ff7070); }
+.tb-card[data-cat="info"]::before      { background: linear-gradient(90deg,#8899aa,#bbccdd); }
+
+/* Imagen */
+.tb-card-img {
+  width: 100%; height: 190px;
+  overflow: hidden; flex-shrink: 0;
+}
+.tb-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.85);
+  transition: transform .5s ease, filter .3s;
+}
+.tb-card:hover .tb-card-img img { transform: scale(1.04); filter: saturate(1); }
+
+/* Body */
+.tb-card-body {
+  padding: 20px 22px 18px;
+  flex: 1; display: flex; flex-direction: column; gap: 9px;
+}
+
+.tb-card-row {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 8px;
+}
+.tb-card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.tb-tag {
+  padding: 3px 9px; border-radius: 20px;
+  font-family: var(--ff-body); font-size: 9.5px;
+  font-weight: 500; letter-spacing: .07em;
+  text-transform: uppercase; white-space: nowrap;
+}
+.tb-tag-descuento { background:#fff4e0; color:#b07010; }
+.tb-tag-novedad   { background:#f2e8fa; color:#6a30a0; }
+.tb-tag-taller    { background:#fdf2e6; color:#a07020; }
+.tb-tag-urgente   { background:#fff0f0; color:#c03030; }
+.tb-tag-info      { background:#f4f6f8; color:#607080; }
+.tb-tag-star      { background:linear-gradient(135deg,#c48a3a,#e8b870); color:#fff; }
+
+/* Acciones admin inline */
+.tb-acciones { display: flex; gap: 3px; }
+.tb-acc-btn {
+  width: 24px; height: 24px; border-radius: 6px;
+  border: none; background: #f5f0ea; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #bbb; transition: all .18s;
+  flex-shrink: 0;
+}
+.tb-acc-btn:hover            { background: var(--ink); color: #fff; }
+.tb-acc-btn.del:hover        { background: #dc3a3a;    color: #fff; }
+
+/* Texto */
+.tb-card-title {
+  font-family: var(--ff-display);
+  font-size: 20px; font-weight: 400; line-height: 1.22;
+  color: var(--ink); margin: 0; letter-spacing: -.01em;
+}
+.tb-card-body-text {
+  font-family: var(--ff-body); font-size: 13px; font-weight: 300;
+  color: #888; line-height: 1.72; margin: 0; flex: 1;
+}
+
+/* Footer card */
+.tb-card-ft {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding-top: 13px;
+  border-top: 1px solid #f2ede6;
+  margin-top: 4px; gap: 8px;
+}
+.tb-card-date {
+  font-family: var(--ff-body); font-size: 10px; color: #ccc;
+  letter-spacing: .04em;
+}
+.tb-date-limit {
+  font-family: var(--ff-body); font-size: 10px;
+  color: #d04040; font-weight: 500;
+  display: flex; align-items: center; gap: 3px;
+}
+.tb-card-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: 50px;
+  background: var(--ink); color: #fff;
+  font-family: var(--ff-body); font-size: 10.5px; font-weight: 500;
+  letter-spacing: .06em; text-decoration: none;
+  transition: background .2s, transform .15s; white-space: nowrap;
+  flex-shrink: 0;
+}
+.tb-card-cta:hover { background: var(--gold); transform: translateY(-1px); }
+
+/* ── Loading / Vacío ── */
+.tb-state {
+  grid-column: 1/-1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 100px 0; gap: 16px;
+  font-family: var(--ff-display); font-size: 20px;
+  font-style: italic; color: #ccc;
+}
+.tb-spin {
+  width: 30px; height: 30px;
+  border: 2px solid #e8e2da; border-top-color: var(--gold);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Botón flotante admin ── */
+#tb-fab {
+  position: fixed; bottom: 28px; right: 28px;
+  display: none; /* JS lo muestra si es admin */
+  align-items: center; gap: 9px;
+  padding: 13px 22px; border-radius: 50px; border: none;
+  background: var(--ink); color: #fff; cursor: pointer;
+  font-family: var(--ff-body); font-size: 12.5px; font-weight: 500;
+  letter-spacing: .07em; z-index: 8000;
+  box-shadow: 0 8px 28px rgba(0,0,0,.28);
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+#tb-fab:hover {
+  background: var(--gold); transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(196,138,58,.35);
+}
+#tb-fab svg { flex-shrink: 0; }
+
+/* ══════════════════ MODAL ANUNCIO ══ */
+.tb-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(10,8,6,.88);
+  backdrop-filter: blur(18px) saturate(1.2);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.tb-modal {
+  background: #fff; border-radius: 22px; width: 100%;
+  max-width: 560px; max-height: 92vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,.4);
+  animation: mIn .38s cubic-bezier(.34,1.3,.64,1);
+}
+.tb-modal-sm { max-width: 400px; }
+@keyframes mIn {
+  from { transform: scale(.86) translateY(22px); opacity:0; }
+  to   { transform: scale(1)   translateY(0);    opacity:1; }
+}
+
+.tb-modal-head {
+  background: linear-gradient(135deg, #0e0b09 0%, #1c1510 100%);
+  padding: 22px 24px;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-shrink: 0;
+}
+.tb-modal-eye {
+  font-family: var(--ff-body); font-size: 9px; font-weight: 500;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(196,138,58,.55); margin-bottom: 5px; display: block;
+}
+.tb-modal-head h3 {
+  font-family: var(--ff-display); font-size: 21px;
+  font-weight: 400; color: #fff; margin: 0; line-height: 1;
+}
+.tb-modal-x {
+  width: 28px; height: 28px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.07); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.3); flex-shrink: 0;
+  transition: all .2s;
+}
+.tb-modal-x:hover { background: rgba(196,138,58,.22); color:#fff; transform:rotate(90deg); }
+
+.tb-modal-body {
+  flex: 1; overflow-y: auto; padding: 22px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  scrollbar-width: thin; scrollbar-color: #e5ddd3 transparent;
+}
+.tb-field { display: flex; flex-direction: column; gap: 6px; }
+.tb-field label {
+  font-family: var(--ff-body); font-size: 10px; font-weight: 500;
+  color: #bbb; letter-spacing: .12em; text-transform: uppercase;
+}
+.tb-field input, .tb-field textarea, .tb-field select {
+  font-family: var(--ff-body); font-size: 13.5px; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 11px;
+  padding: 10px 13px; outline: none; background: #faf8f5;
+  transition: border-color .2s; resize: vertical;
+}
+.tb-field input:focus, .tb-field textarea:focus, .tb-field select:focus {
+  border-color: var(--gold); background: #fff;
+}
+.tb-field-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tb-field-row   { display: flex; gap: 10px; }
+.tb-field-row input:first-child { flex: 1; }
+.tb-field-row input:last-child  { flex: 2; }
+.tb-chars { font-family: var(--ff-body); font-size: 9.5px; color: #ccc; text-align: right; margin-top:-3px; }
+
+/* Drop imagen */
+.tb-img-zone {
+  border: 2px dashed var(--line); border-radius: 11px;
+  padding: 22px; cursor: pointer; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  color: #ccc; font-family: var(--ff-body); font-size: 12px;
+  transition: all .2s;
+}
+.tb-img-zone:hover { border-color: var(--gold); color: var(--gold); background: #fdf8f3; }
+.tb-img-preview { display:none; width:100%; border-radius:11px; margin-top:8px; max-height:150px; object-fit:cover; }
+
+.tb-modal-foot {
+  padding: 14px 24px; background: #faf8f5;
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-shrink: 0;
+}
+.tb-modal-status { font-family: var(--ff-body); font-size: 11.5px; color: var(--muted); flex:1; }
+.tb-btn-cancel {
+  padding: 9px 18px; border-radius: 50px;
+  border: 1.5px solid var(--line); background: #fff; cursor: pointer;
+  font-family: var(--ff-body); font-size: 12px; color: #aaa;
+  transition: all .2s;
+}
+.tb-btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+.tb-btn-publish {
+  display: flex; align-items: center; gap: 7px;
+  padding: 10px 20px; border-radius: 50px; border: none;
+  background: var(--ink); color: #fff; cursor: pointer;
+  font-family: var(--ff-body); font-size: 12px; font-weight: 500;
+  letter-spacing: .06em; transition: all .2s;
+}
+.tb-btn-publish:hover { background: var(--gold); transform: translateY(-1px); }
+.tb-btn-publish:disabled { opacity: .45; pointer-events: none; }
+.tb-btn-del {
+  padding: 10px 20px; border-radius: 50px; border: none;
+  background: #dc3a3a; color: #fff; cursor: pointer;
+  font-family: var(--ff-body); font-size: 12px; font-weight: 500;
+  transition: all .2s;
+}
+.tb-btn-del:hover { background: #bb2020; }
+
+/* Avatar selector modal de perfil */
+.av-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:14px; }
+.av-opt  { width:100%; aspect-ratio:1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:.2s; }
+.av-opt:hover { transform:scale(1.07); border-color:var(--gold); }
+.av-opt.sel   { border-color:var(--gold); box-shadow:0 0 0 3px rgba(196,138,58,.25); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .tb-hero { padding: 90px 7% 60px; }
+  .tb-hero-inner { grid-template-columns:1fr; gap:24px; }
+  .tb-hero-meta { text-align:left; }
+  .tb-hero-sep  { margin-left:0; background: linear-gradient(to right,rgba(196,138,58,.5),transparent); }
+  .tb-nav  { padding: 0 7%; }
+  .tb-wrap { padding: 40px 7% 80px; }
+  .tb-grid { grid-template-columns:1fr; }
+  .tb-field-2col { grid-template-columns:1fr; }
+}
+</style>
+
+<!-- ═══════════════════════════ PRIMER MÓDULO FIREBASE (auth redirect) ══ -->
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b",
-  measurementId: "G-PL79FSGHX5"
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const cfg = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-
-const app = initializeApp(firebaseConfig);
+import { getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+const app  = getApps().length ? getApps()[0] : initializeApp(cfg);
 const auth = getAuth(app);
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.replace("entrada.html");
-  } else {
-    await user.reload();
-    const avatar = document.querySelector(".user-avatar");
-    avatar.src = user.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL:"Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e){}
   }
+  const av = document.querySelector(".user-avatar");
+  if (av) av.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  window._currentUser = user;
 });
-
 </script>
-
 </head>
 
 <body>
 
+<!-- ══ HEADER (mismo del proyecto) ══ -->
 <header class="header">
-
   <div class="logo">
     <span>Gato Miel Estudio</span>
-    <img src="Assets/Img/Logo.jpg" alt="Logo Gato Miel" class="logo-img">
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
   </div>
-
   <nav class="nav">
     <a href="index.html">Inicio</a>
     <a href="historial-De_Talleres.html">Talleres</a>
@@ -66,241 +483,560 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-
     <div class="user-menu">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-        class="user-avatar"
-        onclick="toggleUserMenu()"
-      >
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg" class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
     </div>
-
   </nav>
-
 </header>
 
+<!-- ══ HERO ══ -->
+<section class="tb-hero">
+  <div class="tb-hero-inner">
+    <div>
+      <span class="tb-eyebrow">Gato Miel Estudio · Novedades</span>
+      <h1 class="tb-title">Tablón<br><em>de anuncios.</em></h1>
+    </div>
+    <div class="tb-hero-meta">
+      <p class="tb-hero-desc">Descuentos, nuevas piezas, talleres y todo lo que pasa en el estudio.</p>
+      <div class="tb-hero-sep"></div>
+      <div class="tb-hero-counter">
+        <span id="tb-count">0</span>
+        <sub>anuncios</sub>
+      </div>
+    </div>
+  </div>
+</section>
 
-<main class="contenedor">
+<!-- ══ FILTROS ══ -->
+<div class="tb-nav">
+  <button class="tb-fil active" data-f="todos">Todos</button>
+  <button class="tb-fil" data-f="descuento">
+    <span class="tb-fil-dot" style="background:#e8a020"></span>Descuentos
+  </button>
+  <button class="tb-fil" data-f="novedad">
+    <span class="tb-fil-dot" style="background:#9940c8"></span>Novedades
+  </button>
+  <button class="tb-fil" data-f="taller">
+    <span class="tb-fil-dot" style="background:#c48a3a"></span>Talleres
+  </button>
+  <button class="tb-fil" data-f="urgente">
+    <span class="tb-fil-dot" style="background:#dc3a3a"></span>Urgente
+  </button>
+  <button class="tb-fil" data-f="info">
+    <span class="tb-fil-dot" style="background:#8899aa"></span>Info
+  </button>
+</div>
 
-  <h1 class="titulo">Tablón de Anuncios</h1>
-  <p class="subtitulo">Noticias importantes del estudio</p>
-  <p class="contador">3 anuncios activos</p>
+<!-- ══ GRID ══ -->
+<div class="tb-wrap">
+  <div class="tb-grid" id="tb-grid">
+    <div class="tb-state" id="tb-loading">
+      <div class="tb-spin"></div>
+      Cargando anuncios…
+    </div>
+  </div>
+  <div id="tb-empty" style="display:none">
+    <div class="tb-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Sin anuncios en esta categoría.
+    </div>
+  </div>
+</div>
 
-  <section class="anuncios">
+<!-- ══ FAB ADMIN ══ -->
+<button id="tb-fab" onclick="abrirModal()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+  Nuevo anuncio
+</button>
 
-    <article class="anuncio destacado">
-      <span class="etiqueta urgente">Urgente</span>
-      <span class="fecha-publicacion">Publicado: 21 Febrero 2026</span>
-      <h3>50% de descuento hoy</h3>
-      <p>Si te inscribes hoy al Taller Inicial obtienes un 50% de descuento en tu matrícula.</p>
-      <span class="fecha">Válido hasta hoy</span>
-    </article>
+<!-- ══ MODAL CREAR / EDITAR ══ -->
+<div id="tb-overlay" class="tb-overlay" style="display:none">
+  <div class="tb-modal">
+    <div class="tb-modal-head">
+      <div>
+        <span class="tb-modal-eye">Panel · Admin</span>
+        <h3 id="tb-modal-title">Nuevo anuncio</h3>
+      </div>
+      <button class="tb-modal-x" onclick="cerrarModal()">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
 
-    <article class="anuncio">
-      <span class="etiqueta nuevo">Nuevo</span>
-      <span class="fecha-publicacion">Publicado: 18 Febrero 2026</span>
-      <h3>Pocas vacantes - Taller Intensivo</h3>
-      <p>Solo quedan 2 cupos disponibles. Reserva antes de que se agoten.</p>
-      <span class="fecha">Actualizado recientemente</span>
-    </article>
+    <div class="tb-modal-body">
 
-    <article class="anuncio">
-      <span class="fecha-publicacion">Publicado: 10 Febrero 2026</span>
-      <h3>Nuevas piezas en galería</h3>
-      <p>Hemos añadido nuevas piezas únicas hechas a mano. ¡Ven a descubrirlas!</p>
-      <span class="fecha">Esta semana</span>
-    </article>
+      <div class="tb-field">
+        <label>Título *</label>
+        <input id="f-titulo" type="text" placeholder="Ej: 30% en piezas de temporada" maxlength="80">
+      </div>
 
-  </section>
+      <div class="tb-field">
+        <label>Descripción *</label>
+        <textarea id="f-cuerpo" rows="4" placeholder="Cuéntales todos los detalles…" maxlength="500"></textarea>
+        <span id="f-chars" class="tb-chars">0 / 500</span>
+      </div>
 
-</main>
+      <div class="tb-field-2col">
+        <div class="tb-field">
+          <label>Categoría</label>
+          <select id="f-cat">
+            <option value="novedad">🟣 Novedad</option>
+            <option value="descuento">🟡 Descuento</option>
+            <option value="taller">🟤 Taller</option>
+            <option value="urgente">🔴 Urgente</option>
+            <option value="info">⚪ Info</option>
+          </select>
+        </div>
+        <div class="tb-field">
+          <label>Visibilidad</label>
+          <select id="f-dest">
+            <option value="normal">Normal</option>
+            <option value="destacado">⭐ Destacado</option>
+          </select>
+        </div>
+      </div>
 
+      <div class="tb-field">
+        <label>Válido hasta <span style="color:#ddd;font-weight:300">(opcional)</span></label>
+        <input id="f-hasta" type="date">
+      </div>
 
-<footer class="footer">
-  <p>© 2026 Gato Miel Estudio</p>
-</footer>
+      <div class="tb-field">
+        <label>Botón de acción <span style="color:#ddd;font-weight:300">(opcional)</span></label>
+        <div class="tb-field-row">
+          <input id="f-btn-txt" type="text"  placeholder="Texto del botón">
+          <input id="f-btn-url" type="url"   placeholder="https://...">
+        </div>
+      </div>
 
+      <div class="tb-field">
+        <label>Imagen <span style="color:#ddd;font-weight:300">(opcional)</span></label>
+        <div class="tb-img-zone" id="tb-img-zone" onclick="document.getElementById('f-img').click()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span id="f-img-lbl">Toca para subir imagen</span>
+        </div>
+        <input type="file" id="f-img" accept="image/*" style="display:none">
+        <img id="f-img-prev" class="tb-img-preview">
+      </div>
 
-<!-- MODAL PERFIL -->
+    </div>
 
+    <div class="tb-modal-foot">
+      <span id="tb-status" class="tb-modal-status"></span>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn-cancel" onclick="cerrarModal()">Cancelar</button>
+        <button class="tb-btn-publish" id="btn-pub" onclick="guardarAnuncio()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Publicar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ELIMINAR ══ -->
+<div id="tb-del-overlay" class="tb-overlay" style="display:none">
+  <div class="tb-modal tb-modal-sm">
+    <div class="tb-modal-head">
+      <div>
+        <span class="tb-modal-eye">Admin · Confirmar</span>
+        <h3 style="color:#ff7070">Eliminar anuncio</h3>
+      </div>
+      <button class="tb-modal-x" onclick="cerrarDel()">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="tb-modal-body" style="padding:20px 24px">
+      <p style="font-family:var(--ff-body);font-size:13.5px;color:#777;line-height:1.7">
+        ¿Segura que quieres eliminar este anuncio? Esta acción es permanente y no se puede deshacer.
+      </p>
+    </div>
+    <div class="tb-modal-foot">
+      <span></span>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn-cancel" onclick="cerrarDel()">Cancelar</button>
+        <button class="tb-btn-del"    onclick="confirmarDel()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PERFIL ══ -->
 <div id="perfilModal" class="perfil-modal">
   <div class="perfil-box">
-
     <h3>Personalizar perfil</h3>
-
-    <img id="previewAvatar" class="perfil-preview"
-         src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-
-    <label for="nuevaFoto" class="label-foto">📷 Cambiar foto</label>
-    <input type="file" id="nuevaFoto" accept="image/*" style="display:none">
-
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:12px;color:#aaa;margin:14px 0 10px;font-family:var(--ff-body)">Elige tu avatar:</p>
+    <div class="av-grid">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="av-opt" onclick="selAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="av-opt" onclick="selAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="av-opt" onclick="selAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="av-opt" onclick="selAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="av-opt" onclick="selAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="av-opt" onclick="selAvatar(this)">
+    </div>
     <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
-
-    <p id="perfilStatus" style="font-size:13px; color:#888; margin-top:8px; min-height:18px;"></p>
-
+    <p id="perfilStatus" style="font-size:12px;color:#aaa;margin-top:8px;min-height:18px;font-family:var(--ff-body)"></p>
     <div class="perfil-actions">
       <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
       <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
     </div>
-
   </div>
 </div>
 
+<footer class="footer"><p>© 2026 Gato Miel Estudio</p></footer>
 
-<style>
-.label-foto {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 8px 18px;
-  background: #f0ebe4;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.label-foto:hover {
-  background: #e5ddd3;
-}
-</style>
-
-
+<!-- ══ JS GENERAL ══ -->
 <script>
+let _avatarSel = null, _editId = null, _delId = null;
 
 function toggleUserMenu() {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  const d = document.getElementById("userDropdown");
+  d.style.display = d.style.display === "block" ? "none" : "block";
 }
-
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".user-menu")) {
+document.addEventListener("click", e => {
+  if (!e.target.closest(".user-menu"))
     document.getElementById("userDropdown").style.display = "none";
-  }
 });
 
-// Animación anuncios
-document.addEventListener("DOMContentLoaded", function() {
-  const anuncios = document.querySelectorAll(".anuncio");
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
+// Contador chars
+document.addEventListener("DOMContentLoaded", () => {
+  const ta = document.getElementById("f-cuerpo");
+  const ch = document.getElementById("f-chars");
+  ta?.addEventListener("input", () => ch.textContent = `${ta.value.length} / 500`);
+
+  // Preview img
+  document.getElementById("f-img")?.addEventListener("change", () => {
+    const file = document.getElementById("f-img").files[0];
+    if (!file) return;
+    document.getElementById("f-img-lbl").textContent = file.name;
+    const r = new FileReader();
+    r.onload = e => {
+      const p = document.getElementById("f-img-prev");
+      p.src = e.target.result; p.style.display = "block";
+    };
+    r.readAsDataURL(file);
+  });
+
+  // Filtros
+  document.querySelectorAll(".tb-fil").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".tb-fil").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      window._filtro = b.dataset.f;
+      renderCards();
     });
-  }, { threshold: 0.15 });
-  anuncios.forEach(anuncio => observer.observe(anuncio));
+  });
 });
 
-</script>
-
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  signOut,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b",
-  measurementId: "G-PL79FSGHX5"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const storage = getStorage(app);
-
-const modal = document.getElementById("perfilModal");
-const status = document.getElementById("perfilStatus");
-let archivoNuevo = null;
-
-document.getElementById("nuevaFoto").addEventListener("change", () => {
-  const file = document.getElementById("nuevaFoto").files[0];
-  if (!file) return;
-  archivoNuevo = file;
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById("previewAvatar").src = reader.result;
-  };
-  reader.readAsDataURL(file);
-});
-
-window.cerrarSesion = async () => {
-  await signOut(auth);
-  window.location.replace("entrada.html");
-};
-
-window.abrirPersonalizar = () => {
-  modal.style.display = "flex";
-  archivoNuevo = null;
-  status.textContent = "";
-  const user = auth.currentUser;
-  document.getElementById("nuevoNombre").value = user.displayName || "";
-  document.getElementById("previewAvatar").src =
-    user.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-};
-
-window.cerrarPersonalizar = () => {
-  modal.style.display = "none";
-};
-
-window.guardarPerfil = async () => {
-  const user = auth.currentUser;
-  const nombre = document.getElementById("nuevoNombre").value.trim();
-  status.textContent = "Guardando...";
-  try {
-    let photoURL = user.photoURL;
-    if (archivoNuevo) {
-      status.textContent = "Subiendo foto...";
-      const storageRef = ref(storage, `avatares/${user.uid}`);
-      await uploadBytes(storageRef, archivoNuevo);
-      photoURL = await getDownloadURL(storageRef);
-    }
-    await updateProfile(user, {
-      displayName: nombre || user.displayName,
-      photoURL: photoURL
-    });
-    await user.reload();
-    document.querySelector(".user-avatar").src = photoURL ||
-      "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    status.textContent = "✨ ¡Perfil actualizado!";
-    setTimeout(() => cerrarPersonalizar(), 1200);
-  } catch (error) {
-    console.error(error);
-    status.textContent = "❌ Error: " + error.message;
-  }
-};
-
-</script>
-
-<script type="module" src="JS/src/chat.js"></script>
-```
-
-Y mueve `chat.js` a tu carpeta `JS/` en el proyecto. También necesitas agregar estas reglas en **Firestore** para que funcione:
-```
-match /chats/{uid} {
-  allow read, write: if request.auth != null;
-  match /mensajes/{msgId} {
-    allow read, write: if request.auth != null;
-  }
+// Avatar
+function selAvatar(img) {
+  document.querySelectorAll(".av-opt").forEach(x => x.classList.remove("sel"));
+  img.classList.add("sel");
+  document.getElementById("previewAvatar").src = img.src;
+  _avatarSel = img.src;
 }
 
-</body>
+// Modal anuncio
+function abrirModal(id = null) {
+  _editId = id;
+  const titulo = document.getElementById("tb-modal-title");
+  const btnPub = document.getElementById("btn-pub");
+  titulo.textContent = id ? "Editar anuncio" : "Nuevo anuncio";
+  btnPub.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>${id ? " Guardar" : " Publicar"}`;
+  if (!id) {
+    ["f-titulo","f-cuerpo","f-hasta","f-btn-txt","f-btn-url"].forEach(k => document.getElementById(k).value = "");
+    document.getElementById("f-cat").value = "novedad";
+    document.getElementById("f-dest").value = "normal";
+    document.getElementById("f-img-prev").style.display = "none";
+    document.getElementById("f-img-lbl").textContent = "Toca para subir imagen";
+    document.getElementById("f-img").value = "";
+    document.getElementById("f-chars").textContent = "0 / 500";
+  }
+  document.getElementById("tb-status").textContent = "";
+  document.getElementById("tb-overlay").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function cerrarModal() {
+  document.getElementById("tb-overlay").style.display = "none";
+  document.body.style.overflow = ""; _editId = null;
+}
 
+// Modal eliminar
+function abrirDel(id) {
+  _delId = id;
+  document.getElementById("tb-del-overlay").style.display = "flex";
+}
+function cerrarDel() {
+  document.getElementById("tb-del-overlay").style.display = "none"; _delId = null;
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { cerrarModal(); cerrarDel(); cerrarPersonalizar(); }
+});
+
+window.abrirModal = abrirModal;
+window.cerrarModal = cerrarModal;
+window.abrirDel    = abrirDel;
+window.cerrarDel   = cerrarDel;
+window._filtro     = "todos";
+</script>
+
+<!-- ══ FIREBASE LÓGICA ══ -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc,
+  doc, onSnapshot, orderBy, query, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const cfg = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
+};
+const ADMIN = "jhonanibal576@gmail.com";
+const app   = getApps().length ? getApps()[0] : initializeApp(cfg);
+const auth  = getAuth(app);
+const db    = getFirestore(app);
+
+let isAdmin = false;
+window._anuncios = [];
+
+// ── Auth ──
+onAuthStateChanged(auth, user => { isAdmin = user?.email === ADMIN; });
+
+// ── Perfil modal ──
+const pModal  = document.getElementById("perfilModal");
+const pStatus = document.getElementById("perfilStatus");
+window.cerrarSesion     = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  pModal.style.display = "flex"; _avatarSel = null; pStatus.textContent = "";
+  const u = auth.currentUser;
+  document.getElementById("nuevoNombre").value = u?.displayName || "";
+  const foto = u?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = foto;
+  document.querySelectorAll(".av-opt").forEach(el => {
+    el.classList.remove("sel");
+    if (el.src.endsWith(foto.split("/").pop())) el.classList.add("sel");
+  });
+};
+window.cerrarPersonalizar = () => { pModal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const u = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  pStatus.textContent = "Guardando…";
+  try {
+    const photoURL = _avatarSel || u.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(u, { displayName: nombre || u.displayName, photoURL });
+    await u.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    pStatus.textContent = "✨ ¡Listo!";
+    setTimeout(() => window.cerrarPersonalizar(), 1100);
+  } catch(e) { pStatus.textContent = "❌ " + e.message; }
+};
+
+// ── Escucha anuncios en tiempo real ──
+const q = query(collection(db,"anuncios"), orderBy("fecha","desc"));
+onSnapshot(q, snap => {
+  window._anuncios = [];
+  snap.forEach(d => window._anuncios.push({ id:d.id, ...d.data() }));
+  document.getElementById("tb-count").textContent = window._anuncios.length;
+  renderCards();
+}, err => {
+  document.getElementById("tb-loading").innerHTML =
+    `<p style="color:#e55;font-family:var(--ff-body)">Error al cargar: ${err.message}</p>`;
+});
+
+// ── Render ──
+window.renderCards = function() {
+  const grid   = document.getElementById("tb-grid");
+  const empty  = document.getElementById("tb-empty");
+  document.getElementById("tb-loading").style.display = "none";
+
+  const lista  = window._filtro === "todos"
+    ? window._anuncios
+    : window._anuncios.filter(a => a.categoria === window._filtro);
+
+  if (lista.length === 0) { grid.innerHTML = ""; empty.style.display = "block"; return; }
+  empty.style.display = "none";
+  grid.innerHTML = "";
+
+  const catTag = {
+    descuento:"tb-tag-descuento", novedad:"tb-tag-novedad",
+    taller:"tb-tag-taller", urgente:"tb-tag-urgente", info:"tb-tag-info"
+  };
+
+  lista.forEach((a, i) => {
+    const fecha = a.fecha?.toDate
+      ? a.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"})
+      : "—";
+
+    const c = document.createElement("div");
+    c.className = "tb-card";
+    c.dataset.cat = a.categoria || "info";
+    c.style.animationDelay = `${i * 0.055}s`;
+
+    const adminBtns = isAdmin ? `
+      <div class="tb-acciones">
+        <button class="tb-acc-btn" onclick="editarCard('${a.id}')" title="Editar">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="tb-acc-btn del" onclick="abrirDel('${a.id}')" title="Eliminar">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>` : "";
+
+    const imgHtml = a.imagenBase64
+      ? `<div class="tb-card-img"><img src="${a.imagenBase64}" alt="${a.titulo}" loading="lazy"></div>`
+      : "";
+
+    const limitHtml = a.fechaLimite
+      ? `<span class="tb-date-limit">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Hasta ${a.fechaLimite}
+        </span>`
+      : `<span class="tb-card-date">${fecha}</span>`;
+
+    const ctaHtml = (a.linkUrl && a.linkTexto)
+      ? `<a href="${a.linkUrl}" target="_blank" class="tb-card-cta">
+          ${a.linkTexto}
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>` : "";
+
+    c.innerHTML = `
+      ${imgHtml}
+      <div class="tb-card-body">
+        <div class="tb-card-row">
+          <div class="tb-card-tags">
+            <span class="tb-tag ${catTag[a.categoria]||'tb-tag-info'}">${a.categoria||"info"}</span>
+            ${a.destaca==="destacado"?'<span class="tb-tag tb-tag-star">⭐ destacado</span>':""}
+          </div>
+          ${adminBtns}
+        </div>
+        <h3 class="tb-card-title">${a.titulo}</h3>
+        <p  class="tb-card-body-text">${a.cuerpo}</p>
+        <div class="tb-card-ft">
+          <div style="display:flex;flex-direction:column;gap:3px">${limitHtml}</div>
+          ${ctaHtml}
+        </div>
+      </div>`;
+    grid.appendChild(c);
+  });
+};
+
+// ── Editar ──
+window.editarCard = id => {
+  const a = window._anuncios.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById("f-titulo").value   = a.titulo  || "";
+  document.getElementById("f-cuerpo").value   = a.cuerpo  || "";
+  document.getElementById("f-cat").value      = a.categoria || "novedad";
+  document.getElementById("f-dest").value     = a.destaca  || "normal";
+  document.getElementById("f-hasta").value    = a.fechaLimite || "";
+  document.getElementById("f-btn-txt").value  = a.linkTexto || "";
+  document.getElementById("f-btn-url").value  = a.linkUrl   || "";
+  document.getElementById("f-chars").textContent = `${(a.cuerpo||"").length} / 500`;
+  if (a.imagenBase64) {
+    const p = document.getElementById("f-img-prev");
+    p.src = a.imagenBase64; p.style.display = "block";
+    document.getElementById("f-img-lbl").textContent = "Imagen actual";
+  }
+  abrirModal(id);
+};
+
+// ── Guardar (crear / editar) ──
+window.guardarAnuncio = async () => {
+  const titulo  = document.getElementById("f-titulo").value.trim();
+  const cuerpo  = document.getElementById("f-cuerpo").value.trim();
+  const cat     = document.getElementById("f-cat").value;
+  const dest    = document.getElementById("f-dest").value;
+  const hasta   = document.getElementById("f-hasta").value;
+  const btnTxt  = document.getElementById("f-btn-txt").value.trim();
+  const btnUrl  = document.getElementById("f-btn-url").value.trim();
+  const imgFile = document.getElementById("f-img").files[0];
+  const st      = document.getElementById("tb-status");
+  const btn     = document.getElementById("btn-pub");
+
+  if (!titulo || !cuerpo) { st.textContent = "⚠️ Título y descripción son obligatorios."; return; }
+  btn.disabled = true; st.textContent = "Guardando…";
+
+  try {
+    let imgB64 = null;
+    if (imgFile) {
+      st.textContent = "Procesando imagen…";
+      imgB64 = await comprimir(imgFile, 800, .75);
+    } else if (_editId) {
+      // Conservar imagen anterior
+      const prev = window._anuncios.find(x => x.id === _editId);
+      imgB64 = prev?.imagenBase64 || null;
+    }
+
+    const datos = {
+      titulo, cuerpo, categoria: cat, destaca: dest,
+      fechaLimite: hasta || null,
+      linkTexto: btnTxt || null, linkUrl: btnUrl || null,
+      imagenBase64: imgB64,
+      autor: auth.currentUser?.email,
+      fecha: serverTimestamp()
+    };
+
+    if (_editId) {
+      await updateDoc(doc(db,"anuncios",_editId), datos);
+      st.textContent = "✅ Guardado";
+    } else {
+      await addDoc(collection(db,"anuncios"), datos);
+      st.textContent = "✅ Publicado";
+    }
+    setTimeout(() => cerrarModal(), 900);
+  } catch(e) { st.textContent = "❌ " + e.message; }
+  finally { btn.disabled = false; }
+};
+
+// ── Comprimir imagen ──
+function comprimir(file, maxW, q) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = Math.min(maxW / img.width, 1);
+        const c = document.createElement("canvas");
+        c.width = img.width * ratio; c.height = img.height * ratio;
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", q));
+      };
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// ── Eliminar ──
+window.confirmarDel = async () => {
+  if (!_delId) return;
+  try {
+    await deleteDoc(doc(db,"anuncios",_delId));
+    cerrarDel();
+  } catch(e) { alert("Error: " + e.message); }
+};
+
+// ── Mostrar FAB solo si admin ──
+onAuthStateChanged(auth, user => {
+  if (user?.email === ADMIN)
+    document.getElementById("tb-fab").style.display = "flex";
+});
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+</body>
 </html>
+
