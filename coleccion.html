@@ -148,57 +148,116 @@ onAuthStateChanged(auth, async (user) => {
   <p>© 2026 Gato Miel Estudio</p>
 </footer>
 
-<!-- ══ MODAL PAGO MERCADO PAGO ══ -->
+<!-- ══ MODAL PAGO ══ -->
 <div id="modalCompra" class="cl-modal">
   <div class="cl-modal-box">
 
-    <!-- Franja dorada superior -->
-    <div class="cl-modal-stripe">
-      <div class="cl-modal-stripe-inner">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-        <span>Pago 100% seguro</span>
-        <div class="cl-modal-stripe-dots">
-          <span></span><span></span><span></span>
-        </div>
+    <!-- Barra superior oscura -->
+    <div class="cl-modal-topbar">
+      <div class="cl-topbar-left">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span>PAGO SEGURO</span>
       </div>
+      <div class="cl-topbar-dots"><span></span><span></span><span></span></div>
     </div>
 
+    <!-- Header producto -->
     <div class="cl-modal-header">
       <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+        <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <div class="cl-modal-header-inner">
-        <div class="cl-modal-icon">🛍</div>
+      <div class="cl-modal-prod-info">
+        <div class="cl-modal-prod-icon">🛍</div>
         <div>
-          <h2>Finalizar compra</h2>
-          <p id="productoSeleccionado"></p>
+          <div class="cl-modal-prod-label">Finalizando compra</div>
+          <div class="cl-modal-prod-nombre" id="productoSeleccionado"></div>
         </div>
       </div>
-      <!-- Métodos aceptados -->
-      <div class="cl-modal-metodos-icons">
-        <span class="cl-metodo-chip">💳 Tarjeta</span>
-        <span class="cl-metodo-chip">📱 Yape</span>
-        <span class="cl-metodo-chip">💜 Plin</span>
-        <span class="cl-metodo-chip">🏦 Débito</span>
-      </div>
     </div>
 
-    <div class="cl-modal-body" id="cl-modal-body">
-      <!-- Cargando -->
-      <div id="cl-loading" style="text-align:center;padding:52px 0;">
-        <div class="cl-spinner"></div>
-        <p style="margin-top:16px;font-size:13px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:0.04em;">Preparando tu pago seguro...</p>
-      </div>
-      <!-- Contenedor del Brick -->
-      <div id="paymentBrick_container" style="display:none;"></div>
+    <!-- Tabs de método -->
+    <div class="cl-tabs">
+      <button class="cl-tab active" onclick="switchTab('yape', this)">
+        <span class="cl-tab-icon cl-tab-yape">Y</span> Yape
+      </button>
+      <button class="cl-tab" onclick="switchTab('plin', this)">
+        <span class="cl-tab-icon cl-tab-plin">P</span> Plin
+      </button>
+      <button class="cl-tab" onclick="switchTab('tarjeta', this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Tarjeta
+      </button>
     </div>
 
-    <!-- Footer del modal -->
+    <!-- Contenido tabs -->
+    <div class="cl-modal-body">
+
+      <!-- TAB YAPE -->
+      <div id="tab-yape" class="cl-tab-content active">
+        <div class="cl-qr-section">
+          <div class="cl-qr-badge cl-qr-badge-yape">Yape</div>
+          <p class="cl-qr-instruccion">Abre Yape, escanea el código QR y confirma el pago</p>
+          <div class="cl-qr-wrap cl-qr-wrap-yape">
+            <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
+            <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
+            <img src="Assets/Img/QR-Yape.png" alt="QR Yape" class="cl-qr-img"
+              onerror="this.outerHTML='<div class=cl-qr-placeholder><div class=cl-qr-grid></div><p>QR de Yape</p></div>'">
+          </div>
+          <div class="cl-qr-monto-box">
+            <span class="cl-qr-monto-label">Monto a pagar</span>
+            <span class="cl-qr-monto-valor" id="yape-monto">S/ —</span>
+          </div>
+          <div class="cl-qr-steps">
+            <div class="cl-step"><span>1</span><p>Abre Yape en tu celular</p></div>
+            <div class="cl-step"><span>2</span><p>Toca el ícono de QR</p></div>
+            <div class="cl-step"><span>3</span><p>Escanea y confirma</p></div>
+          </div>
+          <button class="cl-btn-confirmar" onclick="confirmarPagoQR('Yape')">
+            ✓ Ya realicé el pago con Yape
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB PLIN -->
+      <div id="tab-plin" class="cl-tab-content">
+        <div class="cl-qr-section">
+          <div class="cl-qr-badge cl-qr-badge-plin">Plin</div>
+          <p class="cl-qr-instruccion">Abre Plin en tu app de banco y escanea el código</p>
+          <div class="cl-qr-wrap cl-qr-wrap-plin">
+            <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
+            <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
+            <img src="Assets/Img/QR-Plin.png" alt="QR Plin" class="cl-qr-img"
+              onerror="this.outerHTML='<div class=cl-qr-placeholder><div class=cl-qr-grid></div><p>QR de Plin</p></div>'">
+          </div>
+          <div class="cl-qr-monto-box">
+            <span class="cl-qr-monto-label">Monto a pagar</span>
+            <span class="cl-qr-monto-valor" id="plin-monto">S/ —</span>
+          </div>
+          <div class="cl-qr-steps">
+            <div class="cl-step"><span>1</span><p>Abre tu app de banco con Plin</p></div>
+            <div class="cl-step"><span>2</span><p>Selecciona Pagar con QR</p></div>
+            <div class="cl-step"><span>3</span><p>Escanea y confirma</p></div>
+          </div>
+          <button class="cl-btn-confirmar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
+            ✓ Ya realicé el pago con Plin
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB TARJETA -->
+      <div id="tab-tarjeta" class="cl-tab-content">
+        <div id="cl-loading" style="text-align:center;padding:40px 0;display:none;">
+          <div class="cl-spinner"></div>
+          <p style="margin-top:14px;font-size:12px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:0.05em;">Cargando formulario seguro...</p>
+        </div>
+        <div id="paymentBrick_container"></div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
     <div class="cl-modal-footer">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>Procesado por Mercado Pago · Encriptación SSL</span>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Pago protegido · Mercado Pago · SSL 256‑bit</span>
     </div>
 
   </div>
@@ -296,94 +355,144 @@ onAuthStateChanged(auth, async (user) => {
 .cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
 .cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
 
-/* ══ MODAL PREMIUM ══ */
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(10,8,6,0.82); backdrop-filter:blur(14px); justify-content:center; align-items:center; z-index:9999; padding:20px; }
+/* ══ MODAL PAGO ══ */
+.cl-modal { display:none; position:fixed; inset:0; background:rgba(10,8,6,0.85); backdrop-filter:blur(16px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
 .cl-modal.open { display:flex; }
 .cl-modal-box {
-  background:white; width:100%; max-width:500px; max-height:92vh;
-  border-radius:28px; display:flex; flex-direction:column; overflow:hidden;
-  animation:clModalIn 0.42s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 50px 100px rgba(0,0,0,0.35), 0 0 0 1px rgba(196,138,58,0.15);
+  background:#fff; width:100%; max-width:420px; max-height:94vh;
+  border-radius:26px; display:flex; flex-direction:column; overflow:hidden;
+  animation:clModalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 40px 100px rgba(0,0,0,0.4), 0 0 0 1px rgba(196,138,58,0.12);
 }
-@keyframes clModalIn { from{transform:scale(0.85) translateY(30px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+@keyframes clModalIn { from{transform:scale(0.88) translateY(28px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
 
-/* Franja dorada */
-.cl-modal-stripe {
-  background: linear-gradient(135deg, #1a1714 0%, #2a2118 50%, #1a1714 100%);
-  padding: 10px 22px;
-  flex-shrink: 0;
+/* Topbar */
+.cl-modal-topbar {
+  background:linear-gradient(90deg,#161210,#231a10,#161210);
+  padding:9px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
 }
-.cl-modal-stripe-inner {
-  display: flex; align-items: center; gap: 8px;
-  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(196,138,58,0.9);
-}
-.cl-modal-stripe-dots { display:flex; gap:4px; margin-left:auto; }
-.cl-modal-stripe-dots span {
-  width:6px; height:6px; border-radius:50%;
-  background: rgba(196,138,58,0.4);
-}
-.cl-modal-stripe-dots span:nth-child(1) { background: #4CAF50; }
-.cl-modal-stripe-dots span:nth-child(2) { background: rgba(196,138,58,0.7); }
-.cl-modal-stripe-dots span:nth-child(3) { background: rgba(196,138,58,0.4); }
+.cl-topbar-left { display:flex; align-items:center; gap:7px; color:rgba(196,138,58,0.85); font-family:'Inter',sans-serif; font-size:10px; font-weight:600; letter-spacing:0.14em; }
+.cl-topbar-dots { display:flex; gap:5px; }
+.cl-topbar-dots span { width:8px; height:8px; border-radius:50%; }
+.cl-topbar-dots span:nth-child(1){ background:#ff5f57; }
+.cl-topbar-dots span:nth-child(2){ background:#febc2e; }
+.cl-topbar-dots span:nth-child(3){ background:#28c840; }
 
-/* Header */
+/* Header producto */
 .cl-modal-header {
-  padding: 22px 24px 16px; position: relative;
-  border-bottom: 1px solid #f5f0ea; flex-shrink: 0;
-  background: linear-gradient(180deg, #fdfaf7 0%, #fff 100%);
-}
-.cl-modal-header-inner { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-.cl-modal-icon {
-  width:44px; height:44px; background:linear-gradient(135deg,#1a1714,#2d2419);
-  border-radius:14px; display:flex; align-items:center; justify-content:center;
-  font-size:20px; flex-shrink:0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-.cl-modal-header h2 {
-  font-family:'Playfair Display',serif; font-size:19px;
-  font-weight:500; color:var(--ink); margin-bottom:2px; line-height:1.2;
-}
-#productoSeleccionado {
-  font-size:12px; color:var(--gold); font-weight:500;
-  letter-spacing:0.06em; font-family:'Inter',sans-serif; min-height:16px;
+  padding:18px 20px 14px; position:relative; flex-shrink:0;
+  background:linear-gradient(180deg,#fdfaf7,#fff);
+  border-bottom:1px solid #f0ebe3;
 }
 .cl-modal-cerrar {
-  position:absolute; top:18px; right:18px;
-  width:30px; height:30px; border-radius:50%; border:none;
-  background:#f0ebe4; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
+  position:absolute; top:16px; right:16px;
+  width:28px; height:28px; border-radius:50%; border:none;
+  background:#f0ebe4; cursor:pointer; display:flex; align-items:center; justify-content:center;
   color:#999; transition:background 0.2s,transform 0.25s,color 0.2s;
 }
 .cl-modal-cerrar:hover { background:var(--gold); color:white; transform:rotate(90deg); }
-
-/* Chips de métodos */
-.cl-modal-metodos-icons {
-  display:flex; gap:6px; flex-wrap:wrap;
+.cl-modal-prod-info { display:flex; align-items:center; gap:12px; }
+.cl-modal-prod-icon {
+  width:40px; height:40px; background:linear-gradient(135deg,#1a1714,#2d2419);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0; box-shadow:0 3px 10px rgba(0,0,0,0.2);
 }
-.cl-metodo-chip {
-  background:#f5f0ea; border-radius:20px;
-  padding:5px 10px; font-size:11px; font-weight:500;
-  color:#666; font-family:'Inter',sans-serif;
+.cl-modal-prod-label { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:#bbb; margin-bottom:2px; }
+.cl-modal-prod-nombre { font-family:'Playfair Display',serif; font-size:16px; font-weight:500; color:var(--ink); }
+
+/* Tabs */
+.cl-tabs { display:flex; gap:0; flex-shrink:0; border-bottom:2px solid #f0ebe3; background:#faf7f4; }
+.cl-tab {
+  flex:1; padding:12px 8px; border:none; background:transparent; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#aaa;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  transition:color 0.2s, background 0.2s; border-bottom:2px solid transparent; margin-bottom:-2px;
   letter-spacing:0.03em;
-  border: 1px solid rgba(196,138,58,0.15);
 }
+.cl-tab:hover { color:var(--ink); background:#f5f0e8; }
+.cl-tab.active { color:var(--ink); border-bottom-color:var(--gold); background:#fff; }
+.cl-tab-icon {
+  width:18px; height:18px; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; color:white; flex-shrink:0;
+}
+.cl-tab-yape { background:#6c2fa5; }
+.cl-tab-plin { background:#00a3e0; }
 
-/* Body */
-.cl-modal-body { padding:20px 22px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; flex:1; }
+/* Contenido tabs */
+.cl-modal-body { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
+.cl-tab-content { display:none; }
+.cl-tab-content.active { display:block; }
+
+/* Sección QR */
+.cl-qr-section { padding:20px 22px 16px; text-align:center; }
+.cl-qr-badge {
+  display:inline-block; padding:4px 14px; border-radius:20px;
+  font-family:'Inter',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:0.08em; margin-bottom:10px;
+}
+.cl-qr-badge-yape { background:#f0e6fa; color:#6c2fa5; }
+.cl-qr-badge-plin { background:#e0f4fc; color:#0077aa; }
+.cl-qr-instruccion { font-family:'Inter',sans-serif; font-size:12px; color:#888; margin-bottom:16px; line-height:1.5; }
+
+.cl-qr-wrap {
+  position:relative; width:180px; height:180px; margin:0 auto 16px;
+  border-radius:16px; padding:10px; background:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+.cl-qr-wrap-yape { border:2px solid rgba(108,47,165,0.2); }
+.cl-qr-wrap-plin { border:2px solid rgba(0,163,224,0.2); }
+.cl-qr-img { width:100%; height:100%; object-fit:contain; border-radius:8px; }
+.cl-qr-corner {
+  position:absolute; width:14px; height:14px;
+}
+.cl-qr-wrap-yape .cl-qr-corner { border-color:#6c2fa5; }
+.cl-qr-wrap-plin .cl-qr-corner { border-color:#00a3e0; }
+.cl-qr-corner.tl { top:5px; left:5px; border-top:2px solid; border-left:2px solid; border-radius:3px 0 0 0; }
+.cl-qr-corner.tr { top:5px; right:5px; border-top:2px solid; border-right:2px solid; border-radius:0 3px 0 0; }
+.cl-qr-corner.bl { bottom:5px; left:5px; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 3px; }
+.cl-qr-corner.br { bottom:5px; right:5px; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 3px 0; }
+.cl-qr-placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+.cl-qr-placeholder p { font-size:11px; color:#bbb; font-family:'Inter',sans-serif; }
+.cl-qr-grid { width:100px; height:100px; background:repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 0 0/10px 10px; border-radius:4px; opacity:0.5; }
+
+.cl-qr-monto-box {
+  display:flex; align-items:center; justify-content:space-between;
+  background:#faf7f4; border-radius:12px; padding:10px 16px; margin-bottom:14px;
+}
+.cl-qr-monto-label { font-family:'Inter',sans-serif; font-size:11px; color:#aaa; font-weight:500; letter-spacing:0.05em; }
+.cl-qr-monto-valor { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); font-weight:500; }
+
+.cl-qr-steps { display:flex; gap:8px; margin-bottom:16px; }
+.cl-step { flex:1; text-align:center; }
+.cl-step span {
+  display:flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--ink); color:white;
+  font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+  margin:0 auto 5px;
+}
+.cl-step p { font-family:'Inter',sans-serif; font-size:10px; color:#888; line-height:1.4; }
+
+.cl-btn-confirmar {
+  width:100%; padding:13px; border:none; border-radius:50px; cursor:pointer;
+  background:linear-gradient(135deg,#6c2fa5,#8b3fc8);
+  color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:0.05em; transition:opacity 0.2s, transform 0.15s;
+  box-shadow:0 4px 16px rgba(108,47,165,0.3);
+}
+.cl-btn-confirmar:hover { opacity:0.9; transform:translateY(-1px); }
+.cl-btn-plin { background:linear-gradient(135deg,#00a3e0,#0077aa); box-shadow:0 4px 16px rgba(0,163,224,0.3); }
 
 /* Footer */
 .cl-modal-footer {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  padding:10px 22px; background:#faf7f4;
-  border-top:1px solid #f0ebe4; flex-shrink:0;
-  font-family:'Inter',sans-serif; font-size:10px; font-weight:400;
-  color:#bbb; letter-spacing:0.08em;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:9px 20px; background:#faf7f4; border-top:1px solid #f0ebe4;
+  font-family:'Inter',sans-serif; font-size:10px; color:#ccc; letter-spacing:0.07em; flex-shrink:0;
 }
 
 /* Spinner */
-.cl-spinner { width:36px; height:36px; border:3px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
+.cl-spinner { width:32px; height:32px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
 /* Avatar selector */
@@ -401,18 +510,32 @@ onAuthStateChanged(auth, async (user) => {
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
 <script>
-const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795";
 let mp = null;
 let bricksBuilder = null;
 let paymentBrickController = null;
 let productoActual = { nombre: "", monto: 0 };
 let avatarSeleccionado = null;
+let tarjetaInicializada = false;
 
-// Inicializar MP SDK
 function initMP() {
   if (!mp) {
-    mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-PE" });
+    mp = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", { locale: "es-PE" });
     bricksBuilder = mp.bricks();
+  }
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll(".cl-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".cl-tab-content").forEach(c => c.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
+
+  // Cargar Brick de tarjeta solo cuando se selecciona esa tab
+  if (tab === "tarjeta" && !tarjetaInicializada) {
+    tarjetaInicializada = true;
+    document.getElementById("cl-loading").style.display = "block";
+    initMP();
+    renderBrick();
   }
 }
 
@@ -432,114 +555,86 @@ function seleccionarAvatar(img) {
 
 async function comprar(nombre, monto) {
   productoActual = { nombre, monto };
-  document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
-  document.getElementById("cl-loading").style.display = "block";
-  document.getElementById("paymentBrick_container").style.display = "none";
-  document.getElementById("modalCompra").classList.add("open");
-  document.body.style.overflow = "hidden";
 
-  // Destruir brick anterior si existe
+  // Reset tabs al abrir
+  document.querySelectorAll(".cl-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+  document.querySelectorAll(".cl-tab-content").forEach((c,i) => c.classList.toggle("active", i===0));
+  tarjetaInicializada = false;
   if (paymentBrickController) {
     try { await paymentBrickController.unmount(); } catch(e) {}
     paymentBrickController = null;
   }
   document.getElementById("paymentBrick_container").innerHTML = "";
+  document.getElementById("cl-loading").style.display = "none";
 
-  initMP();
-  await renderBrick();
+  // Actualizar montos en QR
+  document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
+  document.getElementById("yape-monto").textContent = `S/ ${monto}`;
+  document.getElementById("plin-monto").textContent = `S/ ${monto}`;
+
+  document.getElementById("modalCompra").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
 async function renderBrick() {
   const settings = {
-    initialization: {
-      amount: productoActual.monto,
-      payer: {
-        email: window._userEmail || ""
-      }
-    },
+    initialization: { amount: productoActual.monto, payer: { email: window._userEmail || "" } },
     customization: {
       paymentMethods: {
-        ticket: "all",
         creditCard: "all",
         debitCard: "all",
-        mercadoPago: "all"
+        ticket: "all",       // Yape, Plin, agentes
+        atm: "all",          // transferencia bancaria
+        mercadoPago: "all"   // billetera Mercado Pago
       },
       visual: {
         style: {
           theme: "default",
           customVariables: {
-            baseColor: "#c48a3a",
-            baseColorFirstVariant: "#a8742f",
-            baseColorSecondVariant: "#e8b870",
-            borderRadiusLarge: "14px",
-            borderRadiusMedium: "10px",
-            borderRadiusSmall: "8px",
-            fontSizeExtraSmall: "11px",
-            fontSizeSmall: "13px",
-            formBackgroundColor: "#faf8f5",
-            inputBackgroundColor: "#ffffff",
+            baseColor: "#c48a3a", baseColorFirstVariant: "#a8742f", baseColorSecondVariant: "#e8b870",
+            borderRadiusLarge: "14px", borderRadiusMedium: "10px",
+            formBackgroundColor: "#faf8f5", inputBackgroundColor: "#ffffff",
             inputFocusedBorderColor: "#c48a3a"
           }
         }
       }
     },
     callbacks: {
-      onReady: () => {
-        document.getElementById("cl-loading").style.display = "none";
-        document.getElementById("paymentBrick_container").style.display = "block";
-      },
-      onSubmit: async ({ selectedPaymentMethod, formData }) => {
+      onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
+      onSubmit: async ({ formData }) => {
         try {
           const resp = await fetch("/.netlify/functions/pagar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...formData,
-              description: productoActual.nombre,
-              transaction_amount: productoActual.monto
-            })
+            body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
           });
           const data = await resp.json();
-
           if (!resp.ok) throw new Error(data.error || "Error al procesar");
-
           cerrarModal();
-
-          if (data.status === "approved") {
-            // Pago aprobado
-            document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto}`;
-            document.getElementById("modalExito").style.display = "flex";
-          } else if (data.status === "pending" || data.status === "in_process") {
-            // Pendiente (Yape, Plin, etc.)
-            const qrData = data.point_of_interaction?.transaction_data;
-            if (qrData?.qr_code_base64) {
-              document.getElementById("qrImg").src = `data:image/png;base64,${qrData.qr_code_base64}`;
-              document.getElementById("pendienteQR").style.display = "block";
-            } else {
-              document.getElementById("pendienteQR").style.display = "none";
-            }
-            document.getElementById("modalPendiente").style.display = "flex";
-          } else {
-            alert(`Estado del pago: ${data.status_detail || data.status}. Intenta nuevamente.`);
-          }
-
+          document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto}`;
+          document.getElementById("modalExito").style.display = "flex";
         } catch (err) {
-          console.error(err);
-          alert("Ocurrió un error al procesar el pago. Por favor intenta nuevamente.");
+          alert("Error al procesar el pago. Por favor intenta nuevamente.");
         }
       },
-      onError: (error) => {
-        console.error("Brick error:", error);
-      }
+      onError: (e) => console.error("Brick error:", e)
     }
   };
-
   try {
     paymentBrickController = await bricksBuilder.create("payment", "paymentBrick_container", settings);
   } catch(e) {
-    console.error("Error al crear brick:", e);
-    document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;">Error al cargar el formulario. Recarga la página.</p>`;
+    document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;padding:20px;">Error al cargar el formulario. Recarga la página.</p>`;
   }
+}
+
+function confirmarPagoQR(metodo) {
+  cerrarModal();
+  document.getElementById("exitoDetalle").textContent = `${productoActual.nombre} · S/ ${productoActual.monto} via ${metodo}`;
+  const modal = document.getElementById("modalExito");
+  modal.style.display = "flex";
+  // Cambiar texto del modal éxito para QR
+  modal.querySelector("h3").textContent = "¡Gracias por tu pago!";
+  modal.querySelector("p:not(#exitoDetalle)").textContent = "Verificaremos tu pago y nos comunicaremos contigo pronto por WhatsApp.";
 }
 
 function cerrarModal() {
@@ -552,8 +647,6 @@ function cerrarExito() {
 function cerrarPendiente() {
   document.getElementById("modalPendiente").style.display = "none";
 }
-
-// Cerrar modales con Escape
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); }
 });
