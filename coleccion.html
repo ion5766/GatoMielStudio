@@ -9,33 +9,31 @@
 <link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+const _fc = {
+  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain:"gato-miel-estudio.firebaseapp.com",
+  projectId:"gato-miel-estudio",
+  storageBucket:"gato-miel-estudio.firebasestorage.app",
+  messagingSenderId:"150671559458",
+  appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.replace("entrada.html"); return; }
-  await user.reload();
-  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
-  if (!user.photoURL) {
-    try {
-      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-      await user.reload();
-    } catch(e) {}
+const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _auth = getAuth(_app);
+onAuthStateChanged(_auth, (user) => {
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  const avatar   = document.querySelector(".user-avatar");
+  if (user) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  } else {
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
   }
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-  // Guardar email del usuario para el pago
-  window._userEmail = user.email || "cliente@gatomiels.com";
 });
 </script>
 </head>
@@ -54,7 +52,10 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
+      🐾 Iniciar sesión
+    </a>
+    <div class="user-menu" style="display:none;">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
@@ -926,6 +927,14 @@ let tarjetaInicializada = false;
 
 // Lee nombre y precio directamente del data-attribute del article padre
 function comprarDesdeCard(btn) {
+  // Verificar sesión antes de continuar
+  if (!window._firebaseUser) {
+    const pl = document.getElementById("popupLogin");
+    const pm = document.getElementById("popupLoginMsg");
+    if (pm) pm.textContent = "Necesitas una cuenta para comprar.";
+    if (pl) { pl.style.display = "flex"; }
+    return;
+  }
   const card = btn.closest(".cl-producto");
   const nombre = card.dataset.nombre;
   const monto  = parseInt(card.dataset.precio, 10);
@@ -1233,5 +1242,18 @@ window.guardarPerfil = async () => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
+
+<!-- ═══ POP-UP NECESITA LOGIN ═══ -->
+<div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3);">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;" id="popupLoginTitulo">Inicia sesión para continuar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;" id="popupLoginMsg">Necesitas una cuenta para continuar.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
+    <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
+</div>
+
 </body>
 </html>
+
