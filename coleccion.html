@@ -152,178 +152,179 @@ onAuthStateChanged(auth, async (user) => {
 <div id="modalCompra" class="cl-modal">
   <div class="cl-modal-box">
 
-    <!-- Barra superior oscura -->
-    <div class="cl-modal-topbar">
-      <div class="cl-topbar-left">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>Pago seguro</span>
-      </div>
-      <div class="cl-topbar-dots"><span></span><span></span><span></span></div>
-    </div>
-
-    <!-- Header producto -->
-    <div class="cl-modal-header">
+    <!-- Header inmersivo con fondo oscuro artesanal -->
+    <div class="cl-modal-hero">
       <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
-        <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <div class="cl-modal-prod-info">
-        <div class="cl-modal-prod-icon">🛍</div>
-        <div>
-          <div class="cl-modal-prod-label">Finalizando compra</div>
-          <div class="cl-modal-prod-nombre" id="productoSeleccionado"></div>
-        </div>
+      <div class="cl-modal-hero-text">
+        <span class="cl-modal-hero-eyebrow">Gato Miel Estudio</span>
+        <h2 class="cl-modal-hero-title" id="productoSeleccionado">—</h2>
+        <span class="cl-modal-hero-sub">hecha a mano · pieza única</span>
+      </div>
+      <div class="cl-modal-hero-deco">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="38" stroke="rgba(196,138,58,0.15)" stroke-width="1"/>
+          <circle cx="40" cy="40" r="28" stroke="rgba(196,138,58,0.1)" stroke-width="1"/>
+          <circle cx="40" cy="40" r="4" fill="rgba(196,138,58,0.3)"/>
+          <path d="M40 2 L40 78 M2 40 L78 40" stroke="rgba(196,138,58,0.08)" stroke-width="1"/>
+          <path d="M14 14 L66 66 M66 14 L14 66" stroke="rgba(196,138,58,0.06)" stroke-width="1"/>
+        </svg>
       </div>
     </div>
 
-    <!-- Tabs de método -->
-    <div class="cl-tabs">
-      <button class="cl-tab active" onclick="switchTab('yape', this)">
-        <span class="cl-tab-icon cl-tab-yape">Y</span> Yape
+    <!-- Selector de método de pago — pills horizontales -->
+    <div class="cl-metodo-selector">
+      <button class="cl-metodo-pill active" onclick="switchTab('yape', this)" data-tab="yape">
+        <span class="cl-pill-dot" style="background:#6c2fa5"></span>
+        Yape
       </button>
-      <button class="cl-tab" onclick="switchTab('plin', this)">
-        <span class="cl-tab-icon cl-tab-plin">P</span> Plin
+      <button class="cl-metodo-pill" onclick="switchTab('plin', this)" data-tab="plin">
+        <span class="cl-pill-dot" style="background:#00a3e0"></span>
+        Plin
       </button>
-      <button class="cl-tab" onclick="switchTab('tarjeta', this)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Tarjeta
+      <button class="cl-metodo-pill" onclick="switchTab('tarjeta', this)" data-tab="tarjeta">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        Tarjeta
       </button>
-      <button class="cl-tab" onclick="switchTab('agencia', this)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Agencia
+      <button class="cl-metodo-pill" onclick="switchTab('agencia', this)" data-tab="agencia">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Agencia
       </button>
     </div>
 
-    <!-- Contenido tabs -->
+    <!-- Contenido -->
     <div class="cl-modal-body">
 
       <!-- TAB YAPE -->
       <div id="tab-yape" class="cl-tab-content active">
-        <div class="cl-qr-section">
-          <div class="cl-qr-badge cl-qr-badge-yape">Yape</div>
-          <p class="cl-qr-instruccion">Abre Yape, escanea el código QR y confirma el pago</p>
-          <div class="cl-qr-wrap cl-qr-wrap-yape">
-            <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
-            <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
-            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="cl-qr-img"
+        <div class="cl-qr-pane">
+          <div class="cl-qr-frame cl-qr-frame-yape">
+            <img src="Assets/Img/yape.jpg" alt="QR Yape" class="cl-qr-img"
               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="cl-qr-placeholder" style="display:none"><div class="cl-qr-grid"></div><p>QR de Yape</p></div>
+            <div class="cl-qr-empty" style="display:none">
+              <div class="cl-qr-grid-bg"></div>
+              <span>QR Yape</span>
+            </div>
+            <div class="cl-qr-badge-float cl-qr-badge-yape">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Yape
+            </div>
           </div>
-          <div class="cl-qr-monto-box">
-            <span class="cl-qr-monto-label">Monto a pagar</span>
-            <span class="cl-qr-monto-valor" id="yape-monto">S/ —</span>
+          <div class="cl-qr-info">
+            <div class="cl-qr-monto-pill">
+              <span>Total</span>
+              <strong id="yape-monto">S/ —</strong>
+            </div>
+            <p class="cl-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
-          <div class="cl-qr-steps">
-            <div class="cl-step"><span>1</span><p>Abre Yape en tu celular</p></div>
-            <div class="cl-step"><span>2</span><p>Toca el ícono de QR</p></div>
-            <div class="cl-step"><span>3</span><p>Escanea y confirma</p></div>
-          </div>
-          <button class="cl-btn-confirmar" onclick="confirmarPagoQR('Yape')">
-            ✓ Ya realicé el pago con Yape
+          <button class="cl-btn-pagar cl-btn-yape" onclick="confirmarPagoQR('Yape')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué con Yape
           </button>
         </div>
       </div>
 
       <!-- TAB PLIN -->
       <div id="tab-plin" class="cl-tab-content">
-        <div class="cl-qr-section">
-          <div class="cl-qr-badge cl-qr-badge-plin">Plin</div>
-          <p class="cl-qr-instruccion">Abre Plin en tu app de banco y escanea el código</p>
-          <div class="cl-qr-wrap cl-qr-wrap-plin">
-            <div class="cl-qr-corner tl"></div><div class="cl-qr-corner tr"></div>
-            <div class="cl-qr-corner bl"></div><div class="cl-qr-corner br"></div>
-            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="cl-qr-img"
+        <div class="cl-qr-pane">
+          <div class="cl-qr-frame cl-qr-frame-plin">
+            <img src="Assets/Img/plin.jpg" alt="QR Plin" class="cl-qr-img"
               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="cl-qr-placeholder" style="display:none"><div class="cl-qr-grid"></div><p>QR de Plin</p></div>
+            <div class="cl-qr-empty" style="display:none">
+              <div class="cl-qr-grid-bg"></div>
+              <span>QR Plin</span>
+            </div>
+            <div class="cl-qr-badge-float cl-qr-badge-plin">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Plin
+            </div>
           </div>
-          <div class="cl-qr-monto-box">
-            <span class="cl-qr-monto-label">Monto a pagar</span>
-            <span class="cl-qr-monto-valor" id="plin-monto">S/ —</span>
+          <div class="cl-qr-info">
+            <div class="cl-qr-monto-pill">
+              <span>Total</span>
+              <strong id="plin-monto">S/ —</strong>
+            </div>
+            <p class="cl-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
-          <div class="cl-qr-steps">
-            <div class="cl-step"><span>1</span><p>Abre tu app de banco con Plin</p></div>
-            <div class="cl-step"><span>2</span><p>Selecciona Pagar con QR</p></div>
-            <div class="cl-step"><span>3</span><p>Escanea y confirma</p></div>
-          </div>
-          <button class="cl-btn-confirmar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
-            ✓ Ya realicé el pago con Plin
+          <button class="cl-btn-pagar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué con Plin
           </button>
         </div>
       </div>
 
       <!-- TAB TARJETA -->
       <div id="tab-tarjeta" class="cl-tab-content">
-        <div id="cl-loading" style="text-align:center;padding:40px 0;display:none;">
+        <div id="cl-loading" style="text-align:center;padding:44px 0;display:none;">
           <div class="cl-spinner"></div>
-          <p style="margin-top:14px;font-size:12px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:0.05em;">Cargando formulario seguro...</p>
+          <p style="margin-top:14px;font-size:12px;color:#bbb;font-family:'Inter',sans-serif;letter-spacing:0.06em;">preparando pago seguro...</p>
         </div>
-        <div id="paymentBrick_container" style="padding:12px 4px 4px;"></div>
+        <div id="paymentBrick_container" style="padding:10px 6px 4px;"></div>
       </div>
 
       <!-- TAB AGENCIA -->
       <div id="tab-agencia" class="cl-tab-content">
-        <div class="cl-agencia-section">
-          <div class="cl-qr-badge cl-qr-badge-agencia">Depósito / Transferencia</div>
-          <p class="cl-qr-instruccion">Deposita o transfiere el monto exacto a esta cuenta y envíanos el comprobante por WhatsApp.</p>
-
-          <div class="cl-cci-box">
-            <div class="cl-cci-header">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              <span>Datos bancarios</span>
+        <div class="cl-agencia-pane">
+          <div class="cl-cci-card">
+            <div class="cl-cci-card-header">
+              <span class="cl-cci-bank-name">BCP</span>
+              <span class="cl-cci-bank-label">Banco de Crédito del Perú</span>
             </div>
-            <div class="cl-cci-row">
-              <span class="cl-cci-label">Banco</span>
-              <span class="cl-cci-val">BCP</span>
-            </div>
-            <div class="cl-cci-row">
-              <span class="cl-cci-label">Titular</span>
-              <span class="cl-cci-val">Jhon Anibal Ramirez</span>
-            </div>
-            <div class="cl-cci-row">
-              <span class="cl-cci-label">N° de cuenta</span>
-              <span class="cl-cci-val cl-cci-mono">000-00000000-0-00</span>
-            </div>
-            <div class="cl-cci-row cl-cci-row-highlight">
-              <span class="cl-cci-label">CCI</span>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <span class="cl-cci-val cl-cci-mono" id="cci-numero">00200000000000000000</span>
-                <button class="cl-cci-copy" onclick="copiarCCI()" title="Copiar CCI">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                </button>
+            <div class="cl-cci-fields">
+              <div class="cl-cci-field">
+                <span class="cl-cci-field-label">Titular</span>
+                <span class="cl-cci-field-val">Jhon Anibal Ramirez</span>
+              </div>
+              <div class="cl-cci-field">
+                <span class="cl-cci-field-label">N° Cuenta</span>
+                <span class="cl-cci-field-val mono">000-00000000-0-00</span>
+              </div>
+              <div class="cl-cci-field cl-cci-field-cci">
+                <span class="cl-cci-field-label">CCI</span>
+                <div class="cl-cci-copy-row">
+                  <span class="cl-cci-field-val mono" id="cci-numero">00200000000000000000</span>
+                  <button class="cl-cci-copy-btn" onclick="copiarCCI()" title="Copiar">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="cl-cci-field cl-cci-field-monto">
+                <span class="cl-cci-field-label">Monto exacto</span>
+                <span class="cl-cci-field-val cl-cci-monto-val" id="agencia-monto">S/ —</span>
               </div>
             </div>
-            <div class="cl-cci-row">
-              <span class="cl-cci-label">Monto exacto</span>
-              <span class="cl-cci-val cl-cci-monto" id="agencia-monto">S/ —</span>
+          </div>
+
+          <div class="cl-agencia-steps">
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">1</div>
+              <p>Deposita o transfiere usando el CCI</p>
+            </div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">2</div>
+              <p>Toma captura del comprobante</p>
+            </div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">3</div>
+              <p>Envíala por WhatsApp · <strong>+51 922 402 608</strong></p>
             </div>
           </div>
 
-          <div class="cl-agencia-pasos">
-            <div class="cl-agencia-paso">
-              <div class="cl-paso-num">1</div>
-              <p>Deposita o transfiere el monto exacto usando el CCI</p>
-            </div>
-            <div class="cl-agencia-paso">
-              <div class="cl-paso-num">2</div>
-              <p>Toma una foto o captura del comprobante</p>
-            </div>
-            <div class="cl-agencia-paso">
-              <div class="cl-paso-num">3</div>
-              <p>Envíala por WhatsApp al <strong>+51 922 402 608</strong></p>
-            </div>
-          </div>
-
-          <a href="https://wa.me/51922402608?text=Hola!%20Realicé%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
+          <a href="https://wa.me/51922402608?text=Hola!%20Hice%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
              target="_blank" class="cl-btn-whatsapp">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-            Enviar comprobante por WhatsApp
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Enviar comprobante
           </a>
         </div>
       </div>
 
     </div>
 
-    <!-- Footer -->
-    <div class="cl-modal-footer">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>Pago protegido · Mercado Pago · SSL 256‑bit</span>
+    <!-- Pie sutil -->
+    <div class="cl-modal-pie">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>pago protegido · ssl 256-bit</span>
     </div>
 
   </div>
@@ -421,196 +422,209 @@ onAuthStateChanged(auth, async (user) => {
 .cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
 .cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
 
-/* ══ MODAL PAGO ══ */
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(10,8,6,0.85); backdrop-filter:blur(16px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
+/* ══ MODAL ══ */
+.cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
 .cl-modal.open { display:flex; }
 .cl-modal-box {
-  background:#fff; width:100%; max-width:420px; max-height:94vh;
-  border-radius:26px; display:flex; flex-direction:column; overflow:hidden;
-  animation:clModalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 40px 100px rgba(0,0,0,0.4), 0 0 0 1px rgba(196,138,58,0.12);
+  background:#fff; width:100%; max-width:400px; max-height:92vh;
+  border-radius:24px; display:flex; flex-direction:column; overflow:hidden;
+  animation:clModalIn 0.45s cubic-bezier(0.34,1.4,0.64,1);
+  box-shadow:0 50px 120px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,138,58,0.1);
 }
-@keyframes clModalIn { from{transform:scale(0.88) translateY(28px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+@keyframes clModalIn { from{transform:scale(0.86) translateY(32px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
 
-/* Topbar */
-.cl-modal-topbar {
-  background:linear-gradient(90deg,#14100d,#1e1610,#14100d);
-  padding:8px 18px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+/* Hero header inmersivo */
+.cl-modal-hero {
+  background: linear-gradient(160deg, #100d0a 0%, #1e1610 50%, #0f0c09 100%);
+  padding: 28px 24px 24px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
-.cl-topbar-left { display:flex; align-items:center; gap:6px; color:rgba(196,138,58,0.75); font-family:'Inter',sans-serif; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:lowercase; }
-.cl-topbar-dots { display:flex; gap:5px; }
-.cl-topbar-dots span { width:7px; height:7px; border-radius:50%; }
-.cl-topbar-dots span:nth-child(1){ background:#ff5f57; }
-.cl-topbar-dots span:nth-child(2){ background:#febc2e; }
-.cl-topbar-dots span:nth-child(3){ background:#28c840; }
-
-/* Header producto */
-.cl-modal-header {
-  padding:18px 20px 14px; position:relative; flex-shrink:0;
-  background:linear-gradient(180deg,#fdfaf7,#fff);
-  border-bottom:1px solid #f0ebe3;
+.cl-modal-hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(196,138,58,0.08) 0%, transparent 65%);
+  pointer-events:none;
 }
 .cl-modal-cerrar {
-  position:absolute; top:16px; right:16px;
-  width:28px; height:28px; border-radius:50%; border:none;
-  background:#f0ebe4; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  color:#999; transition:background 0.2s,transform 0.25s,color 0.2s;
-}
-.cl-modal-cerrar:hover { background:var(--gold); color:white; transform:rotate(90deg); }
-.cl-modal-prod-info { display:flex; align-items:center; gap:12px; }
-.cl-modal-prod-icon {
-  width:40px; height:40px; background:linear-gradient(135deg,#1a1714,#2d2419);
-  border-radius:12px; display:flex; align-items:center; justify-content:center;
-  font-size:18px; flex-shrink:0; box-shadow:0 3px 10px rgba(0,0,0,0.2);
-}
-.cl-modal-prod-label { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:#bbb; margin-bottom:2px; }
-.cl-modal-prod-nombre { font-family:'Playfair Display',serif; font-size:16px; font-weight:500; color:var(--ink); }
-
-/* Tabs */
-.cl-tabs { display:flex; gap:0; flex-shrink:0; border-bottom:2px solid #f0ebe3; background:#faf7f4; }
-.cl-tab {
-  flex:1; padding:12px 8px; border:none; background:transparent; cursor:pointer;
-  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#aaa;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  transition:color 0.2s, background 0.2s; border-bottom:2px solid transparent; margin-bottom:-2px;
-  letter-spacing:0.03em;
-}
-.cl-tab:hover { color:var(--ink); background:#f5f0e8; }
-.cl-tab.active { color:var(--ink); border-bottom-color:var(--gold); background:#fff; }
-.cl-tab-icon {
-  width:18px; height:18px; border-radius:5px;
+  position:absolute; top:14px; right:14px; z-index:2;
+  width:26px; height:26px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.08); cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  font-size:10px; font-weight:700; color:white; flex-shrink:0;
+  color:rgba(255,255,255,0.5); transition:background 0.2s, color 0.2s, transform 0.25s;
 }
-.cl-tab-yape { background:#6c2fa5; }
-.cl-tab-plin { background:#00a3e0; }
+.cl-modal-cerrar:hover { background:rgba(196,138,58,0.3); color:white; transform:rotate(90deg); }
+.cl-modal-hero-eyebrow {
+  display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500;
+  letter-spacing:0.22em; text-transform:uppercase;
+  color:rgba(196,138,58,0.6); margin-bottom:8px;
+}
+.cl-modal-hero-title {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
+  color:white; line-height:1.2; margin-bottom:5px;
+  letter-spacing:-0.01em;
+}
+.cl-modal-hero-sub {
+  display:block; font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
+  color:rgba(255,255,255,0.3); letter-spacing:0.12em;
+  font-style:italic;
+}
+.cl-modal-hero-deco {
+  position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+  width:90px; height:90px; opacity:0.6; pointer-events:none;
+}
+.cl-modal-hero-deco svg { width:100%; height:100%; }
 
-/* Contenido tabs */
+/* Pills selector de método */
+.cl-metodo-selector {
+  display:flex; gap:6px; padding:14px 16px 12px;
+  background:#faf8f5; border-bottom:1px solid #f0ebe3;
+  flex-shrink:0; overflow-x:auto; scrollbar-width:none;
+}
+.cl-metodo-selector::-webkit-scrollbar { display:none; }
+.cl-metodo-pill {
+  display:flex; align-items:center; gap:5px;
+  padding:7px 14px; border-radius:50px; border:1.5px solid #ede8e0;
+  background:white; cursor:pointer; white-space:nowrap;
+  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#999;
+  transition:all 0.2s ease; flex-shrink:0;
+}
+.cl-metodo-pill:hover { border-color:#c48a3a; color:var(--ink); }
+.cl-metodo-pill.active {
+  background:var(--ink); border-color:var(--ink); color:white;
+  box-shadow:0 4px 12px rgba(26,23,20,0.25);
+}
+.cl-metodo-pill.active .cl-pill-dot { opacity:1; }
+.cl-pill-dot { width:7px; height:7px; border-radius:50%; opacity:0.7; flex-shrink:0; }
+
+/* Body */
 .cl-modal-body { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
 .cl-tab-content { display:none; }
 .cl-tab-content.active { display:block; }
 
-/* Sección QR */
-.cl-qr-section { padding:20px 22px 16px; text-align:center; }
-.cl-qr-badge {
-  display:inline-block; padding:4px 14px; border-radius:20px;
-  font-family:'Inter',sans-serif; font-size:11px; font-weight:700;
-  letter-spacing:0.08em; margin-bottom:10px;
-}
-.cl-qr-badge-yape { background:#f0e6fa; color:#6c2fa5; }
-.cl-qr-badge-plin { background:#e0f4fc; color:#0077aa; }
-.cl-qr-instruccion { font-family:'Inter',sans-serif; font-size:12px; color:#888; margin-bottom:16px; line-height:1.5; }
+/* QR pane — Yape / Plin */
+.cl-qr-pane { padding:20px 20px 18px; display:flex; flex-direction:column; align-items:center; gap:14px; }
 
-.cl-qr-wrap {
-  position:relative; width:180px; height:180px; margin:0 auto 16px;
-  border-radius:16px; padding:10px; background:#fff;
-  box-shadow:0 4px 24px rgba(0,0,0,0.1);
+.cl-qr-frame {
+  position:relative; width:190px; height:190px;
+  border-radius:20px; overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.12);
 }
-.cl-qr-wrap-yape { border:2px solid rgba(108,47,165,0.2); }
-.cl-qr-wrap-plin { border:2px solid rgba(0,163,224,0.2); }
-.cl-qr-img { width:100%; height:100%; object-fit:contain; border-radius:8px; }
-.cl-qr-corner {
-  position:absolute; width:14px; height:14px;
+.cl-qr-frame-yape { background:linear-gradient(135deg,rgba(108,47,165,0.06),rgba(108,47,165,0.02)); border:1.5px solid rgba(108,47,165,0.15); }
+.cl-qr-frame-plin  { background:linear-gradient(135deg,rgba(0,163,224,0.06),rgba(0,163,224,0.02)); border:1.5px solid rgba(0,163,224,0.15); }
+.cl-qr-img { width:100%; height:100%; object-fit:contain; padding:10px; }
+.cl-qr-empty {
+  width:100%; height:100%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;
 }
-.cl-qr-wrap-yape .cl-qr-corner { border-color:#6c2fa5; }
-.cl-qr-wrap-plin .cl-qr-corner { border-color:#00a3e0; }
-.cl-qr-corner.tl { top:5px; left:5px; border-top:2px solid; border-left:2px solid; border-radius:3px 0 0 0; }
-.cl-qr-corner.tr { top:5px; right:5px; border-top:2px solid; border-right:2px solid; border-radius:0 3px 0 0; }
-.cl-qr-corner.bl { bottom:5px; left:5px; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 3px; }
-.cl-qr-corner.br { bottom:5px; right:5px; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 3px 0; }
-.cl-qr-placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
-.cl-qr-placeholder p { font-size:11px; color:#bbb; font-family:'Inter',sans-serif; }
-.cl-qr-grid { width:100px; height:100px; background:repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 0 0/10px 10px; border-radius:4px; opacity:0.5; }
+.cl-qr-grid-bg {
+  width:100px; height:100px;
+  background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/10px 10px;
+  border-radius:6px; opacity:0.4;
+}
+.cl-qr-empty span { font-size:11px; color:#ccc; font-family:'Inter',sans-serif; }
+.cl-qr-badge-float {
+  position:absolute; bottom:8px; right:8px;
+  display:flex; align-items:center; gap:4px;
+  padding:3px 9px; border-radius:20px;
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:0.05em;
+}
+.cl-qr-badge-yape { background:#6c2fa5; color:white; }
+.cl-qr-badge-plin  { background:#00a3e0; color:white; }
 
-.cl-qr-monto-box {
+.cl-qr-info { width:100%; display:flex; flex-direction:column; gap:8px; }
+.cl-qr-monto-pill {
   display:flex; align-items:center; justify-content:space-between;
-  background:#faf7f4; border-radius:12px; padding:10px 16px; margin-bottom:14px;
+  background:#f8f5f1; border-radius:14px; padding:11px 16px;
+  border:1px solid #ede8de;
 }
-.cl-qr-monto-label { font-family:'Inter',sans-serif; font-size:11px; color:#aaa; font-weight:500; letter-spacing:0.05em; }
-.cl-qr-monto-valor { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); font-weight:500; }
+.cl-qr-monto-pill span { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; font-weight:400; letter-spacing:0.06em; }
+.cl-qr-monto-pill strong { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); font-weight:500; }
+.cl-qr-hint { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; text-align:center; line-height:1.5; letter-spacing:0.02em; }
 
-.cl-qr-steps { display:flex; gap:8px; margin-bottom:16px; }
-.cl-step { flex:1; text-align:center; }
-.cl-step span {
-  display:flex; align-items:center; justify-content:center;
-  width:24px; height:24px; border-radius:50%;
-  background:var(--ink); color:white;
-  font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
-  margin:0 auto 5px;
+.cl-btn-pagar {
+  width:100%; padding:14px; border:none; border-radius:16px; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.06em;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:opacity 0.2s, transform 0.15s;
 }
-.cl-step p { font-family:'Inter',sans-serif; font-size:10px; color:#888; line-height:1.4; }
+.cl-btn-pagar:hover { opacity:0.9; transform:translateY(-1px); }
+.cl-btn-yape { background:linear-gradient(135deg,#5a2490,#7a35b8); color:white; box-shadow:0 6px 20px rgba(90,36,144,0.3); }
+.cl-btn-plin  { background:linear-gradient(135deg,#0090cc,#006699); color:white; box-shadow:0 6px 20px rgba(0,144,204,0.3); }
 
-.cl-btn-confirmar {
-  width:100%; padding:13px; border:none; border-radius:50px; cursor:pointer;
-  background:linear-gradient(135deg,#6c2fa5,#8b3fc8);
-  color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
-  letter-spacing:0.05em; transition:opacity 0.2s, transform 0.15s;
-  box-shadow:0 4px 16px rgba(108,47,165,0.3);
-}
-.cl-btn-confirmar:hover { opacity:0.9; transform:translateY(-1px); }
-.cl-btn-plin { background:linear-gradient(135deg,#00a3e0,#0077aa); box-shadow:0 4px 16px rgba(0,163,224,0.3); }
-
-/* Footer */
-.cl-modal-footer {
-  display:flex; align-items:center; justify-content:center; gap:5px;
-  padding:9px 20px; background:#faf7f4; border-top:1px solid #f0ebe4;
-  font-family:'Inter',sans-serif; font-size:10px; color:#ccc; letter-spacing:0.07em; flex-shrink:0;
-}
-
-/* Spinner */
-.cl-spinner { width:32px; height:32px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
+/* Tarjeta spinner */
+.cl-spinner { width:30px; height:30px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
-/* Agencia / CCI */
-.cl-agencia-section { padding:18px 20px 20px; }
-.cl-qr-badge-agencia { background:#f0f4e8; color:#5a7a2a; }
-.cl-cci-box {
-  background:#faf8f5; border-radius:16px; overflow:hidden;
-  border:1px solid #ede8e0; margin-bottom:16px;
-}
-.cl-cci-header {
-  background:linear-gradient(135deg,#1a1714,#2d2419);
-  padding:10px 16px; display:flex; align-items:center; gap:8px;
-  color:rgba(196,138,58,0.9); font-family:'Inter',sans-serif;
-  font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
-}
-.cl-cci-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 16px; border-bottom:1px solid #f0ebe3;
-}
-.cl-cci-row:last-child { border-bottom:none; }
-.cl-cci-row-highlight { background:rgba(196,138,58,0.05); }
-.cl-cci-label { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; font-weight:400; }
-.cl-cci-val { font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); font-weight:500; }
-.cl-cci-mono { font-family:monospace; letter-spacing:0.05em; font-size:13px; }
-.cl-cci-monto { color:var(--gold); font-family:'Playfair Display',serif; font-size:16px; }
-.cl-cci-copy {
-  width:24px; height:24px; border:none; background:#f0ebe4;
-  border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  color:#888; transition:background 0.2s, color 0.2s;
-}
-.cl-cci-copy:hover { background:var(--gold); color:white; }
+/* Agencia pane */
+.cl-agencia-pane { padding:18px 18px 20px; display:flex; flex-direction:column; gap:14px; }
 
-.cl-agencia-pasos { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-.cl-agencia-paso { display:flex; align-items:flex-start; gap:12px; }
-.cl-paso-num {
-  width:22px; height:22px; border-radius:50%; background:var(--ink);
+.cl-cci-card {
+  border-radius:18px; overflow:hidden;
+  border:1px solid #ede8de;
+  box-shadow:0 2px 12px rgba(0,0,0,0.05);
+}
+.cl-cci-card-header {
+  background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);
+  padding:14px 18px; display:flex; align-items:baseline; gap:10px;
+}
+.cl-cci-bank-name {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
+  color:var(--gold); letter-spacing:0.04em;
+}
+.cl-cci-bank-label {
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
+  color:rgba(255,255,255,0.3); letter-spacing:0.08em;
+}
+.cl-cci-fields { background:#faf8f5; }
+.cl-cci-field {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px; border-bottom:1px solid #f0ebe3;
+}
+.cl-cci-field:last-child { border-bottom:none; }
+.cl-cci-field-label { font-family:'Inter',sans-serif; font-size:10px; color:#c8c0b4; font-weight:400; letter-spacing:0.08em; text-transform:uppercase; }
+.cl-cci-field-val { font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); font-weight:500; }
+.cl-cci-field-val.mono { font-family:monospace; font-size:13px; letter-spacing:0.04em; }
+.cl-cci-field-cci { background:rgba(196,138,58,0.04); }
+.cl-cci-copy-row { display:flex; align-items:center; gap:8px; }
+.cl-cci-copy-btn {
+  width:22px; height:22px; border:none; border-radius:6px;
+  background:#ede8de; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  color:#999; transition:background 0.2s, color 0.2s;
+}
+.cl-cci-copy-btn:hover { background:var(--gold); color:white; }
+.cl-cci-field-monto .cl-cci-field-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--gold); }
+
+.cl-agencia-steps { display:flex; flex-direction:column; gap:9px; }
+.cl-agencia-step { display:flex; align-items:flex-start; gap:11px; }
+.cl-astep-num {
+  width:20px; height:20px; border-radius:50%; background:var(--ink);
   color:white; font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
   display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
 }
-.cl-agencia-paso p { font-family:'Inter',sans-serif; font-size:12px; color:#666; line-height:1.5; }
-.cl-agencia-paso strong { color:var(--ink); font-weight:600; }
+.cl-agencia-step p { font-family:'Inter',sans-serif; font-size:12px; color:#777; line-height:1.5; }
+.cl-agencia-step strong { color:var(--ink); font-weight:600; }
 
 .cl-btn-whatsapp {
   display:flex; align-items:center; justify-content:center; gap:8px;
-  width:100%; padding:13px; border-radius:50px;
-  background:linear-gradient(135deg,#25D366,#1da851);
+  padding:13px; border-radius:16px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
   color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
-  letter-spacing:0.04em; text-decoration:none;
-  box-shadow:0 4px 16px rgba(37,211,102,0.3);
+  letter-spacing:0.05em; text-decoration:none;
+  box-shadow:0 6px 20px rgba(34,197,94,0.3);
   transition:opacity 0.2s, transform 0.15s;
 }
-.cl-btn-whatsapp:hover { opacity:0.92; transform:translateY(-1px); }
+.cl-btn-whatsapp:hover { opacity:0.9; transform:translateY(-1px); }
+
+/* Pie */
+.cl-modal-pie {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:8px 16px; background:#faf8f5; border-top:1px solid #f0ebe3;
+  font-family:'Inter',sans-serif; font-size:9px; color:#d4cdc4;
+  letter-spacing:0.1em; text-transform:lowercase; flex-shrink:0;
+}
 
 /* Avatar selector */
 .avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
@@ -827,4 +841,3 @@ window.guardarPerfil = async () => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
-
