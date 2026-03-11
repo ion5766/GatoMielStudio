@@ -210,34 +210,25 @@ const auth = getAuth(app);
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 onAuthStateChanged(auth,(user)=>{
-
-if(user){
-
-window.location.replace("index.html");
-
-}
-
+  // Solo redirige si email verificado O es Google (siempre verificado)
+  if(user && (user.emailVerified || user.providerData?.[0]?.providerId === "google.com")){
+    window.location.replace("index.html");
+  }
 });
 
 window.registrarse = async ()=>{
-
-const email = document.getElementById("email").value;
-const pass = document.getElementById("password").value;
-
-try{
-
-const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
-
-await sendEmailVerification(userCredential.user);
-
-alert("Te enviamos un correo para verificar tu cuenta, Verifica el apartado SPAM");
-
-}catch(error){
-
-alert(error.message);
-
-}
-
+  const email = document.getElementById("email").value.trim();
+  const pass = document.getElementById("password").value;
+  if(!email || !pass){ alert("Ingresa correo y contraseña."); return; }
+  try{
+    const userCredential = await createUserWithEmailAndPassword(auth,email,pass);
+    await sendEmailVerification(userCredential.user);
+    // Cerrar sesión inmediatamente — el usuario debe verificar antes de entrar
+    await userCredential.user.auth.signOut();
+    alert("✉️ Te enviamos un correo de verificación.\nRevisa tu bandeja de entrada y SPAM.\nUna vez verificado, inicia sesión.");
+  }catch(error){
+    alert(error.message);
+  }
 };
 
 window.login = async ()=>{
