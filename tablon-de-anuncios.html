@@ -803,7 +803,7 @@ const cfg = {
   messagingSenderId:"150671559458",
   appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-const ADMIN = "jhonanibal576@gmail.com";
+const ADMIN = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
 const app   = getApps().length ? getApps()[0] : initializeApp(cfg);
 const auth  = getAuth(app);
 const db    = getFirestore(app);
@@ -812,7 +812,7 @@ let isAdmin = false;
 window._anuncios = [];
 
 // ── Auth ──
-onAuthStateChanged(auth, user => { isAdmin = user?.email === ADMIN; });
+onAuthStateChanged(auth, user => { isAdmin = ADMIN.includes(user?.email); });
 
 // ── Perfil modal ──
 const pModal  = document.getElementById("perfilModal");
@@ -1031,7 +1031,7 @@ window.confirmarDel = async () => {
 
 // ── Mostrar FAB solo si admin ──
 onAuthStateChanged(auth, user => {
-  if (user?.email === ADMIN)
+  if (ADMIN.includes(user?.email))
     document.getElementById("tb-fab").style.display = "flex";
 });
 </script>
@@ -1039,4 +1039,3 @@ onAuthStateChanged(auth, user => {
 <script type="module" src="Js/src/chat.js"></script>
 </body>
 </html>
-
