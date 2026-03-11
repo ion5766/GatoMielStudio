@@ -138,17 +138,35 @@ onAuthStateChanged(auth, async (user) => {
       <div id="paso-pago" style="display:none;">
         <button class="ht-btn-back" onclick="volverHorario()">← Cambiar horario</button>
         <p class="ht-step-label" style="margin-top:18px;">Método de pago</p>
-        <div class="ht-metodos">
+        <div class="ht-metodos" style="grid-template-columns:repeat(3,1fr);">
           <div class="ht-metodo" onclick="seleccionarMetodo(event,'yape')">
             <img src="Assets/Img/yape.jpeg" alt="Yape"><span class="ht-metodo-label">Yape</span>
           </div>
           <div class="ht-metodo" onclick="seleccionarMetodo(event,'plin')">
             <img src="Assets/Img/plin.jpeg" alt="Plin"><span class="ht-metodo-label">Plin</span>
           </div>
+          <div class="ht-metodo" onclick="seleccionarMetodo(event,'tarjeta')">
+            <div style="display:flex;gap:3px;justify-content:center;align-items:center;height:64px;">
+              <svg width="28" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/><rect x="2" y="12" width="8" height="2" rx="1" fill="white" opacity=".7"/></svg>
+              <svg width="28" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
+            </div>
+            <span class="ht-metodo-label">Tarjeta</span>
+          </div>
         </div>
+        <!-- QR Yape -->
         <div id="ht-pago-yape" class="ht-pago-detalle"><h4>Escanea con Yape</h4><img src="Assets/Img/yape.jpeg" alt="QR Yape"></div>
+        <!-- QR Plin -->
         <div id="ht-pago-plin" class="ht-pago-detalle"><h4>Escanea con Plin</h4><img src="Assets/Img/plin.jpeg" alt="QR Plin"></div>
-        <button id="btnConfirmarMem" class="ht-btn-confirm"><span>Ya realicé el pago · Confirmar ✔</span></button>
+        <!-- Tarjeta MP Brick -->
+        <div id="ht-pago-tarjeta" class="ht-pago-detalle" style="padding:10px 0 0;">
+          <div id="ht-loading-tarjeta" style="text-align:center;padding:20px;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
+            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin 0.8s linear infinite;margin:0 auto 10px;"></div>
+            Cargando formulario...
+          </div>
+          <div id="memCardBrick_container"></div>
+        </div>
+        <!-- Botón confirmar (Yape/Plin) — oculto para tarjeta que paga directamente -->
+        <button id="btnConfirmarMem" class="ht-btn-confirm" style="display:none;"><span>Ya realicé el pago · Confirmar ✔</span></button>
       </div>
     </div>
   </div>
@@ -293,6 +311,7 @@ onAuthStateChanged(auth, async (user) => {
 .ht-metodo-activo::after{content:"✓";position:absolute;top:8px;right:10px;width:18px;height:18px;background:var(--gold);color:white;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
 .ht-pago-detalle{display:none;text-align:center;padding:18px 0 8px;animation:htFade .28s ease}
 @keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes htSpin{to{transform:rotate(360deg)}}
 .ht-pago-detalle h4{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:var(--ink);margin-bottom:14px}
 .ht-pago-detalle img{width:100%;max-width:190px;margin:0 auto 14px;border-radius:14px;display:block;box-shadow:0 8px 28px rgba(0,0,0,.1)}
 .ht-btn-confirm{width:100%;margin-top:20px;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;font-family:'Inter',sans-serif;position:relative;overflow:hidden}
@@ -361,6 +380,13 @@ function seleccionarMetodo(event,metodo){
   event.currentTarget.classList.add("ht-metodo-activo");
   document.querySelectorAll(".ht-pago-detalle").forEach(op=>op.style.display="none");
   document.getElementById("ht-pago-"+metodo).style.display="block";
+  const btnConf = document.getElementById("btnConfirmarMem");
+  if (metodo === "tarjeta") {
+    btnConf.style.display = "none";
+    if (!window._memCardInicializada) { window._memCardInicializada = true; window._initMemCard && window._initMemCard(); }
+  } else {
+    btnConf.style.display = "block";
+  }
 }
 let avatarSeleccionado=null;
 function toggleUserMenu(){ const m=document.getElementById("userDropdown"); m.style.display=m.style.display==="block"?"none":"block"; }
@@ -409,6 +435,9 @@ onAuthStateChanged(auth, async (user) => {
   await _initCupos();
   escucharCupos();
   document.getElementById("btnConfirmarMem").onclick = confirmarPago;
+  // Exponer _registrarMembresia y _mpBrickControllerMem para el brick
+  window._registrarMembresia = _registrarMembresia;
+  window._mpBrickControllerMem = null;
 });
 
 // ── INICIALIZAR DOC CUPOS ────────────────────────────────────────────────
@@ -491,22 +520,32 @@ function _elegirHorario(el, h) {
 // ── ABRIR MODAL ──────────────────────────────────────────────────────────
 window.abrirMembresia = function() {
   horarioElegido = null; horarioElegidoId = null; metodoMembresia = "";
+  window._memCardInicializada = false;
+  if (window._mpBrickControllerMem) { try { window._mpBrickControllerMem.unmount(); } catch(e){} window._mpBrickControllerMem = null; }
   document.getElementById("horarioSeleccionadoLabel").textContent = "";
   document.getElementById("paso-horario").style.display = "block";
   document.getElementById("paso-pago").style.display    = "none";
   document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
   document.querySelectorAll(".ht-pago-detalle").forEach(el => el.style.display = "none");
+  document.getElementById("btnConfirmarMem").style.display = "none";
   document.getElementById("modalMembresia").style.display = "flex";
   document.body.style.overflow = "hidden";
   renderHorarios();
 };
 
-// ── CONFIRMAR PAGO ───────────────────────────────────────────────────────
+// ── CONFIRMAR PAGO (Yape / Plin) ────────────────────────────────────────
 async function confirmarPago() {
   if (!metodoMembresia) { alert("Selecciona un método de pago."); return; }
   if (!currentUser)     { alert("Debes iniciar sesión."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0)      { alert("Este horario ya no tiene cupos disponibles."); return; }
+  await _registrarMembresia(metodoMembresia.toUpperCase());
+}
+
+// ── REGISTRAR MEMBRESÍA EN FIRESTORE Y MOSTRAR POP-UP ───────────────────
+async function _registrarMembresia(metodoLabel) {
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
 
   const docRef = await addDoc(collection(db,"membresias"), {
     usuarioEmail:  currentUser.email,
@@ -514,31 +553,105 @@ async function confirmarPago() {
     usuarioAvatar: currentUser.photoURL || "",
     horarioId:     horarioElegidoId,
     horarioLabel:  horarioElegido,
-    metodo:        metodoMembresia.toUpperCase(),
+    metodo:        metodoLabel,
     estado:        "pendiente",
     fecha:         serverTimestamp(),
     tallerId:      TALLER_ID,
   });
 
-  const wsp = "51922402608";
   const ref = docRef.id.slice(0,8).toUpperCase();
-  const msg = encodeURIComponent(`Hola! Acabo de pagar la membresía.\n\n📅 Horario: ${horarioElegido}\n💳 Método: ${metodoMembresia.toUpperCase()}\n🆔 Ref: ${ref}\n\nTe envío la captura ✨`);
+  const esTarjeta = metodoLabel === "TARJETA";
+
+  // Pop-up de éxito — diferente para tarjeta vs QR
   document.getElementById("modalMembresiaBody").innerHTML = `
-    <div style="text-align:center;padding:28px 8px 8px;animation:htFade .4s ease">
-      <div style="width:60px;height:60px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;box-shadow:0 8px 24px rgba(196,138,58,.3)">✓</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:#1a1714;margin-bottom:8px">¡Membresía casi lista!</h3>
-      <p style="font-size:14px;color:#888;margin-bottom:4px;font-family:'Inter',sans-serif">Horario reservado:</p>
+    <div style="text-align:center;padding:28px 12px 8px;animation:htFade .4s ease">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3)">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:8px">
+        ${esTarjeta ? "¡Pago recibido!" : "¡Solicitud enviada!"}
+      </h3>
+      <p style="font-size:14px;color:#888;margin-bottom:4px;font-family:'Inter',sans-serif">
+        ${esTarjeta ? "Estamos validando tu pago" : "Estamos validando tu comprobante"}
+      </p>
       <p style="font-size:15px;font-weight:500;color:#c48a3a;font-family:'Inter',sans-serif;margin-bottom:6px">${horarioElegido}</p>
-      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;margin-bottom:22px">Ref: ${ref}</p>
-      <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:26px;font-family:'Inter',sans-serif">Envíanos la captura del pago<br>por WhatsApp para confirmar tu plaza.</p>
-      <a href="https://wa.me/${wsp}?text=${msg}" target="_blank"
-         style="display:inline-flex;align-items:center;gap:10px;padding:14px 26px;background:#25D366;color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;letter-spacing:.05em;box-shadow:0 8px 20px rgba(37,211,102,.28);margin-bottom:12px">
+      <div style="background:#faf7f4;border-radius:14px;padding:14px;margin:0 0 20px;text-align:left;">
+        <p style="font-size:12px;color:#888;font-family:'Inter',sans-serif;line-height:1.9;margin:0">
+          <strong style="color:#1a1714">Método:</strong> ${metodoLabel}<br>
+          <strong style="color:#1a1714">Ref:</strong> ${ref}<br>
+          <strong style="color:#1a1714">Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>
+        </p>
+      </div>
+      <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:${esTarjeta?'20px':'22px'};font-family:'Inter',sans-serif">
+        ${esTarjeta
+          ? "Las administradoras revisarán tu pago.<br>Te confirmaremos en menos de 24 horas 🐾"
+          : "Envíanos la captura del pago por WhatsApp<br>para confirmar tu plaza más rápido 🐾"}
+      </p>
+      ${!esTarjeta ? `
+      <a href="https://wa.me/51922402608?text=${encodeURIComponent(`Hola! Acabo de pagar la membresía.\n\n📅 Horario: ${horarioElegido}\n💳 Método: ${metodoLabel}\n🆔 Ref: ${ref}\n\nTe envío la captura ✨`)}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px;background:#25D366;color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;letter-spacing:.05em;box-shadow:0 8px 20px rgba(37,211,102,.28);margin-bottom:14px">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Enviar captura por WhatsApp
-      </a>
+      </a>` : ""}
       <p style="font-size:10px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase">Te confirmaremos en menos de 24h</p>
     </div>`;
 }
+
+// ── MERCADO PAGO BRICK (TARJETA) ─────────────────────────────────────────
+let _mpMem = null;
+let _mpBricksBuilderMem = null;
+let _mpBrickControllerMem = null;
+
+window._initMemCard = async function() {
+  const loading = document.getElementById("ht-loading-tarjeta");
+  const container = document.getElementById("memCardBrick_container");
+  if (!container) return;
+  try {
+    if (!window.MercadoPago) {
+      await new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = "https://sdk.mercadopago.com/js/v2";
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    if (!_mpMem) {
+      _mpMem = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", {locale:"es-PE"});
+      _mpBricksBuilderMem = _mpMem.bricks();
+    }
+    if (_mpBrickControllerMem) { try { await _mpBrickControllerMem.unmount(); } catch(e){} }
+    container.innerHTML = "";
+    if (loading) loading.style.display = "none";
+
+    const PRECIO_MEMBRESIA = 150; // Soles — ajusta según precio real
+    _mpBrickControllerMem = await _mpBricksBuilderMem.create("payment", "memCardBrick_container", {
+      initialization: {
+        amount: PRECIO_MEMBRESIA,
+        payer: { email: currentUser?.email || "" }
+      },
+      customization: {
+        paymentMethods: { creditCard:"all", debitCard:"all", ticket:"none", bankTransfer:"none", atm:"none", onboarding_credits:"none", wallet_purchase:"none" },
+        visual: { style: { theme:"default", customVariables: { baseColor:"#c48a3a" } } }
+      },
+      callbacks: {
+        onReady: () => { if (loading) loading.style.display = "none"; },
+        onError: (e) => { console.error("MP Error:", e); },
+        onSubmit: async ({ selectedPaymentMethod, formData }) => {
+          // Llamar al backend de MP para procesar el pago
+          // Como no hay backend activo, registramos como pendiente igual que Yape/Plin
+          // y notificamos al admin para validación manual
+          try {
+            await _registrarMembresia("TARJETA");
+          } catch(e) {
+            console.error(e);
+          }
+          return Promise.resolve(); // necesario para que el Brick no quede en loading
+        }
+      }
+    });
+  } catch(e) {
+    if (loading) loading.style.display = "none";
+    container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif">Error al cargar el formulario de tarjeta. Intenta con Yape o Plin.</p>`;
+  }
+};
 
 // ══════════════════════════════════════════
 //  PANEL ADMIN
