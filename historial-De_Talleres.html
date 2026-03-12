@@ -263,13 +263,25 @@ onAuthStateChanged(_auth, (user) => {
           <input type="file" id="pt-file-plin" accept="image/*" style="display:none" onchange="ptPreview('plin',this)">
         </div>
 
-        <!-- Tarjeta MP Brick -->
+        <!-- Tarjeta: validación manual -->
         <div id="pt-det-tarjeta" class="ht-pago-detalle" style="display:none;">
-          <div id="pt-loading-tarjeta" style="text-align:center;padding:24px;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
-            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin 0.8s linear infinite;margin:0 auto 10px;"></div>
-            Cargando formulario...
+          <div style="background:#faf7f4;border-radius:16px;padding:20px 18px;border:1px solid #f0ebe4;text-align:left;margin-bottom:16px;">
+            <p style="font-family:'Playfair Display',serif;font-size:15px;font-weight:500;color:#1a1714;margin-bottom:10px;text-align:center;">Pago con tarjeta</p>
+            <p style="font-family:'Inter',sans-serif;font-size:13px;color:#666;line-height:1.8;margin-bottom:14px;">
+              Envíanos los datos de tu tarjeta por WhatsApp y las administradoras procesarán el cobro de forma segura y te confirmarán tu plaza.
+            </p>
+            <div style="background:white;border-radius:12px;padding:14px;border:1px solid #f0ebe4;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:2.2;">
+              <strong style="color:#1a1714;">💳 Monto:</strong> S/ 150.00<br>
+              <strong style="color:#1a1714;">📅 Horario:</strong> <span id="pt-tarjeta-horario"></span><br>
+              <strong style="color:#1a1714;">📋 Estado tras confirmar:</strong> Pendiente de validación
+            </div>
           </div>
-          <div id="ptCardBrick_container"></div>
+          <a id="pt-tarjeta-wsp" href="#" target="_blank"
+             style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#25D366;color:white;text-decoration:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;margin-bottom:12px;box-shadow:0 6px 16px rgba(37,211,102,.25);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Coordinar pago por WhatsApp
+          </a>
+          <p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.6;">Al confirmar tu plaza quedará como pendiente hasta que las administradoras procesen el pago.</p>
         </div>
 
         <!-- Agencia BCP -->
@@ -542,6 +554,9 @@ import {
   getFirestore, collection, addDoc, doc, updateDoc, setDoc,
   onSnapshot, query, orderBy, getDoc, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref as storRef, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
@@ -553,9 +568,10 @@ const HORARIOS = [
 ];
 
 const firebaseConfig={apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app     = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
 let currentUser = null;
 let esAdmin = false;
@@ -730,13 +746,17 @@ window.ptIrDetalle = function() {
   ["yape","plin","tarjeta","agencia"].forEach(m => {
     document.getElementById("pt-det-"+m).style.display = m === ptMetodo ? "block" : "none";
   });
-  // Botón confirmar: visible solo para Yape/Plin/Agencia
-  const btn = document.getElementById("pt-btn-confirmar");
+  // Todos los métodos muestran botón confirmar
+  document.getElementById("pt-btn-confirmar").style.display = "block";
+  // Para tarjeta: actualizar link WhatsApp y mostrar horario
   if (ptMetodo === "tarjeta") {
-    btn.style.display = "none";
-    if (!_ptBrickInited) { _ptBrickInited = true; _initPtCard(); }
-  } else {
-    btn.style.display = "block";
+    const hl = document.getElementById("pt-tarjeta-horario");
+    if (hl) hl.textContent = horarioElegido || "";
+    const wspLink = document.getElementById("pt-tarjeta-wsp");
+    if (wspLink) {
+      const msg = encodeURIComponent("Hola! Quiero pagar con tarjeta la membresía 🐾\n\n📅 Horario: " + horarioElegido + "\n💳 Monto: S/ 150.00\n\n¿Cómo procedo?");
+      wspLink.href = "https://wa.me/51922402608?text=" + msg;
+    }
   }
 };
 
@@ -755,27 +775,44 @@ window.ptPreview = function(metodo, input) {
 };
 
 window.ptConfirmar = async function() {
-  if (!ptFile) { alert("Por favor adjunta el comprobante de pago."); return; }
+  // Solo Yape, Plin y Agencia requieren comprobante
+  if (ptMetodo !== "tarjeta" && !ptFile) {
+    alert("Por favor adjunta el comprobante de pago.");
+    return;
+  }
   const btn = document.getElementById("pt-btn-confirmar");
   btn.disabled = true;
   btn.querySelector("span").textContent = "Enviando...";
-  await _ptRegistrar(ptMetodo.toUpperCase());
-  btn.disabled = false;
+  try {
+    await _ptRegistrar(ptMetodo.toUpperCase());
+  } catch(e) {
+    console.error("Error registrando:", e);
+    alert("Error al registrar: " + e.message);
+    btn.disabled = false;
+    btn.querySelector("span").textContent = "Ya realicé el pago · Confirmar ✔";
+  }
 };
 
 async function _ptRegistrar(metodoLabel) {
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Sin cupos disponibles."); return; }
+
+  // Subir comprobante a Firebase Storage (solo Yape/Plin/Agencia)
   let comprobanteURL = "";
   if (ptFile) {
     try {
       const ext  = ptFile.name.split(".").pop() || "jpg";
-      const ruta = storRef(storage, "comprobantes/"+Date.now()+"_"+currentUser.uid+"."+ext);
-      const snap = await uploadBytes(ruta, ptFile);
-      comprobanteURL = await getDownloadURL(snap.ref);
-    } catch(e) { console.warn("Error subiendo comprobante:", e); }
+      const ruta = storRef(storage, "comprobantes/" + Date.now() + "_" + currentUser.uid + "." + ext);
+      const snapUp = await uploadBytes(ruta, ptFile);
+      comprobanteURL = await getDownloadURL(snapUp.ref);
+    } catch(e) {
+      console.warn("Error subiendo comprobante:", e);
+      // Continuar aunque falle el upload — el admin solicitará reenvío si es necesario
+    }
   }
-  const docRef = await addDoc(collection(db,"membresias"), {
+
+  // Guardar en Firestore
+  const docRef = await addDoc(collection(db, "membresias"), {
     usuarioEmail:  currentUser.email,
     usuarioNombre: currentUser.displayName || currentUser.email,
     usuarioAvatar: currentUser.photoURL || "",
@@ -787,26 +824,27 @@ async function _ptRegistrar(metodoLabel) {
     fecha:         serverTimestamp(),
     tallerId:      TALLER_ID,
   });
-  const ref = docRef.id.slice(0,8).toUpperCase();
-  // Pop-up de éxito
+  const ref = docRef.id.slice(0, 8).toUpperCase();
+  ptFile = null;
+
+  // Pantalla de éxito
   document.getElementById("pagoTallerBody").innerHTML = `
     <div style="text-align:center;padding:36px 16px 24px;animation:htFade .4s ease">
-      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3)">✓</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px">¡Gracias! Estamos validando tu pago</h3>
-      <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;font-family:'Inter',sans-serif">Recibimos tu comprobante.<br>Las administradoras lo revisarán pronto 🐾</p>
-      <div style="background:#faf7f4;border-radius:16px;padding:16px;margin:0 0 24px;text-align:left;border:1px solid #f0ebe4;">
-        <p style="font-size:12px;color:#999;font-family:'Inter',sans-serif;line-height:2;margin:0">
-          <strong style="color:#1a1714">📅 Horario:</strong> ${horarioElegido}<br>
-          <strong style="color:#1a1714">💳 Método:</strong> ${metodoLabel}<br>
-          <strong style="color:#1a1714">🆔 Ref:</strong> ${ref}<br>
-          <strong style="color:#1a1714">📋 Estado:</strong>
-          <span style="color:#92712a;font-weight:600;background:#fef9ee;padding:2px 8px;border-radius:20px;font-size:11px;margin-left:4px">Pendiente de validación</span>
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3);">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">¡Gracias! Revisaremos tu pago</h3>
+      <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;font-family:'Inter',sans-serif;">Recibimos tu solicitud.<br>Las administradoras lo validarán pronto 🐾</p>
+      <div style="background:#faf7f4;border-radius:16px;padding:16px;margin:0 0 20px;text-align:left;border:1px solid #f0ebe4;">
+        <p style="font-size:12px;color:#999;font-family:'Inter',sans-serif;line-height:2.2;margin:0;">
+          <strong style="color:#1a1714;">📅 Horario:</strong> \${horarioElegido}<br>
+          <strong style="color:#1a1714;">💳 Método:</strong> \${metodoLabel}<br>
+          <strong style="color:#1a1714;">🆔 Ref:</strong> \${ref}<br>
+          <strong style="color:#1a1714;">📋 Estado:</strong>
+          <span style="color:#92712a;font-weight:600;background:#fef9ee;padding:2px 8px;border-radius:20px;font-size:11px;margin-left:4px;">Pendiente de validación</span>
         </p>
       </div>
-      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase">Te confirmaremos en menos de 24h</p>
-      <button onclick="cerrarPagoTaller()" style="margin-top:18px;background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 24px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
+      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px;">Te confirmaremos en menos de 24h</p>
+      <button onclick="cerrarPagoTaller()" style="background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 24px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
     </div>`;
-  ptFile = null;
 }
 
 async function _initPtCard() {
@@ -1032,6 +1070,10 @@ function renderPanelAdmin() {
         <strong>Ref:</strong> ${m.id.slice(0,8).toUpperCase()}<br>
         <strong>Fecha:</strong> ${fecha}
       </div>
+      ${m.comprobanteURL
+        ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="abrirLightbox('${m.comprobanteURL}')" title="Ver comprobante">`
+        : `<p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;margin-top:8px;text-align:center;">Sin comprobante adjunto</p>`
+      }
       ${m.estado==="pendiente"?`
       <div class="adm-acciones">
         <button class="adm-btn-confirmar" data-id="${m.id}" data-hid="${m.horarioId}" onclick="validarPago('${m.id}','${m.horarioId}',this)">✓ Confirmar pago</button>
