@@ -10,14 +10,7 @@
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const _fc = {
-  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain:"gato-miel-estudio.firebaseapp.com",
-  projectId:"gato-miel-estudio",
-  storageBucket:"gato-miel-estudio.firebasestorage.app",
-  messagingSenderId:"150671559458",
-  appId:"1:150671559458:web:6daaf4a78150706db0337b"
-};
+const _fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
 const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
 const _auth = getAuth(_app);
 onAuthStateChanged(_auth, (user) => {
@@ -50,14 +43,10 @@ onAuthStateChanged(_auth, (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
-      🐾 Iniciar sesión
-    </a>
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">🐾 Iniciar sesión</a>
     <div class="user-menu" style="display:none;">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
-        class="user-avatar" onclick="toggleUserMenu()">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E" class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
-        <button onclick="window.location.href='coleccion.html'">🛍 Mis pedidos</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
@@ -83,8 +72,7 @@ onAuthStateChanged(_auth, (user) => {
     <div class="ht-grid">
       <article class="ht-card">
         <div class="ht-card-img">
-          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna"
-               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
           <span class="ht-badge ht-badge-open">Abierto</span>
         </div>
         <div class="ht-card-body">
@@ -96,7 +84,7 @@ onAuthStateChanged(_auth, (user) => {
             <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
           </div>
           <div class="ht-card-footer">
-            <button class="ht-btn-solid" onclick="abrirMembresia()">Pagar membresía</button>
+            <button class="ht-btn-solid" onclick="abrirPagoMembresia()">Pagar membresía</button>
           </div>
         </div>
       </article>
@@ -113,8 +101,7 @@ onAuthStateChanged(_auth, (user) => {
     <div class="ht-grid">
       <article class="ht-card ht-card-dim">
         <div class="ht-card-img">
-          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno"
-               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
           <span class="ht-badge ht-badge-soon">Pronto</span>
         </div>
         <div class="ht-card-body">
@@ -128,220 +115,254 @@ onAuthStateChanged(_auth, (user) => {
     </div>
   </section>
 </main>
-
 <footer class="footer"><p>© 2026 Gato Miel Estudio</p></footer>
 
-<!-- MODAL MEMBRESÍA -->
-<div id="modalMembresia" class="ht-modal">
-  <div class="ht-modal-box">
-    <div class="ht-modal-header">
-      <button class="ht-modal-cerrar" onclick="cerrarMembresia()">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-      <h2>Pagar membresía</h2>
-      <p id="horarioSeleccionadoLabel"></p>
-    </div>
-    <div class="ht-modal-body" id="modalMembresiaBody">
-      <div id="paso-horario">
-        <p class="ht-step-label">Elige tu horario</p>
-        <div class="ht-horarios" id="lista-horarios"></div>
-        <button class="ht-btn-confirm" onclick="window.irAPagoTaller()"><span>Continuar al pago →</span></button>
-      </div>
-      <div id="paso-pago" style="display:none;">
-        <button class="ht-btn-back" onclick="volverHorario()">← Cambiar horario</button>
-        <p class="ht-step-label" style="margin-top:18px;">Método de pago</p>
-        <div class="ht-metodos" style="grid-template-columns:repeat(3,1fr);">
-          <div class="ht-metodo" onclick="seleccionarMetodo(event,'yape')">
-            <img src="Assets/Img/yape.jpeg" alt="Yape"><span class="ht-metodo-label">Yape</span>
-          </div>
-          <div class="ht-metodo" onclick="seleccionarMetodo(event,'plin')">
-            <img src="Assets/Img/plin.jpeg" alt="Plin"><span class="ht-metodo-label">Plin</span>
-          </div>
-          <div class="ht-metodo" onclick="seleccionarMetodo(event,'tarjeta')">
-            <div style="display:flex;gap:3px;justify-content:center;align-items:center;height:64px;">
-              <svg width="28" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/><rect x="2" y="12" width="8" height="2" rx="1" fill="white" opacity=".7"/></svg>
-              <svg width="28" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
-            </div>
-            <span class="ht-metodo-label">Tarjeta</span>
-          </div>
-        </div>
-        <!-- QR Yape -->
-        <div id="ht-pago-yape" class="ht-pago-detalle"><h4>Escanea con Yape</h4><img src="Assets/Img/yape.jpeg" alt="QR Yape"></div>
-        <!-- QR Plin -->
-        <div id="ht-pago-plin" class="ht-pago-detalle"><h4>Escanea con Plin</h4><img src="Assets/Img/plin.jpeg" alt="QR Plin"></div>
-        <!-- Tarjeta MP Brick -->
-        <div id="ht-pago-tarjeta" class="ht-pago-detalle" style="padding:10px 0 0;">
-          <div id="ht-loading-tarjeta" style="text-align:center;padding:20px;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
-            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin 0.8s linear infinite;margin:0 auto 10px;"></div>
-            Cargando formulario...
-          </div>
-          <div id="memCardBrick_container"></div>
-        </div>
-        <!-- Botón confirmar (Yape/Plin) — oculto para tarjeta que paga directamente -->
-        <button id="btnConfirmarMem" class="ht-btn-confirm" style="display:none;"><span>Ya realicé el pago · Confirmar ✔</span></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ═══ POP-UP: NECESITA LOGIN ═══ -->
+<!-- ═══ POPUP LOGIN ═══ -->
 <div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);animation:htFade .35s ease;">
-    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3);">🐾</div>
-    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;" id="popupLoginTitulo">Inicia sesión para continuar</h3>
-    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;" id="popupLoginMsg">Para reservar un taller necesitas una cuenta.</p>
-    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">Iniciar sesión / Crear cuenta</a>
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">Inicia sesión para continuar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;">Para reservar un taller necesitas una cuenta.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
     <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
   </div>
 </div>
 
-<!-- ═══ MODAL PAGO UNIFICADO (igual a colección) ═══ -->
-<div id="modalPagoTaller" class="ht-modal" style="z-index:9999;">
+<!-- ═══ MODAL PASO 1: HORARIO ═══ -->
+<div id="modalHorario" class="ht-modal">
   <div class="ht-modal-box">
-    <div class="ht-modal-header">
-      <button class="ht-modal-cerrar" onclick="cerrarPagoTaller()">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalHorario()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <h2>Pagar membresía</h2>
-      <p id="pagoTallerHorarioLabel" style="font-size:12px;color:#c48a3a;font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-family:'Inter',sans-serif;min-height:16px;"></p>
-    </div>
-    <div class="ht-modal-body" id="pagoTallerBody">
-
-      <!-- PASO 1: ELEGIR MÉTODO -->
-      <div id="pt-paso-metodo">
-        <p class="ht-step-label">Elige cómo pagar</p>
-        <div class="ht-metodos" style="grid-template-columns:repeat(2,1fr);gap:10px;">
-          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'yape')">
-            <img src="Assets/Img/yape.jpeg" alt="Yape" style="max-width:72px;height:52px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 4px;">
-            <span class="ht-metodo-label">Yape</span>
-          </div>
-          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'plin')">
-            <img src="Assets/Img/plin.jpeg" alt="Plin" style="max-width:72px;height:52px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 4px;">
-            <span class="ht-metodo-label">Plin</span>
-          </div>
-          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'tarjeta')">
-            <div style="display:flex;gap:4px;justify-content:center;align-items:center;height:52px;">
-              <svg width="30" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/><rect x="2" y="12" width="8" height="2" rx="1" fill="white" opacity=".7"/></svg>
-              <svg width="30" height="20" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
-            </div>
-            <span class="ht-metodo-label">Tarjeta</span>
-          </div>
-          <div class="ht-metodo" onclick="ptSeleccionarMetodo(event,'agencia')">
-            <div style="font-size:26px;text-align:center;line-height:52px;">🏦</div>
-            <span class="ht-metodo-label">Agencia</span>
-          </div>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub">elige tu horario · S/ 150</span>
         </div>
-        <button class="ht-btn-confirm" onclick="ptIrDetalle()" style="margin-top:6px;"><span>Continuar →</span></button>
+      </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
+      </div>
+    </div>
+    <div style="padding:20px 22px 24px;">
+      <p class="ht-step-label">Selecciona un horario disponible</p>
+      <div class="ht-horarios" id="lista-horarios"></div>
+      <button class="ht-btn-confirm" onclick="irAPago()" style="margin-top:16px;"><span>Continuar al pago →</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL PASO 2: PAGO ═══ -->
+<div id="modalPago" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalPago()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub" id="pago-horario-sub">—</span>
+        </div>
+      </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
+      </div>
+    </div>
+
+    <div class="ht-metodo-selector">
+      <button class="ht-metodo-pill active" onclick="switchMetodo('yape',this)"><span class="ht-pill-dot" style="background:#6c2fa5;"></span>Yape</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('plin',this)"><span class="ht-pill-dot" style="background:#00a3e0;"></span>Plin</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('tarjeta',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Tarjeta
+      </button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('agencia',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Agencia
+      </button>
+    </div>
+
+    <div class="ht-modal-body">
+
+      <!-- TAB YAPE -->
+      <div id="tab-yape" class="ht-tab active">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-yape">
+            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-yape">Yape</div>
+          </div>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
+          </div>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-yape" onclick="document.getElementById('file-yape').click()">
+              <div id="ph-yape" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-yape" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-yape" accept="image/*" style="display:none" onchange="previewComp('yape',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-yape" onclick="confirmarPago('Yape')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué · Enviar comprobante
+          </button>
+        </div>
       </div>
 
-      <!-- PASO 2: DETALLE DE PAGO -->
-      <div id="pt-paso-detalle" style="display:none;">
-        <button class="ht-btn-back" onclick="ptVolverMetodo()">← Cambiar método</button>
-
-        <!-- Yape -->
-        <div id="pt-det-yape" class="ht-pago-detalle" style="display:none;">
-          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:10px;">Escanea con Yape</h4>
-          <img src="Assets/Img/yape.jpeg" alt="QR Yape" style="max-width:160px;border-radius:12px;display:block;margin:0 auto 16px;">
-          <p class="ht-comp-titulo">📎 Adjunta tu comprobante</p>
-          <div class="ht-comp-zona" id="zona-yape" onclick="document.getElementById('pt-file-yape').click()">
-            <div id="ph-yape" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir captura</span></div>
-            <div id="pr-yape" style="display:none;width:100%;text-align:center;"></div>
+      <!-- TAB PLIN -->
+      <div id="tab-plin" class="ht-tab">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-plin">
+            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-plin">Plin</div>
           </div>
-          <input type="file" id="pt-file-yape" accept="image/*" style="display:none" onchange="ptPreview('yape',this)">
-        </div>
-
-        <!-- Plin -->
-        <div id="pt-det-plin" class="ht-pago-detalle" style="display:none;">
-          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:10px;">Escanea con Plin</h4>
-          <img src="Assets/Img/plin.jpeg" alt="QR Plin" style="max-width:160px;border-radius:12px;display:block;margin:0 auto 16px;">
-          <p class="ht-comp-titulo">📎 Adjunta tu comprobante</p>
-          <div class="ht-comp-zona" id="zona-plin" onclick="document.getElementById('pt-file-plin').click()">
-            <div id="ph-plin" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir captura</span></div>
-            <div id="pr-plin" style="display:none;width:100%;text-align:center;"></div>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
-          <input type="file" id="pt-file-plin" accept="image/*" style="display:none" onchange="ptPreview('plin',this)">
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-plin" onclick="document.getElementById('file-plin').click()">
+              <div id="ph-plin" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-plin" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-plin" accept="image/*" style="display:none" onchange="previewComp('plin',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-plin" onclick="confirmarPago('Plin')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué · Enviar comprobante
+          </button>
         </div>
+      </div>
 
-        <!-- Tarjeta: validación manual -->
-        <div id="pt-det-tarjeta" class="ht-pago-detalle" style="display:none;">
-          <div style="background:#faf7f4;border-radius:16px;padding:20px 18px;border:1px solid #f0ebe4;text-align:left;margin-bottom:16px;">
-            <p style="font-family:'Playfair Display',serif;font-size:15px;font-weight:500;color:#1a1714;margin-bottom:10px;text-align:center;">Pago con tarjeta</p>
-            <p style="font-family:'Inter',sans-serif;font-size:13px;color:#666;line-height:1.8;margin-bottom:14px;">
-              Envíanos los datos de tu tarjeta por WhatsApp y las administradoras procesarán el cobro de forma segura y te confirmarán tu plaza.
-            </p>
-            <div style="background:white;border-radius:12px;padding:14px;border:1px solid #f0ebe4;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:2.2;">
-              <strong style="color:#1a1714;">💳 Monto:</strong> S/ 150.00<br>
-              <strong style="color:#1a1714;">📅 Horario:</strong> <span id="pt-tarjeta-horario"></span><br>
-              <strong style="color:#1a1714;">📋 Estado tras confirmar:</strong> Pendiente de validación
+      <!-- TAB TARJETA -->
+      <div id="tab-tarjeta" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:14px;">
+          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:center;gap:10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,0.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+              <span style="font-family:'Playfair Display',serif;font-size:16px;color:white;">Pago con tarjeta</span>
+            </div>
+            <div style="padding:14px 18px;font-family:'Inter',sans-serif;font-size:12px;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Taller</span><span style="color:#1a1714;font-weight:500;">Arcilla Nocturna</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Horario</span><span style="color:#1a1714;font-weight:500;" id="tarjeta-horario-val">—</span></div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
             </div>
           </div>
-          <a id="pt-tarjeta-wsp" href="#" target="_blank"
-             style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#25D366;color:white;text-decoration:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;margin-bottom:12px;box-shadow:0 6px 16px rgba(37,211,102,.25);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+          <p style="font-family:'Inter',sans-serif;font-size:12px;color:#aaa;text-align:center;line-height:1.6;margin:0 4px;">Coordina el cobro por WhatsApp. Confirmamos en menos de 24h.</p>
+          <a id="tarjeta-wsp" href="#" target="_blank" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:16px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 6px 20px rgba(34,197,94,.3);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
             Coordinar pago por WhatsApp
           </a>
-          <p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.6;">Al confirmar tu plaza quedará como pendiente hasta que las administradoras procesen el pago.</p>
+          <button onclick="confirmarPago('Tarjeta')" style="width:100%;padding:12px;border:1.5px solid #ede8de;border-radius:16px;background:white;color:#888;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;" onmouseover="this.style.background='#faf8f5'" onmouseout="this.style.background='white'">
+            Ya coordiné · Confirmar plaza ✔
+          </button>
         </div>
+      </div>
 
-        <!-- Agencia BCP -->
-        <div id="pt-det-agencia" class="ht-pago-detalle" style="display:none;">
-          <h4 style="font-family:'Playfair Display',serif;font-size:16px;text-align:center;margin-bottom:16px;">Depósito en Agencia BCP</h4>
-          <div style="background:#faf7f4;border-radius:14px;padding:18px;font-family:'Inter',sans-serif;font-size:13px;color:#555;line-height:2;border:1px solid #f0ebe4;">
-            <strong style="color:#1a1714">Titular:</strong> Gato Miel Estudio<br>
-            <strong style="color:#1a1714">Banco:</strong> BCP<br>
-            <strong style="color:#1a1714">Cuenta:</strong> 000-000000-0-00 <span style="color:#ccc;font-size:11px;">(actualizar)</span><br>
-            <strong style="color:#1a1714">CCI:</strong> 00200000000000000000 <span style="color:#ccc;font-size:11px;">(actualizar)</span>
+      <!-- TAB AGENCIA -->
+      <div id="tab-agencia" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:14px;">
+          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:baseline;gap:10px;">
+              <span style="font-family:'Playfair Display',serif;font-size:20px;color:#c48a3a;">BCP</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;">Banco de Crédito del Perú</span>
+            </div>
+            <div style="padding:0 18px;">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Titular</span><span style="color:#1a1714;font-weight:500;">Gato Miel Estudio</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Cuenta</span><span style="font-family:monospace;color:#1a1714;">000-00000000-0-00</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">CCI</span><span style="font-family:monospace;color:#1a1714;">00200000000000000000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
+            </div>
           </div>
-          <p style="font-size:12px;color:#aaa;text-align:center;margin-top:10px;font-family:'Inter',sans-serif;">Realiza el depósito y adjunta el voucher</p>
-          <p class="ht-comp-titulo" style="margin-top:14px;">📎 Adjunta tu comprobante</p>
-          <div class="ht-comp-zona" id="zona-agencia" onclick="document.getElementById('pt-file-agencia').click()">
-            <div id="ph-agencia" class="ht-comp-placeholder"><span style="font-size:26px">📸</span><span>Toca para subir voucher</span></div>
-            <div id="pr-agencia" style="display:none;width:100%;text-align:center;"></div>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu voucher de depósito</p>
+            <div class="ht-comp-zona" id="zona-agencia" onclick="document.getElementById('file-agencia').click()">
+              <div id="ph-agencia" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir voucher</span></div>
+              <div id="pr-agencia" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-agencia" accept="image/*" style="display:none" onchange="previewComp('agencia',this)">
           </div>
-          <input type="file" id="pt-file-agencia" accept="image/*" style="display:none" onchange="ptPreview('agencia',this)">
+          <button class="ht-btn-pagar ht-btn-agencia" onclick="confirmarPago('Agencia')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya deposité · Enviar voucher
+          </button>
         </div>
-
-        <!-- Botón confirmar (solo para Yape/Plin/Agencia) -->
-        <button id="pt-btn-confirmar" class="ht-btn-confirm" style="display:none;margin-top:14px;" onclick="ptConfirmar()">
-          <span>Ya realicé el pago · Confirmar ✔</span>
-        </button>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- BOTÓN FAB ADMIN -->
+<!-- ═══ MODAL ÉXITO ═══ -->
+<div id="modalExito" class="ht-modal" style="z-index:10001;">
+  <div class="ht-modal-box" style="max-width:380px;">
+    <div style="padding:36px 28px 28px;text-align:center;">
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3);">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:500;color:#1a1714;margin-bottom:8px;">¡Gracias por tu pago!</h3>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#888;line-height:1.7;margin-bottom:4px;">Revisaremos tu comprobante y activaremos tu plaza.</p>
+      <p id="exito-detalle" style="font-family:'Inter',sans-serif;font-size:14px;color:#c48a3a;font-weight:500;margin-bottom:20px;"></p>
+      <div id="exito-resumen" style="background:#faf7f4;border-radius:14px;padding:16px;margin-bottom:20px;text-align:left;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:2;border:1px solid #f0ebe4;"></div>
+      <p style="font-family:'Inter',sans-serif;font-size:11px;color:#ccc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px;">Te confirmaremos en menos de 24h 🐾</p>
+      <button onclick="document.getElementById('modalExito').style.display='none';document.body.style.overflow='';" style="background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 28px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LIGHTBOX ═══ -->
+<div id="lightbox" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="lightbox-img" src="" style="max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6);">
+</div>
+
+<!-- ═══ PANEL ADMIN FAB ═══ -->
 <div id="panelAdminMem" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
-  <button onclick="abrirPanelAdmin()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;">
+  <button onclick="abrirPanelAdmin()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
     🎫 Membresías
     <span id="badge-mem" style="background:#c48a3a;color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;"></span>
   </button>
 </div>
 
-<!-- MODAL PANEL ADMIN -->
+<!-- ═══ MODAL PANEL ADMIN ═══ -->
 <div id="modalAdminMem" class="ht-modal" style="z-index:9998;">
   <div class="ht-modal-box" style="max-width:560px;">
-    <div class="ht-modal-header">
+    <div class="ht-modal-hero" style="padding:22px 22px 18px;">
       <button class="ht-modal-cerrar" onclick="cerrarPanelAdmin()">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <h2>Membresías recibidas</h2>
-      <p>Valida los pagos y activa las plazas</p>
+      <div class="ht-modal-hero-brand">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Panel Admin</span>
+          <h2 class="ht-modal-hero-title">Membresías recibidas</h2>
+          <span class="ht-modal-hero-sub">Valida pagos y activa plazas</span>
+        </div>
+      </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+      </div>
     </div>
     <div class="ht-modal-body">
       <div class="adm-tabs">
         <button class="adm-tab activo" onclick="filtrarMem('pendiente',this)">Pendientes</button>
         <button class="adm-tab" onclick="filtrarMem('confirmado',this)">Confirmados</button>
+        <button class="adm-tab" onclick="filtrarMem('rechazado',this)">Rechazados</button>
         <button class="adm-tab" onclick="filtrarMem('todos',this)">Todos</button>
       </div>
-      <div id="lista-mem-admin"><div style="text-align:center;padding:30px;color:#bbb;font-size:13px;">Cargando...</div></div>
+      <div id="lista-mem-admin"><div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Cargando...</div></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL PERFIL -->
+<!-- ═══ MODAL PERFIL ═══ -->
 <div id="perfilModal" class="perfil-modal">
   <div class="perfil-box">
     <h3>Personalizar perfil</h3>
@@ -365,7 +386,7 @@ onAuthStateChanged(_auth, (user) => {
 </div>
 
 <style>
-:root{--gold:#c48a3a;--ink:#1a1714;--sand:#f8f5f1;--warm:#f3ece3;--muted:#888}
+:root{--gold:#c48a3a;--ink:#1a1714;--sand:#f8f5f1}
 .ht-eyebrow{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:18px}
 .ht-label{display:inline-block;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:14px}
 .ht-label-activo{background:rgba(196,138,58,.12);color:var(--gold)}
@@ -400,7 +421,7 @@ onAuthStateChanged(_auth, (user) => {
 .ht-card-body h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--ink);margin-bottom:10px}
 .ht-card-body p{font-size:14px;color:#777;line-height:1.7;flex:1;margin-bottom:16px;font-weight:300}
 .ht-card-footer{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid #f0ebe4}
-/* CUPOS CARD */
+.ht-card-footer-soon{border:none;padding:0}
 .ht-cupos-resumen{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .ht-cupo-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#faf7f4;border-radius:10px;border:1px solid #f0ebe4}
 .ht-cupo-label{font-family:'Inter',sans-serif;font-size:11px;color:#888}
@@ -408,21 +429,27 @@ onAuthStateChanged(_auth, (user) => {
 .ht-cupo-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);display:inline-block;transition:all .3s}
 .ht-cupo-dot.vacio{background:#e8e0d8}
 .ht-cupo-agotado{font-family:'Inter',sans-serif;font-size:10px;color:#e55;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-/* BOTONES */
 .ht-btn-solid{display:block;text-align:center;padding:12px 20px;background:var(--gold);color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:.06em;font-family:'Inter',sans-serif;transition:all .3s ease;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(196,138,58,.28);width:100%}
 .ht-btn-solid:hover{background:#a8742f;transform:translateY(-2px);box-shadow:0 10px 24px rgba(196,138,58,.38)}
 .ht-aviso{font-size:13px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:.04em;text-align:center;padding:6px 0}
-/* MODAL */
+/* ── Modal ── */
 .ht-modal{display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9999;padding:20px}
 .ht-modal-box{background:white;width:100%;max-width:440px;max-height:90vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;animation:htModalIn .38s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 80px rgba(0,0,0,.25)}
 @keyframes htModalIn{from{transform:scale(.88) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-.ht-modal-header{padding:26px 26px 18px;position:relative;border-bottom:1px solid #f5f0ea}
-.ht-modal-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--ink);margin-bottom:3px}
-.ht-modal-header p{font-size:12px;color:var(--gold);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-family:'Inter',sans-serif;min-height:16px}
-.ht-modal-cerrar{position:absolute;top:20px;right:20px;width:32px;height:32px;border-radius:50%;border:none;background:#f5f0ea;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:background .2s,transform .2s}
-.ht-modal-cerrar:hover{background:var(--gold);color:white;transform:rotate(90deg)}
-.ht-modal-body{padding:22px 26px 28px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#e5ddd3 transparent}
-/* HORARIOS MODAL */
+.ht-modal-hero{padding:22px 22px 18px;background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);position:relative;overflow:hidden;flex-shrink:0}
+.ht-modal-hero-brand{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+.ht-modal-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;border:2px solid rgba(196,138,58,.4)}
+.ht-modal-hero-eyebrow{font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block}
+.ht-modal-hero-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:500;color:white;margin:2px 0}
+.ht-modal-hero-sub{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.05em}
+.ht-modal-cerrar{position:absolute;top:16px;right:16px;z-index:3;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);transition:all .2s}
+.ht-modal-cerrar:hover{background:rgba(255,255,255,.2);color:white}
+.ht-deco-ring{position:absolute;border-radius:50%;border:1px solid rgba(196,138,58,.15)}
+.ht-deco-ring-1{width:120px;height:120px;bottom:-40px;right:-30px}
+.ht-deco-ring-2{width:80px;height:80px;bottom:-20px;right:10px}
+.ht-deco-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(196,138,58,.4);bottom:18px;right:60px}
+.ht-modal-hero-deco{position:absolute;inset:0;pointer-events:none}
+.ht-modal-body{padding:18px 22px 24px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#e5ddd3 transparent;flex:1}
 .ht-step-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#bbb;text-align:center;margin-bottom:16px}
 .ht-horarios{display:flex;flex-direction:column;gap:10px}
 .ht-horario{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid #f0ebe4;background:#faf7f4;cursor:pointer;transition:all .22s ease}
@@ -441,40 +468,50 @@ onAuthStateChanged(_auth, (user) => {
 .sin-cupo .ht-cupo-txt{color:#e55;font-weight:700}
 .ht-horario-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s;flex-shrink:0}
 .ht-horario.seleccionado .ht-horario-check{background:var(--gold);border-color:var(--gold);color:white}
-/* MÉTODOS */
-.ht-metodos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
-.ht-metodo{background:#faf7f4;border-radius:14px;padding:14px 12px 10px;cursor:pointer;border:1.5px solid transparent;transition:all .22s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:6px}
-.ht-metodo:hover{transform:translateY(-3px);border-color:#e8d5b7;box-shadow:0 8px 20px rgba(196,138,58,.1)}
-.ht-metodo img{width:100%;max-width:80px;height:64px;object-fit:cover;border-radius:10px;display:block;margin:auto}
-.ht-metodo-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#888;letter-spacing:.06em}
-.ht-metodo-activo{border-color:var(--gold)!important;background:#fdf6ec;box-shadow:0 6px 20px rgba(196,138,58,.2)!important}
-.ht-metodo-activo::after{content:"✓";position:absolute;top:8px;right:10px;width:18px;height:18px;background:var(--gold);color:white;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.ht-pago-detalle{display:none;text-align:center;padding:18px 0 8px;animation:htFade .28s ease}
-
-/* ── Comprobante upload ── */
-.ht-comp-titulo{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#888;letter-spacing:.07em;text-transform:uppercase;text-align:center;margin-bottom:8px}
-.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:4px}
-.ht-comp-zona:hover,.ht-comp-zona.lista{border-color:var(--gold);background:#fdf6ec}
-.ht-comp-placeholder{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
+/* pills */
+.ht-metodo-selector{display:flex;gap:6px;padding:12px 18px 0;border-top:1px solid #f5f0ea;flex-shrink:0}
+.ht-metodo-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border-radius:10px;border:1.5px solid #f0ebe4;background:#faf8f5;cursor:pointer;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;color:#888;letter-spacing:.04em;transition:all .2s;white-space:nowrap}
+.ht-metodo-pill:hover{border-color:#e8d5b7;color:var(--ink)}
+.ht-metodo-pill.active{background:var(--ink);color:white;border-color:var(--ink)}
+.ht-pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* tabs */
+.ht-tab{display:none}
+.ht-tab.active{display:block}
+.ht-qr-pane{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0}
+.ht-qr-frame{position:relative;border-radius:16px;overflow:hidden;width:160px;height:160px;flex-shrink:0}
+.ht-qr-img{width:100%;height:100%;object-fit:cover}
+.ht-qr-yape{box-shadow:0 8px 24px rgba(108,47,165,.25)}
+.ht-qr-plin{box-shadow:0 8px 24px rgba(0,163,224,.25)}
+.ht-qr-badge{position:absolute;bottom:0;left:0;right:0;padding:5px 0;text-align:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ht-badge-yape{background:#6c2fa5;color:white}
+.ht-badge-plin{background:#00a3e0;color:white}
+.ht-qr-info{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.ht-monto-pill{display:flex;align-items:center;justify-content:space-between;width:100%;background:#faf7f4;border-radius:12px;padding:10px 16px;border:1px solid #f0ebe4;font-family:'Inter',sans-serif;font-size:12px}
+.ht-monto-pill span{color:#aaa}
+.ht-monto-pill strong{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold)}
+.ht-qr-hint{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.5;margin:0}
+.ht-comp-wrap{width:100%;display:flex;flex-direction:column;gap:6px}
+.ht-comp-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:100%}
+.ht-comp-zona:hover,.ht-comp-zona.has-file{border-color:var(--gold);background:#fdf6ec}
+.ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
 .ht-comp-check{position:absolute;top:8px;right:8px;background:var(--gold);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.adm-comp-img{width:100%;max-height:150px;object-fit:contain;border-radius:10px;margin-top:8px;border:1px solid #f0ebe4;cursor:zoom-in;display:block}
-#ht-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out}
-#ht-lightbox img{max-width:92vw;max-height:88vh;border-radius:14px}
-
-@keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes htSpin{to{transform:rotate(360deg)}}
-.ht-pago-detalle h4{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:var(--ink);margin-bottom:14px}
-.ht-pago-detalle img{width:100%;max-width:190px;margin:0 auto 14px;border-radius:14px;display:block;box-shadow:0 8px 28px rgba(0,0,0,.1)}
-.ht-btn-confirm{width:100%;margin-top:20px;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;font-family:'Inter',sans-serif;position:relative;overflow:hidden}
+.ht-btn-pagar{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:all .25s;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.ht-btn-pagar:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.ht-btn-yape{background:linear-gradient(135deg,#6c2fa5,#8b3ccf);color:white}
+.ht-btn-yape:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,47,165,.4)}
+.ht-btn-plin{background:linear-gradient(135deg,#0090c8,#00a3e0);color:white}
+.ht-btn-plin:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,163,224,.4)}
+.ht-btn-agencia{background:linear-gradient(135deg,#1a1714,#2a2420);color:white}
+.ht-btn-agencia:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.ht-btn-confirm{width:100%;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;font-family:'Inter',sans-serif;position:relative;overflow:hidden}
 .ht-btn-confirm::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#e8b870);opacity:0;transition:opacity .35s ease}
 .ht-btn-confirm:hover::before{opacity:1}
 .ht-btn-confirm span{position:relative;z-index:1}
 .ht-btn-confirm:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(196,138,58,.38)}
-.ht-btn-back{background:none;border:none;font-size:13px;color:var(--gold);cursor:pointer;padding:0;font-family:'Inter',sans-serif;font-weight:500;letter-spacing:.04em;transition:opacity .2s}
-.ht-btn-back:hover{opacity:.65}
-/* PANEL ADMIN */
-.adm-tabs{display:flex;gap:6px;margin-bottom:16px}
-.adm-tab{flex:1;padding:8px;border:1.5px solid #f0ebe4;background:#faf7f4;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.06em;cursor:pointer;color:#888;transition:all .2s}
+/* Admin */
+.adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.adm-tab{flex:1;min-width:60px;padding:8px 4px;border:1.5px solid #f0ebe4;background:#faf7f4;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;color:#888;transition:all .2s}
 .adm-tab.activo{background:var(--ink);color:white;border-color:var(--ink)}
 .adm-card{background:#faf7f4;border-radius:14px;padding:16px;margin-bottom:10px;border:1.5px solid #f0ebe4}
 .adm-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
@@ -483,19 +520,20 @@ onAuthStateChanged(_auth, (user) => {
 .adm-estado.pendiente{background:#fff3cd;color:#856404}
 .adm-estado.confirmado{background:#d4edda;color:#155724}
 .adm-estado.rechazado{background:#f8d7da;color:#721c24}
-.adm-info{font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.8}
+.adm-info{font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.9}
 .adm-info strong{color:var(--ink);font-weight:500}
+.adm-comp-img{width:100%;max-height:150px;object-fit:contain;border-radius:10px;margin-top:10px;border:1px solid #f0ebe4;cursor:zoom-in;display:block}
 .adm-acciones{display:flex;gap:8px;margin-top:12px}
 .adm-btn-confirmar{flex:1;padding:9px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.06em;transition:all .2s}
-.adm-btn-confirmar:hover{background:#a8742f;transform:translateY(-1px)}
-.adm-btn-confirmar:disabled{background:#ccc;cursor:not-allowed;transform:none}
+.adm-btn-confirmar:hover:not(:disabled){background:#a8742f;transform:translateY(-1px)}
+.adm-btn-confirmar:disabled{background:#ccc;cursor:not-allowed}
 .adm-btn-rechazar{padding:9px 14px;background:#fff0f0;color:#e74c3c;border:1px solid #ffd5d5;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s}
 .adm-btn-rechazar:hover{background:#ffe0e0}
-/* AVATAR */
 .avatar-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.avatar-opcion{width:100%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;cursor:pointer;border:3px solid transparent;transition:.2s ease}
+.avatar-opcion{width:100%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;cursor:pointer;border:3px solid transparent;transition:.2s}
 .avatar-opcion:hover{transform:scale(1.08);border-color:#c48a3a}
 .avatar-opcion.seleccionado{border-color:#c48a3a;box-shadow:0 0 0 3px rgba(196,138,58,.3)}
+@keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:900px){
   .ht-hero{padding:90px 7% 70px;flex-direction:column;min-height:auto}
   .ht-hero-deco{display:none}
@@ -506,45 +544,13 @@ onAuthStateChanged(_auth, (user) => {
 </style>
 
 <script>
-let horarioElegido = null;
-let horarioElegidoId = null;
-let metodoMembresia = "";
-function cerrarMembresia(){ document.getElementById("modalMembresia").style.display="none"; document.body.style.overflow=""; }
-function volverHorario(){
-  document.getElementById("paso-pago").style.display="none";
-  document.getElementById("paso-horario").style.display="block";
-  document.getElementById("horarioSeleccionadoLabel").textContent="";
-  metodoMembresia="";
-  document.querySelectorAll(".ht-metodo").forEach(el=>el.classList.remove("ht-metodo-activo"));
-  document.querySelectorAll(".ht-pago-detalle").forEach(el=>el.style.display="none");
-}
-function irAPago(){
-  if(!horarioElegido){alert("Elige un horario primero.");return;}
-  document.getElementById("horarioSeleccionadoLabel").textContent=horarioElegido;
-  document.getElementById("paso-horario").style.display="none";
-  document.getElementById("paso-pago").style.display="block";
-  document.getElementById("modalMembresiaBody").scrollTop=0;
-}
-function seleccionarMetodo(event,metodo){
-  metodoMembresia=metodo;
-  document.querySelectorAll(".ht-metodo").forEach(el=>el.classList.remove("ht-metodo-activo"));
-  event.currentTarget.classList.add("ht-metodo-activo");
-  document.querySelectorAll(".ht-pago-detalle").forEach(op=>op.style.display="none");
-  document.getElementById("ht-pago-"+metodo).style.display="block";
-  const btnConf = document.getElementById("btnConfirmarMem");
-  if (metodo === "tarjeta") {
-    btnConf.style.display = "none";
-    if (!window._memCardInicializada) { window._memCardInicializada = true; window._initMemCard && window._initMemCard(); }
-  } else {
-    btnConf.style.display = "block";
-  }
-}
-let avatarSeleccionado=null;
+let _avatarSeleccionado = null;
 function toggleUserMenu(){ const m=document.getElementById("userDropdown"); m.style.display=m.style.display==="block"?"none":"block"; }
-document.addEventListener("click",(e)=>{ if(!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display="none"; });
-function seleccionarAvatar(img){ document.querySelectorAll(".avatar-opcion").forEach(el=>el.classList.remove("seleccionado")); img.classList.add("seleccionado"); document.getElementById("previewAvatar").src=img.src; avatarSeleccionado=img.src; }
-function abrirPanelAdmin(){ document.getElementById("modalAdminMem").style.display="flex"; }
-function cerrarPanelAdmin(){ document.getElementById("modalAdminMem").style.display="none"; }
+document.addEventListener("click",(e)=>{ if(!e.target.closest(".user-menu")){ const d=document.getElementById("userDropdown"); if(d) d.style.display="none"; }});
+function seleccionarAvatar(img){ document.querySelectorAll(".avatar-opcion").forEach(el=>el.classList.remove("seleccionado")); img.classList.add("seleccionado"); document.getElementById("previewAvatar").src=img.src; _avatarSeleccionado=img.src; }
+window.abrirPanelAdmin  = () => { document.getElementById("modalAdminMem").style.display="flex"; document.body.style.overflow="hidden"; };
+window.cerrarPanelAdmin = () => { document.getElementById("modalAdminMem").style.display="none"; document.body.style.overflow=""; };
+window.verLightbox = function(url){ document.getElementById("lightbox-img").src=url; document.getElementById("lightbox").style.display="flex"; };
 </script>
 
 <script type="module">
@@ -562,49 +568,42 @@ const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
 const CUPOS_MAX    = 4;
 const HORARIOS = [
-  {id:"h0",dia:"Sábado", fecha:"7 de marzo", hora:"10:00 AM",label:"Sáb 7 mar · 10:00 AM"},
-  {id:"h1",dia:"Domingo",fecha:"8 de marzo", hora:"6:00 PM", label:"Dom 8 mar · 6:00 PM"},
-  {id:"h2",dia:"Lunes",  fecha:"9 de marzo", hora:"12:00 PM",label:"Lun 9 mar · 12:00 PM"},
+  {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
+  {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
+  {id:"h2", dia:"Lunes",   fecha:"9 de marzo",  hora:"12:00 PM", label:"Lun 9 mar · 12:00 PM"},
 ];
-
-const firebaseConfig={apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const app     = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const app     = getApps().length ? getApps()[0] : initializeApp(fc);
 const auth    = getAuth(app);
 const db      = getFirestore(app);
 const storage = getStorage(app);
 
-let currentUser = null;
-let esAdmin = false;
-let cuposData = {};
+let currentUser      = null;
+let cuposData        = {};
+let horarioElegidoId = null;
+let horarioElegido   = null;
+let compFiles        = {};
 let filtroPanelAdmin = "pendiente";
+let todasLasMembresias = [];
 
-// ── AUTH ────────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   if (!user) return;
-  esAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase());
+  const esAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase());
   if (esAdmin) {
     document.getElementById("panelAdminMem").style.display = "block";
     escucharMembresiasAdmin();
   }
   await _initCupos();
   escucharCupos();
-  document.getElementById("btnConfirmarMem").onclick = confirmarPago;
-  // Exponer _registrarMembresia y _mpBrickControllerMem para el brick
-  window._registrarMembresia = _registrarMembresia;
-  window._mpBrickControllerMem = null;
 });
 
-// ── INICIALIZAR DOC CUPOS ────────────────────────────────────────────────
 async function _initCupos() {
-  const ref = doc(db, "talleres", TALLER_ID);
+  const ref  = doc(db, "talleres", TALLER_ID);
   const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, {h0:0, h1:0, h2:0});
-  }
+  if (!snap.exists()) await setDoc(ref, {h0:0, h1:0, h2:0});
 }
 
-// ── ESCUCHAR CUPOS EN TIEMPO REAL ────────────────────────────────────────
 function escucharCupos() {
   onSnapshot(doc(db,"talleres",TALLER_ID), snap => {
     if (!snap.exists()) return;
@@ -615,41 +614,37 @@ function escucharCupos() {
   });
 }
 
-// ── DOTS EN LA CARD ──────────────────────────────────────────────────────
 function actualizarCuposCard() {
-  HORARIOS.forEach((h,i) => {
+  HORARIOS.forEach((h, i) => {
     const el = document.getElementById(`num-h${i}`);
     if (!el) return;
-    const confirmados = cuposData[h.id] || 0;
-    const libres = CUPOS_MAX - confirmados;
+    const libres = CUPOS_MAX - (cuposData[h.id] || 0);
     el.innerHTML = "";
     if (libres <= 0) {
       el.innerHTML = `<span class="ht-cupo-agotado">Agotado</span>`;
     } else {
       for (let j = 0; j < CUPOS_MAX; j++) {
-        const d = document.createElement("span");
-        d.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
-        el.appendChild(d);
+        const dot = document.createElement("span");
+        dot.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
+        el.appendChild(dot);
       }
     }
   });
 }
 
-// ── HORARIOS EN MODAL ────────────────────────────────────────────────────
 function renderHorarios() {
   const lista = document.getElementById("lista-horarios");
   if (!lista) return;
   lista.innerHTML = "";
   HORARIOS.forEach(h => {
-    const confirmados = cuposData[h.id] || 0;
-    const libres = CUPOS_MAX - confirmados;
+    const libres  = CUPOS_MAX - (cuposData[h.id] || 0);
     const sinCupo = libres <= 0;
-    const selec = horarioElegidoId === h.id;
+    const selec   = (horarioElegidoId === h.id);
     const div = document.createElement("div");
     div.className = `ht-horario${selec?" seleccionado":""}${sinCupo?" sin-cupo":""}`;
     if (!sinCupo) div.onclick = () => _elegirHorario(div, h);
     let dots = "";
-    for (let j = 0; j < CUPOS_MAX; j++) dots += `<span class="ht-cupo-dot-mini${j < libres?"":" vacio"}"></span>`;
+    for (let j = 0; j < CUPOS_MAX; j++) dots += `<span class="ht-cupo-dot-mini${j<libres?"":" vacio"}"></span>`;
     div.innerHTML = `
       <div class="ht-horario-left">
         <span class="ht-horario-dia">${h.dia}</span>
@@ -668,367 +663,138 @@ function renderHorarios() {
 function _elegirHorario(el, h) {
   document.querySelectorAll(".ht-horario").forEach(x => x.classList.remove("seleccionado"));
   el.classList.add("seleccionado");
-  horarioElegido   = `${h.dia} ${h.fecha} · ${h.hora}`;
   horarioElegidoId = h.id;
+  horarioElegido   = h.label;
 }
 
-// ── ABRIR MODAL ──────────────────────────────────────────────────────────
-// ════════════════════════════════════════════════════
-//  NUEVO MODAL DE PAGO DE TALLER (pt = pago taller)
-// ════════════════════════════════════════════════════
-let ptMetodo = "";
-let ptFile   = null;
-let _ptMp    = null, _ptBuilder = null, _ptBrick = null, _ptBrickInited = false;
-
-// Abre el flujo: primero verifica login, luego muestra el modal de horarios existente
-window.abrirPagoTaller = function() {
+// ── Abrir / cerrar modales ─────────────────────────────────────────────────
+window.abrirPagoMembresia = function() {
   if (!window._firebaseUser) {
-    // No hay sesión → mostrar pop-up de login
     document.getElementById("popupLogin").style.display = "flex";
     return;
   }
-  // Tiene sesión → abrir modal de horarios (el flujo existente)
-  window.abrirMembresia();
-};
-
-// Cuando el usuario elige horario y llega al paso de pago, 
-// en vez de usar el viejo modal, usamos el nuevo modal unificado
-window.irAPagoTaller = function() {
-  // Validar que hay horario elegido
-  if (!horarioElegidoId) { alert("Selecciona un horario primero."); return; }
-  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
-  if (libres <= 0) { alert("Este horario no tiene cupos disponibles."); return; }
-  // Cerrar modal de horarios y abrir modal de pago
-  document.getElementById("modalMembresia").style.display = "none";
-  ptMetodo = ""; ptFile = null; _ptBrickInited = false;
-  if (_ptBrick) { try { _ptBrick.unmount(); } catch(e){} _ptBrick = null; }
-  // Reset UI
-  ["yape","plin","agencia"].forEach(m => {
-    const zona = document.getElementById("zona-"+m);
-    const ph   = document.getElementById("ph-"+m);
-    const pr   = document.getElementById("pr-"+m);
-    const inp  = document.getElementById("pt-file-"+m);
-    if (zona) zona.classList.remove("lista");
-    if (ph)   ph.style.display = "flex";
-    if (pr)   { pr.style.display = "none"; pr.innerHTML = ""; }
-    if (inp)  inp.value = "";
-  });
-  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
-  document.getElementById("pt-paso-metodo").style.display = "block";
-  document.getElementById("pt-paso-detalle").style.display = "none";
-  document.getElementById("pt-btn-confirmar").style.display = "none";
-  document.getElementById("pagoTallerHorarioLabel").textContent = horarioElegido || "";
-  document.getElementById("modalPagoTaller").style.display = "flex";
+  horarioElegidoId = null; horarioElegido = null;
+  renderHorarios();
+  document.getElementById("modalHorario").style.display = "flex";
   document.body.style.overflow = "hidden";
 };
 
-window.cerrarPagoTaller = function() {
-  document.getElementById("modalPagoTaller").style.display = "none";
+window.cerrarModalHorario = function() {
+  document.getElementById("modalHorario").style.display = "none";
   document.body.style.overflow = "";
 };
 
-window.ptSeleccionarMetodo = function(event, metodo) {
-  ptMetodo = metodo;
-  document.querySelectorAll("#pt-paso-metodo .ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
-  event.currentTarget.classList.add("ht-metodo-activo");
-};
-
-window.ptVolverMetodo = function() {
-  document.getElementById("pt-paso-detalle").style.display = "none";
-  document.getElementById("pt-paso-metodo").style.display  = "block";
-};
-
-window.ptIrDetalle = function() {
-  if (!ptMetodo) { alert("Selecciona un método de pago."); return; }
-  document.getElementById("pt-paso-metodo").style.display  = "none";
-  document.getElementById("pt-paso-detalle").style.display = "block";
-  // Mostrar sección del método elegido
-  ["yape","plin","tarjeta","agencia"].forEach(m => {
-    document.getElementById("pt-det-"+m).style.display = m === ptMetodo ? "block" : "none";
+window.cerrarModalPago = function() {
+  document.getElementById("modalPago").style.display = "none";
+  document.body.style.overflow = "";
+  compFiles = {};
+  ["yape","plin","agencia"].forEach(m => {
+    const ph   = document.getElementById("ph-"+m);
+    const pr   = document.getElementById("pr-"+m);
+    const zona = document.getElementById("zona-"+m);
+    const inp  = document.getElementById("file-"+m);
+    if (ph)   ph.style.display = "flex";
+    if (pr)   { pr.style.display = "none"; pr.innerHTML = ""; }
+    if (zona) zona.classList.remove("has-file");
+    if (inp)  inp.value = "";
   });
-  // Todos los métodos muestran botón confirmar
-  document.getElementById("pt-btn-confirmar").style.display = "block";
-  // Para tarjeta: actualizar link WhatsApp y mostrar horario
-  if (ptMetodo === "tarjeta") {
-    const hl = document.getElementById("pt-tarjeta-horario");
-    if (hl) hl.textContent = horarioElegido || "";
-    const wspLink = document.getElementById("pt-tarjeta-wsp");
-    if (wspLink) {
-      const msg = encodeURIComponent("Hola! Quiero pagar con tarjeta la membresía 🐾\n\n📅 Horario: " + horarioElegido + "\n💳 Monto: S/ 150.00\n\n¿Cómo procedo?");
-      wspLink.href = "https://wa.me/51922402608?text=" + msg;
-    }
-  }
 };
 
-window.ptPreview = function(metodo, input) {
+window.irAPago = function() {
+  if (!horarioElegidoId) { alert("Selecciona un horario primero."); return; }
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+  document.getElementById("modalHorario").style.display = "none";
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
+  document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
+  const wspMsg = encodeURIComponent("Hola! Quiero pagar con tarjeta la membresía Arcilla Nocturna 🐾\n\n📅 Horario: " + horarioElegido + "\n💳 Monto: S/ 150.00\n\n¿Cómo procedo?");
+  document.getElementById("tarjeta-wsp").href = "https://wa.me/51922402608?text=" + wspMsg;
+  document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
+  document.querySelectorAll(".ht-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+  document.getElementById("modalPago").style.display = "flex";
+};
+
+window.switchMetodo = function(metodo, btn) {
+  document.querySelectorAll(".ht-metodo-pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".ht-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("tab-"+metodo).classList.add("active");
+};
+
+window.previewComp = function(metodo, input) {
   const file = input.files[0];
   if (!file) return;
-  ptFile = file;
+  compFiles[metodo] = file;
   const ph   = document.getElementById("ph-"+metodo);
   const pr   = document.getElementById("pr-"+metodo);
   const zona = document.getElementById("zona-"+metodo);
   const url  = URL.createObjectURL(file);
-  pr.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:140px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>';
+  pr.innerHTML = `<img src="${url}" style="max-width:100%;max-height:130px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
   pr.style.display = "block";
   ph.style.display = "none";
-  zona.classList.add("lista");
+  zona.classList.add("has-file");
 };
 
-window.ptConfirmar = async function() {
-  // Solo Yape, Plin y Agencia requieren comprobante
-  if (ptMetodo !== "tarjeta" && !ptFile) {
-    alert("Por favor adjunta el comprobante de pago.");
-    return;
-  }
-  const btn = document.getElementById("pt-btn-confirmar");
-  btn.disabled = true;
-  btn.querySelector("span").textContent = "Enviando...";
-  try {
-    await _ptRegistrar(ptMetodo.toUpperCase());
-  } catch(e) {
-    console.error("Error registrando:", e);
-    alert("Error al registrar: " + e.message);
-    btn.disabled = false;
-    btn.querySelector("span").textContent = "Ya realicé el pago · Confirmar ✔";
-  }
-};
-
-async function _ptRegistrar(metodoLabel) {
-  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
-  if (libres <= 0) { alert("Sin cupos disponibles."); return; }
-
-  // Subir comprobante a Firebase Storage (solo Yape/Plin/Agencia)
-  let comprobanteURL = "";
-  if (ptFile) {
-    try {
-      const ext  = ptFile.name.split(".").pop() || "jpg";
-      const ruta = storRef(storage, "comprobantes/" + Date.now() + "_" + currentUser.uid + "." + ext);
-      const snapUp = await uploadBytes(ruta, ptFile);
-      comprobanteURL = await getDownloadURL(snapUp.ref);
-    } catch(e) {
-      console.warn("Error subiendo comprobante:", e);
-      // Continuar aunque falle el upload — el admin solicitará reenvío si es necesario
-    }
-  }
-
-  // Guardar en Firestore
-  const docRef = await addDoc(collection(db, "membresias"), {
-    usuarioEmail:  currentUser.email,
-    usuarioNombre: currentUser.displayName || currentUser.email,
-    usuarioAvatar: currentUser.photoURL || "",
-    horarioId:     horarioElegidoId,
-    horarioLabel:  horarioElegido,
-    metodo:        metodoLabel,
-    comprobanteURL,
-    estado:        "pendiente",
-    fecha:         serverTimestamp(),
-    tallerId:      TALLER_ID,
-  });
-  const ref = docRef.id.slice(0, 8).toUpperCase();
-  ptFile = null;
-
-  // Pantalla de éxito
-  document.getElementById("pagoTallerBody").innerHTML = `
-    <div style="text-align:center;padding:36px 16px 24px;animation:htFade .4s ease">
-      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3);">✓</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">¡Gracias! Revisaremos tu pago</h3>
-      <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;font-family:'Inter',sans-serif;">Recibimos tu solicitud.<br>Las administradoras lo validarán pronto 🐾</p>
-      <div style="background:#faf7f4;border-radius:16px;padding:16px;margin:0 0 20px;text-align:left;border:1px solid #f0ebe4;">
-        <p style="font-size:12px;color:#999;font-family:'Inter',sans-serif;line-height:2.2;margin:0;">
-          <strong style="color:#1a1714;">📅 Horario:</strong> \${horarioElegido}<br>
-          <strong style="color:#1a1714;">💳 Método:</strong> \${metodoLabel}<br>
-          <strong style="color:#1a1714;">🆔 Ref:</strong> \${ref}<br>
-          <strong style="color:#1a1714;">📋 Estado:</strong>
-          <span style="color:#92712a;font-weight:600;background:#fef9ee;padding:2px 8px;border-radius:20px;font-size:11px;margin-left:4px;">Pendiente de validación</span>
-        </p>
-      </div>
-      <p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px;">Te confirmaremos en menos de 24h</p>
-      <button onclick="cerrarPagoTaller()" style="background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 24px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
-    </div>`;
-}
-
-async function _initPtCard() {
-  const loading   = document.getElementById("pt-loading-tarjeta");
-  const container = document.getElementById("ptCardBrick_container");
-  if (!container) return;
-  try {
-    if (!window.MercadoPago) {
-      await new Promise((res,rej) => {
-        const s = document.createElement("script");
-        s.src = "https://sdk.mercadopago.com/js/v2";
-        s.onload = res; s.onerror = rej;
-        document.head.appendChild(s);
-      });
-    }
-    if (!_ptMp) {
-      _ptMp      = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", {locale:"es-PE"});
-      _ptBuilder = _ptMp.bricks();
-    }
-    if (_ptBrick) { try { await _ptBrick.unmount(); } catch(e){} }
-    container.innerHTML = "";
-    if (loading) loading.style.display = "none";
-    _ptBrick = await _ptBuilder.create("payment","ptCardBrick_container", {
-      initialization: { amount: 150, payer: { email: currentUser?.email || "" } },
-      customization: {
-        paymentMethods: { creditCard:"all", debitCard:"all", ticket:"none", bankTransfer:"none", atm:"none", onboarding_credits:"none", wallet_purchase:"none" },
-        visual: { style: { theme:"default", customVariables: { baseColor:"#c48a3a" } } }
-      },
-      callbacks: {
-        onReady: () => { if (loading) loading.style.display = "none"; },
-        onError: (e) => console.error("MP Error:",e),
-        onSubmit: async () => {
-          try { await _ptRegistrar("TARJETA"); } catch(e){ console.error(e); }
-          return Promise.resolve();
-        }
-      }
-    });
-  } catch(e) {
-    if (loading) loading.style.display = "none";
-    container.innerHTML = '<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:Inter,sans-serif">Error al cargar tarjeta. Usa Yape, Plin o Agencia.</p>';
-  }
-}
-
-
-window.abrirMembresia = function() {
-  horarioElegido = null; horarioElegidoId = null; metodoMembresia = "";
-  window._memCardInicializada = false;
-  if (window._mpBrickControllerMem) { try { window._mpBrickControllerMem.unmount(); } catch(e){} window._mpBrickControllerMem = null; }
-  document.getElementById("horarioSeleccionadoLabel").textContent = "";
-  document.getElementById("paso-horario").style.display = "block";
-  document.getElementById("paso-pago").style.display    = "none";
-  document.querySelectorAll(".ht-metodo").forEach(el => el.classList.remove("ht-metodo-activo"));
-  document.querySelectorAll(".ht-pago-detalle").forEach(el => el.style.display = "none");
-  document.getElementById("btnConfirmarMem").style.display = "none";
-  document.getElementById("modalMembresia").style.display = "flex";
-  document.body.style.overflow = "hidden";
-  renderHorarios();
-};
-
-// ── CONFIRMAR PAGO (Yape / Plin) ────────────────────────────────────────
-async function confirmarPago() {
-  if (!metodoMembresia) { alert("Selecciona un método de pago."); return; }
-  if (!currentUser)     { alert("Debes iniciar sesión."); return; }
-  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
-  if (libres <= 0)      { alert("Este horario ya no tiene cupos disponibles."); return; }
-  await _registrarMembresia(metodoMembresia.toUpperCase());
-}
-
-// ── REGISTRAR MEMBRESÍA EN FIRESTORE Y MOSTRAR POP-UP ───────────────────
-async function _registrarMembresia(metodoLabel) {
+// ── CONFIRMAR PAGO ─────────────────────────────────────────────────────────
+window.confirmarPago = async function(metodoLabel) {
+  if (!currentUser) { alert("Debes iniciar sesión."); return; }
+  if (!horarioElegidoId) { alert("No hay horario seleccionado."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
 
-  const docRef = await addDoc(collection(db,"membresias"), {
-    usuarioEmail:  currentUser.email,
-    usuarioNombre: currentUser.displayName || currentUser.email,
-    usuarioAvatar: currentUser.photoURL || "",
-    horarioId:     horarioElegidoId,
-    horarioLabel:  horarioElegido,
-    metodo:        metodoLabel,
-    estado:        "pendiente",
-    fecha:         serverTimestamp(),
-    tallerId:      TALLER_ID,
-  });
+  const esTarjeta = (metodoLabel === "Tarjeta");
+  const archivo   = esTarjeta ? null : (compFiles[metodoLabel.toLowerCase()] || null);
+  if (!esTarjeta && !archivo) {
+    alert("Por favor adjunta el comprobante de pago antes de continuar.");
+    return;
+  }
 
-  const ref = docRef.id.slice(0,8).toUpperCase();
-  const esTarjeta = metodoLabel === "TARJETA";
+  const tabId = "tab-" + metodoLabel.toLowerCase();
+  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`) ||
+                    document.querySelector(`#${tabId} button[onclick*="confirmarPago"]`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Registrando..."; }
 
-  // Pop-up de éxito — diferente para tarjeta vs QR
-  document.getElementById("modalMembresiaBody").innerHTML = `
-    <div style="text-align:center;padding:28px 12px 8px;animation:htFade .4s ease">
-      <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3)">✓</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:8px">
-        ${esTarjeta ? "¡Pago recibido!" : "¡Solicitud enviada!"}
-      </h3>
-      <p style="font-size:14px;color:#888;margin-bottom:4px;font-family:'Inter',sans-serif">
-        ${esTarjeta ? "Estamos validando tu pago" : "Estamos validando tu comprobante"}
-      </p>
-      <p style="font-size:15px;font-weight:500;color:#c48a3a;font-family:'Inter',sans-serif;margin-bottom:6px">${horarioElegido}</p>
-      <div style="background:#faf7f4;border-radius:14px;padding:14px;margin:0 0 20px;text-align:left;">
-        <p style="font-size:12px;color:#888;font-family:'Inter',sans-serif;line-height:1.9;margin:0">
-          <strong style="color:#1a1714">Método:</strong> ${metodoLabel}<br>
-          <strong style="color:#1a1714">Ref:</strong> ${ref}<br>
-          <strong style="color:#1a1714">Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>
-        </p>
-      </div>
-      <p style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:${esTarjeta?'20px':'22px'};font-family:'Inter',sans-serif">
-        ${esTarjeta
-          ? "Las administradoras revisarán tu pago.<br>Te confirmaremos en menos de 24 horas 🐾"
-          : "Envíanos la captura del pago por WhatsApp<br>para confirmar tu plaza más rápido 🐾"}
-      </p>
-      ${!esTarjeta ? `
-      <a href="https://wa.me/51922402608?text=${encodeURIComponent(`Hola! Acabo de pagar la membresía.\n\n📅 Horario: ${horarioElegido}\n💳 Método: ${metodoLabel}\n🆔 Ref: ${ref}\n\nTe envío la captura ✨`)}" target="_blank"
-         style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px;background:#25D366;color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;letter-spacing:.05em;box-shadow:0 8px 20px rgba(37,211,102,.28);margin-bottom:14px">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Enviar captura por WhatsApp
-      </a>` : ""}
-      <p style="font-size:10px;color:#ccc;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase">Te confirmaremos en menos de 24h</p>
-    </div>`;
-}
-
-// ── MERCADO PAGO BRICK (TARJETA) ─────────────────────────────────────────
-let _mpMem = null;
-let _mpBricksBuilderMem = null;
-let _mpBrickControllerMem = null;
-
-window._initMemCard = async function() {
-  const loading = document.getElementById("ht-loading-tarjeta");
-  const container = document.getElementById("memCardBrick_container");
-  if (!container) return;
   try {
-    if (!window.MercadoPago) {
-      await new Promise((res, rej) => {
-        const s = document.createElement("script");
-        s.src = "https://sdk.mercadopago.com/js/v2";
-        s.onload = res; s.onerror = rej;
-        document.head.appendChild(s);
-      });
+    let comprobanteURL = "";
+    if (archivo) {
+      const ext  = archivo.name.split(".").pop() || "jpg";
+      const path = `comprobantes/${Date.now()}_${currentUser.uid}.${ext}`;
+      const snap = await uploadBytes(storRef(storage, path), archivo);
+      comprobanteURL = await getDownloadURL(snap.ref);
     }
-    if (!_mpMem) {
-      _mpMem = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", {locale:"es-PE"});
-      _mpBricksBuilderMem = _mpMem.bricks();
-    }
-    if (_mpBrickControllerMem) { try { await _mpBrickControllerMem.unmount(); } catch(e){} }
-    container.innerHTML = "";
-    if (loading) loading.style.display = "none";
 
-    const PRECIO_MEMBRESIA = 150; // Soles — ajusta según precio real
-    _mpBrickControllerMem = await _mpBricksBuilderMem.create("payment", "memCardBrick_container", {
-      initialization: {
-        amount: PRECIO_MEMBRESIA,
-        payer: { email: currentUser?.email || "" }
-      },
-      customization: {
-        paymentMethods: { creditCard:"all", debitCard:"all", ticket:"none", bankTransfer:"none", atm:"none", onboarding_credits:"none", wallet_purchase:"none" },
-        visual: { style: { theme:"default", customVariables: { baseColor:"#c48a3a" } } }
-      },
-      callbacks: {
-        onReady: () => { if (loading) loading.style.display = "none"; },
-        onError: (e) => { console.error("MP Error:", e); },
-        onSubmit: async ({ selectedPaymentMethod, formData }) => {
-          // Llamar al backend de MP para procesar el pago
-          // Como no hay backend activo, registramos como pendiente igual que Yape/Plin
-          // y notificamos al admin para validación manual
-          try {
-            await _registrarMembresia("TARJETA");
-          } catch(e) {
-            console.error(e);
-          }
-          return Promise.resolve(); // necesario para que el Brick no quede en loading
-        }
-      }
+    const docRef = await addDoc(collection(db, "membresias"), {
+      usuarioEmail:   currentUser.email,
+      usuarioNombre:  currentUser.displayName || currentUser.email,
+      usuarioAvatar:  currentUser.photoURL || "",
+      horarioId:      horarioElegidoId,
+      horarioLabel:   horarioElegido,
+      metodo:         metodoLabel,
+      comprobanteURL: comprobanteURL,
+      estado:         "pendiente",
+      fecha:          serverTimestamp(),
+      tallerId:       TALLER_ID,
     });
-  } catch(e) {
-    if (loading) loading.style.display = "none";
-    container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif">Error al cargar el formulario de tarjeta. Intenta con Yape o Plin.</p>`;
+    const ref = docRef.id.slice(0,8).toUpperCase();
+
+    cerrarModalPago();
+    document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
+    document.getElementById("exito-resumen").innerHTML =
+      `<strong>Método:</strong> ${metodoLabel}<br>` +
+      `<strong>Horario:</strong> ${horarioElegido}<br>` +
+      `<strong>Referencia:</strong> ${ref}<br>` +
+      `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+    document.getElementById("modalExito").style.display = "flex";
+    document.body.style.overflow = "hidden";
+
+  } catch(err) {
+    console.error("Error registrando membresía:", err);
+    alert("Ha ocurrido un error: " + err.message);
+    if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
   }
 };
 
-// ══════════════════════════════════════════
-//  PANEL ADMIN
-// ══════════════════════════════════════════
-let todasLasMembresias = [];
-
+// ── PANEL ADMIN ────────────────────────────────────────────────────────────
 function escucharMembresiasAdmin() {
   const q = query(collection(db,"membresias"), orderBy("fecha","desc"));
   onSnapshot(q, snap => {
@@ -1036,7 +802,7 @@ function escucharMembresiasAdmin() {
     const pendientes = todasLasMembresias.filter(m => m.estado === "pendiente").length;
     const badge = document.getElementById("badge-mem");
     badge.style.display = pendientes > 0 ? "flex" : "none";
-    badge.textContent = pendientes;
+    badge.textContent   = pendientes;
     renderPanelAdmin();
   });
 }
@@ -1048,7 +814,7 @@ function renderPanelAdmin() {
     ? todasLasMembresias
     : todasLasMembresias.filter(m => m.estado === filtroPanelAdmin);
   if (!items.length) {
-    lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;">Sin registros</div>`;
+    lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Sin registros</div>`;
     return;
   }
   lista.innerHTML = "";
@@ -1058,10 +824,19 @@ function renderPanelAdmin() {
       : "—";
     const div = document.createElement("div");
     div.className = "adm-card";
+    const estadoLabel = {pendiente:"Pendiente",confirmado:"Confirmado",rechazado:"Rechazado"}[m.estado] || m.estado;
+    const compImg = m.comprobanteURL
+      ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="verLightbox('${m.comprobanteURL}')" alt="Comprobante">`
+      : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:8px 0;text-align:center;">Sin comprobante adjunto</p>`;
+    const acciones = m.estado === "pendiente" ? `
+      <div class="adm-acciones">
+        <button class="adm-btn-confirmar" onclick="validarPago('${m.id}','${m.horarioId}',this)">✓ Confirmar pago</button>
+        <button class="adm-btn-rechazar" onclick="rechazarPago('${m.id}')">✕ Rechazar</button>
+      </div>` : "";
     div.innerHTML = `
       <div class="adm-card-header">
         <span class="adm-nombre">${m.usuarioNombre || m.usuarioEmail}</span>
-        <span class="adm-estado ${m.estado}">${m.estado==="pendiente"?"Pendiente":m.estado==="confirmado"?"Confirmado":"Rechazado"}</span>
+        <span class="adm-estado ${m.estado}">${estadoLabel}</span>
       </div>
       <div class="adm-info">
         <strong>Email:</strong> ${m.usuarioEmail}<br>
@@ -1070,15 +845,8 @@ function renderPanelAdmin() {
         <strong>Ref:</strong> ${m.id.slice(0,8).toUpperCase()}<br>
         <strong>Fecha:</strong> ${fecha}
       </div>
-      ${m.comprobanteURL
-        ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="abrirLightbox('${m.comprobanteURL}')" title="Ver comprobante">`
-        : `<p style="font-size:11px;color:#ccc;font-family:'Inter',sans-serif;margin-top:8px;text-align:center;">Sin comprobante adjunto</p>`
-      }
-      ${m.estado==="pendiente"?`
-      <div class="adm-acciones">
-        <button class="adm-btn-confirmar" data-id="${m.id}" data-hid="${m.horarioId}" onclick="validarPago('${m.id}','${m.horarioId}',this)">✓ Confirmar pago</button>
-        <button class="adm-btn-rechazar" onclick="rechazarPago('${m.id}')">✕ Rechazar</button>
-      </div>`:""}`;
+      ${compImg}
+      ${acciones}`;
     lista.appendChild(div);
   });
 }
@@ -1090,15 +858,14 @@ window.filtrarMem = function(filtro, btn) {
   renderPanelAdmin();
 };
 
-// ── Validar → transacción atómica: sube contador + confirma membresía
 window.validarPago = async function(memId, horarioId, btn) {
   btn.disabled = true; btn.textContent = "Confirmando...";
   try {
     await runTransaction(db, async tx => {
       const tallerRef = doc(db,"talleres",TALLER_ID);
-      const snap = await tx.get(tallerRef);
-      const actuales = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
-      if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos disponibles.");
+      const snap      = await tx.get(tallerRef);
+      const actuales  = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
+      if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos.");
       tx.update(tallerRef, {[horarioId]: actuales + 1});
       tx.update(doc(db,"membresias",memId), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
     });
@@ -1113,35 +880,44 @@ window.rechazarPago = async function(memId) {
   await updateDoc(doc(db,"membresias",memId), {estado:"rechazado"});
 };
 
-// ── PERFIL ───────────────────────────────────────────────────────────────
-const modal  = document.getElementById("perfilModal");
-const status = document.getElementById("perfilStatus");
-window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+// ── PERFIL ─────────────────────────────────────────────────────────────────
+const perfilModal  = document.getElementById("perfilModal");
+const perfilStatus = document.getElementById("perfilStatus");
+window.cerrarSesion      = async () => { await signOut(auth); window.location.replace("entrada.html"); };
 window.abrirPersonalizar = () => {
-  modal.style.display="flex"; avatarSeleccionado=null; status.textContent="";
+  perfilModal.style.display = "flex"; perfilStatus.textContent = "";
   const user = auth.currentUser;
   document.getElementById("nuevoNombre").value = user?.displayName || "";
   const foto = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
   document.getElementById("previewAvatar").src = foto;
   document.querySelectorAll(".avatar-opcion").forEach(el => {
     el.classList.remove("seleccionado");
-    if (el.getAttribute("src") === foto || el.src === foto) el.classList.add("seleccionado");
+    if (el.src === foto || el.getAttribute("src") === foto) el.classList.add("seleccionado");
   });
 };
-window.cerrarPersonalizar = () => { modal.style.display="none"; };
+window.cerrarPersonalizar = () => { perfilModal.style.display = "none"; };
 window.guardarPerfil = async () => {
-  const user = auth.currentUser;
+  const user   = auth.currentUser;
   const nombre = document.getElementById("nuevoNombre").value.trim();
-  status.textContent = "Guardando...";
+  perfilStatus.textContent = "Guardando...";
   try {
-    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    const photoURL = _avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
     await updateProfile(user, {displayName: nombre || user.displayName, photoURL});
     await user.reload();
     document.querySelector(".user-avatar").src = photoURL;
-    status.textContent = "✨ ¡Perfil actualizado!";
+    perfilStatus.textContent = "✨ ¡Perfil actualizado!";
     setTimeout(() => window.cerrarPersonalizar(), 1200);
-  } catch(e) { status.textContent = "❌ Error: " + e.message; }
+  } catch(e) { perfilStatus.textContent = "❌ Error: " + e.message; }
 };
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll(".ht-modal").forEach(m => {
+    if (m.style.display !== "none") { m.style.display = "none"; document.body.style.overflow = ""; }
+  });
+  document.getElementById("lightbox").style.display = "none";
+  document.getElementById("popupLogin").style.display = "none";
+});
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
