@@ -3,23 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Colección | Gato Miel Estudio</title>
+<title>Talleres – Gato Miel Estudio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/Styles.css">
 <link rel="stylesheet" href="movil-ui.css">
-
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const _fc = {
-  apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain:"gato-miel-estudio.firebaseapp.com",
-  projectId:"gato-miel-estudio",
-  storageBucket:"gato-miel-estudio.firebasestorage.app",
-  messagingSenderId:"150671559458",
-  appId:"1:150671559458:web:6daaf4a78150706db0337b"
-};
-const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _app = getApps().length ? getApps()[0] : initializeApp(_fc);
 const _auth = getAuth(_app);
 onAuthStateChanged(_auth, (user) => {
   window._firebaseUser = user || null;
@@ -38,8 +30,6 @@ onAuthStateChanged(_auth, (user) => {
 </script>
 </head>
 <body>
-
-<!-- ══ HEADER ══ -->
 <header class="header">
   <div class="logo">
     <span>Gato Miel Estudio</span>
@@ -52,14 +42,10 @@ onAuthStateChanged(_auth, (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
-      🐾 Iniciar sesión
-    </a>
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">🐾 Iniciar sesión</a>
     <div class="user-menu" style="display:none;">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
-        class="user-avatar" onclick="toggleUserMenu()">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E" class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
-        <button onclick="window.location.href='coleccion.html'">🛍 Mis pedidos</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
@@ -68,352 +54,327 @@ onAuthStateChanged(_auth, (user) => {
 </header>
 
 <main>
-  <!-- ══ HERO ══ -->
-  <section class="cl-hero">
-    <div class="cl-hero-inner">
-      <span class="cl-eyebrow">Gato Miel Estudio</span>
-      <h1>Piezas únicas,<br><em>hechas a mano.</em></h1>
-      <p>Cada pieza nace del barro con intención. Sin repeticiones, sin moldes.</p>
+  <section class="ht-hero">
+    <div class="ht-hero-inner">
+      <span class="ht-eyebrow">Gato Miel Estudio</span>
+      <h1>Talleres de<br><em>cerámica</em></h1>
+      <p>Espacios creativos para explorar el barro, aprender con las manos y encontrar tu propio ritmo.</p>
     </div>
-    <div class="cl-hero-deco"><div class="cl-hero-line"></div></div>
+    <div class="ht-hero-deco"><div class="ht-hero-line"></div></div>
   </section>
 
-  <!-- ══ GRID PRODUCTOS ══ -->
-  <section class="cl-tienda">
-    <div class="cl-grid">
-
-      <article class="cl-producto" data-nombre="Taza Arena" data-precio="120">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
-               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
+  <section class="ht-seccion" id="actuales">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-activo">Inscripciones abiertas</span>
+      <h2>Talleres actuales</h2>
+    </div>
+    <div class="ht-grid">
+      <article class="ht-card">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <span class="ht-badge ht-badge-open">Abierto</span>
         </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Taza Arena</h3>
-            <span class="cl-precio">S/ 120</span>
+        <div class="ht-card-body">
+          <h3>Arcilla Nocturna</h3>
+          <p>Taller semanal para experimentar técnicas de modelado en un ambiente creativo y relajado.</p>
+          <div class="ht-cupos-resumen">
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="num-h0"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="num-h1"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
           </div>
-          <p>Cerámica esmaltada en tonos tierra.</p>
+          <div class="ht-card-footer">
+            <button class="ht-btn-solid" onclick="abrirPagoTaller()">Pagar membresía</button>
+          </div>
         </div>
       </article>
+    </div>
+  </section>
 
-      <article class="cl-producto" data-nombre="Plato Bruma" data-precio="150">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
-               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
+  <div class="ht-divisor"></div>
+
+  <section class="ht-seccion ht-seccion-pronto" id="proximos">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-pronto">Próximamente</span>
+      <h2>Talleres por venir</h2>
+    </div>
+    <div class="ht-grid">
+      <article class="ht-card ht-card-dim">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <span class="ht-badge ht-badge-soon">Pronto</span>
         </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Plato Bruma</h3>
-            <span class="cl-precio">S/ 150</span>
+        <div class="ht-card-body">
+          <h3>Iniciación al Torno</h3>
+          <p>Curso intensivo para aprender desde cero el trabajo en torno cerámico.</p>
+          <div class="ht-card-footer ht-card-footer-soon">
+            <span class="ht-aviso">Avisarme cuando abra</span>
           </div>
-          <p>Plato decorativo con textura orgánica.</p>
         </div>
       </article>
-
-      <article class="cl-producto" data-nombre="Jarrón Eclipse" data-precio="240">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
-               onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Jarrón Eclipse</h3>
-            <span class="cl-precio">S/ 240</span>
-          </div>
-          <p>Pieza única torneada a mano.</p>
-        </div>
-      </article>
-
-      <article class="cl-producto" data-nombre="Cuenco Alba" data-precio="135">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
-               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Cuenco Alba</h3>
-            <span class="cl-precio">S/ 135</span>
-          </div>
-          <p>Perfecto para decoración minimalista.</p>
-        </div>
-      </article>
-
     </div>
   </section>
 </main>
+<footer class="footer"><p>© 2026 Gato Miel Estudio</p></footer>
 
-<footer class="footer">
-  <p>© 2026 Gato Miel Estudio</p>
-</footer>
+<!-- ═══ POPUP LOGIN ═══ -->
+<div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">Inicia sesión para continuar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;">Para reservar un taller necesitas una cuenta.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
+    <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
+</div>
 
-<!-- ══ MODAL PAGO ══ -->
-<div id="modalCompra" class="cl-modal">
-  <div class="cl-modal-box">
-
-    <!-- Header inmersivo con fondo oscuro artesanal -->
-    <div class="cl-modal-hero">
-      <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
+<!-- ═══ MODAL PASO 1: HORARIO ═══ -->
+<div id="modalHorario" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalHorario()">
         <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-
-      <!-- Logo + nombre -->
-      <div class="cl-modal-hero-brand">
-        <img src="Assets/Img/Logo.jpg" alt="Logo" class="cl-modal-logo">
-        <div class="cl-modal-hero-text">
-          <span class="cl-modal-hero-eyebrow">Gato Miel Estudio</span>
-          <h2 class="cl-modal-hero-title" id="productoSeleccionado">—</h2>
-          <span class="cl-modal-hero-sub">hecha a mano · pieza única</span>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub">elige tu horario · S/ 150</span>
         </div>
       </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
+      </div>
+    </div>
+    <div style="padding:20px 22px 24px;">
+      <p class="ht-step-label">Selecciona un horario disponible</p>
+      <div class="ht-horarios" id="lista-horarios"></div>
+      <button class="ht-btn-confirm" onclick="irAPago()" style="margin-top:16px;"><span>Continuar al pago →</span></button>
+    </div>
+  </div>
+</div>
 
-      <!-- Deco animado -->
-      <div class="cl-modal-hero-deco">
-        <div class="cl-deco-ring cl-deco-ring-1"></div>
-        <div class="cl-deco-ring cl-deco-ring-2"></div>
-        <div class="cl-deco-ring cl-deco-ring-3"></div>
-        <div class="cl-deco-dot"></div>
+<!-- ═══ MODAL PASO 2: PAGO (idéntico a colección) ═══ -->
+<div id="modalPago" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalPago()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub" id="pago-horario-sub">—</span>
+        </div>
+      </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
       </div>
     </div>
 
-    <!-- Selector de método de pago — pills horizontales -->
-    <div class="cl-metodo-selector">
-      <button class="cl-metodo-pill active" onclick="switchTab('yape', this)" data-tab="yape">
-        <span class="cl-pill-dot" style="background:#6c2fa5"></span>
-        Yape
+    <!-- Pills -->
+    <div class="ht-metodo-selector">
+      <button class="ht-metodo-pill active" onclick="switchMetodo('yape',this)"><span class="ht-pill-dot" style="background:#6c2fa5;"></span>Yape</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('plin',this)"><span class="ht-pill-dot" style="background:#00a3e0;"></span>Plin</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('tarjeta',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Tarjeta
       </button>
-      <button class="cl-metodo-pill" onclick="switchTab('plin', this)" data-tab="plin">
-        <span class="cl-pill-dot" style="background:#00a3e0"></span>
-        Plin
-      </button>
-      <button class="cl-metodo-pill" onclick="switchTab('tarjeta', this)" data-tab="tarjeta">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-        Tarjeta
-      </button>
-      <button class="cl-metodo-pill" onclick="switchTab('agencia', this)" data-tab="agencia">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        Agencia
+      <button class="ht-metodo-pill" onclick="switchMetodo('agencia',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Agencia
       </button>
     </div>
 
-    <!-- Contenido -->
-    <div class="cl-modal-body">
+    <div class="ht-modal-body">
 
       <!-- TAB YAPE -->
-      <div id="tab-yape" class="cl-tab-content active">
-        <div class="cl-qr-pane">
-          <div class="cl-qr-frame cl-qr-frame-yape">
-            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="cl-qr-img"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="cl-qr-empty" style="display:none">
-              <div class="cl-qr-grid-bg"></div>
-              <span>QR Yape</span>
-            </div>
-            <div class="cl-qr-badge-float cl-qr-badge-yape">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-              Yape
-            </div>
+      <div id="tab-yape" class="ht-tab active">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-yape">
+            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-yape">Yape</div>
           </div>
-          <div class="cl-qr-info">
-            <div class="cl-qr-monto-pill">
-              <span>Total</span>
-              <strong id="yape-monto">S/ —</strong>
-            </div>
-            <p class="cl-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
-          <button class="cl-btn-pagar cl-btn-yape" onclick="confirmarPagoQR('Yape')">
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-yape" onclick="document.getElementById('file-yape').click()">
+              <div id="ph-yape" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-yape" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-yape" accept="image/*" style="display:none" onchange="previewComp('yape',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-yape" onclick="confirmarPago('Yape')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué con Yape
+            Ya pagué · Enviar comprobante
           </button>
         </div>
       </div>
 
       <!-- TAB PLIN -->
-      <div id="tab-plin" class="cl-tab-content">
-        <div class="cl-qr-pane">
-          <div class="cl-qr-frame cl-qr-frame-plin">
-            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="cl-qr-img"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="cl-qr-empty" style="display:none">
-              <div class="cl-qr-grid-bg"></div>
-              <span>QR Plin</span>
-            </div>
-            <div class="cl-qr-badge-float cl-qr-badge-plin">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-              Plin
-            </div>
+      <div id="tab-plin" class="ht-tab">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-plin">
+            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-plin">Plin</div>
           </div>
-          <div class="cl-qr-info">
-            <div class="cl-qr-monto-pill">
-              <span>Total</span>
-              <strong id="plin-monto">S/ —</strong>
-            </div>
-            <p class="cl-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
-          <button class="cl-btn-pagar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-plin" onclick="document.getElementById('file-plin').click()">
+              <div id="ph-plin" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-plin" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-plin" accept="image/*" style="display:none" onchange="previewComp('plin',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-plin" onclick="confirmarPago('Plin')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué con Plin
+            Ya pagué · Enviar comprobante
           </button>
         </div>
       </div>
 
       <!-- TAB TARJETA -->
-      <div id="tab-tarjeta" class="cl-tab-content">
-        <div id="cl-loading" style="text-align:center;padding:44px 0;display:none;">
-          <div class="cl-spinner"></div>
-          <p style="margin-top:14px;font-size:12px;color:#bbb;font-family:'Inter',sans-serif;letter-spacing:0.06em;">preparando pago seguro...</p>
+      <div id="tab-tarjeta" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:14px;">
+          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:center;gap:10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,0.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+              <span style="font-family:'Playfair Display',serif;font-size:16px;color:white;">Pago con tarjeta</span>
+            </div>
+            <div style="padding:14px 18px;font-family:'Inter',sans-serif;font-size:12px;line-height:2.2;">
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;">
+                <span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Taller</span>
+                <span style="color:#1a1714;font-weight:500;">Arcilla Nocturna</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;">
+                <span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Horario</span>
+                <span style="color:#1a1714;font-weight:500;" id="tarjeta-horario-val">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;">
+                <span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Monto</span>
+                <span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-family:'Inter',sans-serif;font-size:12px;color:#aaa;text-align:center;line-height:1.6;margin:0 4px;">Coordina el cobro por WhatsApp. Confirmamos en menos de 24h.</p>
+          <a id="tarjeta-wsp" href="https://wa.me/51922402608?text=Hola!%20Quiero%20pagar%20con%20tarjeta%20la%20membresía%20Arcilla%20Nocturna%20S%2F150" target="_blank" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:16px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 6px 20px rgba(34,197,94,.3);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Coordinar pago por WhatsApp
+          </a>
+          <button onclick="confirmarPago('Tarjeta')" style="width:100%;padding:12px;border:1.5px solid #ede8de;border-radius:16px;background:white;color:#888;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;" onmouseover="this.style.background='#faf8f5'" onmouseout="this.style.background='white'">
+            Ya coordiné · Confirmar plaza ✔
+          </button>
         </div>
-        <div id="paymentBrick_container" style="padding:10px 6px 4px;"></div>
       </div>
 
       <!-- TAB AGENCIA -->
-      <div id="tab-agencia" class="cl-tab-content">
-        <div class="cl-agencia-pane">
-          <div class="cl-cci-card">
-            <div class="cl-cci-card-header">
-              <span class="cl-cci-bank-name">BCP</span>
-              <span class="cl-cci-bank-label">Banco de Crédito del Perú</span>
+      <div id="tab-agencia" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:14px;">
+          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:baseline;gap:10px;">
+              <span style="font-family:'Playfair Display',serif;font-size:20px;color:#c48a3a;">BCP</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;">Banco de Crédito del Perú</span>
             </div>
-            <div class="cl-cci-fields">
-              <div class="cl-cci-field">
-                <span class="cl-cci-field-label">Titular</span>
-                <span class="cl-cci-field-val">Jhon Anibal Ramirez</span>
-              </div>
-              <div class="cl-cci-field">
-                <span class="cl-cci-field-label">N° Cuenta</span>
-                <span class="cl-cci-field-val mono">000-00000000-0-00</span>
-              </div>
-              <div class="cl-cci-field cl-cci-field-cci">
-                <span class="cl-cci-field-label">CCI</span>
-                <div class="cl-cci-copy-row">
-                  <span class="cl-cci-field-val mono" id="cci-numero">00200000000000000000</span>
-                  <button class="cl-cci-copy-btn" onclick="copiarCCI()" title="Copiar">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="cl-cci-field cl-cci-field-monto">
-                <span class="cl-cci-field-label">Monto exacto</span>
-                <span class="cl-cci-field-val cl-cci-monto-val" id="agencia-monto">S/ —</span>
-              </div>
+            <div style="padding:0 18px;">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Titular</span><span style="color:#1a1714;font-weight:500;">Gato Miel Estudio</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Cuenta</span><span style="font-family:monospace;color:#1a1714;">000-00000000-0-00</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">CCI</span><span style="font-family:monospace;color:#1a1714;">00200000000000000000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:17px;color:#c48a3a;">S/ 150</span></div>
             </div>
           </div>
-
-          <div class="cl-agencia-steps">
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">1</div>
-              <p>Deposita o transfiere usando el CCI</p>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta voucher del depósito</p>
+            <div class="ht-comp-zona" id="zona-agencia" onclick="document.getElementById('file-agencia').click()">
+              <div id="ph-agencia" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir voucher</span></div>
+              <div id="pr-agencia" style="display:none;width:100%;text-align:center;position:relative;"></div>
             </div>
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">2</div>
-              <p>Toma captura del comprobante</p>
-            </div>
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">3</div>
-              <p>Envíala por WhatsApp · <strong>+51 922 402 608</strong></p>
-            </div>
+            <input type="file" id="file-agencia" accept="image/*" style="display:none" onchange="previewComp('agencia',this)">
           </div>
-
-          <a href="https://wa.me/51922402608?text=Hola!%20Hice%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
-             target="_blank" class="cl-btn-whatsapp">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-            Enviar comprobante
-          </a>
+          <button class="ht-btn-pagar" style="background:linear-gradient(135deg,#1a1714,#2d2419);color:white;box-shadow:0 6px 20px rgba(0,0,0,.25);" onclick="confirmarPago('Agencia')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya deposité · Enviar comprobante
+          </button>
         </div>
       </div>
 
     </div>
-
-    <!-- Pie sutil -->
-    <div class="cl-modal-pie">
+    <div class="ht-modal-pie">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span>pago protegido · ssl 256-bit</span>
     </div>
-
   </div>
 </div>
 
-<!-- ══ MODAL ÉXITO / VALIDACIÓN ══ -->
-<div id="modalExito" class="cl-modal" style="display:none;">
-  <div class="cl-modal-box cl-exito-box">
-
-    <!-- Icono animado -->
-    <div class="cl-exito-icon-wrap">
-      <div class="cl-exito-ring cl-exito-ring-1"></div>
-      <div class="cl-exito-ring cl-exito-ring-2"></div>
-      <div class="cl-exito-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" class="cl-check-path"/></svg>
-      </div>
+<!-- ═══ MODAL ÉXITO ═══ -->
+<div id="modalExito" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:white;width:100%;max-width:380px;border-radius:24px;overflow:visible;animation:htModalIn .5s cubic-bezier(.34,1.4,.64,1);box-shadow:0 50px 120px rgba(0,0,0,.5);">
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:-40px auto 0;position:relative;z-index:2;box-shadow:0 12px 32px rgba(196,138,58,.4);">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" stroke-dasharray="30" stroke-dashoffset="30" style="animation:checkDraw .5s ease .3s forwards;"/></svg>
     </div>
-
-    <!-- Textos -->
-    <div class="cl-exito-body">
-      <h3 class="cl-exito-title">Estamos validando<br>tu pago</h3>
-      <p id="exitoDetalle" class="cl-exito-detalle"></p>
-
-      <!-- Separador decorativo -->
-      <div class="cl-exito-sep">
-        <div></div><span>mientras tanto</span><div></div>
+    <div style="padding:24px 28px 28px;text-align:center;">
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:#1a1714;margin-bottom:8px;">¡Gracias! Validaremos<br>tu pago pronto</h3>
+      <p id="exito-detalle" style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#c48a3a;margin-bottom:16px;"></p>
+      <div style="background:#faf8f5;border-radius:14px;padding:14px;margin-bottom:16px;text-align:left;border:1px solid #ede8de;">
+        <p id="exito-resumen" style="font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:2;margin:0;"></p>
       </div>
-
-      <p class="cl-exito-msg">
-        Vamos coordinando el envío de tu pieza.<br>
-        <strong>Escríbenos y envíanos el comprobante:</strong>
-      </p>
-
-      <!-- Número destacado -->
-      <div class="cl-exito-numero">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 11.29 19.79 19.79 0 01.67 2.68 2 2 0 012.66.5h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8a16 16 0 006.06 6.06l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-        922 402 608
-      </div>
-
-      <!-- Botones -->
-      <a id="btnWspComprobante" href="#" target="_blank" class="cl-exito-btn-wsp">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        Enviar comprobante por WhatsApp
-      </a>
-
-      <button onclick="cerrarExito()" class="cl-exito-btn-cerrar">
-        Ya lo envié · Cerrar
-      </button>
+      <p style="font-family:'Inter',sans-serif;font-size:12px;color:#aaa;line-height:1.6;margin-bottom:20px;">Las administradoras confirmarán tu plaza en menos de 24h 🐾</p>
+      <button onclick="document.getElementById('modalExito').style.display='none';document.body.style.overflow='';" style="background:none;border:1.5px solid #ede8de;color:#888;border-radius:50px;padding:10px 28px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
     </div>
-
   </div>
 </div>
 
-<!-- ══ MODAL HISTORIAL ══ -->
-<div id="modalHistorial" class="cl-modal" style="display:none;">
-  <div class="cl-modal-box cl-hist-box">
-    <div class="cl-hist-header">
-      <div>
-        <span class="cl-hist-eyebrow">Gato Miel Estudio</span>
-        <h3 class="cl-hist-title">Mis pedidos</h3>
-      </div>
-      <button onclick="cerrarHistorial()" class="cl-hist-cerrar">
+<!-- ═══ FAB ADMIN ═══ -->
+<div id="panelAdminMem" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
+  <button onclick="abrirPanelAdmin()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
+    🎫 Membresías
+    <span id="badge-mem" style="background:#c48a3a;color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;"></span>
+  </button>
+</div>
+
+<!-- ═══ MODAL ADMIN ═══ -->
+<div id="modalAdminMem" class="ht-modal" style="z-index:9998;">
+  <div class="ht-modal-box" style="max-width:560px;">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarPanelAdmin()">
         <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-    </div>
-    <div id="historialLista" class="cl-hist-lista">
-      <div class="cl-hist-loading">
-        <div class="cl-spinner"></div>
-        <p>Cargando pedidos...</p>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Panel Admin</span>
+          <h2 class="ht-modal-hero-title">Membresías</h2>
+          <span class="ht-modal-hero-sub">valida pagos · activa plazas</span>
+        </div>
       </div>
+    </div>
+    <div class="ht-modal-body" style="padding:16px 20px 20px;">
+      <div style="display:flex;gap:6px;margin-bottom:14px;">
+        <button class="adm-tab activo" onclick="filtrarMem('pendiente',this)">Pendientes</button>
+        <button class="adm-tab" onclick="filtrarMem('confirmado',this)">Confirmados</button>
+        <button class="adm-tab" onclick="filtrarMem('todos',this)">Todos</button>
+      </div>
+      <div id="lista-mem-admin"><div style="text-align:center;padding:30px;color:#bbb;font-size:13px;">Cargando...</div></div>
     </div>
   </div>
 </div>
 
-<!-- ══ MODAL PERFIL ══ -->
+<!-- ═══ LIGHTBOX ═══ -->
+<div id="lightbox" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="lightbox-img" src="" style="max-width:92vw;max-height:88vh;border-radius:14px;">
+</div>
+
+<!-- ═══ MODAL PERFIL ═══ -->
 <div id="perfilModal" class="perfil-modal">
   <div class="perfil-box">
     <h3>Personalizar perfil</h3>
@@ -437,823 +398,604 @@ onAuthStateChanged(_auth, (user) => {
 </div>
 
 <style>
-:root { --gold:#c48a3a; --ink:#1a1714; --sand:#f8f5f1; --warm:#f3ece3; --muted:#888; }
-
-.cl-eyebrow { font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:rgba(196,138,58,0.8); display:block; margin-bottom:18px; }
-
-.cl-hero { background:var(--ink); padding:120px 9% 100px; display:flex; align-items:flex-end; justify-content:space-between; gap:40px; min-height:50vh; }
-.cl-hero-inner { max-width:580px; }
-.cl-hero-inner h1 { font-family:'Playfair Display',serif; font-size:clamp(50px,7vw,84px); font-weight:400; color:white; line-height:1.05; letter-spacing:-0.02em; margin-bottom:22px; }
-.cl-hero-inner h1 em { font-style:italic; color:var(--gold); }
-.cl-hero-inner p { font-size:16px; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.75; max-width:400px; }
-.cl-hero-deco { align-self:flex-start; padding-top:8px; }
-.cl-hero-line { width:1px; height:80px; background:linear-gradient(var(--gold),transparent); opacity:0.5; }
-
-.cl-tienda { padding:100px 9%; background:var(--sand); }
-.cl-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
-
-.cl-producto { background:white; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 2px 16px rgba(0,0,0,0.05); transition:transform 0.35s ease,box-shadow 0.35s ease; position:relative; }
-.cl-producto::after { content:""; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),#e8b870); transform:scaleX(0); transform-origin:left; transition:transform 0.4s ease; }
-.cl-producto:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,0.1); }
-.cl-producto:hover::after { transform:scaleX(1); }
-
-.cl-img { position:relative; height:280px; overflow:hidden; }
-.cl-img img { width:100%; height:100%; object-fit:cover; filter:saturate(85%); transition:transform 0.6s ease,filter 0.4s ease; display:block; }
-.cl-producto:hover .cl-img img { transform:scale(1.06); filter:saturate(100%); }
-.cl-img-overlay { position:absolute; inset:0; background:rgba(26,23,20,0); display:flex; align-items:flex-end; justify-content:center; padding-bottom:22px; opacity:0; transition:opacity 0.3s ease,background 0.3s ease; }
-.cl-producto:hover .cl-img-overlay { opacity:1; background:rgba(26,23,20,0.38); }
-.cl-btn-ver { padding:11px 26px; background:white; color:var(--ink); border:none; border-radius:50px; font-size:12px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; transform:translateY(10px); transition:transform 0.3s ease,background 0.2s; }
-.cl-producto:hover .cl-btn-ver { transform:translateY(0); }
-.cl-btn-ver:hover { background:var(--gold); color:white; }
-
-.cl-info { padding:20px 20px 24px; }
-.cl-info-top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; }
-.cl-info-top h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:500; color:var(--ink); }
-.cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
-.cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
-
-/* ══ MODAL ══ */
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
-.cl-modal.open { display:flex; }
-.cl-modal-box {
-  background:#fff; width:100%; max-width:400px; max-height:92vh;
-  border-radius:24px; display:flex; flex-direction:column; overflow:hidden;
-  animation:clModalIn 0.45s cubic-bezier(0.34,1.4,0.64,1);
-  box-shadow:0 50px 120px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,138,58,0.1);
+:root{--gold:#c48a3a;--ink:#1a1714;--sand:#f8f5f1;}
+/* HERO */
+.ht-eyebrow{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,138,58,.8);display:block;margin-bottom:18px}
+.ht-label{display:inline-block;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.ht-label-activo{background:rgba(196,138,58,.12);color:var(--gold)}
+.ht-label-pronto{background:rgba(0,0,0,.05);color:#aaa}
+.ht-hero{background:var(--ink);padding:120px 9% 100px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;min-height:52vh}
+.ht-hero-inner{max-width:560px}
+.ht-hero-inner h1{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,86px);font-weight:400;color:white;line-height:1;letter-spacing:-.02em;margin-bottom:24px}
+.ht-hero-inner h1 em{font-style:italic;color:var(--gold)}
+.ht-hero-inner p{font-size:16px;color:rgba(255,255,255,.5);font-weight:300;line-height:1.75;max-width:420px}
+.ht-hero-deco{align-self:flex-start;padding-top:8px}
+.ht-hero-line{width:1px;height:80px;background:linear-gradient(var(--gold),transparent);opacity:.5}
+.ht-seccion{padding:100px 9%;background:var(--sand)}
+.ht-seccion-pronto{background:white}
+.ht-seccion-header{margin-bottom:56px}
+.ht-seccion-header h2{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);font-weight:400;color:var(--ink);letter-spacing:-.01em}
+.ht-divisor{height:1px;background:linear-gradient(90deg,transparent,#e8d5b7,transparent);margin:0 9%}
+/* CARDS */
+.ht-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,360px));gap:28px}
+.ht-card{background:white;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 16px rgba(0,0,0,.06);transition:transform .35s,box-shadow .35s;position:relative}
+.ht-card::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),#e8b870);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.ht-card:hover{transform:translateY(-8px);box-shadow:0 24px 50px rgba(0,0,0,.11)}
+.ht-card:hover::after{transform:scaleX(1)}
+.ht-card-dim{opacity:.68}.ht-card-dim:hover{opacity:1}
+.ht-card-img{position:relative;height:230px;overflow:hidden}
+.ht-card-img img{width:100%;height:100%;object-fit:cover;filter:saturate(88%);transition:transform .6s,filter .4s}
+.ht-card:hover .ht-card-img img{transform:scale(1.06);filter:saturate(100%)}
+.ht-badge{position:absolute;top:14px;right:14px;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:5px 13px;border-radius:20px}
+.ht-badge-open{background:var(--gold);color:white}
+.ht-badge-soon{background:rgba(255,255,255,.88);color:#888}
+.ht-card-body{padding:24px 22px 26px;flex:1;display:flex;flex-direction:column}
+.ht-card-body h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--ink);margin-bottom:10px}
+.ht-card-body p{font-size:14px;color:#777;line-height:1.7;flex:1;margin-bottom:16px;font-weight:300}
+.ht-card-footer{padding-top:16px;border-top:1px solid #f0ebe4}
+.ht-cupos-resumen{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.ht-cupo-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#faf7f4;border-radius:10px;border:1px solid #f0ebe4}
+.ht-cupo-label{font-family:'Inter',sans-serif;font-size:11px;color:#888}
+.ht-cupo-num{display:flex;gap:4px;align-items:center}
+.ht-cupo-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);display:inline-block}
+.ht-cupo-dot.vacio{background:#e8e0d8}
+.ht-cupo-agotado{font-family:'Inter',sans-serif;font-size:10px;color:#e55;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ht-btn-solid{display:block;width:100%;text-align:center;padding:12px 20px;background:var(--gold);color:white;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:.06em;font-family:'Inter',sans-serif;transition:all .3s;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(196,138,58,.28)}
+.ht-btn-solid:hover{background:#a8742f;transform:translateY(-2px)}
+.ht-aviso{font-size:13px;color:#aaa;font-family:'Inter',sans-serif;text-align:center;padding:6px 0;display:block}
+/* MODALES */
+.ht-modal{display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9999;padding:20px}
+.ht-modal.open{display:flex}
+.ht-modal-box{background:white;width:100%;max-width:420px;max-height:92vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;animation:htModalIn .4s cubic-bezier(.34,1.4,.64,1);box-shadow:0 50px 120px rgba(0,0,0,.4)}
+@keyframes htModalIn{from{transform:scale(.88) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+/* hero modal */
+.ht-modal-hero{background:linear-gradient(160deg,#100d0a,#1e1610,#0f0c09);padding:20px;position:relative;overflow:hidden;flex-shrink:0}
+.ht-modal-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 40%,rgba(196,138,58,.12),transparent 60%);pointer-events:none}
+.ht-modal-cerrar{position:absolute;top:12px;right:12px;z-index:2;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);transition:.2s}
+.ht-modal-cerrar:hover{background:rgba(196,138,58,.25);color:white;transform:rotate(90deg)}
+.ht-modal-hero-brand{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.ht-modal-logo{width:44px;height:44px;border-radius:12px;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(196,138,58,.25)}
+.ht-modal-hero-eyebrow{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:5px}
+.ht-modal-hero-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:white;line-height:1.2;margin-bottom:3px}
+.ht-modal-hero-sub{display:block;font-family:'Inter',sans-serif;font-size:10px;font-weight:300;color:rgba(255,255,255,.25);letter-spacing:.1em}
+.ht-modal-hero-deco{position:absolute;right:-20px;top:50%;transform:translateY(-50%);width:100px;height:100px;pointer-events:none}
+.ht-deco-ring{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);animation:ringPulse 3s ease-in-out infinite}
+.ht-deco-ring-1{width:60px;height:60px;border:1px solid rgba(196,138,58,.12)}
+.ht-deco-ring-2{width:90px;height:90px;border:1px solid rgba(196,138,58,.06);animation-delay:.6s}
+@keyframes ringPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.08);opacity:.5}}
+.ht-deco-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:rgba(196,138,58,.5);animation:dotGlow 2s ease-in-out infinite}
+@keyframes dotGlow{0%,100%{box-shadow:0 0 0 0 rgba(196,138,58,.4)}50%{box-shadow:0 0 0 6px rgba(196,138,58,0)}}
+/* pills */
+.ht-metodo-selector{display:flex;gap:6px;padding:12px 16px 10px;background:#faf8f5;border-bottom:1px solid #f0ebe3;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.ht-metodo-selector::-webkit-scrollbar{display:none}
+.ht-metodo-pill{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:50px;border:1.5px solid #ede8e0;background:white;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:#999;transition:all .25s;flex-shrink:0}
+.ht-metodo-pill:hover{border-color:var(--gold);color:var(--ink);transform:translateY(-1px)}
+.ht-metodo-pill.active{background:var(--ink);border-color:var(--ink);color:white;box-shadow:0 4px 14px rgba(26,23,20,.3);transform:translateY(-1px)}
+.ht-pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* tabs pago */
+.ht-modal-body{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#e5ddd3 transparent}
+.ht-tab{display:none}.ht-tab.active{display:block;animation:tabIn .3s ease}
+@keyframes tabIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ht-qr-pane{padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+/* QR */
+.ht-qr-frame{position:relative;width:190px;height:190px;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.14);animation:qrFloat 4s ease-in-out infinite;flex-shrink:0}
+@keyframes qrFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.ht-qr-yape{border:1.5px solid rgba(108,47,165,.15);background:linear-gradient(135deg,rgba(108,47,165,.06),rgba(108,47,165,.02))}
+.ht-qr-plin{border:1.5px solid rgba(0,163,224,.15);background:linear-gradient(135deg,rgba(0,163,224,.06),rgba(0,163,224,.02))}
+.ht-qr-img{width:100%;height:100%;object-fit:contain;padding:10px}
+.ht-qr-badge{position:absolute;bottom:8px;right:8px;padding:3px 9px;border-radius:20px;font-family:'Inter',sans-serif;font-size:10px;font-weight:700}
+.ht-badge-yape{background:#6c2fa5;color:white}
+.ht-badge-plin{background:#00a3e0;color:white}
+.ht-qr-info{width:100%;display:flex;flex-direction:column;gap:8px}
+.ht-monto-pill{display:flex;align-items:center;justify-content:space-between;background:#f8f5f1;border-radius:14px;padding:11px 16px;border:1px solid #ede8de}
+.ht-monto-pill span{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;letter-spacing:.06em}
+.ht-monto-pill strong{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+.ht-qr-hint{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.5}
+/* comprobante */
+.ht-comp-wrap{width:100%}
+.ht-comp-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#888;letter-spacing:.07em;text-transform:uppercase;text-align:center;margin-bottom:8px}
+.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ht-comp-zona:hover,.ht-comp-zona.lista{border-color:var(--gold);background:#fdf6ec}
+.ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb}
+.ht-comp-check{position:absolute;top:8px;right:8px;background:var(--gold);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+/* botones pagar */
+.ht-btn-pagar{width:100%;padding:14px;border:none;border-radius:16px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s}
+.ht-btn-pagar:hover{opacity:.9;transform:translateY(-1px)}
+.ht-btn-yape{background:linear-gradient(135deg,#5a2490,#7a35b8);color:white;box-shadow:0 6px 20px rgba(90,36,144,.3)}
+.ht-btn-plin{background:linear-gradient(135deg,#0090cc,#006699);color:white;box-shadow:0 6px 20px rgba(0,144,204,.3)}
+/* horarios */
+.ht-step-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#bbb;text-align:center;margin-bottom:16px}
+.ht-horarios{display:flex;flex-direction:column;gap:10px}
+.ht-horario{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid #f0ebe4;background:#faf7f4;cursor:pointer;transition:all .22s}
+.ht-horario:hover:not(.sin-cupo){border-color:#e8d5b7;background:#fdf6ec;transform:translateY(-2px);box-shadow:0 6px 16px rgba(196,138,58,.1)}
+.ht-horario.seleccionado{border-color:var(--gold);background:#fdf6ec;box-shadow:0 6px 20px rgba(196,138,58,.18)}
+.ht-horario.sin-cupo{opacity:.4;cursor:not-allowed}
+.ht-horario-left{display:flex;flex-direction:column;min-width:70px}
+.ht-horario-dia{font-family:'Playfair Display',serif;font-size:14px;font-weight:500;color:var(--ink)}
+.ht-horario-fecha{font-size:11px;color:#888;font-family:'Inter',sans-serif;margin-top:1px}
+.ht-horario-hora{font-size:14px;font-weight:500;color:var(--gold);font-family:'Inter',sans-serif;flex:1;text-align:right}
+.ht-horario-cupo{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px}
+.ht-cupo-dots-mini{display:flex;gap:3px}
+.ht-cupo-dot-mini{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ht-cupo-dot-mini.vacio{background:#e8e0d8}
+.ht-cupo-txt{font-size:9px;color:#aaa;font-family:'Inter',sans-serif;white-space:nowrap}
+.sin-cupo .ht-cupo-txt{color:#e55;font-weight:700}
+.ht-horario-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s;flex-shrink:0}
+.ht-horario.seleccionado .ht-horario-check{background:var(--gold);border-color:var(--gold);color:white}
+.ht-btn-confirm{width:100%;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;position:relative;overflow:hidden}
+.ht-btn-confirm::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#e8b870);opacity:0;transition:opacity .35s}
+.ht-btn-confirm:hover::before{opacity:1}
+.ht-btn-confirm span{position:relative;z-index:1}
+.ht-btn-confirm:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(196,138,58,.38)}
+/* pie modal */
+.ht-modal-pie{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 16px;background:#faf8f5;border-top:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:9px;color:#d4cdc4;letter-spacing:.1em;text-transform:lowercase;flex-shrink:0}
+/* admin */
+.adm-tab{flex:1;padding:8px;border:1.5px solid #f0ebe4;background:#faf7f4;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.06em;cursor:pointer;color:#888;transition:all .2s}
+.adm-tab.activo{background:var(--ink);color:white;border-color:var(--ink)}
+.adm-card{background:#faf7f4;border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid #f0ebe4}
+.adm-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.adm-nombre{font-family:'Playfair Display',serif;font-size:15px;font-weight:500;color:var(--ink)}
+.adm-info{font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.9;margin-bottom:10px}
+.adm-info strong{color:var(--ink);font-weight:500}
+.adm-estado{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.adm-estado.pendiente{background:#fff3cd;color:#856404}
+.adm-estado.confirmado{background:#d4edda;color:#155724}
+.adm-estado.rechazado{background:#f8d7da;color:#721c24}
+.adm-comp-img{width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin:8px 0;border:1px solid #f0ebe4;cursor:zoom-in;display:block}
+.adm-acciones{display:flex;gap:8px;margin-top:8px}
+.adm-btn-confirmar{flex:1;padding:9px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:.2s}
+.adm-btn-confirmar:hover{background:#a8742f}
+.adm-btn-confirmar:disabled{background:#ccc;cursor:not-allowed}
+.adm-btn-rechazar{padding:9px 14px;background:#fff0f0;color:#e74c3c;border:1px solid #ffd5d5;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer}
+/* avatar */
+.avatar-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.avatar-opcion{width:100%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;cursor:pointer;border:3px solid transparent;transition:.2s}
+.avatar-opcion:hover{transform:scale(1.08);border-color:#c48a3a}
+.avatar-opcion.seleccionado{border-color:#c48a3a;box-shadow:0 0 0 3px rgba(196,138,58,.3)}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+@media(max-width:900px){
+  .ht-hero{padding:90px 7% 70px;flex-direction:column;min-height:auto}
+  .ht-hero-deco{display:none}
+  .ht-seccion{padding:70px 7%}
+  .ht-divisor{margin:0 7%}
+  .ht-grid{grid-template-columns:1fr;max-width:380px}
 }
-@keyframes clModalIn { from{transform:scale(0.86) translateY(32px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
-
-/* Hero header inmersivo */
-.cl-modal-hero {
-  background: linear-gradient(160deg, #100d0a 0%, #1e1610 50%, #0f0c09 100%);
-  padding: 22px 20px 20px;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  animation: heroSlideIn 0.5s cubic-bezier(0.34,1.2,0.64,1) both;
-}
-@keyframes heroSlideIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
-.cl-modal-hero::before {
-  content:'';
-  position:absolute; inset:0;
-  background: radial-gradient(ellipse at 85% 40%, rgba(196,138,58,0.12) 0%, transparent 60%);
-  pointer-events:none;
-}
-.cl-modal-cerrar {
-  position:absolute; top:12px; right:12px; z-index:2;
-  width:26px; height:26px; border-radius:50%; border:none;
-  background:rgba(255,255,255,0.07); cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  color:rgba(255,255,255,0.4); transition:background 0.2s, color 0.2s, transform 0.3s;
-}
-.cl-modal-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg) scale(1.1); }
-
-/* Brand row */
-.cl-modal-hero-brand { display:flex; align-items:center; gap:14px; position:relative; z-index:1; }
-.cl-modal-logo {
-  width:46px; height:46px; border-radius:12px; object-fit:cover; flex-shrink:0;
-  border:1.5px solid rgba(196,138,58,0.25);
-  box-shadow:0 4px 16px rgba(0,0,0,0.4);
-  animation: logoPop 0.55s cubic-bezier(0.34,1.5,0.64,1) 0.1s both;
-}
-@keyframes logoPop { from{transform:scale(0.7) rotate(-8deg);opacity:0} to{transform:scale(1) rotate(0deg);opacity:1} }
-.cl-modal-hero-eyebrow {
-  display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500;
-  letter-spacing:0.22em; text-transform:uppercase;
-  color:rgba(196,138,58,0.6); margin-bottom:5px;
-}
-.cl-modal-hero-title {
-  font-family:'Playfair Display',serif; font-size:18px; font-weight:400;
-  color:white; line-height:1.2; margin-bottom:4px;
-  letter-spacing:-0.01em;
-  animation: titleSlide 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.15s both;
-}
-@keyframes titleSlide { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
-.cl-modal-hero-sub {
-  display:block; font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
-  color:rgba(255,255,255,0.25); letter-spacing:0.1em;
-  font-style:italic;
-}
-
-/* Deco animado */
-.cl-modal-hero-deco {
-  position:absolute; right:-20px; top:50%; transform:translateY(-50%);
-  width:100px; height:100px; pointer-events:none;
-}
-.cl-deco-ring {
-  position:absolute; border-radius:50%; border:1px solid rgba(196,138,58,0.12);
-  top:50%; left:50%; transform:translate(-50%,-50%);
-  animation: ringPulse 3s ease-in-out infinite;
-}
-.cl-deco-ring-1 { width:60px; height:60px; animation-delay:0s; }
-.cl-deco-ring-2 { width:80px; height:80px; animation-delay:0.6s; border-color:rgba(196,138,58,0.07); }
-.cl-deco-ring-3 { width:100px; height:100px; animation-delay:1.2s; border-color:rgba(196,138,58,0.04); }
-@keyframes ringPulse {
-  0%,100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
-  50% { transform:translate(-50%,-50%) scale(1.08); opacity:0.6; }
-}
-.cl-deco-dot {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:6px; height:6px; border-radius:50%;
-  background:rgba(196,138,58,0.5);
-  animation: dotGlow 2s ease-in-out infinite;
-}
-@keyframes dotGlow {
-  0%,100% { box-shadow:0 0 0 0 rgba(196,138,58,0.4); }
-  50% { box-shadow:0 0 0 6px rgba(196,138,58,0); }
-}
-
-/* Pills selector de método */
-.cl-metodo-selector {
-  display:flex; gap:6px; padding:12px 16px 10px;
-  background:#faf8f5; border-bottom:1px solid #f0ebe3;
-  flex-shrink:0; overflow-x:auto; scrollbar-width:none;
-  animation: pillsSlide 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.2s both;
-}
-@keyframes pillsSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.cl-metodo-selector::-webkit-scrollbar { display:none; }
-.cl-metodo-pill {
-  display:flex; align-items:center; gap:5px;
-  padding:7px 14px; border-radius:50px; border:1.5px solid #ede8e0;
-  background:white; cursor:pointer; white-space:nowrap;
-  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#999;
-  transition:all 0.25s cubic-bezier(0.34,1.3,0.64,1); flex-shrink:0;
-}
-.cl-metodo-pill:hover { border-color:var(--gold); color:var(--ink); transform:translateY(-1px); box-shadow:0 4px 12px rgba(196,138,58,0.15); }
-.cl-metodo-pill.active {
-  background:var(--ink); border-color:var(--ink); color:white;
-  box-shadow:0 4px 14px rgba(26,23,20,0.3);
-  transform:translateY(-1px);
-}
-.cl-pill-dot { width:7px; height:7px; border-radius:50%; opacity:0.8; flex-shrink:0; }
-
-/* Body */
-.cl-modal-body { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
-.cl-tab-content { display:none; }
-.cl-tab-content.active { display:block; animation: tabFadeIn 0.3s ease both; }
-@keyframes tabFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-
-/* QR pane — Yape / Plin */
-.cl-qr-pane { padding:18px 18px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
-
-.cl-qr-frame {
-  position:relative; width:195px; height:195px;
-  border-radius:20px; overflow:hidden;
-  box-shadow:0 10px 40px rgba(0,0,0,0.14);
-  transition:transform 0.3s ease, box-shadow 0.3s ease;
-  animation: qrFloat 4s ease-in-out infinite;
-}
-@keyframes qrFloat {
-  0%,100% { transform:translateY(0px); }
-  50% { transform:translateY(-4px); }
-}
-.cl-qr-frame:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 16px 50px rgba(0,0,0,0.18); }
-.cl-qr-frame-yape { background:linear-gradient(135deg,rgba(108,47,165,0.06),rgba(108,47,165,0.02)); border:1.5px solid rgba(108,47,165,0.15); }
-.cl-qr-frame-plin  { background:linear-gradient(135deg,rgba(0,163,224,0.06),rgba(0,163,224,0.02)); border:1.5px solid rgba(0,163,224,0.15); }
-.cl-qr-img { width:100%; height:100%; object-fit:contain; padding:10px; }
-.cl-qr-empty {
-  width:100%; height:100%; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:8px;
-}
-.cl-qr-grid-bg {
-  width:100px; height:100px;
-  background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/10px 10px;
-  border-radius:6px; opacity:0.4;
-}
-.cl-qr-empty span { font-size:11px; color:#ccc; font-family:'Inter',sans-serif; }
-.cl-qr-badge-float {
-  position:absolute; bottom:8px; right:8px;
-  display:flex; align-items:center; gap:4px;
-  padding:3px 9px; border-radius:20px;
-  font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
-  letter-spacing:0.05em;
-}
-.cl-qr-badge-yape { background:#6c2fa5; color:white; }
-.cl-qr-badge-plin  { background:#00a3e0; color:white; }
-
-.cl-qr-info { width:100%; display:flex; flex-direction:column; gap:8px; }
-.cl-qr-monto-pill {
-  display:flex; align-items:center; justify-content:space-between;
-  background:#f8f5f1; border-radius:14px; padding:11px 16px;
-  border:1px solid #ede8de;
-}
-.cl-qr-monto-pill span { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; font-weight:400; letter-spacing:0.06em; }
-.cl-qr-monto-pill strong { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); font-weight:500; }
-.cl-qr-hint { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; text-align:center; line-height:1.5; letter-spacing:0.02em; }
-
-.cl-btn-pagar {
-  width:100%; padding:14px; border:none; border-radius:16px; cursor:pointer;
-  font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.06em;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  transition:opacity 0.2s, transform 0.15s;
-}
-.cl-btn-pagar:hover { opacity:0.9; transform:translateY(-1px); }
-.cl-btn-yape { background:linear-gradient(135deg,#5a2490,#7a35b8); color:white; box-shadow:0 6px 20px rgba(90,36,144,0.3); }
-.cl-btn-plin  { background:linear-gradient(135deg,#0090cc,#006699); color:white; box-shadow:0 6px 20px rgba(0,144,204,0.3); }
-
-/* Tarjeta spinner */
-.cl-spinner { width:30px; height:30px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
-@keyframes spin { to{transform:rotate(360deg)} }
-
-/* Agencia pane */
-.cl-agencia-pane { padding:18px 18px 20px; display:flex; flex-direction:column; gap:14px; }
-
-.cl-cci-card {
-  border-radius:18px; overflow:hidden;
-  border:1px solid #ede8de;
-  box-shadow:0 2px 12px rgba(0,0,0,0.05);
-}
-.cl-cci-card-header {
-  background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);
-  padding:14px 18px; display:flex; align-items:baseline; gap:10px;
-}
-.cl-cci-bank-name {
-  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
-  color:var(--gold); letter-spacing:0.04em;
-}
-.cl-cci-bank-label {
-  font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
-  color:rgba(255,255,255,0.3); letter-spacing:0.08em;
-}
-.cl-cci-fields { background:#faf8f5; }
-.cl-cci-field {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:10px 18px; border-bottom:1px solid #f0ebe3;
-}
-.cl-cci-field:last-child { border-bottom:none; }
-.cl-cci-field-label { font-family:'Inter',sans-serif; font-size:10px; color:#c8c0b4; font-weight:400; letter-spacing:0.08em; text-transform:uppercase; }
-.cl-cci-field-val { font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); font-weight:500; }
-.cl-cci-field-val.mono { font-family:monospace; font-size:13px; letter-spacing:0.04em; }
-.cl-cci-field-cci { background:rgba(196,138,58,0.04); }
-.cl-cci-copy-row { display:flex; align-items:center; gap:8px; }
-.cl-cci-copy-btn {
-  width:22px; height:22px; border:none; border-radius:6px;
-  background:#ede8de; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  color:#999; transition:background 0.2s, color 0.2s;
-}
-.cl-cci-copy-btn:hover { background:var(--gold); color:white; }
-.cl-cci-field-monto .cl-cci-field-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--gold); }
-
-.cl-agencia-steps { display:flex; flex-direction:column; gap:9px; }
-.cl-agencia-step { display:flex; align-items:flex-start; gap:11px; }
-.cl-astep-num {
-  width:20px; height:20px; border-radius:50%; background:var(--ink);
-  color:white; font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
-}
-.cl-agencia-step p { font-family:'Inter',sans-serif; font-size:12px; color:#777; line-height:1.5; }
-.cl-agencia-step strong { color:var(--ink); font-weight:600; }
-
-.cl-btn-whatsapp {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  padding:13px; border-radius:16px;
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
-  letter-spacing:0.05em; text-decoration:none;
-  box-shadow:0 6px 20px rgba(34,197,94,0.3);
-  transition:opacity 0.2s, transform 0.15s;
-}
-.cl-btn-whatsapp:hover { opacity:0.9; transform:translateY(-1px); }
-
-/* Pie */
-.cl-modal-pie {
-  display:flex; align-items:center; justify-content:center; gap:5px;
-  padding:8px 16px; background:#faf8f5; border-top:1px solid #f0ebe3;
-  font-family:'Inter',sans-serif; font-size:9px; color:#d4cdc4;
-  letter-spacing:0.1em; text-transform:lowercase; flex-shrink:0;
-}
-
-/* Avatar selector */
-.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
-.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
-.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
-.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
-
-/* ══ MODAL ÉXITO ══ */
-.cl-exito-box {
-  max-width:380px !important;
-  animation:clModalIn 0.5s cubic-bezier(0.34,1.4,0.64,1) !important;
-  overflow:visible !important;
-}
-.cl-exito-icon-wrap {
-  position:relative; width:80px; height:80px;
-  margin:-40px auto 0; z-index:2; flex-shrink:0;
-}
-.cl-exito-ring {
-  position:absolute; border-radius:50%;
-  top:50%; left:50%; transform:translate(-50%,-50%);
-  animation:exitoRing 2.5s ease-in-out infinite;
-}
-.cl-exito-ring-1 { width:80px; height:80px; border:1.5px solid rgba(196,138,58,0.25); animation-delay:0s; }
-.cl-exito-ring-2 { width:100px; height:100px; border:1px solid rgba(196,138,58,0.12); animation-delay:0.4s; }
-@keyframes exitoRing {
-  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}
-  50%{transform:translate(-50%,-50%) scale(1.08);opacity:0.5}
-}
-.cl-exito-icon {
-  width:80px; height:80px; border-radius:50%;
-  background:linear-gradient(135deg,#c48a3a,#e8b870);
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 12px 32px rgba(196,138,58,0.4);
-  position:relative; z-index:1;
-  animation:iconPop 0.6s cubic-bezier(0.34,1.6,0.64,1) 0.1s both;
-}
-@keyframes iconPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
-.cl-check-path {
-  stroke-dasharray:30; stroke-dashoffset:30;
-  animation:checkDraw 0.5s ease 0.5s forwards;
-}
-@keyframes checkDraw { to{stroke-dashoffset:0} }
-
-.cl-exito-body {
-  padding:24px 28px 28px; text-align:center;
-  display:flex; flex-direction:column; align-items:center; gap:12px;
-}
-.cl-exito-title {
-  font-family:'Playfair Display',serif; font-size:22px; font-weight:400;
-  color:var(--ink); line-height:1.2;
-  animation:fadeUp 0.4s ease 0.3s both;
-}
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.cl-exito-detalle {
-  font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
-  color:var(--gold); letter-spacing:0.02em;
-}
-.cl-exito-sep {
-  display:flex; align-items:center; gap:10px; width:100%; margin:4px 0;
-}
-.cl-exito-sep div { flex:1; height:1px; background:#f0ebe3; }
-.cl-exito-sep span {
-  font-family:'Inter',sans-serif; font-size:9px; color:#ccc;
-  letter-spacing:0.15em; text-transform:uppercase; white-space:nowrap;
-}
-.cl-exito-msg {
-  font-family:'Inter',sans-serif; font-size:13px; color:#888;
-  line-height:1.7; margin:0;
-}
-.cl-exito-msg strong { color:var(--ink); }
-.cl-exito-numero {
-  display:flex; align-items:center; gap:8px;
-  background:#f8f5f1; border:1px solid #ede8de;
-  border-radius:12px; padding:10px 20px;
-  font-family:'Inter',sans-serif; font-size:18px; font-weight:600;
-  color:var(--ink); letter-spacing:0.06em;
-  width:100%; justify-content:center;
-}
-.cl-exito-btn-wsp {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  width:100%; padding:14px; border-radius:14px;
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:white; font-family:'Inter',sans-serif; font-size:13px;
-  font-weight:600; letter-spacing:0.04em; text-decoration:none;
-  box-shadow:0 6px 20px rgba(34,197,94,0.3);
-  transition:opacity 0.2s,transform 0.15s;
-}
-.cl-exito-btn-wsp:hover { opacity:0.9; transform:translateY(-1px); }
-.cl-exito-btn-cerrar {
-  background:none; border:none; cursor:pointer;
-  font-family:'Inter',sans-serif; font-size:12px; color:#bbb;
-  padding:4px 16px; letter-spacing:0.04em;
-  transition:color 0.2s;
-}
-.cl-exito-btn-cerrar:hover { color:var(--ink); }
-
-/* ══ MODAL HISTORIAL ══ */
-.cl-hist-box {
-  max-width:440px !important; max-height:80vh !important;
-  display:flex !important; flex-direction:column !important;
-}
-.cl-hist-header {
-  background:linear-gradient(135deg,#100d0a,#1e1610);
-  padding:20px 22px; display:flex; align-items:flex-start;
-  justify-content:space-between; flex-shrink:0;
-}
-.cl-hist-eyebrow {
-  display:block; font-family:'Inter',sans-serif; font-size:9px;
-  font-weight:500; letter-spacing:0.2em; text-transform:uppercase;
-  color:rgba(196,138,58,0.6); margin-bottom:5px;
-}
-.cl-hist-title {
-  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
-  color:white; margin:0;
-}
-.cl-hist-cerrar {
-  width:26px; height:26px; border-radius:50%; border:none;
-  background:rgba(255,255,255,0.08); cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  color:rgba(255,255,255,0.4); transition:all 0.2s; flex-shrink:0;
-}
-.cl-hist-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg); }
-.cl-hist-lista {
-  flex:1; overflow-y:auto; padding:16px;
-  scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent;
-  display:flex; flex-direction:column; gap:10px;
-}
-.cl-hist-loading {
-  text-align:center; padding:40px 0; color:#bbb;
-  font-family:'Inter',sans-serif; font-size:13px;
-  display:flex; flex-direction:column; align-items:center; gap:12px;
-}
-.cl-hist-vacio {
-  text-align:center; padding:50px 20px;
-  font-family:'Playfair Display',serif; font-size:18px;
-  color:#ccc; font-style:italic;
-}
-.cl-hist-item {
-  background:#faf8f5; border:1px solid #ede8de;
-  border-radius:14px; padding:14px 16px;
-  display:flex; align-items:flex-start; gap:12px;
-  animation:fadeUp 0.3s ease both;
-}
-.cl-hist-item-icon {
-  width:36px; height:36px; border-radius:10px; flex-shrink:0;
-  background:linear-gradient(135deg,#1a1714,#2d2419);
-  display:flex; align-items:center; justify-content:center;
-  font-size:16px;
-}
-.cl-hist-item-info { flex:1; min-width:0; }
-.cl-hist-item-nombre {
-  font-family:'Playfair Display',serif; font-size:15px;
-  font-weight:500; color:var(--ink); margin-bottom:3px;
-}
-.cl-hist-item-meta {
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-}
-.cl-hist-item-monto {
-  font-family:'Inter',sans-serif; font-size:13px;
-  font-weight:600; color:var(--gold);
-}
-.cl-hist-item-metodo {
-  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
-  padding:2px 8px; border-radius:20px; letter-spacing:0.04em;
-}
-.cl-hist-metodo-yape { background:#f0e6fa; color:#6c2fa5; }
-.cl-hist-metodo-plin { background:#e0f4fc; color:#0077aa; }
-.cl-hist-metodo-tarjeta { background:#f5f5f5; color:#555; }
-.cl-hist-metodo-agencia { background:#f0f4e8; color:#5a7a2a; }
-.cl-hist-item-fecha {
-  font-family:'Inter',sans-serif; font-size:10px; color:#bbb;
-}
-.cl-hist-item-estado {
-  display:flex; align-items:center; gap:4px;
-  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
-}
-.cl-hist-estado-pendiente { color:#e8a020; }
-.cl-hist-estado-confirmado { color:#22c55e; }
-.cl-hist-item-wsp {
-  display:flex; align-items:center; justify-content:center;
-  width:30px; height:30px; border-radius:8px; flex-shrink:0;
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:white; text-decoration:none;
-  transition:transform 0.2s, opacity 0.2s;
-}
-.cl-hist-item-wsp:hover { transform:scale(1.1); opacity:0.9; }
-
-@media (max-width:1100px) { .cl-grid { grid-template-columns:repeat(2,1fr); } }
-@media (max-width:900px) { .cl-hero { padding:90px 7% 70px; flex-direction:column; min-height:auto; } .cl-hero-deco { display:none; } .cl-tienda { padding:70px 7%; } }
-@media (max-width:600px) { .cl-grid { grid-template-columns:1fr; max-width:380px; } }
 </style>
-
-<!-- SDK Mercado Pago -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-
 <script>
-let mp = null;
-let bricksBuilder = null;
-let paymentBrickController = null;
-let productoActual = { nombre: "", monto: 0 };
-let avatarSeleccionado = null;
-let tarjetaInicializada = false;
-
-// Lee nombre y precio directamente del data-attribute del article padre
-function comprarDesdeCard(btn) {
-  // Verificar sesión antes de continuar
-  if (!window._firebaseUser) {
-    const pl = document.getElementById("popupLogin");
-    const pm = document.getElementById("popupLoginMsg");
-    if (pm) pm.textContent = "Necesitas una cuenta para comprar.";
-    if (pl) { pl.style.display = "flex"; }
-    return;
-  }
-  const card = btn.closest(".cl-producto");
-  const nombre = card.dataset.nombre;
-  const monto  = parseInt(card.dataset.precio, 10);
-  comprar(nombre, monto);
-}
-
-function initMP() {
-  if (!mp) {
-    mp = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", { locale: "es-PE" });
-    bricksBuilder = mp.bricks();
-  }
-}
-
-function switchTab(tab, btn) {
-  document.querySelectorAll(".cl-metodo-pill").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".cl-tab-content").forEach(c => c.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById("tab-" + tab).classList.add("active");
-
-  // Cargar Brick de tarjeta solo cuando se selecciona esa tab
-  if (tab === "tarjeta" && !tarjetaInicializada) {
-    tarjetaInicializada = true;
-    document.getElementById("cl-loading").style.display = "block";
-    initMP();
-    renderBrick();
-  }
-}
+// ── Estado del flujo ──────────────────────────────────────────────────────
+let horarioElegidoId  = null;
+let horarioElegido    = null;
+let metodoActual      = "yape";
+// Archivos adjuntos por método
+window.compFiles = { yape: null, plin: null, agencia: null };
+const compFiles = window.compFiles;
 
 function toggleUserMenu() {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  const m = document.getElementById("userDropdown");
+  m.style.display = m.style.display === "block" ? "none" : "block";
 }
-document.addEventListener("click", (e) => {
+document.addEventListener("click", e => {
   if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
 });
-function seleccionarAvatar(img) {
+
+// ── Abrir pago con guard de sesión ────────────────────────────────────────
+window.abrirPagoTaller = function() {
+  if (!window._firebaseUser) {
+    document.getElementById("popupLogin").style.display = "flex";
+    return;
+  }
+  // Reset estado
+  horarioElegidoId = null;
+  horarioElegido   = null;
+  metodoActual     = "yape";
+  compFiles.yape = compFiles.plin = compFiles.agencia = null;
+  limpiarPreviews();
+  renderHorarios();
+  document.getElementById("modalHorario").classList.add("open");
+  document.body.style.overflow = "hidden";
+};
+
+function cerrarModalHorario() {
+  document.getElementById("modalHorario").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function cerrarModalPago() {
+  document.getElementById("modalPago").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ── Ir al paso 2: pago ────────────────────────────────────────────────────
+window.irAPago = function() {
+  if (!horarioElegidoId) { alert("Por favor selecciona un horario."); return; }
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
+  // Actualizar tarjeta WhatsApp link con horario elegido
+  const wl = document.getElementById("tarjeta-wsp");
+  if (wl) {
+    const msg = encodeURIComponent("Hola! Quiero pagar con tarjeta la membresía Arcilla Nocturna\n\n📅 " + horarioElegido + "\n💰 S/ 150\n\n¿Cómo procedo?");
+    wl.href = "https://wa.me/51922402608?text=" + msg;
+  }
+  const tv = document.getElementById("tarjeta-horario-val");
+  if (tv) tv.textContent = horarioElegido;
+  cerrarModalHorario();
+  // Reset pills al primer tab
+  document.querySelectorAll(".ht-metodo-pill").forEach((b,i) => b.classList.toggle("active", i===0));
+  document.querySelectorAll(".ht-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+  metodoActual = "yape";
+  document.getElementById("modalPago").classList.add("open");
+  document.body.style.overflow = "hidden";
+};
+
+// ── Cambiar método ────────────────────────────────────────────────────────
+window.switchMetodo = function(tab, btn) {
+  metodoActual = tab;
+  document.querySelectorAll(".ht-metodo-pill").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".ht-tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
+};
+
+// ── Preview comprobante ───────────────────────────────────────────────────
+window.previewComp = function(metodo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  compFiles[metodo] = file;
+  const ph = document.getElementById("ph-" + metodo);
+  const pr = document.getElementById("pr-" + metodo);
+  const zona = document.getElementById("zona-" + metodo);
+  const reader = new FileReader();
+  reader.onload = e => {
+    pr.innerHTML = `
+      <img src="${e.target.result}" style="max-width:100%;max-height:120px;border-radius:10px;object-fit:contain;">
+      <div class="ht-comp-check">✓</div>`;
+    ph.style.display = "none";
+    pr.style.display = "block";
+    zona.classList.add("lista");
+  };
+  reader.readAsDataURL(file);
+};
+
+function limpiarPreviews() {
+  ["yape","plin","agencia"].forEach(m => {
+    const ph = document.getElementById("ph-" + m);
+    const pr = document.getElementById("pr-" + m);
+    const zona = document.getElementById("zona-" + m);
+    const fi = document.getElementById("file-" + m);
+    if (ph)   { ph.style.display = "flex"; }
+    if (pr)   { pr.style.display = "none"; pr.innerHTML = ""; }
+    if (zona) { zona.classList.remove("lista"); }
+    if (fi)   { fi.value = ""; }
+  });
+}
+</script>
+
+<script type="module">
+import { initializeApp, getApps }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, doc, updateDoc, setDoc,
+  onSnapshot, query, orderBy, getDoc, serverTimestamp, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref as storRef, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
+const TALLER_ID    = "arcilla-nocturna";
+const CUPOS_MAX    = 4;
+const HORARIOS = [
+  {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
+  {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
+  {id:"h2", dia:"Lunes",   fecha:"9 de marzo",  hora:"12:00 PM", label:"Lun 9 mar · 12:00 PM"},
+];
+
+const FC = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const app     = getApps().length ? getApps()[0] : initializeApp(FC);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+let currentUser        = null;
+let esAdmin            = false;
+let cuposData          = {};
+let filtroPanelAdmin   = "pendiente";
+let todasLasMembresias = [];
+let avatarSeleccionado = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (!user) return;
+  esAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase());
+  if (esAdmin) {
+    document.getElementById("panelAdminMem").style.display = "block";
+    escucharMembresiasAdmin();
+  }
+  await _initCupos();
+  escucharCupos();
+});
+
+// ── CUPOS ─────────────────────────────────────────────────────────────────
+async function _initCupos() {
+  const ref = doc(db, "talleres", TALLER_ID);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) await setDoc(ref, {h0:0,h1:0,h2:0});
+}
+
+function escucharCupos() {
+  onSnapshot(doc(db,"talleres",TALLER_ID), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    HORARIOS.forEach(h => { cuposData[h.id] = d[h.id] || 0; });
+    actualizarCuposCard();
+    renderHorarios();
+  });
+}
+
+function actualizarCuposCard() {
+  HORARIOS.forEach((h, i) => {
+    const el = document.getElementById(`num-h${i}`);
+    if (!el) return;
+    const libres = CUPOS_MAX - (cuposData[h.id] || 0);
+    el.innerHTML = "";
+    if (libres <= 0) {
+      el.innerHTML = `<span class="ht-cupo-agotado">Agotado</span>`;
+    } else {
+      for (let j = 0; j < CUPOS_MAX; j++) {
+        const d = document.createElement("span");
+        d.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
+        el.appendChild(d);
+      }
+    }
+  });
+}
+
+// ── RENDERIZAR HORARIOS EN MODAL ──────────────────────────────────────────
+window.renderHorarios = function() {
+  const lista = document.getElementById("lista-horarios");
+  if (!lista) return;
+  lista.innerHTML = "";
+  HORARIOS.forEach(h => {
+    const confirmados = cuposData[h.id] || 0;
+    const libres  = CUPOS_MAX - confirmados;
+    const sinCupo = libres <= 0;
+    const selec   = (window.horarioElegidoId === h.id);
+    const div = document.createElement("div");
+    div.className = `ht-horario${selec ? " seleccionado" : ""}${sinCupo ? " sin-cupo" : ""}`;
+    if (!sinCupo) div.onclick = () => _elegirHorario(div, h);
+    let dots = "";
+    for (let j = 0; j < CUPOS_MAX; j++) dots += `<span class="ht-cupo-dot-mini${j < libres ? "" : " vacio"}"></span>`;
+    div.innerHTML = `
+      <div class="ht-horario-left">
+        <span class="ht-horario-dia">${h.dia}</span>
+        <span class="ht-horario-fecha">${h.fecha}</span>
+      </div>
+      <span class="ht-horario-hora">${h.hora}</span>
+      <div class="ht-horario-cupo">
+        <div class="ht-cupo-dots-mini">${dots}</div>
+        <span class="ht-cupo-txt">${sinCupo ? "AGOTADO" : libres + " libre" + (libres !== 1 ? "s" : "")}</span>
+      </div>
+      <div class="ht-horario-check">✓</div>`;
+    lista.appendChild(div);
+  });
+};
+
+function _elegirHorario(el, h) {
+  document.querySelectorAll(".ht-horario").forEach(x => x.classList.remove("seleccionado"));
+  el.classList.add("seleccionado");
+  window.horarioElegidoId = h.id;
+  window.horarioElegido   = h.label;
+}
+
+// ── CONFIRMAR PAGO ────────────────────────────────────────────────────────
+window.confirmarPago = async function(metodoLabel) {
+  if (!currentUser) { alert("Debes iniciar sesión."); return; }
+  const libres = CUPOS_MAX - (cuposData[window.horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+
+  // Tarjeta: no requiere comprobante
+  const esConComprobante = (metodoLabel !== "Tarjeta");
+  const archivo = esConComprobante ? window.compFiles?.[metodoLabel.toLowerCase()] : null;
+
+  if (esConComprobante && !archivo) {
+    alert("Por favor adjunta el comprobante de pago antes de continuar.");
+    return;
+  }
+
+  // Deshabilitar botón que inició la acción
+  const btnActivo = document.querySelector(`#tab-${metodoLabel.toLowerCase()} .ht-btn-pagar`) ||
+                    document.querySelector(`#tab-${metodoLabel.toLowerCase()} button[onclick]`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Registrando..."; }
+
+  try {
+    let comprobanteURL = "";
+
+    // Subir imagen a Firebase Storage
+    if (archivo) {
+      const ext = archivo.name.split(".").pop();
+      const path = `comprobantes/${Date.now()}_${currentUser.uid}.${ext}`;
+      const snap = await uploadBytes(storRef(storage, path), archivo);
+      comprobanteURL = await getDownloadURL(snap.ref);
+    }
+
+    // Guardar en Firestore
+    const docRef = await addDoc(collection(db, "membresias"), {
+      usuarioEmail:   currentUser.email,
+      usuarioNombre:  currentUser.displayName || currentUser.email,
+      usuarioAvatar:  currentUser.photoURL || "",
+      horarioId:      window.horarioElegidoId,
+      horarioLabel:   window.horarioElegido,
+      metodo:         metodoLabel,
+      comprobanteURL: comprobanteURL,
+      estado:         "pendiente",
+      fecha:          serverTimestamp(),
+      tallerId:       TALLER_ID,
+    });
+
+    const ref = docRef.id.slice(0,8).toUpperCase();
+
+    // Cerrar modal pago y mostrar éxito
+    cerrarModalPago();
+    document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${window.horarioElegido}`;
+    document.getElementById("exito-resumen").innerHTML =
+      `<strong>Método:</strong> ${metodoLabel}<br>` +
+      `<strong>Horario:</strong> ${window.horarioElegido}<br>` +
+      `<strong>Referencia:</strong> ${ref}<br>` +
+      `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+    document.getElementById("modalExito").style.display = "flex";
+
+  } catch (err) {
+    console.error("Error registrando membresía:", err);
+    alert("Ha ocurrido un error: " + err.message);
+    if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
+  }
+};
+
+// ── PANEL ADMIN ───────────────────────────────────────────────────────────
+function escucharMembresiasAdmin() {
+  const q = query(collection(db,"membresias"), orderBy("fecha","desc"));
+  onSnapshot(q, snap => {
+    todasLasMembresias = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const pendientes = todasLasMembresias.filter(m => m.estado === "pendiente").length;
+    const badge = document.getElementById("badge-mem");
+    badge.style.display = pendientes > 0 ? "flex" : "none";
+    badge.textContent   = pendientes;
+    renderPanelAdmin();
+  });
+}
+
+function renderPanelAdmin() {
+  const lista = document.getElementById("lista-mem-admin");
+  if (!lista) return;
+  const items = filtroPanelAdmin === "todos"
+    ? todasLasMembresias
+    : todasLasMembresias.filter(m => m.estado === filtroPanelAdmin);
+  if (!items.length) {
+    lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Sin registros</div>`;
+    return;
+  }
+  lista.innerHTML = "";
+  items.forEach(m => {
+    const fecha = m.fecha?.toDate
+      ? m.fecha.toDate().toLocaleDateString("es-PE", {day:"2-digit",month:"short",year:"numeric"})
+      : "—";
+    const div = document.createElement("div");
+    div.className = "adm-card";
+    const estadoLabel = m.estado === "pendiente" ? "Pendiente" : m.estado === "confirmado" ? "Confirmado" : "Rechazado";
+    // Imagen del comprobante
+    const compImg = m.comprobanteURL
+      ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="verLightbox('${m.comprobanteURL}')" alt="Comprobante">`
+      : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:6px 0;">Sin comprobante adjunto</p>`;
+    const acciones = m.estado === "pendiente" ? `
+      <div class="adm-acciones">
+        <button class="adm-btn-confirmar" onclick="validarPago('${m.id}','${m.horarioId}',this)">✓ Confirmar pago</button>
+        <button class="adm-btn-rechazar" onclick="rechazarPago('${m.id}')">✕ Rechazar</button>
+      </div>` : "";
+    div.innerHTML = `
+      <div class="adm-card-header">
+        <span class="adm-nombre">${m.usuarioNombre || m.usuarioEmail}</span>
+        <span class="adm-estado ${m.estado}">${estadoLabel}</span>
+      </div>
+      <div class="adm-info">
+        <strong>Email:</strong> ${m.usuarioEmail}<br>
+        <strong>Horario:</strong> ${m.horarioLabel}<br>
+        <strong>Método:</strong> ${m.metodo}<br>
+        <strong>Ref:</strong> ${m.id.slice(0,8).toUpperCase()}<br>
+        <strong>Fecha:</strong> ${fecha}
+      </div>
+      ${compImg}
+      ${acciones}`;
+    lista.appendChild(div);
+  });
+}
+
+window.abrirPanelAdmin  = () => { document.getElementById("modalAdminMem").classList.add("open"); document.body.style.overflow = "hidden"; };
+window.cerrarPanelAdmin = () => { document.getElementById("modalAdminMem").classList.remove("open"); document.body.style.overflow = ""; };
+
+window.filtrarMem = function(filtro, btn) {
+  filtroPanelAdmin = filtro;
+  document.querySelectorAll(".adm-tab").forEach(b => b.classList.remove("activo"));
+  btn.classList.add("activo");
+  renderPanelAdmin();
+};
+
+window.validarPago = async function(memId, horarioId, btn) {
+  btn.disabled = true; btn.textContent = "Confirmando...";
+  try {
+    await runTransaction(db, async tx => {
+      const tallerRef = doc(db,"talleres",TALLER_ID);
+      const snap = await tx.get(tallerRef);
+      const actuales = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
+      if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos.");
+      tx.update(tallerRef, {[horarioId]: actuales + 1});
+      tx.update(doc(db,"membresias",memId), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
+    });
+  } catch(e) {
+    alert("Error: " + e.message);
+    btn.disabled = false; btn.textContent = "✓ Confirmar pago";
+  }
+};
+
+window.rechazarPago = async function(memId) {
+  if (!confirm("¿Rechazar este pago?")) return;
+  await updateDoc(doc(db,"membresias",memId), {estado:"rechazado"});
+};
+
+window.verLightbox = function(url) {
+  document.getElementById("lightbox-img").src = url;
+  document.getElementById("lightbox").style.display = "flex";
+};
+
+// ── PERFIL ────────────────────────────────────────────────────────────────
+const perfilModal = document.getElementById("perfilModal");
+const perfilStatus = document.getElementById("perfilStatus");
+
+window.cerrarSesion    = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  perfilModal.style.display = "flex"; avatarSeleccionado = null; perfilStatus.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const foto = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = foto;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === foto || el.src === foto) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { perfilModal.style.display = "none"; };
+window.seleccionarAvatar = (img) => {
   document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
   img.classList.add("seleccionado");
   document.getElementById("previewAvatar").src = img.src;
   avatarSeleccionado = img.src;
-}
-
-async function comprar(nombre, monto) {
-  productoActual = { nombre, monto };
-
-  // Reset tabs al abrir
-  document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
-  document.querySelectorAll(".cl-tab-content").forEach((c,i) => c.classList.toggle("active", i===0));
-  tarjetaInicializada = false;
-  if (paymentBrickController) {
-    try { await paymentBrickController.unmount(); } catch(e) {}
-    paymentBrickController = null;
-  }
-  document.getElementById("paymentBrick_container").innerHTML = "";
-  document.getElementById("cl-loading").style.display = "none";
-
-  // Actualizar montos en QR
-  document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
-  document.getElementById("yape-monto").textContent = `S/ ${monto}`;
-  document.getElementById("plin-monto").textContent = `S/ ${monto}`;
-  document.getElementById("agencia-monto").textContent = `S/ ${monto}`;
-
-  document.getElementById("modalCompra").classList.add("open");
-  document.body.style.overflow = "hidden";
-}
-
-async function renderBrick() {
-  const settings = {
-    initialization: { amount: productoActual.monto, payer: { email: window._userEmail || "" } },
-    customization: {
-      paymentMethods: {
-        creditCard: "all",
-        debitCard: "all",
-        mercadoPago: "all"   // billetera Mercado Pago
-      },
-      visual: {
-        style: {
-          theme: "default",
-          customVariables: {
-            baseColor: "#c48a3a", baseColorFirstVariant: "#a8742f", baseColorSecondVariant: "#e8b870",
-            borderRadiusLarge: "14px", borderRadiusMedium: "10px",
-            formBackgroundColor: "#faf8f5", inputBackgroundColor: "#ffffff",
-            inputFocusedBorderColor: "#c48a3a"
-          }
-        }
-      }
-    },
-    callbacks: {
-      onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
-      onSubmit: async ({ formData }) => {
-        try {
-          const resp = await fetch("/.netlify/functions/pagar", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
-          });
-          const data = await resp.json();
-          if (!resp.ok) throw new Error(data.error || "Error al procesar");
-          cerrarModal();
-          mostrarModalExito(productoActual.nombre, productoActual.monto, "Tarjeta");
-          window.guardarPedido && window.guardarPedido(productoActual.nombre, productoActual.monto, "Tarjeta");
-        } catch (err) {
-          alert("Error al procesar el pago. Por favor intenta nuevamente.");
-        }
-      },
-      onError: (e) => console.error("Brick error:", e)
-    }
-  };
-  try {
-    paymentBrickController = await bricksBuilder.create("payment", "paymentBrick_container", settings);
-  } catch(e) {
-    document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;padding:20px;">Error al cargar el formulario. Recarga la página.</p>`;
-  }
-}
-
-function copiarCCI() {
-  const cci = document.getElementById("cci-numero").textContent;
-  navigator.clipboard.writeText(cci).then(() => {
-    const btn = document.querySelector(".cl-cci-copy");
-    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
-    btn.style.background = "#28c840"; btn.style.color = "white";
-    setTimeout(() => {
-      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
-      btn.style.background = ""; btn.style.color = "";
-    }, 2000);
-  });
-}
-
-function confirmarPagoQR(metodo) {
-  cerrarModal();
-  mostrarModalExito(productoActual.nombre, productoActual.monto, metodo);
-  guardarPedido(productoActual.nombre, productoActual.monto, metodo);
-}
-
-function mostrarModalExito(nombre, monto, metodo) {
-  document.getElementById("exitoDetalle").textContent = `${nombre} · S/ ${monto} via ${metodo}`;
-  // Link WhatsApp con info del pedido
-  const texto = encodeURIComponent(`Hola! 🐱 Acabo de pagar *${nombre} - S/ ${monto}* via *${metodo}*. Te envío el comprobante.`);
-  document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
-  document.getElementById("modalExito").style.display = "flex";
-}
-
-function cerrarModal() {
-  document.getElementById("modalCompra").classList.remove("open");
-  document.body.style.overflow = "";
-}
-function cerrarExito() {
-  document.getElementById("modalExito").style.display = "none";
-}
-function cerrarPendiente() {
-  const m = document.getElementById("modalPendiente");
-  if (m) m.style.display = "none";
-}
-function cerrarHistorial() {
-  document.getElementById("modalHistorial").style.display = "none";
-}
-window.cerrarHistorial = cerrarHistorial;
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); cerrarHistorial(); }
-});
-</script>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-const modal  = document.getElementById("perfilModal");
-const status = document.getElementById("perfilStatus");
-
-// ── Dropdown: agregar botón historial ──
-const dropdown = document.getElementById("userDropdown");
-const btnHist = document.createElement("button");
-btnHist.textContent = "🛍 Mis pedidos";
-btnHist.onclick = () => { dropdown.style.display = "none"; abrirHistorial(); };
-dropdown.insertBefore(btnHist, dropdown.firstChild);
-
-// ── Guardar pedido en Firestore ──
-window.guardarPedido = async (nombre, monto, metodo) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  try {
-    await addDoc(collection(db, "pedidos"), {
-      uid: user.uid,
-      email: user.email,
-      nombre: user.displayName || user.email,
-      producto: nombre,
-      monto: monto,
-      metodo: metodo,
-      estado: "pendiente",
-      fecha: serverTimestamp()
-    });
-  } catch(e) { console.error("Error guardando pedido:", e); }
-};
-
-// ── Abrir historial ──
-window.abrirHistorial = async () => {
-  const user = auth.currentUser;
-  if (!user) return;
-  document.getElementById("modalHistorial").style.display = "flex";
-  const lista = document.getElementById("historialLista");
-  lista.innerHTML = `<div class="cl-hist-loading"><div class="cl-spinner"></div><p>Cargando pedidos...</p></div>`;
-
-  try {
-    // Sin orderBy para evitar índice compuesto — ordenamos en JS
-    const q = query(
-      collection(db, "pedidos"),
-      where("uid", "==", user.uid)
-    );
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-      lista.innerHTML = `<div class="cl-hist-vacio">Aún no tienes pedidos 🐱</div>`;
-      return;
-    }
-
-    // Ordenar por fecha desc en el cliente
-    const docs = [];
-    snap.forEach(d => docs.push(d.data()));
-    docs.sort((a,b) => {
-      const ta = a.fecha?.toMillis ? a.fecha.toMillis() : 0;
-      const tb = b.fecha?.toMillis ? b.fecha.toMillis() : 0;
-      return tb - ta;
-    });
-
-    lista.innerHTML = "";
-    docs.forEach((d) => {
-      const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE", { day:"2-digit", month:"short", year:"numeric" }) : "—";
-      const metodoClass = `cl-hist-metodo-${(d.metodo || "").toLowerCase().replace(/ /g,"")}`;
-      const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
-      const estadoIcon  = d.estado === "confirmado" ? "✓" : "⏳";
-      const estadoText  = d.estado === "confirmado" ? "Confirmado" : "Validando pago";
-      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
-
-      const item = document.createElement("div");
-      item.className = "cl-hist-item";
-      item.innerHTML = `
-        <div class="cl-hist-item-icon">🛍</div>
-        <div class="cl-hist-item-info">
-          <div class="cl-hist-item-nombre">${d.producto}</div>
-          <div class="cl-hist-item-meta">
-            <span class="cl-hist-item-monto">S/ ${d.monto}</span>
-            <span class="cl-hist-item-metodo ${metodoClass}">${d.metodo}</span>
-            <span class="cl-hist-item-fecha">${fecha}</span>
-          </div>
-          <div class="cl-hist-item-estado ${estadoClass}">${estadoIcon} ${estadoText}</div>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspText}" target="_blank" class="cl-hist-item-wsp" title="Consultar por WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>
-      `;
-      lista.appendChild(item);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div class="cl-hist-vacio" style="color:#e55;font-style:normal;">Error al cargar pedidos</div>`;
-    console.error(e);
-  }
-};
-
-// ── También guardar cuando se paga con tarjeta (MP Bricks) ──
-window._guardarPedidoTarjeta = () => {
-  if (window.productoActual?.nombre) {
-    window.guardarPedido(window.productoActual.nombre, window.productoActual.monto, "Tarjeta");
-  }
-};
-
-window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
-window.abrirPersonalizar = () => {
-  modal.style.display = "flex"; window.avatarSeleccionado = null; status.textContent = "";
-  const user = auth.currentUser;
-  document.getElementById("nuevoNombre").value = user?.displayName || "";
-  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-  document.getElementById("previewAvatar").src = fotoActual;
-  document.querySelectorAll(".avatar-opcion").forEach(el => {
-    el.classList.remove("seleccionado");
-    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
-  });
-};
-window.cerrarPersonalizar = () => { modal.style.display = "none"; };
 window.guardarPerfil = async () => {
   const user = auth.currentUser;
   const nombre = document.getElementById("nuevoNombre").value.trim();
-  status.textContent = "Guardando...";
+  perfilStatus.textContent = "Guardando...";
   try {
-    const photoURL = window.avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, {displayName: nombre || user.displayName, photoURL});
     await user.reload();
     document.querySelector(".user-avatar").src = photoURL;
-    status.textContent = "✨ ¡Perfil actualizado!";
-    setTimeout(() => cerrarPersonalizar(), 1200);
-  } catch (error) { status.textContent = "❌ Error: " + error.message; }
+    perfilStatus.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => window.cerrarPersonalizar(), 1200);
+  } catch(e) { perfilStatus.textContent = "❌ Error: " + e.message; }
 };
+
+// ── ESC cierra modales ────────────────────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  cerrarModalHorario();
+  cerrarModalPago();
+  window.cerrarPanelAdmin?.();
+  document.getElementById("modalExito").style.display = "none";
+  document.getElementById("lightbox").style.display = "none";
+  document.body.style.overflow = "";
+});
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
-
-<!-- ═══ POP-UP NECESITA LOGIN ═══ -->
-<div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
-    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;box-shadow:0 8px 24px rgba(196,138,58,.3);">🐾</div>
-    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;" id="popupLoginTitulo">Inicia sesión para continuar</h3>
-    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;" id="popupLoginMsg">Necesitas una cuenta para continuar.</p>
-    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
-    <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
-  </div>
-</div>
-
 </body>
 </html>
 
