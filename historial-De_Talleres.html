@@ -38,7 +38,7 @@ onAuthStateChanged(_auth, (user) => {
   </div>
   <nav class="nav">
     <a href="index.html">Inicio</a>
-    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="historial-De_Talleres.html" class="active">Talleres</a>
     <a href="coleccion.html">Colección</a>
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
@@ -179,6 +179,7 @@ onAuthStateChanged(_auth, (user) => {
       </div>
     </div>
 
+    <!-- Pills -->
     <div class="ht-metodo-selector">
       <button class="ht-metodo-pill active" onclick="switchMetodo('yape',this)"><span class="ht-pill-dot" style="background:#6c2fa5;"></span>Yape</button>
       <button class="ht-metodo-pill" onclick="switchMetodo('plin',this)"><span class="ht-pill-dot" style="background:#00a3e0;"></span>Plin</button>
@@ -244,28 +245,31 @@ onAuthStateChanged(_auth, (user) => {
         </div>
       </div>
 
-      <!-- TAB TARJETA -->
+      <!-- TAB TARJETA — Mercado Pago Brick -->
       <div id="tab-tarjeta" class="ht-tab">
-        <div class="ht-qr-pane" style="gap:14px;">
-          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
-            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:center;gap:10px;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,0.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-              <span style="font-family:'Playfair Display',serif;font-size:16px;color:white;">Pago con tarjeta</span>
+        <div class="ht-qr-pane" style="gap:10px;padding:8px 0;">
+          <div style="width:100%;background:#faf8f5;border-radius:14px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+                <span style="font-family:'Playfair Display',serif;font-size:15px;color:white;">Tarjeta de crédito/débito</span>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/></svg>
+                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
+              </div>
             </div>
-            <div style="padding:14px 18px;font-family:'Inter',sans-serif;font-size:12px;line-height:2.2;">
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Taller</span><span style="color:#1a1714;font-weight:500;">Arcilla Nocturna</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe3;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Horario</span><span style="color:#1a1714;font-weight:500;" id="tarjeta-horario-val">—</span></div>
-              <div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:#bbb;text-transform:uppercase;font-size:10px;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
+            <div style="padding:10px 16px 12px;font-family:'Inter',sans-serif;font-size:11px;display:flex;justify-content:space-between;color:#888;">
+              <span>Horario: <strong id="tarjeta-horario-val" style="color:#1a1714;">—</strong></span>
+              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 150</strong></span>
             </div>
           </div>
-          <p style="font-family:'Inter',sans-serif;font-size:12px;color:#aaa;text-align:center;line-height:1.6;margin:0 4px;">Coordina el cobro por WhatsApp. Confirmamos en menos de 24h.</p>
-          <a id="tarjeta-wsp" href="#" target="_blank" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:16px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 6px 20px rgba(34,197,94,.3);">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-            Coordinar pago por WhatsApp
-          </a>
-          <button onclick="confirmarPago('Tarjeta')" style="width:100%;padding:12px;border:1.5px solid #ede8de;border-radius:16px;background:white;color:#888;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;" onmouseover="this.style.background='#faf8f5'" onmouseout="this.style.background='white'">
-            Ya coordiné · Confirmar plaza ✔
-          </button>
+          <!-- Mercado Pago Brick container -->
+          <div id="mp-loading" style="width:100%;text-align:center;padding:20px 0;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
+            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin .8s linear infinite;margin:0 auto 10px;"></div>
+            Cargando formulario...
+          </div>
+          <div id="mpCardBrick_container" style="width:100%;"></div>
         </div>
       </div>
 
@@ -299,7 +303,7 @@ onAuthStateChanged(_auth, (user) => {
         </div>
       </div>
 
-    </div>
+    </div><!-- end ht-modal-body -->
   </div>
 </div>
 
@@ -323,7 +327,7 @@ onAuthStateChanged(_auth, (user) => {
   <img id="lightbox-img" src="" style="max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6);">
 </div>
 
-<!-- ═══ PANEL ADMIN FAB ═══ -->
+<!-- ═══ FAB ADMIN ═══ -->
 <div id="panelAdminMem" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
   <button onclick="abrirPanelAdmin()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
     🎫 Membresías
@@ -334,7 +338,7 @@ onAuthStateChanged(_auth, (user) => {
 <!-- ═══ MODAL PANEL ADMIN ═══ -->
 <div id="modalAdminMem" class="ht-modal" style="z-index:9998;">
   <div class="ht-modal-box" style="max-width:560px;">
-    <div class="ht-modal-hero" style="padding:22px 22px 18px;">
+    <div class="ht-modal-hero" style="padding:20px 22px 16px;">
       <button class="ht-modal-cerrar" onclick="cerrarPanelAdmin()">
         <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
@@ -342,13 +346,10 @@ onAuthStateChanged(_auth, (user) => {
         <div>
           <span class="ht-modal-hero-eyebrow">Panel Admin</span>
           <h2 class="ht-modal-hero-title">Membresías recibidas</h2>
-          <span class="ht-modal-hero-sub">Valida pagos y activa plazas</span>
+          <span class="ht-modal-hero-sub">Valida pagos · activa plazas</span>
         </div>
       </div>
-      <div class="ht-modal-hero-deco">
-        <div class="ht-deco-ring ht-deco-ring-1"></div>
-        <div class="ht-deco-ring ht-deco-ring-2"></div>
-      </div>
+      <div class="ht-modal-hero-deco"><div class="ht-deco-ring ht-deco-ring-1"></div><div class="ht-deco-ring ht-deco-ring-2"></div></div>
     </div>
     <div class="ht-modal-body">
       <div class="adm-tabs">
@@ -409,8 +410,7 @@ onAuthStateChanged(_auth, (user) => {
 .ht-card::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),#e8b870);transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
 .ht-card:hover{transform:translateY(-8px);box-shadow:0 24px 50px rgba(0,0,0,.11)}
 .ht-card:hover::after{transform:scaleX(1)}
-.ht-card-dim{opacity:.68}
-.ht-card-dim:hover{opacity:1}
+.ht-card-dim{opacity:.68}.ht-card-dim:hover{opacity:1}
 .ht-card-img{position:relative;height:230px;overflow:hidden}
 .ht-card-img img{width:100%;height:100%;object-fit:cover;filter:saturate(88%);transition:transform .6s ease,filter .4s ease}
 .ht-card:hover .ht-card-img img{transform:scale(1.06);filter:saturate(100%)}
@@ -430,13 +430,13 @@ onAuthStateChanged(_auth, (user) => {
 .ht-cupo-dot.vacio{background:#e8e0d8}
 .ht-cupo-agotado{font-family:'Inter',sans-serif;font-size:10px;color:#e55;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .ht-btn-solid{display:block;text-align:center;padding:12px 20px;background:var(--gold);color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:.06em;font-family:'Inter',sans-serif;transition:all .3s ease;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(196,138,58,.28);width:100%}
-.ht-btn-solid:hover{background:#a8742f;transform:translateY(-2px);box-shadow:0 10px 24px rgba(196,138,58,.38)}
+.ht-btn-solid:hover{background:#a8742f;transform:translateY(-2px)}
 .ht-aviso{font-size:13px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:.04em;text-align:center;padding:6px 0}
-/* ── Modal ── */
+/* Modal */
 .ht-modal{display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9999;padding:20px}
 .ht-modal-box{background:white;width:100%;max-width:440px;max-height:90vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;animation:htModalIn .38s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 80px rgba(0,0,0,.25)}
 @keyframes htModalIn{from{transform:scale(.88) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-.ht-modal-hero{padding:22px 22px 18px;background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);position:relative;overflow:hidden;flex-shrink:0}
+.ht-modal-hero{padding:22px 22px 18px;background:linear-gradient(135deg,#1a1714,#2a1f10);position:relative;overflow:hidden;flex-shrink:0}
 .ht-modal-hero-brand{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
 .ht-modal-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;border:2px solid rgba(196,138,58,.4)}
 .ht-modal-hero-eyebrow{font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block}
@@ -451,6 +451,7 @@ onAuthStateChanged(_auth, (user) => {
 .ht-modal-hero-deco{position:absolute;inset:0;pointer-events:none}
 .ht-modal-body{padding:18px 22px 24px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#e5ddd3 transparent;flex:1}
 .ht-step-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#bbb;text-align:center;margin-bottom:16px}
+/* Horarios */
 .ht-horarios{display:flex;flex-direction:column;gap:10px}
 .ht-horario{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid #f0ebe4;background:#faf7f4;cursor:pointer;transition:all .22s ease}
 .ht-horario:hover:not(.sin-cupo){border-color:#e8d5b7;background:#fdf6ec;transform:translateY(-2px);box-shadow:0 6px 16px rgba(196,138,58,.1)}
@@ -468,15 +469,14 @@ onAuthStateChanged(_auth, (user) => {
 .sin-cupo .ht-cupo-txt{color:#e55;font-weight:700}
 .ht-horario-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s;flex-shrink:0}
 .ht-horario.seleccionado .ht-horario-check{background:var(--gold);border-color:var(--gold);color:white}
-/* pills */
+/* Pills */
 .ht-metodo-selector{display:flex;gap:6px;padding:12px 18px 0;border-top:1px solid #f5f0ea;flex-shrink:0}
 .ht-metodo-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border-radius:10px;border:1.5px solid #f0ebe4;background:#faf8f5;cursor:pointer;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;color:#888;letter-spacing:.04em;transition:all .2s;white-space:nowrap}
 .ht-metodo-pill:hover{border-color:#e8d5b7;color:var(--ink)}
 .ht-metodo-pill.active{background:var(--ink);color:white;border-color:var(--ink)}
 .ht-pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-/* tabs */
-.ht-tab{display:none}
-.ht-tab.active{display:block}
+/* Tabs */
+.ht-tab{display:none}.ht-tab.active{display:block}
 .ht-qr-pane{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0}
 .ht-qr-frame{position:relative;border-radius:16px;overflow:hidden;width:160px;height:160px;flex-shrink:0}
 .ht-qr-img{width:100%;height:100%;object-fit:cover}
@@ -490,12 +490,14 @@ onAuthStateChanged(_auth, (user) => {
 .ht-monto-pill span{color:#aaa}
 .ht-monto-pill strong{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold)}
 .ht-qr-hint{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.5;margin:0}
+/* Comprobante */
 .ht-comp-wrap{width:100%;display:flex;flex-direction:column;gap:6px}
 .ht-comp-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;text-align:center}
 .ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:100%}
 .ht-comp-zona:hover,.ht-comp-zona.has-file{border-color:var(--gold);background:#fdf6ec}
 .ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
 .ht-comp-check{position:absolute;top:8px;right:8px;background:var(--gold);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+/* Botones pagar */
 .ht-btn-pagar{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:all .25s;box-shadow:0 6px 20px rgba(0,0,0,.12)}
 .ht-btn-pagar:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 .ht-btn-yape{background:linear-gradient(135deg,#6c2fa5,#8b3ccf);color:white}
@@ -504,6 +506,7 @@ onAuthStateChanged(_auth, (user) => {
 .ht-btn-plin:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,163,224,.4)}
 .ht-btn-agencia{background:linear-gradient(135deg,#1a1714,#2a2420);color:white}
 .ht-btn-agencia:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+/* Confirm btn */
 .ht-btn-confirm{width:100%;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;font-family:'Inter',sans-serif;position:relative;overflow:hidden}
 .ht-btn-confirm::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#e8b870);opacity:0;transition:opacity .35s ease}
 .ht-btn-confirm:hover::before{opacity:1}
@@ -534,6 +537,7 @@ onAuthStateChanged(_auth, (user) => {
 .avatar-opcion:hover{transform:scale(1.08);border-color:#c48a3a}
 .avatar-opcion.seleccionado{border-color:#c48a3a;box-shadow:0 0 0 3px rgba(196,138,58,.3)}
 @keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes htSpin{to{transform:rotate(360deg)}}
 @media(max-width:900px){
   .ht-hero{padding:90px 7% 70px;flex-direction:column;min-height:auto}
   .ht-hero-deco{display:none}
@@ -567,6 +571,7 @@ import {
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
 const CUPOS_MAX    = 4;
+const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
 const HORARIOS = [
   {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
   {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
@@ -585,6 +590,9 @@ let horarioElegido   = null;
 let compFiles        = {};
 let filtroPanelAdmin = "pendiente";
 let todasLasMembresias = [];
+
+// ── Mercado Pago Brick state ───────────────────────────────────────────────
+let _mp = null, _mpBuilder = null, _mpBrick = null, _mpInited = false;
 
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
@@ -667,7 +675,7 @@ function _elegirHorario(el, h) {
   horarioElegido   = h.label;
 }
 
-// ── Abrir / cerrar modales ─────────────────────────────────────────────────
+// ── Abrir / cerrar ─────────────────────────────────────────────────────────
 window.abrirPagoMembresia = function() {
   if (!window._firebaseUser) {
     document.getElementById("popupLogin").style.display = "flex";
@@ -687,6 +695,9 @@ window.cerrarModalHorario = function() {
 window.cerrarModalPago = function() {
   document.getElementById("modalPago").style.display = "none";
   document.body.style.overflow = "";
+  // desmontar brick si existe
+  if (_mpBrick) { try { _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
+  _mpInited = false;
   compFiles = {};
   ["yape","plin","agencia"].forEach(m => {
     const ph   = document.getElementById("ph-"+m);
@@ -698,6 +709,11 @@ window.cerrarModalPago = function() {
     if (zona) zona.classList.remove("has-file");
     if (inp)  inp.value = "";
   });
+  // resetear contenedor MP
+  const mpCont = document.getElementById("mpCardBrick_container");
+  if (mpCont) mpCont.innerHTML = "";
+  const mpLoad = document.getElementById("mp-loading");
+  if (mpLoad) mpLoad.style.display = "block";
 };
 
 window.irAPago = function() {
@@ -707,8 +723,7 @@ window.irAPago = function() {
   document.getElementById("modalHorario").style.display = "none";
   document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
   document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
-  const wspMsg = encodeURIComponent("Hola! Quiero pagar con tarjeta la membresía Arcilla Nocturna 🐾\n\n📅 Horario: " + horarioElegido + "\n💳 Monto: S/ 150.00\n\n¿Cómo procedo?");
-  document.getElementById("tarjeta-wsp").href = "https://wa.me/51922402608?text=" + wspMsg;
+  // resetear pills → Yape activo
   document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
   document.querySelectorAll(".ht-tab").forEach((t,i) => t.classList.toggle("active", i===0));
   document.getElementById("modalPago").style.display = "flex";
@@ -719,8 +734,85 @@ window.switchMetodo = function(metodo, btn) {
   btn.classList.add("active");
   document.querySelectorAll(".ht-tab").forEach(t => t.classList.remove("active"));
   document.getElementById("tab-"+metodo).classList.add("active");
+  // Iniciar MP Brick solo cuando el usuario selecciona Tarjeta
+  if (metodo === "tarjeta" && !_mpInited) {
+    _mpInited = true;
+    _initMpBrick();
+  }
 };
 
+// ── Mercado Pago Brick ─────────────────────────────────────────────────────
+async function _initMpBrick() {
+  const loading   = document.getElementById("mp-loading");
+  const container = document.getElementById("mpCardBrick_container");
+  if (!container) return;
+  try {
+    // Cargar SDK si aún no está
+    if (!window.MercadoPago) {
+      await new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = "https://sdk.mercadopago.com/js/v2";
+        s.onload = res; s.onerror = () => rej(new Error("No se pudo cargar SDK de MP"));
+        document.head.appendChild(s);
+      });
+    }
+    if (!_mp) {
+      _mp = new window.MercadoPago(MP_PUBLIC_KEY, {locale:"es-PE"});
+      _mpBuilder = _mp.bricks();
+    }
+    if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} }
+    container.innerHTML = "";
+    if (loading) loading.style.display = "none";
+
+    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
+      initialization: {
+        amount: 150,
+        payer: { email: currentUser?.email || "" }
+      },
+      customization: {
+        paymentMethods: {
+          creditCard: "all",
+          debitCard:  "all",
+          ticket:     "none",
+          bankTransfer: "none",
+          atm:        "none",
+          onboarding_credits: "none",
+          wallet_purchase:    "none"
+        },
+        visual: {
+          style: {
+            theme: "default",
+            customVariables: { baseColor: "#c48a3a" }
+          }
+        }
+      },
+      callbacks: {
+        onReady: () => { if (loading) loading.style.display = "none"; },
+        onError: (e) => {
+          console.error("MP Brick error:", e);
+          if (loading) loading.style.display = "none";
+          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
+        },
+        onSubmit: async ({ formData }) => {
+          // Sin backend activo, registramos como pendiente igual que los otros métodos
+          // El admin validará manualmente (como acordado)
+          try {
+            await _registrarPago("Tarjeta", null);
+          } catch(e) {
+            console.error("Error registrando pago tarjeta:", e);
+          }
+          return Promise.resolve(); // necesario para que el Brick no quede en loading
+        }
+      }
+    });
+  } catch(e) {
+    console.error("Error iniciando MP Brick:", e);
+    if (loading) loading.style.display = "none";
+    if (container) container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">No se pudo cargar el formulario de tarjeta.<br>Usa Yape, Plin o Agencia.</p>`;
+  }
+}
+
+// ── Preview comprobante ────────────────────────────────────────────────────
 window.previewComp = function(metodo, input) {
   const file = input.files[0];
   if (!file) return;
@@ -735,66 +827,68 @@ window.previewComp = function(metodo, input) {
   zona.classList.add("has-file");
 };
 
-// ── CONFIRMAR PAGO ─────────────────────────────────────────────────────────
+// ── Confirmar pago (Yape / Plin / Agencia) ─────────────────────────────────
 window.confirmarPago = async function(metodoLabel) {
   if (!currentUser) { alert("Debes iniciar sesión."); return; }
   if (!horarioElegidoId) { alert("No hay horario seleccionado."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
 
-  const esTarjeta = (metodoLabel === "Tarjeta");
-  const archivo   = esTarjeta ? null : (compFiles[metodoLabel.toLowerCase()] || null);
-  if (!esTarjeta && !archivo) {
+  const archivo = compFiles[metodoLabel.toLowerCase()] || null;
+  if (!archivo) {
     alert("Por favor adjunta el comprobante de pago antes de continuar.");
     return;
   }
 
-  const tabId = "tab-" + metodoLabel.toLowerCase();
-  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`) ||
-                    document.querySelector(`#${tabId} button[onclick*="confirmarPago"]`);
-  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Registrando..."; }
+  const tabId     = "tab-" + metodoLabel.toLowerCase();
+  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Enviando..."; }
 
   try {
-    let comprobanteURL = "";
-    if (archivo) {
-      const ext  = archivo.name.split(".").pop() || "jpg";
-      const path = `comprobantes/${Date.now()}_${currentUser.uid}.${ext}`;
-      const snap = await uploadBytes(storRef(storage, path), archivo);
-      comprobanteURL = await getDownloadURL(snap.ref);
-    }
-
-    const docRef = await addDoc(collection(db, "membresias"), {
-      usuarioEmail:   currentUser.email,
-      usuarioNombre:  currentUser.displayName || currentUser.email,
-      usuarioAvatar:  currentUser.photoURL || "",
-      horarioId:      horarioElegidoId,
-      horarioLabel:   horarioElegido,
-      metodo:         metodoLabel,
-      comprobanteURL: comprobanteURL,
-      estado:         "pendiente",
-      fecha:          serverTimestamp(),
-      tallerId:       TALLER_ID,
-    });
-    const ref = docRef.id.slice(0,8).toUpperCase();
-
-    cerrarModalPago();
-    document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
-    document.getElementById("exito-resumen").innerHTML =
-      `<strong>Método:</strong> ${metodoLabel}<br>` +
-      `<strong>Horario:</strong> ${horarioElegido}<br>` +
-      `<strong>Referencia:</strong> ${ref}<br>` +
-      `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
-    document.getElementById("modalExito").style.display = "flex";
-    document.body.style.overflow = "hidden";
-
+    await _registrarPago(metodoLabel, archivo);
   } catch(err) {
-    console.error("Error registrando membresía:", err);
+    console.error("Error:", err);
     alert("Ha ocurrido un error: " + err.message);
     if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
   }
 };
 
-// ── PANEL ADMIN ────────────────────────────────────────────────────────────
+// ── Función central de registro ────────────────────────────────────────────
+async function _registrarPago(metodoLabel, archivo) {
+  let comprobanteURL = "";
+  if (archivo) {
+    const ext  = archivo.name.split(".").pop() || "jpg";
+    const path = `comprobantes/${currentUser.uid}/${Date.now()}.${ext}`;
+    const snap = await uploadBytes(storRef(storage, path), archivo);
+    comprobanteURL = await getDownloadURL(snap.ref);
+  }
+
+  const docRef = await addDoc(collection(db, "membresias"), {
+    usuarioEmail:   currentUser.email,
+    usuarioNombre:  currentUser.displayName || currentUser.email,
+    usuarioAvatar:  currentUser.photoURL || "",
+    horarioId:      horarioElegidoId,
+    horarioLabel:   horarioElegido,
+    metodo:         metodoLabel,
+    comprobanteURL: comprobanteURL,
+    estado:         "pendiente",
+    fecha:          serverTimestamp(),
+    tallerId:       TALLER_ID,
+  });
+  const ref = docRef.id.slice(0,8).toUpperCase();
+
+  cerrarModalPago();
+  document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
+  document.getElementById("exito-resumen").innerHTML =
+    `<strong>Método:</strong> ${metodoLabel}<br>` +
+    `<strong>Horario:</strong> ${horarioElegido}<br>` +
+    `<strong>Referencia:</strong> ${ref}<br>` +
+    `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+  document.getElementById("modalExito").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+// ── Panel Admin ────────────────────────────────────────────────────────────
 function escucharMembresiasAdmin() {
   const q = query(collection(db,"membresias"), orderBy("fecha","desc"));
   onSnapshot(q, snap => {
@@ -826,7 +920,7 @@ function renderPanelAdmin() {
     div.className = "adm-card";
     const estadoLabel = {pendiente:"Pendiente",confirmado:"Confirmado",rechazado:"Rechazado"}[m.estado] || m.estado;
     const compImg = m.comprobanteURL
-      ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="verLightbox('${m.comprobanteURL}')" alt="Comprobante">`
+      ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="verLightbox('${m.comprobanteURL}')" alt="Ver comprobante">`
       : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:8px 0;text-align:center;">Sin comprobante adjunto</p>`;
     const acciones = m.estado === "pendiente" ? `
       <div class="adm-acciones">
@@ -880,7 +974,7 @@ window.rechazarPago = async function(memId) {
   await updateDoc(doc(db,"membresias",memId), {estado:"rechazado"});
 };
 
-// ── PERFIL ─────────────────────────────────────────────────────────────────
+// ── Perfil ─────────────────────────────────────────────────────────────────
 const perfilModal  = document.getElementById("perfilModal");
 const perfilStatus = document.getElementById("perfilStatus");
 window.cerrarSesion      = async () => { await signOut(auth); window.location.replace("entrada.html"); };
@@ -915,6 +1009,7 @@ document.addEventListener("keydown", e => {
   document.querySelectorAll(".ht-modal").forEach(m => {
     if (m.style.display !== "none") { m.style.display = "none"; document.body.style.overflow = ""; }
   });
+  if (_mpBrick) { try { _mpBrick.unmount(); } catch(ee){} _mpBrick = null; _mpInited = false; }
   document.getElementById("lightbox").style.display = "none";
   document.getElementById("popupLogin").style.display = "none";
 });
