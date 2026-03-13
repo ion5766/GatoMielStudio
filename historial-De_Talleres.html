@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/Styles.css">
 <link rel="stylesheet" href="movil-ui.css">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -38,7 +39,7 @@ onAuthStateChanged(_auth, (user) => {
   </div>
   <nav class="nav">
     <a href="index.html">Inicio</a>
-    <a href="historial-De_Talleres.html" class="active">Talleres</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
     <a href="coleccion.html">Colección</a>
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
@@ -746,24 +747,15 @@ async function _initMpBrick() {
   const loading   = document.getElementById("mp-loading");
   const container = document.getElementById("mpCardBrick_container");
   if (!container) return;
+  // Inicializar MP una sola vez (SDK ya cargado en <head>)
+  if (!_mp) {
+    _mp = new window.MercadoPago(MP_PUBLIC_KEY, { locale: "es-PE" });
+    _mpBuilder = _mp.bricks();
+  }
+  if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
+  container.innerHTML = "";
+  if (loading) loading.style.display = "block";
   try {
-    // Cargar SDK si aún no está
-    if (!window.MercadoPago) {
-      await new Promise((res, rej) => {
-        const s = document.createElement("script");
-        s.src = "https://sdk.mercadopago.com/js/v2";
-        s.onload = res; s.onerror = () => rej(new Error("No se pudo cargar SDK de MP"));
-        document.head.appendChild(s);
-      });
-    }
-    if (!_mp) {
-      _mp = new window.MercadoPago(MP_PUBLIC_KEY, {locale:"es-PE"});
-      _mpBuilder = _mp.bricks();
-    }
-    if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} }
-    container.innerHTML = "";
-    if (loading) loading.style.display = "none";
-
     _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
       initialization: {
         amount: 150,
@@ -773,6 +765,7 @@ async function _initMpBrick() {
         paymentMethods: {
           creditCard: "all",
           debitCard:  "all",
+          mercadoPago: "none",
           ticket:     "none",
           bankTransfer: "none",
           atm:        "none",
@@ -782,7 +775,16 @@ async function _initMpBrick() {
         visual: {
           style: {
             theme: "default",
-            customVariables: { baseColor: "#c48a3a" }
+            customVariables: {
+              baseColor: "#c48a3a",
+              baseColorFirstVariant:  "#a8742f",
+              baseColorSecondVariant: "#e8b870",
+              borderRadiusLarge:  "14px",
+              borderRadiusMedium: "10px",
+              formBackgroundColor:  "#faf8f5",
+              inputBackgroundColor: "#ffffff",
+              inputFocusedBorderColor: "#c48a3a"
+            }
           }
         }
       },
@@ -791,24 +793,21 @@ async function _initMpBrick() {
         onError: (e) => {
           console.error("MP Brick error:", e);
           if (loading) loading.style.display = "none";
-          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
         },
         onSubmit: async ({ formData }) => {
-          // Sin backend activo, registramos como pendiente igual que los otros métodos
-          // El admin validará manualmente (como acordado)
           try {
             await _registrarPago("Tarjeta", null);
           } catch(e) {
             console.error("Error registrando pago tarjeta:", e);
           }
-          return Promise.resolve(); // necesario para que el Brick no quede en loading
+          return Promise.resolve();
         }
       }
     });
   } catch(e) {
     console.error("Error iniciando MP Brick:", e);
     if (loading) loading.style.display = "none";
-    if (container) container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">No se pudo cargar el formulario de tarjeta.<br>Usa Yape, Plin o Agencia.</p>`;
+    if (container) container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar formulario. Usa Yape, Plin o Agencia.</p>`;
   }
 }
 
@@ -1016,6 +1015,29 @@ document.addEventListener("keydown", e => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
+
+<script>
+// Corregir links del nav inmediatamente y después del DOM load
+// Necesario porque movil-ui.css puede inyectar un nav móvil con links propios
+function fixNavLinks() {
+  document.querySelectorAll("a").forEach(function(a) {
+    const texto = a.textContent.trim();
+    const href  = a.getAttribute("href") || "";
+    // Si el texto es "Colección" y el href apunta a otra página, corregir
+    if (texto === "Colección" && href !== "coleccion.html" && !href.startsWith("http")) {
+      a.setAttribute("href", "coleccion.html");
+    }
+    // Si el texto es "Talleres" y el href es incorrecto, corregir
+    if (texto === "Talleres" && href !== "historial-De_Talleres.html" && !href.startsWith("http")) {
+      a.setAttribute("href", "historial-De_Talleres.html");
+    }
+  });
+}
+// Ejecutar inmediatamente y luego de que todo cargue
+fixNavLinks();
+document.addEventListener("DOMContentLoaded", fixNavLinks);
+window.addEventListener("load", fixNavLinks);
+</script>
 </body>
 </html>
 
