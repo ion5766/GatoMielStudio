@@ -1,1 +1,1233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colección | Gato Miel Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e) {}
+  }
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  // Guardar email del usuario para el pago
+  window._userEmail = user.email || "cliente@gatomiels.com";
+});
+</script>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <div class="user-menu">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="window.location.href='coleccion.html'">🛍 Mis compras</button>
+        <button onclick="window.location.href='historial-De_Talleres.html'">🎫 Mis membresías</button>
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- ══ HERO ══ -->
+  <section class="cl-hero">
+    <div class="cl-hero-inner">
+      <span class="cl-eyebrow">Gato Miel Estudio</span>
+      <h1>Piezas únicas,<br><em>hechas a mano.</em></h1>
+      <p>Cada pieza nace del barro con intención. Sin repeticiones, sin moldes.</p>
+    </div>
+    <div class="cl-hero-deco"><div class="cl-hero-line"></div></div>
+  </section>
+
+  <!-- ══ GRID PRODUCTOS ══ -->
+  <section class="cl-tienda">
+    <div class="cl-grid">
+
+      <article class="cl-producto" data-nombre="Taza Arena" data-precio="120">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Taza Arena</h3>
+            <span class="cl-precio">S/ 120</span>
+          </div>
+          <p>Cerámica esmaltada en tonos tierra.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Plato Bruma" data-precio="150">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
+               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Plato Bruma</h3>
+            <span class="cl-precio">S/ 150</span>
+          </div>
+          <p>Plato decorativo con textura orgánica.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Jarrón Eclipse" data-precio="240">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
+               onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Jarrón Eclipse</h3>
+            <span class="cl-precio">S/ 240</span>
+          </div>
+          <p>Pieza única torneada a mano.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Cuenco Alba" data-precio="135">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Cuenco Alba</h3>
+            <span class="cl-precio">S/ 135</span>
+          </div>
+          <p>Perfecto para decoración minimalista.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- ══ MODAL PAGO ══ -->
+<div id="modalCompra" class="cl-modal">
+  <div class="cl-modal-box">
+
+    <!-- Header inmersivo con fondo oscuro artesanal -->
+    <div class="cl-modal-hero">
+      <button class="cl-modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <!-- Logo + nombre -->
+      <div class="cl-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="cl-modal-logo">
+        <div class="cl-modal-hero-text">
+          <span class="cl-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="cl-modal-hero-title" id="productoSeleccionado">—</h2>
+          <span class="cl-modal-hero-sub">hecha a mano · pieza única</span>
+        </div>
+      </div>
+
+      <!-- Deco animado -->
+      <div class="cl-modal-hero-deco">
+        <div class="cl-deco-ring cl-deco-ring-1"></div>
+        <div class="cl-deco-ring cl-deco-ring-2"></div>
+        <div class="cl-deco-ring cl-deco-ring-3"></div>
+        <div class="cl-deco-dot"></div>
+      </div>
+    </div>
+
+    <!-- Selector de método de pago — pills horizontales -->
+    <div class="cl-metodo-selector">
+      <button class="cl-metodo-pill active" onclick="switchTab('yape', this)" data-tab="yape">
+        <span class="cl-pill-dot" style="background:#6c2fa5"></span>
+        Yape
+      </button>
+      <button class="cl-metodo-pill" onclick="switchTab('plin', this)" data-tab="plin">
+        <span class="cl-pill-dot" style="background:#00a3e0"></span>
+        Plin
+      </button>
+      <button class="cl-metodo-pill" onclick="switchTab('tarjeta', this)" data-tab="tarjeta">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        Tarjeta
+      </button>
+      <button class="cl-metodo-pill" onclick="switchTab('agencia', this)" data-tab="agencia">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Agencia
+      </button>
+    </div>
+
+    <!-- Contenido -->
+    <div class="cl-modal-body">
+
+      <!-- TAB YAPE -->
+      <div id="tab-yape" class="cl-tab-content active">
+        <div class="cl-qr-pane">
+          <div class="cl-qr-frame cl-qr-frame-yape">
+            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="cl-qr-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="cl-qr-empty" style="display:none">
+              <div class="cl-qr-grid-bg"></div>
+              <span>QR Yape</span>
+            </div>
+            <div class="cl-qr-badge-float cl-qr-badge-yape">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Yape
+            </div>
+          </div>
+          <div class="cl-qr-info">
+            <div class="cl-qr-monto-pill">
+              <span>Total</span>
+              <strong id="yape-monto">S/ —</strong>
+            </div>
+            <p class="cl-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
+          </div>
+          <button class="cl-btn-pagar cl-btn-yape" onclick="confirmarPagoQR('Yape')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué con Yape
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB PLIN -->
+      <div id="tab-plin" class="cl-tab-content">
+        <div class="cl-qr-pane">
+          <div class="cl-qr-frame cl-qr-frame-plin">
+            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="cl-qr-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="cl-qr-empty" style="display:none">
+              <div class="cl-qr-grid-bg"></div>
+              <span>QR Plin</span>
+            </div>
+            <div class="cl-qr-badge-float cl-qr-badge-plin">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Plin
+            </div>
+          </div>
+          <div class="cl-qr-info">
+            <div class="cl-qr-monto-pill">
+              <span>Total</span>
+              <strong id="plin-monto">S/ —</strong>
+            </div>
+            <p class="cl-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
+          </div>
+          <button class="cl-btn-pagar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué con Plin
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB TARJETA -->
+      <div id="tab-tarjeta" class="cl-tab-content">
+        <div id="cl-loading" style="text-align:center;padding:44px 0;display:none;">
+          <div class="cl-spinner"></div>
+          <p style="margin-top:14px;font-size:12px;color:#bbb;font-family:'Inter',sans-serif;letter-spacing:0.06em;">preparando pago seguro...</p>
+        </div>
+        <div id="paymentBrick_container" style="padding:10px 6px 4px;"></div>
+      </div>
+
+      <!-- TAB AGENCIA -->
+      <div id="tab-agencia" class="cl-tab-content">
+        <div class="cl-agencia-pane">
+          <div class="cl-cci-card">
+            <div class="cl-cci-card-header">
+              <span class="cl-cci-bank-name">BCP</span>
+              <span class="cl-cci-bank-label">Banco de Crédito del Perú</span>
+            </div>
+            <div class="cl-cci-fields">
+              <div class="cl-cci-field">
+                <span class="cl-cci-field-label">Titular</span>
+                <span class="cl-cci-field-val">Jhon Anibal Ramirez</span>
+              </div>
+              <div class="cl-cci-field">
+                <span class="cl-cci-field-label">N° Cuenta</span>
+                <span class="cl-cci-field-val mono">000-00000000-0-00</span>
+              </div>
+              <div class="cl-cci-field cl-cci-field-cci">
+                <span class="cl-cci-field-label">CCI</span>
+                <div class="cl-cci-copy-row">
+                  <span class="cl-cci-field-val mono" id="cci-numero">00200000000000000000</span>
+                  <button class="cl-cci-copy-btn" onclick="copiarCCI()" title="Copiar">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="cl-cci-field cl-cci-field-monto">
+                <span class="cl-cci-field-label">Monto exacto</span>
+                <span class="cl-cci-field-val cl-cci-monto-val" id="agencia-monto">S/ —</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cl-agencia-steps">
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">1</div>
+              <p>Deposita o transfiere usando el CCI</p>
+            </div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">2</div>
+              <p>Toma captura del comprobante</p>
+            </div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">3</div>
+              <p>Envíala por WhatsApp · <strong>+51 922 402 608</strong></p>
+            </div>
+          </div>
+
+          <a href="https://wa.me/51922402608?text=Hola!%20Hice%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
+             target="_blank" class="cl-btn-whatsapp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Enviar comprobante
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pie sutil -->
+    <div class="cl-modal-pie">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>pago protegido · ssl 256-bit</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL ÉXITO / VALIDACIÓN ══ -->
+<div id="modalExito" class="cl-modal" style="display:none;">
+  <div class="cl-modal-box cl-exito-box">
+
+    <!-- Icono animado -->
+    <div class="cl-exito-icon-wrap">
+      <div class="cl-exito-ring cl-exito-ring-1"></div>
+      <div class="cl-exito-ring cl-exito-ring-2"></div>
+      <div class="cl-exito-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" class="cl-check-path"/></svg>
+      </div>
+    </div>
+
+    <!-- Textos -->
+    <div class="cl-exito-body">
+      <h3 class="cl-exito-title">Estamos validando<br>tu pago</h3>
+      <p id="exitoDetalle" class="cl-exito-detalle"></p>
+
+      <!-- Separador decorativo -->
+      <div class="cl-exito-sep">
+        <div></div><span>mientras tanto</span><div></div>
+      </div>
+
+      <p class="cl-exito-msg">
+        Vamos coordinando el envío de tu pieza.<br>
+        <strong>Escríbenos y envíanos el comprobante:</strong>
+      </p>
+
+      <!-- Número destacado -->
+      <div class="cl-exito-numero">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 11.29 19.79 19.79 0 01.67 2.68 2 2 0 012.66.5h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8a16 16 0 006.06 6.06l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        922 402 608
+      </div>
+
+      <!-- Botones -->
+      <a id="btnWspComprobante" href="#" target="_blank" class="cl-exito-btn-wsp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        Enviar comprobante por WhatsApp
+      </a>
+
+      <button onclick="cerrarExito()" class="cl-exito-btn-cerrar">
+        Ya lo envié · Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL HISTORIAL ══ -->
+<div id="modalHistorial" class="cl-modal" style="display:none;">
+  <div class="cl-modal-box cl-hist-box">
+    <div class="cl-hist-header">
+      <div>
+        <span class="cl-hist-eyebrow">Gato Miel Estudio</span>
+        <h3 class="cl-hist-title">Mis pedidos</h3>
+      </div>
+      <button onclick="cerrarHistorial()" class="cl-hist-cerrar">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="historialLista" class="cl-hist-lista">
+      <div class="cl-hist-loading">
+        <div class="cl-spinner"></div>
+        <p>Cargando pedidos...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PERFIL ══ -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+:root { --gold:#c48a3a; --ink:#1a1714; --sand:#f8f5f1; --warm:#f3ece3; --muted:#888; }
+
+.cl-eyebrow { font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:rgba(196,138,58,0.8); display:block; margin-bottom:18px; }
+
+.cl-hero { background:var(--ink); padding:120px 9% 100px; display:flex; align-items:flex-end; justify-content:space-between; gap:40px; min-height:50vh; }
+.cl-hero-inner { max-width:580px; }
+.cl-hero-inner h1 { font-family:'Playfair Display',serif; font-size:clamp(50px,7vw,84px); font-weight:400; color:white; line-height:1.05; letter-spacing:-0.02em; margin-bottom:22px; }
+.cl-hero-inner h1 em { font-style:italic; color:var(--gold); }
+.cl-hero-inner p { font-size:16px; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.75; max-width:400px; }
+.cl-hero-deco { align-self:flex-start; padding-top:8px; }
+.cl-hero-line { width:1px; height:80px; background:linear-gradient(var(--gold),transparent); opacity:0.5; }
+
+.cl-tienda { padding:100px 9%; background:var(--sand); }
+.cl-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+
+.cl-producto { background:white; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 2px 16px rgba(0,0,0,0.05); transition:transform 0.35s ease,box-shadow 0.35s ease; position:relative; }
+.cl-producto::after { content:""; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),#e8b870); transform:scaleX(0); transform-origin:left; transition:transform 0.4s ease; }
+.cl-producto:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,0.1); }
+.cl-producto:hover::after { transform:scaleX(1); }
+
+.cl-img { position:relative; height:280px; overflow:hidden; }
+.cl-img img { width:100%; height:100%; object-fit:cover; filter:saturate(85%); transition:transform 0.6s ease,filter 0.4s ease; display:block; }
+.cl-producto:hover .cl-img img { transform:scale(1.06); filter:saturate(100%); }
+.cl-img-overlay { position:absolute; inset:0; background:rgba(26,23,20,0); display:flex; align-items:flex-end; justify-content:center; padding-bottom:22px; opacity:0; transition:opacity 0.3s ease,background 0.3s ease; }
+.cl-producto:hover .cl-img-overlay { opacity:1; background:rgba(26,23,20,0.38); }
+.cl-btn-ver { padding:11px 26px; background:white; color:var(--ink); border:none; border-radius:50px; font-size:12px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; transform:translateY(10px); transition:transform 0.3s ease,background 0.2s; }
+.cl-producto:hover .cl-btn-ver { transform:translateY(0); }
+.cl-btn-ver:hover { background:var(--gold); color:white; }
+
+.cl-info { padding:20px 20px 24px; }
+.cl-info-top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; }
+.cl-info-top h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:500; color:var(--ink); }
+.cl-precio { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--gold); letter-spacing:-0.01em; }
+.cl-info p { font-size:13px; color:#888; line-height:1.6; font-weight:300; }
+
+/* ══ MODAL ══ */
+.cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
+.cl-modal.open { display:flex; }
+.cl-modal-box {
+  background:#fff; width:100%; max-width:400px; max-height:92vh;
+  border-radius:24px; display:flex; flex-direction:column; overflow:hidden;
+  animation:clModalIn 0.45s cubic-bezier(0.34,1.4,0.64,1);
+  box-shadow:0 50px 120px rgba(0,0,0,0.5), 0 0 0 1px rgba(196,138,58,0.1);
+}
+@keyframes clModalIn { from{transform:scale(0.86) translateY(32px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+
+/* Hero header inmersivo */
+.cl-modal-hero {
+  background: linear-gradient(160deg, #100d0a 0%, #1e1610 50%, #0f0c09 100%);
+  padding: 22px 20px 20px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  animation: heroSlideIn 0.5s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+@keyframes heroSlideIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+.cl-modal-hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse at 85% 40%, rgba(196,138,58,0.12) 0%, transparent 60%);
+  pointer-events:none;
+}
+.cl-modal-cerrar {
+  position:absolute; top:12px; right:12px; z-index:2;
+  width:26px; height:26px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.07); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.4); transition:background 0.2s, color 0.2s, transform 0.3s;
+}
+.cl-modal-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg) scale(1.1); }
+
+/* Brand row */
+.cl-modal-hero-brand { display:flex; align-items:center; gap:14px; position:relative; z-index:1; }
+.cl-modal-logo {
+  width:46px; height:46px; border-radius:12px; object-fit:cover; flex-shrink:0;
+  border:1.5px solid rgba(196,138,58,0.25);
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  animation: logoPop 0.55s cubic-bezier(0.34,1.5,0.64,1) 0.1s both;
+}
+@keyframes logoPop { from{transform:scale(0.7) rotate(-8deg);opacity:0} to{transform:scale(1) rotate(0deg);opacity:1} }
+.cl-modal-hero-eyebrow {
+  display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500;
+  letter-spacing:0.22em; text-transform:uppercase;
+  color:rgba(196,138,58,0.6); margin-bottom:5px;
+}
+.cl-modal-hero-title {
+  font-family:'Playfair Display',serif; font-size:18px; font-weight:400;
+  color:white; line-height:1.2; margin-bottom:4px;
+  letter-spacing:-0.01em;
+  animation: titleSlide 0.5s cubic-bezier(0.34,1.2,0.64,1) 0.15s both;
+}
+@keyframes titleSlide { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+.cl-modal-hero-sub {
+  display:block; font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
+  color:rgba(255,255,255,0.25); letter-spacing:0.1em;
+  font-style:italic;
+}
+
+/* Deco animado */
+.cl-modal-hero-deco {
+  position:absolute; right:-20px; top:50%; transform:translateY(-50%);
+  width:100px; height:100px; pointer-events:none;
+}
+.cl-deco-ring {
+  position:absolute; border-radius:50%; border:1px solid rgba(196,138,58,0.12);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+.cl-deco-ring-1 { width:60px; height:60px; animation-delay:0s; }
+.cl-deco-ring-2 { width:80px; height:80px; animation-delay:0.6s; border-color:rgba(196,138,58,0.07); }
+.cl-deco-ring-3 { width:100px; height:100px; animation-delay:1.2s; border-color:rgba(196,138,58,0.04); }
+@keyframes ringPulse {
+  0%,100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
+  50% { transform:translate(-50%,-50%) scale(1.08); opacity:0.6; }
+}
+.cl-deco-dot {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(196,138,58,0.5);
+  animation: dotGlow 2s ease-in-out infinite;
+}
+@keyframes dotGlow {
+  0%,100% { box-shadow:0 0 0 0 rgba(196,138,58,0.4); }
+  50% { box-shadow:0 0 0 6px rgba(196,138,58,0); }
+}
+
+/* Pills selector de método */
+.cl-metodo-selector {
+  display:flex; gap:6px; padding:12px 16px 10px;
+  background:#faf8f5; border-bottom:1px solid #f0ebe3;
+  flex-shrink:0; overflow-x:auto; scrollbar-width:none;
+  animation: pillsSlide 0.4s cubic-bezier(0.34,1.2,0.64,1) 0.2s both;
+}
+@keyframes pillsSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.cl-metodo-selector::-webkit-scrollbar { display:none; }
+.cl-metodo-pill {
+  display:flex; align-items:center; gap:5px;
+  padding:7px 14px; border-radius:50px; border:1.5px solid #ede8e0;
+  background:white; cursor:pointer; white-space:nowrap;
+  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#999;
+  transition:all 0.25s cubic-bezier(0.34,1.3,0.64,1); flex-shrink:0;
+}
+.cl-metodo-pill:hover { border-color:var(--gold); color:var(--ink); transform:translateY(-1px); box-shadow:0 4px 12px rgba(196,138,58,0.15); }
+.cl-metodo-pill.active {
+  background:var(--ink); border-color:var(--ink); color:white;
+  box-shadow:0 4px 14px rgba(26,23,20,0.3);
+  transform:translateY(-1px);
+}
+.cl-pill-dot { width:7px; height:7px; border-radius:50%; opacity:0.8; flex-shrink:0; }
+
+/* Body */
+.cl-modal-body { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent; }
+.cl-tab-content { display:none; }
+.cl-tab-content.active { display:block; animation: tabFadeIn 0.3s ease both; }
+@keyframes tabFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* QR pane — Yape / Plin */
+.cl-qr-pane { padding:18px 18px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+
+.cl-qr-frame {
+  position:relative; width:195px; height:195px;
+  border-radius:20px; overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,0.14);
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+  animation: qrFloat 4s ease-in-out infinite;
+}
+@keyframes qrFloat {
+  0%,100% { transform:translateY(0px); }
+  50% { transform:translateY(-4px); }
+}
+.cl-qr-frame:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 16px 50px rgba(0,0,0,0.18); }
+.cl-qr-frame-yape { background:linear-gradient(135deg,rgba(108,47,165,0.06),rgba(108,47,165,0.02)); border:1.5px solid rgba(108,47,165,0.15); }
+.cl-qr-frame-plin  { background:linear-gradient(135deg,rgba(0,163,224,0.06),rgba(0,163,224,0.02)); border:1.5px solid rgba(0,163,224,0.15); }
+.cl-qr-img { width:100%; height:100%; object-fit:contain; padding:10px; }
+.cl-qr-empty {
+  width:100%; height:100%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;
+}
+.cl-qr-grid-bg {
+  width:100px; height:100px;
+  background:repeating-conic-gradient(#ddd 0% 25%,#f5f5f5 0% 50%) 0 0/10px 10px;
+  border-radius:6px; opacity:0.4;
+}
+.cl-qr-empty span { font-size:11px; color:#ccc; font-family:'Inter',sans-serif; }
+.cl-qr-badge-float {
+  position:absolute; bottom:8px; right:8px;
+  display:flex; align-items:center; gap:4px;
+  padding:3px 9px; border-radius:20px;
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:0.05em;
+}
+.cl-qr-badge-yape { background:#6c2fa5; color:white; }
+.cl-qr-badge-plin  { background:#00a3e0; color:white; }
+
+.cl-qr-info { width:100%; display:flex; flex-direction:column; gap:8px; }
+.cl-qr-monto-pill {
+  display:flex; align-items:center; justify-content:space-between;
+  background:#f8f5f1; border-radius:14px; padding:11px 16px;
+  border:1px solid #ede8de;
+}
+.cl-qr-monto-pill span { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; font-weight:400; letter-spacing:0.06em; }
+.cl-qr-monto-pill strong { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); font-weight:500; }
+.cl-qr-hint { font-family:'Inter',sans-serif; font-size:11px; color:#bbb; text-align:center; line-height:1.5; letter-spacing:0.02em; }
+
+.cl-btn-pagar {
+  width:100%; padding:14px; border:none; border-radius:16px; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.06em;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:opacity 0.2s, transform 0.15s;
+}
+.cl-btn-pagar:hover { opacity:0.9; transform:translateY(-1px); }
+.cl-btn-yape { background:linear-gradient(135deg,#5a2490,#7a35b8); color:white; box-shadow:0 6px 20px rgba(90,36,144,0.3); }
+.cl-btn-plin  { background:linear-gradient(135deg,#0090cc,#006699); color:white; box-shadow:0 6px 20px rgba(0,144,204,0.3); }
+
+/* Tarjeta spinner */
+.cl-spinner { width:30px; height:30px; border:2.5px solid #f0ebe4; border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Agencia pane */
+.cl-agencia-pane { padding:18px 18px 20px; display:flex; flex-direction:column; gap:14px; }
+
+.cl-cci-card {
+  border-radius:18px; overflow:hidden;
+  border:1px solid #ede8de;
+  box-shadow:0 2px 12px rgba(0,0,0,0.05);
+}
+.cl-cci-card-header {
+  background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);
+  padding:14px 18px; display:flex; align-items:baseline; gap:10px;
+}
+.cl-cci-bank-name {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
+  color:var(--gold); letter-spacing:0.04em;
+}
+.cl-cci-bank-label {
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:300;
+  color:rgba(255,255,255,0.3); letter-spacing:0.08em;
+}
+.cl-cci-fields { background:#faf8f5; }
+.cl-cci-field {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px; border-bottom:1px solid #f0ebe3;
+}
+.cl-cci-field:last-child { border-bottom:none; }
+.cl-cci-field-label { font-family:'Inter',sans-serif; font-size:10px; color:#c8c0b4; font-weight:400; letter-spacing:0.08em; text-transform:uppercase; }
+.cl-cci-field-val { font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); font-weight:500; }
+.cl-cci-field-val.mono { font-family:monospace; font-size:13px; letter-spacing:0.04em; }
+.cl-cci-field-cci { background:rgba(196,138,58,0.04); }
+.cl-cci-copy-row { display:flex; align-items:center; gap:8px; }
+.cl-cci-copy-btn {
+  width:22px; height:22px; border:none; border-radius:6px;
+  background:#ede8de; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  color:#999; transition:background 0.2s, color 0.2s;
+}
+.cl-cci-copy-btn:hover { background:var(--gold); color:white; }
+.cl-cci-field-monto .cl-cci-field-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--gold); }
+
+.cl-agencia-steps { display:flex; flex-direction:column; gap:9px; }
+.cl-agencia-step { display:flex; align-items:flex-start; gap:11px; }
+.cl-astep-num {
+  width:20px; height:20px; border-radius:50%; background:var(--ink);
+  color:white; font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+}
+.cl-agencia-step p { font-family:'Inter',sans-serif; font-size:12px; color:#777; line-height:1.5; }
+.cl-agencia-step strong { color:var(--ink); font-weight:600; }
+
+.cl-btn-whatsapp {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px; border-radius:16px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:0.05em; text-decoration:none;
+  box-shadow:0 6px 20px rgba(34,197,94,0.3);
+  transition:opacity 0.2s, transform 0.15s;
+}
+.cl-btn-whatsapp:hover { opacity:0.9; transform:translateY(-1px); }
+
+/* Pie */
+.cl-modal-pie {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:8px 16px; background:#faf8f5; border-top:1px solid #f0ebe3;
+  font-family:'Inter',sans-serif; font-size:9px; color:#d4cdc4;
+  letter-spacing:0.1em; text-transform:lowercase; flex-shrink:0;
+}
+
+/* Avatar selector */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ══ MODAL ÉXITO ══ */
+.cl-exito-box {
+  max-width:380px !important;
+  animation:clModalIn 0.5s cubic-bezier(0.34,1.4,0.64,1) !important;
+  overflow:visible !important;
+}
+.cl-exito-icon-wrap {
+  position:relative; width:80px; height:80px;
+  margin:-40px auto 0; z-index:2; flex-shrink:0;
+}
+.cl-exito-ring {
+  position:absolute; border-radius:50%;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation:exitoRing 2.5s ease-in-out infinite;
+}
+.cl-exito-ring-1 { width:80px; height:80px; border:1.5px solid rgba(196,138,58,0.25); animation-delay:0s; }
+.cl-exito-ring-2 { width:100px; height:100px; border:1px solid rgba(196,138,58,0.12); animation-delay:0.4s; }
+@keyframes exitoRing {
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  50%{transform:translate(-50%,-50%) scale(1.08);opacity:0.5}
+}
+.cl-exito-icon {
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg,#c48a3a,#e8b870);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 12px 32px rgba(196,138,58,0.4);
+  position:relative; z-index:1;
+  animation:iconPop 0.6s cubic-bezier(0.34,1.6,0.64,1) 0.1s both;
+}
+@keyframes iconPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+.cl-check-path {
+  stroke-dasharray:30; stroke-dashoffset:30;
+  animation:checkDraw 0.5s ease 0.5s forwards;
+}
+@keyframes checkDraw { to{stroke-dashoffset:0} }
+
+.cl-exito-body {
+  padding:24px 28px 28px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.cl-exito-title {
+  font-family:'Playfair Display',serif; font-size:22px; font-weight:400;
+  color:var(--ink); line-height:1.2;
+  animation:fadeUp 0.4s ease 0.3s both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.cl-exito-detalle {
+  font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  color:var(--gold); letter-spacing:0.02em;
+}
+.cl-exito-sep {
+  display:flex; align-items:center; gap:10px; width:100%; margin:4px 0;
+}
+.cl-exito-sep div { flex:1; height:1px; background:#f0ebe3; }
+.cl-exito-sep span {
+  font-family:'Inter',sans-serif; font-size:9px; color:#ccc;
+  letter-spacing:0.15em; text-transform:uppercase; white-space:nowrap;
+}
+.cl-exito-msg {
+  font-family:'Inter',sans-serif; font-size:13px; color:#888;
+  line-height:1.7; margin:0;
+}
+.cl-exito-msg strong { color:var(--ink); }
+.cl-exito-numero {
+  display:flex; align-items:center; gap:8px;
+  background:#f8f5f1; border:1px solid #ede8de;
+  border-radius:12px; padding:10px 20px;
+  font-family:'Inter',sans-serif; font-size:18px; font-weight:600;
+  color:var(--ink); letter-spacing:0.06em;
+  width:100%; justify-content:center;
+}
+.cl-exito-btn-wsp {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:14px; border-radius:14px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white; font-family:'Inter',sans-serif; font-size:13px;
+  font-weight:600; letter-spacing:0.04em; text-decoration:none;
+  box-shadow:0 6px 20px rgba(34,197,94,0.3);
+  transition:opacity 0.2s,transform 0.15s;
+}
+.cl-exito-btn-wsp:hover { opacity:0.9; transform:translateY(-1px); }
+.cl-exito-btn-cerrar {
+  background:none; border:none; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:12px; color:#bbb;
+  padding:4px 16px; letter-spacing:0.04em;
+  transition:color 0.2s;
+}
+.cl-exito-btn-cerrar:hover { color:var(--ink); }
+
+/* ══ MODAL HISTORIAL ══ */
+.cl-hist-box {
+  max-width:440px !important; max-height:80vh !important;
+  display:flex !important; flex-direction:column !important;
+}
+.cl-hist-header {
+  background:linear-gradient(135deg,#100d0a,#1e1610);
+  padding:20px 22px; display:flex; align-items:flex-start;
+  justify-content:space-between; flex-shrink:0;
+}
+.cl-hist-eyebrow {
+  display:block; font-family:'Inter',sans-serif; font-size:9px;
+  font-weight:500; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(196,138,58,0.6); margin-bottom:5px;
+}
+.cl-hist-title {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:400;
+  color:white; margin:0;
+}
+.cl-hist-cerrar {
+  width:26px; height:26px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.08); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.4); transition:all 0.2s; flex-shrink:0;
+}
+.cl-hist-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg); }
+.cl-hist-lista {
+  flex:1; overflow-y:auto; padding:16px;
+  scrollbar-width:thin; scrollbar-color:#e5ddd3 transparent;
+  display:flex; flex-direction:column; gap:10px;
+}
+.cl-hist-loading {
+  text-align:center; padding:40px 0; color:#bbb;
+  font-family:'Inter',sans-serif; font-size:13px;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.cl-hist-vacio {
+  text-align:center; padding:50px 20px;
+  font-family:'Playfair Display',serif; font-size:18px;
+  color:#ccc; font-style:italic;
+}
+.cl-hist-item {
+  background:#faf8f5; border:1px solid #ede8de;
+  border-radius:14px; padding:14px 16px;
+  display:flex; align-items:flex-start; gap:12px;
+  animation:fadeUp 0.3s ease both;
+}
+.cl-hist-item-icon {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,#1a1714,#2d2419);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+}
+.cl-hist-item-info { flex:1; min-width:0; }
+.cl-hist-item-nombre {
+  font-family:'Playfair Display',serif; font-size:15px;
+  font-weight:500; color:var(--ink); margin-bottom:3px;
+}
+.cl-hist-item-meta {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.cl-hist-item-monto {
+  font-family:'Inter',sans-serif; font-size:13px;
+  font-weight:600; color:var(--gold);
+}
+.cl-hist-item-metodo {
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
+  padding:2px 8px; border-radius:20px; letter-spacing:0.04em;
+}
+.cl-hist-metodo-yape { background:#f0e6fa; color:#6c2fa5; }
+.cl-hist-metodo-plin { background:#e0f4fc; color:#0077aa; }
+.cl-hist-metodo-tarjeta { background:#f5f5f5; color:#555; }
+.cl-hist-metodo-agencia { background:#f0f4e8; color:#5a7a2a; }
+.cl-hist-item-fecha {
+  font-family:'Inter',sans-serif; font-size:10px; color:#bbb;
+}
+.cl-hist-item-estado {
+  display:flex; align-items:center; gap:4px;
+  font-family:'Inter',sans-serif; font-size:10px; font-weight:500;
+}
+.cl-hist-estado-pendiente { color:#e8a020; }
+.cl-hist-estado-confirmado { color:#22c55e; }
+.cl-hist-item-wsp {
+  display:flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white; text-decoration:none;
+  transition:transform 0.2s, opacity 0.2s;
+}
+.cl-hist-item-wsp:hover { transform:scale(1.1); opacity:0.9; }
+
+@media (max-width:1100px) { .cl-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:900px) { .cl-hero { padding:90px 7% 70px; flex-direction:column; min-height:auto; } .cl-hero-deco { display:none; } .cl-tienda { padding:70px 7%; } }
+@media (max-width:600px) { .cl-grid { grid-template-columns:1fr; max-width:380px; } }
+</style>
+
+<!-- SDK Mercado Pago -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<script>
+let mp = null;
+let bricksBuilder = null;
+let paymentBrickController = null;
+let productoActual = { nombre: "", monto: 0 };
+let avatarSeleccionado = null;
+let tarjetaInicializada = false;
+
+// Lee nombre y precio directamente del data-attribute del article padre
+function comprarDesdeCard(btn) {
+  const card = btn.closest(".cl-producto");
+  const nombre = card.dataset.nombre;
+  const monto  = parseInt(card.dataset.precio, 10);
+  comprar(nombre, monto);
+}
+
+function initMP() {
+  if (!mp) {
+    mp = new MercadoPago("APP_USR-4362f159-fd72-4caf-871a-6a6b98384795", { locale: "es-PE" });
+    bricksBuilder = mp.bricks();
+  }
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll(".cl-metodo-pill").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".cl-tab-content").forEach(c => c.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("tab-" + tab).classList.add("active");
+
+  // Cargar Brick de tarjeta solo cuando se selecciona esa tab
+  if (tab === "tarjeta" && !tarjetaInicializada) {
+    tarjetaInicializada = true;
+    document.getElementById("cl-loading").style.display = "block";
+    initMP();
+    renderBrick();
+  }
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+
+async function comprar(nombre, monto) {
+  productoActual = { nombre, monto };
+
+  // Reset tabs al abrir
+  document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
+  document.querySelectorAll(".cl-tab-content").forEach((c,i) => c.classList.toggle("active", i===0));
+  tarjetaInicializada = false;
+  if (paymentBrickController) {
+    try { await paymentBrickController.unmount(); } catch(e) {}
+    paymentBrickController = null;
+  }
+  document.getElementById("paymentBrick_container").innerHTML = "";
+  document.getElementById("cl-loading").style.display = "none";
+
+  // Actualizar montos en QR
+  document.getElementById("productoSeleccionado").textContent = `${nombre} · S/ ${monto}`;
+  document.getElementById("yape-monto").textContent = `S/ ${monto}`;
+  document.getElementById("plin-monto").textContent = `S/ ${monto}`;
+  document.getElementById("agencia-monto").textContent = `S/ ${monto}`;
+
+  document.getElementById("modalCompra").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+async function renderBrick() {
+  const settings = {
+    initialization: { amount: productoActual.monto, payer: { email: window._userEmail || "" } },
+    customization: {
+      paymentMethods: {
+        creditCard: "all",
+        debitCard: "all",
+        mercadoPago: "all"   // billetera Mercado Pago
+      },
+      visual: {
+        style: {
+          theme: "default",
+          customVariables: {
+            baseColor: "#c48a3a", baseColorFirstVariant: "#a8742f", baseColorSecondVariant: "#e8b870",
+            borderRadiusLarge: "14px", borderRadiusMedium: "10px",
+            formBackgroundColor: "#faf8f5", inputBackgroundColor: "#ffffff",
+            inputFocusedBorderColor: "#c48a3a"
+          }
+        }
+      }
+    },
+    callbacks: {
+      onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
+      onSubmit: async ({ formData }) => {
+        try {
+          const resp = await fetch("/.netlify/functions/pagar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
+          });
+          const data = await resp.json();
+          if (!resp.ok) throw new Error(data.error || "Error al procesar");
+          cerrarModal();
+          mostrarModalExito(productoActual.nombre, productoActual.monto, "Tarjeta");
+          window.guardarPedido && window.guardarPedido(productoActual.nombre, productoActual.monto, "Tarjeta");
+        } catch (err) {
+          alert("Error al procesar el pago. Por favor intenta nuevamente.");
+        }
+      },
+      onError: (e) => console.error("Brick error:", e)
+    }
+  };
+  try {
+    paymentBrickController = await bricksBuilder.create("payment", "paymentBrick_container", settings);
+  } catch(e) {
+    document.getElementById("cl-loading").innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;font-size:13px;text-align:center;padding:20px;">Error al cargar el formulario. Recarga la página.</p>`;
+  }
+}
+
+function copiarCCI() {
+  const cci = document.getElementById("cci-numero").textContent;
+  navigator.clipboard.writeText(cci).then(() => {
+    const btn = document.querySelector(".cl-cci-copy");
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+    btn.style.background = "#28c840"; btn.style.color = "white";
+    setTimeout(() => {
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+      btn.style.background = ""; btn.style.color = "";
+    }, 2000);
+  });
+}
+
+function confirmarPagoQR(metodo) {
+  cerrarModal();
+  mostrarModalExito(productoActual.nombre, productoActual.monto, metodo);
+  guardarPedido(productoActual.nombre, productoActual.monto, metodo);
+}
+
+function mostrarModalExito(nombre, monto, metodo) {
+  document.getElementById("exitoDetalle").textContent = `${nombre} · S/ ${monto} via ${metodo}`;
+  // Link WhatsApp con info del pedido
+  const texto = encodeURIComponent(`Hola! 🐱 Acabo de pagar *${nombre} - S/ ${monto}* via *${metodo}*. Te envío el comprobante.`);
+  document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
+  document.getElementById("modalExito").style.display = "flex";
+}
+
+function cerrarModal() {
+  document.getElementById("modalCompra").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function cerrarExito() {
+  document.getElementById("modalExito").style.display = "none";
+}
+function cerrarPendiente() {
+  const m = document.getElementById("modalPendiente");
+  if (m) m.style.display = "none";
+}
+function cerrarHistorial() {
+  document.getElementById("modalHistorial").style.display = "none";
+}
+window.cerrarHistorial = cerrarHistorial;
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { cerrarModal(); cerrarExito(); cerrarPendiente(); cerrarHistorial(); }
+});
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const modal  = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+
+// Botón historial ya en el HTML estático
+
+// ── Guardar pedido en Firestore ──
+window.guardarPedido = async (nombre, monto, metodo) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await addDoc(collection(db, "pedidos"), {
+      uid: user.uid,
+      email: user.email,
+      nombre: user.displayName || user.email,
+      producto: nombre,
+      monto: monto,
+      metodo: metodo,
+      estado: "pendiente",
+      fecha: serverTimestamp()
+    });
+  } catch(e) { console.error("Error guardando pedido:", e); }
+};
+
+// ── Abrir historial ──
+window.abrirHistorial = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+  document.getElementById("modalHistorial").style.display = "flex";
+  const lista = document.getElementById("historialLista");
+  lista.innerHTML = `<div class="cl-hist-loading"><div class="cl-spinner"></div><p>Cargando pedidos...</p></div>`;
+
+  try {
+    // Sin orderBy para evitar índice compuesto — ordenamos en JS
+    const q = query(
+      collection(db, "pedidos"),
+      where("uid", "==", user.uid)
+    );
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      lista.innerHTML = `<div class="cl-hist-vacio">Aún no tienes pedidos 🐱</div>`;
+      return;
+    }
+
+    // Ordenar por fecha desc en el cliente
+    const docs = [];
+    snap.forEach(d => docs.push(d.data()));
+    docs.sort((a,b) => {
+      const ta = a.fecha?.toMillis ? a.fecha.toMillis() : 0;
+      const tb = b.fecha?.toMillis ? b.fecha.toMillis() : 0;
+      return tb - ta;
+    });
+
+    lista.innerHTML = "";
+    docs.forEach((d) => {
+      const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE", { day:"2-digit", month:"short", year:"numeric" }) : "—";
+      const metodoClass = `cl-hist-metodo-${(d.metodo || "").toLowerCase().replace(/ /g,"")}`;
+      const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
+      const estadoIcon  = d.estado === "confirmado" ? "✓" : "⏳";
+      const estadoText  = d.estado === "confirmado" ? "Confirmado" : "Validando pago";
+      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
+
+      const item = document.createElement("div");
+      item.className = "cl-hist-item";
+      item.innerHTML = `
+        <div class="cl-hist-item-icon">🛍</div>
+        <div class="cl-hist-item-info">
+          <div class="cl-hist-item-nombre">${d.producto}</div>
+          <div class="cl-hist-item-meta">
+            <span class="cl-hist-item-monto">S/ ${d.monto}</span>
+            <span class="cl-hist-item-metodo ${metodoClass}">${d.metodo}</span>
+            <span class="cl-hist-item-fecha">${fecha}</span>
+          </div>
+          <div class="cl-hist-item-estado ${estadoClass}">${estadoIcon} ${estadoText}</div>
+        </div>
+        <a href="https://wa.me/51922402608?text=${wspText}" target="_blank" class="cl-hist-item-wsp" title="Consultar por WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        </a>
+      `;
+      lista.appendChild(item);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div class="cl-hist-vacio" style="color:#e55;font-style:normal;">Error al cargar pedidos</div>`;
+    console.error(e);
+  }
+};
+
+// ── También guardar cuando se paga con tarjeta (MP Bricks) ──
+window._guardarPedidoTarjeta = () => {
+  if (window.productoActual?.nombre) {
+    window.guardarPedido(window.productoActual.nombre, window.productoActual.monto, "Tarjeta");
+  }
+};
+
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex"; window.avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = window.avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) { status.textContent = "❌ Error: " + error.message; }
+};
+</script>
+
+<script type="module" src="Js/src/chat.js"></script>
+</body>
+</html>
