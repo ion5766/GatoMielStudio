@@ -752,24 +752,17 @@ async function _renderBrick() {
   if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
   container.innerHTML = "";
   try {
-    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
-      initialization: { amount: 150, payer: { email: currentUser?.email || "" } },
+    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
+      initialization: {
+        amount: 150,
+        payer: { email: currentUser?.email || "" }
+      },
       customization: {
-        paymentMethods: {
-          creditCard:  "all",
-          debitCard:   "all",
-          mercadoPago: "none",
-          ticket:      "none",
-          bankTransfer:"none",
-          atm:         "none",
-          onboarding_credits: "none",
-          wallet_purchase:    "none"
-        },
         visual: {
           style: {
             theme: "default",
             customVariables: {
-              baseColor: "#c48a3a",
+              baseColor:               "#c48a3a",
               baseColorFirstVariant:   "#a8742f",
               baseColorSecondVariant:  "#e8b870",
               borderRadiusLarge:       "14px",
@@ -788,39 +781,39 @@ async function _renderBrick() {
           if (loading) loading.style.display = "none";
           container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:20px;font-family:'Inter',sans-serif;">Error al cargar el formulario.<br>Usa Yape, Plin o Agencia.</p>`;
         },
-        onSubmit: async ({ formData }) => {
-          // Llamada directa a la API de MP (sin backend, igual que coleccion en GitHub Pages)
+        onSubmit: async (formData) => {
           try {
             const payload = {
               transaction_amount: 150,
               description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
               payment_method_id: formData.payment_method_id,
+              token:        formData.token,
+              installments: formData.installments || 1,
               payer: {
-                email: formData.payer?.email || currentUser?.email || "cliente@gatomieles.com"
+                email:          formData.payer?.email || currentUser?.email || "",
+                first_name:     formData.payer?.first_name || "",
+                last_name:      formData.payer?.last_name  || "",
+                identification: formData.payer?.identification || {}
               }
             };
-            if (formData.token)        { payload.token = formData.token; payload.installments = formData.installments || 1; }
-            if (formData.issuer_id)    payload.issuer_id = formData.issuer_id;
-            if (formData.payer?.identification?.type) payload.payer.identification = formData.payer.identification;
-            if (formData.payer?.first_name) payload.payer.first_name = formData.payer.first_name;
-            if (formData.payer?.last_name)  payload.payer.last_name  = formData.payer.last_name;
+            if (formData.issuer_id) payload.issuer_id = formData.issuer_id;
 
-            const resp = await fetch("https://api.mercadopago.com/v1/payments", {
+            const resp = await fetch("/api/pagar", {
               method: "POST",
-              headers: {
-                "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
-                "Content-Type": "application/json",
-                "X-Idempotency-Key": `${Date.now()}-${Math.random().toString(36).slice(2)}`
-              },
-              body: JSON.stringify(payload)
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...payload,
+                transaction_amount: 150,
+                description: "Membresía Arcilla Nocturna - " + (horarioElegido || "")
+              })
             });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data.message || "Error al procesar");
 
-            // Pago procesado → registrar en Firestore como confirmado
-            await _registrarPago("Tarjeta", null, data.status === "approved" ? "confirmado" : "pendiente");
+            const estadoPago = data.status === "approved" ? "confirmado" : "pendiente";
+            await _registrarPago("Tarjeta", null, estadoPago);
           } catch(e) {
-            console.error("Error MP pago:", e);
+            console.error("Error pago tarjeta:", e);
             alert("Error al procesar el pago. Intenta nuevamente o usa Yape/Plin.");
           }
           return Promise.resolve();
@@ -1081,4 +1074,3 @@ window.addEventListener("load", fixNavLinks);
 </script>
 </body>
 </html>
-
