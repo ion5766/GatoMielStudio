@@ -766,25 +766,25 @@ async function _initMpBrick() {
     container.innerHTML = "";
     if (loading) loading.style.display = "none";
 
-    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
+    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
       initialization: {
         amount: 150,
         payer: { email: currentUser?.email || "" }
       },
       customization: {
-        paymentMethods: {
-          creditCard: "all",
-          debitCard:  "all",
-          ticket:     "none",
-          bankTransfer: "none",
-          atm:        "none",
-          onboarding_credits: "none",
-          wallet_purchase:    "none"
-        },
         visual: {
           style: {
             theme: "default",
-            customVariables: { baseColor: "#c48a3a" }
+            customVariables: {
+              baseColor: "#c48a3a",
+              baseColorFirstVariant: "#a8742f",
+              baseColorSecondVariant: "#e8b870",
+              borderRadiusLarge: "14px",
+              borderRadiusMedium: "10px",
+              formBackgroundColor: "#faf8f5",
+              inputBackgroundColor: "#ffffff",
+              inputFocusedBorderColor: "#c48a3a"
+            }
           }
         }
       },
@@ -795,15 +795,32 @@ async function _initMpBrick() {
           if (loading) loading.style.display = "none";
           container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
         },
-        onSubmit: async ({ formData }) => {
-          // Sin backend activo, registramos como pendiente igual que los otros métodos
-          // El admin validará manualmente (como acordado)
+        onSubmit: async (formData) => {
           try {
-            await _registrarPago("Tarjeta", null);
+            const resp = await fetch("/api/pagar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                transaction_amount: 150,
+                description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
+                payment_method_id: formData.payment_method_id,
+                token:        formData.token,
+                installments: formData.installments || 1,
+                issuer_id:    formData.issuer_id,
+                payer: {
+                  email:          formData.payer?.email || currentUser?.email || "",
+                  identification: formData.payer?.identification || {}
+                }
+              })
+            });
+            const data = await resp.json();
+            const estado = data.status === "approved" ? "confirmado" : "pendiente";
+            await _registrarPago("Tarjeta", null, estado);
           } catch(e) {
-            console.error("Error registrando pago tarjeta:", e);
+            console.error("Error pago tarjeta:", e);
+            alert("Error al procesar. Intenta con Yape, Plin o Agencia.");
           }
-          return Promise.resolve(); // necesario para que el Brick no quede en loading
+          return Promise.resolve();
         }
       }
     });
@@ -856,7 +873,7 @@ window.confirmarPago = async function(metodoLabel) {
 };
 
 // ── Función central de registro ────────────────────────────────────────────
-async function _registrarPago(metodoLabel, archivo) {
+async function _registrarPago(metodoLabel, archivo, estadoOverride) {
   let comprobanteURL = "";
   if (archivo) {
     const ext  = archivo.name.split(".").pop() || "jpg";
@@ -865,6 +882,7 @@ async function _registrarPago(metodoLabel, archivo) {
     comprobanteURL = await getDownloadURL(snap.ref);
   }
 
+  const estado = estadoOverride || "pendiente";
   const docRef = await addDoc(collection(db, "membresias"), {
     usuarioEmail:   currentUser.email,
     usuarioNombre:  currentUser.displayName || currentUser.email,
@@ -873,11 +891,14 @@ async function _registrarPago(metodoLabel, archivo) {
     horarioLabel:   horarioElegido,
     metodo:         metodoLabel,
     comprobanteURL: comprobanteURL,
-    estado:         "pendiente",
+    estado:         estado,
     fecha:          serverTimestamp(),
     tallerId:       TALLER_ID,
   });
   const ref = docRef.id.slice(0,8).toUpperCase();
+  const estadoLabel = estado === "confirmado"
+    ? `<span style="color:#065f46;font-weight:600">✓ Pago aprobado</span>`
+    : `<span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
 
   cerrarModalPago();
   document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
@@ -885,7 +906,7 @@ async function _registrarPago(metodoLabel, archivo) {
     `<strong>Método:</strong> ${metodoLabel}<br>` +
     `<strong>Horario:</strong> ${horarioElegido}<br>` +
     `<strong>Referencia:</strong> ${ref}<br>` +
-    `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+    `<strong>Estado:</strong> ${estadoLabel}`;
   document.getElementById("modalExito").style.display = "flex";
   document.body.style.overflow = "hidden";
 }
