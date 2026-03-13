@@ -490,7 +490,7 @@ onAuthStateChanged(_auth, (user) => {
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
-        <button onclick="window.location.href='coleccion.html'">🛍 Mis compras</button>
+        <button onclick="abrirModalCompras()">🛍 Mis compras</button>
         <button onclick="abrirModalMembresias()">🎫 Mis membresías</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
@@ -1148,6 +1148,92 @@ window.cerrarModalMembresias = () => {
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") window.cerrarModalMembresias();
+});
+</script>
+
+
+<!-- ═══ MODAL MIS COMPRAS (global) ═══ -->
+<div id="modalGlobalCompras" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
+  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
+    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
+      <button onclick="cerrarModalCompras()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis compras</h3>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Piezas de colección · pendientes o confirmadas</span>
+    </div>
+    <div id="lista-global-compras" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const _fcC = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _appC  = getApps().length ? getApps()[0] : initializeApp(_fcC);
+const _authC = getAuth(_appC);
+const _dbC   = getFirestore(_appC);
+
+window.abrirModalCompras = async () => {
+  const user = _authC.currentUser;
+  if (!user) { window.location.href = "entrada.html"; return; }
+  const modal = document.getElementById("modalGlobalCompras");
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  const lista = document.getElementById("lista-global-compras");
+  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando compras...</div>`;
+  try {
+    const q = query(collection(_dbC,"pedidos"), where("uid","==",user.uid));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes compras 🐱</div>`;
+      return;
+    }
+    const docs = [];
+    snap.forEach(d => docs.push({id:d.id,...d.data()}));
+    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
+    lista.innerHTML = "";
+    docs.forEach(p => {
+      const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+      const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
+      const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
+      const eIcon  = p.estado==="confirmado"?"✓":p.estado==="rechazado"?"✕":"⏳";
+      const eText  = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente de validación";
+      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[p.metodo?.toLowerCase()]||"#888";
+      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[p.metodo?.toLowerCase()]||"#f5f5f5";
+      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi compra: *${p.producto||"—"} - S/ ${p.monto||"—"}* via *${p.metodo}* del ${fecha}`);
+      const div = document.createElement("div");
+      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
+      div.innerHTML = `
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛍</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${p.producto||"—"}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ ${p.monto||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${p.metodo||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
+        </div>
+        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        </a>`;
+      lista.appendChild(div);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
+  }
+};
+
+window.cerrarModalCompras = () => {
+  document.getElementById("modalGlobalCompras").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") window.cerrarModalCompras?.();
 });
 </script>
 
