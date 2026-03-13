@@ -232,9 +232,17 @@ onAuthStateChanged(auth, async (user) => {
             </div>
             <p class="cl-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
-          <button class="cl-btn-pagar cl-btn-yape" onclick="confirmarPagoQR('Yape')">
+          <div class="ht-comp-wrap" style="width:100%;">
+            <p class="ht-comp-label">📎 Adjunta captura del pago</p>
+            <div class="ht-comp-zona" id="zona-yape-col" onclick="document.getElementById('file-yape-col').click()">
+              <div id="ph-yape-col" class="ht-comp-ph"><span style="font-size:22px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-yape-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-yape-col" accept="image/*" style="display:none" onchange="previewColComp('yape',this)">
+          </div>
+          <button class="cl-btn-pagar cl-btn-yape" onclick="irAFormEntrega('Yape')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué con Yape
+            Ya pagué · Continuar
           </button>
         </div>
       </div>
@@ -261,9 +269,17 @@ onAuthStateChanged(auth, async (user) => {
             </div>
             <p class="cl-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
-          <button class="cl-btn-pagar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
+          <div class="ht-comp-wrap" style="width:100%;">
+            <p class="ht-comp-label">📎 Adjunta captura del pago</p>
+            <div class="ht-comp-zona" id="zona-plin-col" onclick="document.getElementById('file-plin-col').click()">
+              <div id="ph-plin-col" class="ht-comp-ph"><span style="font-size:22px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-plin-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-plin-col" accept="image/*" style="display:none" onchange="previewColComp('plin',this)">
+          </div>
+          <button class="cl-btn-pagar cl-btn-plin" onclick="irAFormEntrega('Plin')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué con Plin
+            Ya pagué · Continuar
           </button>
         </div>
       </div>
@@ -1058,10 +1074,30 @@ function copiarCCI() {
   });
 }
 
-function confirmarPagoQR(metodo) {
+// Preview comprobante Yape/Plin coleccion
+window.previewColComp = function(metodo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  window._compFilesCol = window._compFilesCol || {};
+  window._compFilesCol[metodo] = file;
+  const ph   = document.getElementById(`ph-${metodo}-col`);
+  const pr   = document.getElementById(`pr-${metodo}-col`);
+  const zona = document.getElementById(`zona-${metodo}-col`);
+  pr.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:110px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
+  pr.style.display = "block"; ph.style.display = "none"; zona.classList.add("has-file");
+};
+
+// Ir al formulario de entrega desde Yape/Plin
+window.irAFormEntrega = function(metodo) {
+  window._metodoColActual = metodo;
+  window._compFileCol = (window._compFilesCol || {})[metodo.toLowerCase()] || null;
   cerrarModal();
-  mostrarModalExito(productoActual.nombre, productoActual.monto, metodo);
-  guardarPedido(productoActual.nombre, productoActual.monto, metodo);
+  window.abrirFormEntrega?.();
+};
+
+function confirmarPagoQR(metodo) {
+  // Ya no se usa directo — pasa por irAFormEntrega
+  window.irAFormEntrega(metodo);
 }
 
 function mostrarModalExito(nombre, monto, metodo) {
@@ -1634,6 +1670,7 @@ window.enviarPedidoColeccion = async function() {
     }
 
     const user = _authP.currentUser;
+    const metodoFinal = window._metodoColActual || "Agencia/BCP";
     const { addDoc: addD, collection: col, serverTimestamp: sts } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     await addD(col(_dbP,"pedidos"), {
       uid:            user.uid,
@@ -1643,7 +1680,7 @@ window.enviarPedidoColeccion = async function() {
       correoEntrega:  correo,
       producto:       window.productoActual?.nombre || "—",
       monto:          window.productoActual?.monto  || 0,
-      metodo:         "Agencia/BCP",
+      metodo:         metodoFinal,
       comprobanteURL: comprobanteURL,
       tipoEntrega:    _tipoEntrega,
       direccion:      _tipoEntrega === "delivery" ? dir : "Recoger en Gato Miel Estudio",
@@ -1653,9 +1690,15 @@ window.enviarPedidoColeccion = async function() {
 
     // Cerrar todo y mostrar éxito
     window.cerrarFormEntrega();
-    window.cerrarModal?.();
-    window.mostrarModalExito?.(window.productoActual?.nombre, window.productoActual?.monto, "Agencia/BCP");
+    const prod = window.productoActual?.nombre || "—";
+    const monto = window.productoActual?.monto || "—";
+    const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
+    document.getElementById("exitoDetalle").textContent = `${prod} · S/ ${monto} via ${metodoFinal2}`;
+    const texto = encodeURIComponent(`Hola! 🐱 Realicé mi pedido: *${prod} - S/ ${monto}* via *${metodoFinal2}*`);
+    document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
+    document.getElementById("modalExito").style.display = "flex";
     window._compFileCol = null;
+    window._metodoColActual = null;
 
   } catch(e) {
     alert("Error al enviar pedido: " + e.message);
