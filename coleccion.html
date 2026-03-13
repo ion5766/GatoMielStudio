@@ -1555,23 +1555,55 @@ document.addEventListener("keydown", e => {
   </button>
 </div>
 
-<div id="modalAdminPedidos" style="display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9997;padding:20px;">
-  <div style="background:white;width:100%;max-width:580px;max-height:90vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.25);">
-    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);position:relative;flex-shrink:0;">
-      <button onclick="cerrarAdminPedidos()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+<div id="modalAdminPedidos" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.85);backdrop-filter:blur(20px);justify-content:center;align-items:center;z-index:9997;padding:16px;">
+  <div style="background:#f5f2ee;width:100%;max-width:620px;max-height:94vh;border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.4);">
+
+    <!-- HEADER -->
+    <div style="background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);padding:22px 24px 20px;flex-shrink:0;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 90% 50%,rgba(196,138,58,.12),transparent 60%);pointer-events:none;"></div>
+      <button onclick="cerrarAdminPedidos()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);transition:.2s;z-index:1;" onmouseover="this.style.background='rgba(196,138,58,.25)';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.4)'">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:3px;">Panel Admin</span>
-      <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:500;color:white;margin:0 0 2px;">Pedidos Colección</h2>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);">Valida pagos · confirma pedidos</span>
+      <div style="position:relative;z-index:1;">
+        <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:6px;">Panel Admin · Gato Miel</span>
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:white;margin:0 0 4px;line-height:1.1;">Pedidos <em style="font-style:italic;color:#c48a3a;">Colección</em></h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="adm-total-badge" style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);">cargando...</span>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;gap:6px;padding:12px 16px;background:#faf8f5;border-bottom:1px solid #f0ebe3;flex-shrink:0;">
-      <button class="adm-tab-col activo-col" onclick="filtrarAdminPedidos('pendiente',this)">Pendientes</button>
-      <button class="adm-tab-col" onclick="filtrarAdminPedidos('confirmado',this)">Confirmados</button>
-      <button class="adm-tab-col" onclick="filtrarAdminPedidos('rechazado',this)">Rechazados</button>
-      <button class="adm-tab-col" onclick="filtrarAdminPedidos('todos',this)">Todos</button>
+
+    <!-- FILTROS + BÚSQUEDA -->
+    <div style="background:#eee9e2;padding:14px 16px;border-bottom:1px solid #ddd8d0;flex-shrink:0;display:flex;flex-direction:column;gap:10px;">
+      <!-- Tabs de estado -->
+      <div style="display:flex;gap:6px;">
+        <button id="adm-f-pendiente" onclick="filtrarAdminPedidos('pendiente')" style="flex:1;padding:9px 6px;border-radius:12px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;background:#1a1714;color:white;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:.2s;">
+          ⏳ Pendientes
+          <span id="adm-cnt-pendiente" style="margin-left:4px;background:rgba(255,255,255,.2);padding:1px 6px;border-radius:20px;font-size:10px;"></span>
+        </button>
+        <button id="adm-f-confirmado" onclick="filtrarAdminPedidos('confirmado')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
+          ✓ Confirmados
+        </button>
+        <button id="adm-f-rechazado" onclick="filtrarAdminPedidos('rechazado')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
+          ✕ Rechazados
+        </button>
+        <button id="adm-f-todos" onclick="filtrarAdminPedidos('todos')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
+          Todos
+        </button>
+      </div>
+      <!-- Búsqueda por ref -->
+      <div style="position:relative;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="adm-buscar-ref" type="text" placeholder="Buscar por ref, nombre o producto..."
+          oninput="filtrarAdminPedidos(window._filtroAdm||'pendiente')"
+          style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid #ddd8d0;border-radius:12px;font-family:'Inter',sans-serif;font-size:12px;color:#1a1714;background:white;outline:none;box-sizing:border-box;"
+          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ddd8d0'">
+      </div>
     </div>
-    <div id="lista-admin-pedidos" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
+
+    <!-- LISTA -->
+    <div id="lista-admin-pedidos" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#ddd8d0 transparent;"></div>
+
   </div>
 </div>
 
@@ -1746,68 +1778,137 @@ window.actualizarMapaDireccion = function(direccion) {
 // ── Panel Admin ──
 window.abrirAdminPedidos  = () => { document.getElementById("modalAdminPedidos").style.display="flex"; document.body.style.overflow="hidden"; };
 window.cerrarAdminPedidos = () => { document.getElementById("modalAdminPedidos").style.display="none"; document.body.style.overflow=""; };
-window.filtrarAdminPedidos = (filtro, btn) => {
-  _filtroPedidos = filtro;
-  document.querySelectorAll(".adm-tab-col").forEach(b => b.classList.remove("activo-col"));
-  btn.classList.add("activo-col");
+window._filtroAdm = "pendiente";
+
+window.filtrarAdminPedidos = (filtro) => {
+  window._filtroAdm = filtro;
+  // Update tab styles
+  ["pendiente","confirmado","rechazado","todos"].forEach(f => {
+    const btn = document.getElementById(`adm-f-${f}`);
+    if (!btn) return;
+    if (f === filtro) {
+      btn.style.cssText = `flex:1;padding:9px 6px;border-radius:12px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;background:#1a1714;color:white;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:.2s;`;
+    } else {
+      btn.style.cssText = `flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;`;
+    }
+  });
   _renderAdminPedidos();
 };
 
 function _renderAdminPedidos() {
   const lista = document.getElementById("lista-admin-pedidos");
   if (!lista) return;
-  const items = _filtroPedidos === "todos" ? _todosLosPedidos : _todosLosPedidos.filter(p => p.estado === _filtroPedidos);
+  const buscar = (document.getElementById("adm-buscar-ref")?.value || "").toLowerCase().trim();
+  const filtro = window._filtroAdm || "pendiente";
+
+  // Update counters
+  const pend = _todosLosPedidos.filter(p => p.estado==="pendiente").length;
+  const cnt = document.getElementById("adm-cnt-pendiente");
+  if (cnt) cnt.textContent = pend || "";
+  const total = document.getElementById("adm-total-badge");
+  if (total) total.textContent = `${_todosLosPedidos.length} pedidos en total`;
+
+  let items = filtro === "todos" ? [..._todosLosPedidos] : _todosLosPedidos.filter(p => p.estado === filtro);
+
+  // Search filter
+  if (buscar) {
+    items = items.filter(p =>
+      p.id?.slice(0,8).toLowerCase().includes(buscar) ||
+      (p.nombre||"").toLowerCase().includes(buscar) ||
+      (p.producto||"").toLowerCase().includes(buscar) ||
+      (p.email||"").toLowerCase().includes(buscar)
+    );
+  }
+
   if (!items.length) {
-    lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="font-size:32px;opacity:.3;">🛍</div>Sin registros en esta categoría</div>`;
+    lista.innerHTML = `<div style="text-align:center;padding:50px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div style="font-size:36px;opacity:.25;">🛍</div>
+      <p style="font-family:'Playfair Display',serif;font-size:16px;color:#bbb;font-style:italic;margin:0;">${buscar ? "Sin resultados para tu búsqueda" : "Sin pedidos en esta categoría"}</p>
+    </div>`;
     return;
   }
   lista.innerHTML = "";
-  items.forEach((p, i) => {
-    const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-    const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
-    const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
-    const eIcon  = p.estado==="confirmado"?"✓ Confirmado":p.estado==="rechazado"?"✕ Rechazado":"⏳ Pendiente";
+  items.forEach((p) => {
+    const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+    const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#92400e";
+    const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fef3c7";
+    const eDot   = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
+    const eText  = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente";
     const mColors = {"yape":"#6c2fa5","agencia/bcp":"#5a7a2a","plin":"#0077aa","tarjeta":"#555"};
-    const mBgs    = {"yape":"#f0e6fa","agencia/bcp":"#f0f4e8","plin":"#e0f4fc","tarjeta":"#f5f5f5"};
+    const mBgs    = {"yape":"#f0e6fa","agencia/bcp":"#e8f5e9","plin":"#e0f4fc","tarjeta":"#f5f5f5"};
     const mk = (p.metodo||"").toLowerCase();
     const ref = p.id.slice(0,8).toUpperCase();
+    const pid = p.id;
+
     const entregaHtml = p.tipoEntrega ? `
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:${p.tipoEntrega==='recoger'?'#f0f9f4':'#f0f4ff'};border-radius:8px;border:1px solid ${p.tipoEntrega==='recoger'?'#d1fae5':'#dde5ff'};">
-        <span style="font-size:14px;">${p.tipoEntrega==='recoger'?'🏺':'🚚'}</span>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:${p.tipoEntrega==='recoger'?'#f0fdf4':'#eff6ff'};border-radius:10px;border:1px solid ${p.tipoEntrega==='recoger'?'#bbf7d0':'#bfdbfe'};">
+        <span style="font-size:18px;line-height:1;">${p.tipoEntrega==='recoger'?'🏺':'🚚'}</span>
         <div>
-          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;">${p.tipoEntrega==='recoger'?'Recojo en estudio':'Envío a domicilio'}</div>
-          <div style="font-family:'Inter',sans-serif;font-size:12px;color:#666;margin-top:2px;">${p.direccion||''}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:${p.tipoEntrega==='recoger'?'#15803d':'#1d4ed8'};text-transform:uppercase;letter-spacing:.1em;">${p.tipoEntrega==='recoger'?'Recojo en estudio':'Envío a domicilio'}</div>
+          ${p.direccion?`<div style="font-family:'Inter',sans-serif;font-size:12px;color:#555;margin-top:3px;">${p.direccion}</div>`:''}
         </div>
       </div>` : "";
+
     const compImg = p.comprobanteURL
-      ? `<div style="margin:6px 0;"><img src="${p.comprobanteURL}" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'" style="width:100%;max-height:160px;object-fit:contain;border-radius:10px;cursor:zoom-in;border:1px solid #ede8de;display:block;" alt="Comprobante"></div>` : "";
+      ? `<div style="border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;cursor:zoom-in;" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'">
+          <img src="${p.comprobanteURL}" style="width:100%;max-height:180px;object-fit:contain;display:block;background:#fafafa;" alt="Comprobante">
+          <div style="padding:8px 12px;background:#fafafa;border-top:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:10px;color:#bbb;text-align:center;">🔍 Toca para ampliar</div>
+        </div>`
+      : `<div style="padding:14px;background:#fafafa;border-radius:10px;border:1px dashed #ddd;text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;">Sin comprobante adjunto</div>`;
+
     const acciones = p.estado === "pendiente" ? `
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button onclick="confirmarPedidoAdmin('${p.id}',this)" style="flex:1;padding:10px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;">✓ Confirmar pago</button>
-        <button onclick="rechazarPedidoAdmin('${p.id}')" style="flex:1;padding:10px;border:none;border-radius:10px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;">✕ Rechazar</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+        <button onclick="confirmarPedidoAdmin('${pid}',this)" style="padding:12px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;box-shadow:0 4px 12px rgba(34,197,94,.3);transition:.2s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          ✓ Confirmar pago
+        </button>
+        <button onclick="rechazarPedidoAdmin('${pid}')" style="padding:12px;border:none;border-radius:12px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;transition:.2s;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+          ✕ Rechazar
+        </button>
       </div>` : "";
+
     const div = document.createElement("div");
-    div.style.cssText = `background:#fff;border:1px solid #ede8de;border-radius:16px;overflow:hidden;margin-bottom:2px;`;
+    div.style.cssText = "background:white;border-radius:18px;overflow:hidden;border:1px solid #e8e3dc;transition:box-shadow .2s;";
     div.innerHTML = `
-      <div style="background:linear-gradient(135deg,#faf8f5,#f5f0ea);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ede8de;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#1a1714,#2d2419);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;">🛍</div>
-          <div>
-            <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;">${p.producto||"—"}</div>
-            <div style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;">Ref: <strong style="color:#888;font-family:monospace;">${ref}</strong> · ${fecha}</div>
+      <!-- CARD HEADER — siempre visible, clic para expandir -->
+      <div onclick="togglePedidoCard('${pid}')" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;">
+        <!-- Estado dot -->
+        <div style="width:10px;height:10px;border-radius:50%;background:${eDot};flex-shrink:0;box-shadow:0 0 0 3px ${eBg};"></div>
+        <!-- Info principal -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;">${p.producto||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#c48a3a;">S/ ${p.monto||"—"}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap;">
+            <span style="font-family:monospace;font-size:10px;font-weight:700;color:#888;background:#f5f5f5;padding:2px 6px;border-radius:4px;">${ref}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;">${fecha}</span>
           </div>
         </div>
-        <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBg};color:${eColor};white-space:nowrap;">${eIcon}</span>
-      </div>
-      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-family:'Playfair Display',serif;font-size:22px;color:#c48a3a;">S/ ${p.monto||"—"}</span>
-          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
+        <!-- Estado + chevron -->
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eText}</span>
+          <svg id="chevron-${pid}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" style="transition:transform .25s;flex-shrink:0;"><path d="M6 9l6 6 6-6"/></svg>
         </div>
-        <div style="background:#faf8f5;border-radius:10px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:12px;color:#666;line-height:1.8;border:1px solid #f0ebe3;">
-          <div>👤 ${p.nombre||"—"}</div>
-          <div>✉️ ${p.email||"—"}</div>
-          ${p.celular?`<div>📱 <a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;text-decoration:none;">${p.celular}</a></div>`:""}
+      </div>
+
+      <!-- CARD BODY — expandible -->
+      <div id="body-${pid}" style="display:none;padding:0 16px 16px;display:none;flex-direction:column;gap:10px;border-top:1px solid #f0ebe3;">
+        <!-- Datos del cliente -->
+        <div style="background:#faf8f5;border-radius:12px;padding:12px 14px;border:1px solid #ede8de;">
+          <p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c48a3a;margin:0 0 10px;">Cliente</p>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:12px;color:#555;">
+              <span style="font-size:14px;">👤</span><strong style="color:#1a1714;min-width:50px;">Nombre</strong>${p.nombre||"—"}
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:12px;color:#555;">
+              <span style="font-size:14px;">✉️</span><strong style="color:#1a1714;min-width:50px;">Email</strong>${p.email||"—"}
+            </div>
+            ${p.celular?`<div style="display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:12px;color:#555;">
+              <span style="font-size:14px;">📱</span><strong style="color:#1a1714;min-width:50px;">Cel</strong>
+              <a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;text-decoration:none;font-weight:600;">${p.celular} <span style="font-size:10px;">↗ WhatsApp</span></a>
+            </div>`:""}
+          </div>
         </div>
         ${entregaHtml}
         ${compImg}
@@ -1817,10 +1918,19 @@ function _renderAdminPedidos() {
   });
 }
 
+window.togglePedidoCard = function(pid) {
+  const body = document.getElementById("body-"+pid);
+  const chevron = document.getElementById("chevron-"+pid);
+  if (!body) return;
+  const open = body.style.display === "flex";
+  body.style.display = open ? "none" : "flex";
+  if (chevron) chevron.style.transform = open ? "none" : "rotate(180deg)";
+};
+
 window.confirmarPedidoAdmin = async (id, btn) => {
   btn.disabled = true; btn.textContent = "Confirmando...";
   try { await updateDoc(doc(_dbP,"pedidos",id), {estado:"confirmado",fechaConfirmacion:serverTimestamp()}); }
-  catch(e) { alert("Error: "+e.message); btn.disabled=false; btn.textContent="✓ Confirmar"; }
+  catch(e) { alert("Error: "+e.message); btn.disabled=false; btn.textContent="✓ Confirmar pago"; }
 };
 window.rechazarPedidoAdmin = async (id) => {
   if (!confirm("¿Rechazar este pedido?")) return;
