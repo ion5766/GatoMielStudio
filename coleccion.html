@@ -280,6 +280,7 @@ onAuthStateChanged(auth, async (user) => {
       <!-- TAB AGENCIA -->
       <div id="tab-agencia" class="cl-tab-content">
         <div class="cl-agencia-pane">
+          <!-- Datos bancarios -->
           <div class="cl-cci-card">
             <div class="cl-cci-card-header">
               <span class="cl-cci-bank-name">BCP</span>
@@ -310,26 +311,28 @@ onAuthStateChanged(auth, async (user) => {
             </div>
           </div>
 
+          <!-- Pasos -->
           <div class="cl-agencia-steps">
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">1</div>
-              <p>Deposita o transfiere usando el CCI</p>
-            </div>
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">2</div>
-              <p>Toma captura del comprobante</p>
-            </div>
-            <div class="cl-agencia-step">
-              <div class="cl-astep-num">3</div>
-              <p>Envíala por WhatsApp · <strong>+51 922 402 608</strong></p>
-            </div>
+            <div class="cl-agencia-step"><div class="cl-astep-num">1</div><p>Deposita o transfiere usando el CCI</p></div>
+            <div class="cl-agencia-step"><div class="cl-astep-num">2</div><p>Toma captura del comprobante</p></div>
+            <div class="cl-agencia-step"><div class="cl-astep-num">3</div><p>Adjunta el comprobante abajo y completa tus datos de entrega</p></div>
           </div>
 
-          <a href="https://wa.me/51922402608?text=Hola!%20Hice%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
-             target="_blank" class="cl-btn-whatsapp">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-            Enviar comprobante
-          </a>
+          <!-- Comprobante upload igual que talleres -->
+          <div class="ht-comp-wrap" style="width:100%;">
+            <p class="ht-comp-label">📎 Adjunta tu voucher de depósito</p>
+            <div class="ht-comp-zona" id="zona-agencia-col" onclick="document.getElementById('file-agencia-col').click()">
+              <div id="ph-agencia-col" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir voucher</span></div>
+              <div id="pr-agencia-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-agencia-col" accept="image/*" style="display:none" onchange="previewAgenciaCol(this)">
+          </div>
+
+          <!-- Botón continuar a formulario -->
+          <button class="ht-btn-pagar ht-btn-agencia" onclick="abrirFormEntrega()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#1a1714,#2a2420);color:white;box-shadow:0 6px 20px rgba(0,0,0,.2);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya deposité · Continuar
+          </button>
         </div>
       </div>
 
@@ -1092,7 +1095,8 @@ document.addEventListener("keydown", e => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, doc, updateDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref as storRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -1105,6 +1109,10 @@ const firebaseConfig = {
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+const storage = getStorage(app);
+
+const ADMIN_EMAILS_COL = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
+let _compFile = null; // comprobante agencia coleccion
 
 const modal  = document.getElementById("perfilModal");
 const status = document.getElementById("perfilStatus");
@@ -1399,6 +1407,327 @@ window.cerrarModalCompras = () => {
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") window.cerrarModalCompras?.();
+});
+</script>
+
+<!-- ═══ MODAL FORMULARIO ENTREGA ═══ -->
+<div id="modalFormEntrega" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10003;justify-content:center;align-items:center;padding:16px;">
+  <div style="background:#fff;width:100%;max-width:440px;max-height:92vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
+    <!-- Header -->
+    <div style="padding:18px 20px 14px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
+      <button onclick="cerrarFormEntrega()" style="position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:3px;">Último paso</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;color:white;margin:0 0 2px;">Datos de entrega</h3>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Completa para confirmar tu pedido</span>
+    </div>
+    <!-- Body con scroll -->
+    <div style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;">
+      <!-- Campos -->
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Nombre completo *</label>
+        <input id="fe-nombre" type="text" placeholder="Tu nombre y apellido" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Celular *</label>
+        <input id="fe-cel" type="tel" placeholder="+51 9XX XXX XXX" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Correo *</label>
+        <input id="fe-correo" type="email" placeholder="correo@ejemplo.com" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
+      </div>
+
+      <!-- Opción entrega -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Tipo de entrega *</label>
+        <div style="display:flex;gap:8px;">
+          <button id="btn-delivery" onclick="seleccionarEntrega('delivery')" style="flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;">
+            🚚 Envío a domicilio
+          </button>
+          <button id="btn-recoger" onclick="seleccionarEntrega('recoger')" style="flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;">
+            🏺 Recoger en estudio
+          </button>
+        </div>
+      </div>
+
+      <!-- Mapa solo si delivery -->
+      <div id="bloque-mapa" style="display:none;flex-direction:column;gap:8px;">
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">📍 Marca tu ubicación en el mapa</label>
+        <div style="border-radius:12px;overflow:hidden;border:1.5px solid #ede8de;">
+          <iframe id="mapa-entrega"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d249736.38587774815!2d-77.13282769121086!3d-12.046373699067564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c5f619ee3ec7%3A0x14206caad5efdb85!2sLima!5e0!3m2!1ses!2spe!4v1710000000000!5m2!1ses!2spe"
+            width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy">
+          </iframe>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Dirección de entrega *</label>
+          <input id="fe-direccion" type="text" placeholder="Calle, número, distrito, referencia..." style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
+        </div>
+      </div>
+
+      <!-- Info recoger -->
+      <div id="bloque-recoger" style="display:none;background:#f8f5f1;border-radius:12px;padding:14px 16px;border:1px solid #ede8de;">
+        <p style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin:0 0 6px;line-height:1.6;">📍 <strong style="color:#1a1714;">Gato Miel Estudio</strong><br>Te contactaremos para coordinar el horario de recojo.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:14px 20px;background:#faf8f5;border-top:1px solid #f0ebe3;flex-shrink:0;">
+      <button onclick="enviarPedidoColeccion()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a1714,#2a2420);color:white;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" id="btn-enviar-pedido">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Confirmar pedido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FAB + PANEL ADMIN PEDIDOS ═══ -->
+<div id="fabAdminPedidos" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
+  <button onclick="abrirAdminPedidos()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
+    🛍 Pedidos
+    <span id="badge-pedidos" style="background:#c48a3a;color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;"></span>
+  </button>
+</div>
+
+<div id="modalAdminPedidos" style="display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9997;padding:20px;">
+  <div style="background:white;width:100%;max-width:580px;max-height:90vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.25);">
+    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);position:relative;flex-shrink:0;">
+      <button onclick="cerrarAdminPedidos()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:3px;">Panel Admin</span>
+      <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:500;color:white;margin:0 0 2px;">Pedidos Colección</h2>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);">Valida pagos · confirma pedidos</span>
+    </div>
+    <div style="display:flex;gap:6px;padding:12px 16px;background:#faf8f5;border-bottom:1px solid #f0ebe3;flex-shrink:0;">
+      <button class="adm-tab-col activo-col" onclick="filtrarAdminPedidos('pendiente',this)">Pendientes</button>
+      <button class="adm-tab-col" onclick="filtrarAdminPedidos('confirmado',this)">Confirmados</button>
+      <button class="adm-tab-col" onclick="filtrarAdminPedidos('rechazado',this)">Rechazados</button>
+      <button class="adm-tab-col" onclick="filtrarAdminPedidos('todos',this)">Todos</button>
+    </div>
+    <div id="lista-admin-pedidos" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
+  </div>
+</div>
+
+<!-- Lightbox pedidos -->
+<div id="lightboxPedido" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10001;justify-content:center;align-items:center;" onclick="this.style.display='none'">
+  <img id="lightboxPedidoImg" src="" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;">
+</div>
+
+<style>
+.ht-comp-wrap{width:100%;display:flex;flex-direction:column;gap:6px}
+.ht-comp-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:100%}
+.ht-comp-zona:hover,.ht-comp-zona.has-file{border-color:#c48a3a;background:#fdf6ec}
+.ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
+.ht-comp-check{position:absolute;top:8px;right:8px;background:#c48a3a;color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+</style>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref as storRef2, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const _fcP = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _appP   = getApps().length ? getApps()[0] : initializeApp(_fcP);
+const _authP  = getAuth(_appP);
+const _dbP    = getFirestore(_appP);
+const _storP  = getStorage(_appP);
+const ADMINS  = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
+
+let _todosLosPedidos = [], _filtroPedidos = "pendiente";
+let _tipoEntrega = null;
+
+// ── Auth: mostrar FAB admin ──
+onAuthStateChanged(_authP, user => {
+  if (!user) return;
+  if (ADMINS.includes(user.email?.toLowerCase())) {
+    document.getElementById("fabAdminPedidos").style.display = "block";
+    const q = query(collection(_dbP,"pedidos"), orderBy("fecha","desc"));
+    onSnapshot(q, snap => {
+      _todosLosPedidos = snap.docs.map(d => ({id:d.id,...d.data()}));
+      const pend = _todosLosPedidos.filter(p => p.estado==="pendiente").length;
+      const badge = document.getElementById("badge-pedidos");
+      badge.style.display = pend > 0 ? "flex" : "none";
+      badge.textContent = pend;
+      _renderAdminPedidos();
+    });
+  }
+});
+
+// ── Preview comprobante agencia coleccion ──
+window.previewAgenciaCol = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  window._compFileCol = file;
+  const ph = document.getElementById("ph-agencia-col");
+  const pr = document.getElementById("pr-agencia-col");
+  const zona = document.getElementById("zona-agencia-col");
+  pr.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:130px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
+  pr.style.display = "block"; ph.style.display = "none"; zona.classList.add("has-file");
+};
+
+// ── Abrir formulario entrega ──
+window.abrirFormEntrega = function() {
+  // Pre-rellenar correo del usuario
+  const user = _authP.currentUser;
+  if (user) {
+    document.getElementById("fe-correo").value = user.email || "";
+    document.getElementById("fe-nombre").value = user.displayName || "";
+  }
+  _tipoEntrega = null;
+  document.getElementById("bloque-mapa").style.display = "none";
+  document.getElementById("bloque-recoger").style.display = "none";
+  document.getElementById("btn-delivery").style.cssText = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;";
+  document.getElementById("btn-recoger").style.cssText = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;";
+  document.getElementById("modalFormEntrega").style.display = "flex";
+  document.body.style.overflow = "hidden";
+};
+window.cerrarFormEntrega = function() {
+  document.getElementById("modalFormEntrega").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+window.seleccionarEntrega = function(tipo) {
+  _tipoEntrega = tipo;
+  const btnD = document.getElementById("btn-delivery");
+  const btnR = document.getElementById("btn-recoger");
+  const estBase = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:.2s;";
+  if (tipo === "delivery") {
+    btnD.style.cssText = estBase + "background:#1a1714;color:white;border-color:#1a1714;";
+    btnR.style.cssText = estBase + "background:#faf8f5;color:#888;";
+    document.getElementById("bloque-mapa").style.display = "flex";
+    document.getElementById("bloque-recoger").style.display = "none";
+  } else {
+    btnR.style.cssText = estBase + "background:#1a1714;color:white;border-color:#1a1714;";
+    btnD.style.cssText = estBase + "background:#faf8f5;color:#888;";
+    document.getElementById("bloque-mapa").style.display = "none";
+    document.getElementById("bloque-recoger").style.display = "block";
+  }
+};
+
+// ── Enviar pedido coleccion con todos los datos ──
+window.enviarPedidoColeccion = async function() {
+  const nombre = document.getElementById("fe-nombre").value.trim();
+  const cel    = document.getElementById("fe-cel").value.trim();
+  const correo = document.getElementById("fe-correo").value.trim();
+  const dir    = document.getElementById("fe-direccion")?.value.trim() || "";
+
+  if (!nombre || !cel || !correo) { alert("Por favor completa nombre, celular y correo."); return; }
+  if (!_tipoEntrega) { alert("Selecciona el tipo de entrega."); return; }
+  if (_tipoEntrega === "delivery" && !dir) { alert("Ingresa tu dirección de entrega."); return; }
+
+  const btn = document.getElementById("btn-enviar-pedido");
+  btn.disabled = true; btn.innerHTML = "Enviando...";
+
+  try {
+    let comprobanteURL = "";
+    if (window._compFileCol) {
+      const file = window._compFileCol;
+      const user = _authP.currentUser;
+      const ext  = file.name.split(".").pop() || "jpg";
+      const path = `comprobantes/${user.uid}/${Date.now()}.${ext}`;
+      const snap = await uploadBytes(storRef2(_storP, path), file);
+      comprobanteURL = await getDownloadURL(snap.ref);
+    }
+
+    const user = _authP.currentUser;
+    const { addDoc: addD, collection: col, serverTimestamp: sts } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await addD(col(_dbP,"pedidos"), {
+      uid:            user.uid,
+      email:          user.email,
+      nombre:         nombre,
+      celular:        cel,
+      correoEntrega:  correo,
+      producto:       window.productoActual?.nombre || "—",
+      monto:          window.productoActual?.monto  || 0,
+      metodo:         "Agencia/BCP",
+      comprobanteURL: comprobanteURL,
+      tipoEntrega:    _tipoEntrega,
+      direccion:      _tipoEntrega === "delivery" ? dir : "Recoger en Gato Miel Estudio",
+      estado:         "pendiente",
+      fecha:          sts()
+    });
+
+    // Cerrar todo y mostrar éxito
+    window.cerrarFormEntrega();
+    window.cerrarModal?.();
+    window.mostrarModalExito?.(window.productoActual?.nombre, window.productoActual?.monto, "Agencia/BCP");
+    window._compFileCol = null;
+
+  } catch(e) {
+    alert("Error al enviar pedido: " + e.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Confirmar pedido';
+  }
+};
+
+// ── Panel Admin ──
+window.abrirAdminPedidos  = () => { document.getElementById("modalAdminPedidos").style.display="flex"; document.body.style.overflow="hidden"; };
+window.cerrarAdminPedidos = () => { document.getElementById("modalAdminPedidos").style.display="none"; document.body.style.overflow=""; };
+window.filtrarAdminPedidos = (filtro, btn) => {
+  _filtroPedidos = filtro;
+  document.querySelectorAll(".adm-tab-col").forEach(b => b.classList.remove("activo-col"));
+  btn.classList.add("activo-col");
+  _renderAdminPedidos();
+};
+
+function _renderAdminPedidos() {
+  const lista = document.getElementById("lista-admin-pedidos");
+  if (!lista) return;
+  const items = _filtroPedidos === "todos" ? _todosLosPedidos : _todosLosPedidos.filter(p => p.estado === _filtroPedidos);
+  if (!items.length) { lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Sin registros</div>`; return; }
+  lista.innerHTML = "";
+  items.forEach(p => {
+    const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+    const eLabel = {pendiente:"Pendiente",confirmado:"Confirmado",rechazado:"Rechazado"}[p.estado]||p.estado;
+    const compImg = p.comprobanteURL
+      ? `<img src="${p.comprobanteURL}" class="adm-comp-img-col" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'" style="cursor:zoom-in;" alt="Ver comprobante">`
+      : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:6px 0;text-align:center;">Sin comprobante</p>`;
+    const entregaInfo = p.tipoEntrega ? `<strong>Entrega:</strong> ${p.tipoEntrega === "recoger" ? "🏺 Recoger en estudio" : "🚚 " + (p.direccion||"—")}<br>` : "";
+    const contactoInfo = p.celular ? `<strong>Celular:</strong> ${p.celular}<br>` : "";
+    const acciones = p.estado === "pendiente" ? `
+      <div class="adm-acciones-col">
+        <button class="adm-btn-confirmar-col" onclick="confirmarPedidoAdmin('${p.id}',this)">✓ Confirmar</button>
+        <button class="adm-btn-rechazar-col" onclick="rechazarPedidoAdmin('${p.id}')">✕ Rechazar</button>
+      </div>` : "";
+    const div = document.createElement("div");
+    div.className = "adm-card-col";
+    div.innerHTML = `
+      <div class="adm-card-col-header">
+        <span class="adm-nombre-col">${p.nombre||p.email||"—"}</span>
+        <span class="adm-estado-col ${p.estado}">${eLabel}</span>
+      </div>
+      <div class="adm-info-col">
+        <strong>Email:</strong> ${p.email||"—"}<br>
+        ${contactoInfo}
+        <strong>Producto:</strong> ${p.producto||"—"}<br>
+        <strong>Monto:</strong> S/ ${p.monto||"—"}<br>
+        <strong>Método:</strong> ${p.metodo||"—"}<br>
+        ${entregaInfo}
+        <strong>Ref:</strong> ${p.id.slice(0,8).toUpperCase()}<br>
+        <strong>Fecha:</strong> ${fecha}
+      </div>
+      ${compImg}
+      ${acciones}`;
+    lista.appendChild(div);
+  });
+}
+
+window.confirmarPedidoAdmin = async (id, btn) => {
+  btn.disabled = true; btn.textContent = "Confirmando...";
+  try { await updateDoc(doc(_dbP,"pedidos",id), {estado:"confirmado",fechaConfirmacion:serverTimestamp()}); }
+  catch(e) { alert("Error: "+e.message); btn.disabled=false; btn.textContent="✓ Confirmar"; }
+};
+window.rechazarPedidoAdmin = async (id) => {
+  if (!confirm("¿Rechazar este pedido?")) return;
+  await updateDoc(doc(_dbP,"pedidos",id), {estado:"rechazado"});
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { window.cerrarAdminPedidos?.(); window.cerrarFormEntrega?.(); }
 });
 </script>
 
