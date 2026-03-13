@@ -255,22 +255,14 @@ onAuthStateChanged(_auth, (user) => {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
                 <span style="font-family:'Playfair Display',serif;font-size:15px;color:white;">Tarjeta de crédito/débito</span>
               </div>
-              <div style="display:flex;gap:4px;">
-                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/></svg>
-                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
-              </div>
-            </div>
-            <div style="padding:10px 16px 12px;font-family:'Inter',sans-serif;font-size:11px;display:flex;justify-content:space-between;color:#888;">
-              <span>Horario: <strong id="tarjeta-horario-val" style="color:#1a1714;">—</strong></span>
-              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 150</strong></span>
+              <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);" id="tarjeta-horario-val">—</span>
             </div>
           </div>
-          <!-- Mercado Pago Brick container -->
-          <div id="mp-loading" style="width:100%;text-align:center;padding:20px 0;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
+          <div id="mp-loading" style="width:100%;text-align:center;padding:30px 0;display:none;">
             <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin .8s linear infinite;margin:0 auto 10px;"></div>
-            Cargando formulario...
+            <p style="font-size:12px;color:#bbb;font-family:'Inter',sans-serif;letter-spacing:.06em;">preparando pago seguro...</p>
           </div>
-          <div id="mpCardBrick_container" style="width:100%;"></div>
+          <div id="mpCardBrick_container" style="width:100%;padding:4px 0;"></div>
         </div>
       </div>
 
@@ -572,7 +564,8 @@ import {
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
 const CUPOS_MAX    = 4;
-const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
+const MP_PUBLIC_KEY  = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795";
+const MP_ACCESS_TOKEN = "APP_USR-5689465558713400-031012-48ea0212316d3076a98965d502640995-3021614843";
 const HORARIOS = [
   {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
   {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
@@ -592,8 +585,15 @@ let compFiles        = {};
 let filtroPanelAdmin = "pendiente";
 let todasLasMembresias = [];
 
-// ── Mercado Pago Brick state ───────────────────────────────────────────────
-let _mp = null, _mpBuilder = null, _mpBrick = null, _mpInited = false;
+// ── Mercado Pago (mismo patrón que coleccion.html) ────────────────────────
+let _mp = null, _mpBuilder = null, _mpBrick = null, _tarjetaInicializada = false;
+
+function _initMP() {
+  if (!_mp) {
+    _mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-PE" });
+    _mpBuilder = _mp.bricks();
+  }
+}
 
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
@@ -698,7 +698,7 @@ window.cerrarModalPago = function() {
   document.body.style.overflow = "";
   // desmontar brick si existe
   if (_mpBrick) { try { _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
-  _mpInited = false;
+  _tarjetaInicializada = false;
   compFiles = {};
   ["yape","plin","agencia"].forEach(m => {
     const ph   = document.getElementById("ph-"+m);
@@ -735,40 +735,33 @@ window.switchMetodo = function(metodo, btn) {
   btn.classList.add("active");
   document.querySelectorAll(".ht-tab").forEach(t => t.classList.remove("active"));
   document.getElementById("tab-"+metodo).classList.add("active");
-  // Iniciar MP Brick solo cuando el usuario selecciona Tarjeta
-  if (metodo === "tarjeta" && !_mpInited) {
-    _mpInited = true;
-    _initMpBrick();
+  // Cargar Brick de tarjeta solo cuando se selecciona esa tab — igual que coleccion.html
+  if (metodo === "tarjeta" && !_tarjetaInicializada) {
+    _tarjetaInicializada = true;
+    document.getElementById("mp-loading").style.display = "block";
+    _initMP();
+    _renderBrick();
   }
 };
 
-// ── Mercado Pago Brick ─────────────────────────────────────────────────────
-async function _initMpBrick() {
+// ── Mercado Pago Brick render — idéntico a coleccion.html ─────────────────
+async function _renderBrick() {
   const loading   = document.getElementById("mp-loading");
   const container = document.getElementById("mpCardBrick_container");
   if (!container) return;
-  // Inicializar MP una sola vez (SDK ya cargado en <head>)
-  if (!_mp) {
-    _mp = new window.MercadoPago(MP_PUBLIC_KEY, { locale: "es-PE" });
-    _mpBuilder = _mp.bricks();
-  }
   if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
   container.innerHTML = "";
-  if (loading) loading.style.display = "block";
   try {
     _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
-      initialization: {
-        amount: 150,
-        payer: { email: currentUser?.email || "" }
-      },
+      initialization: { amount: 150, payer: { email: currentUser?.email || "" } },
       customization: {
         paymentMethods: {
-          creditCard: "all",
-          debitCard:  "all",
+          creditCard:  "all",
+          debitCard:   "all",
           mercadoPago: "none",
-          ticket:     "none",
-          bankTransfer: "none",
-          atm:        "none",
+          ticket:      "none",
+          bankTransfer:"none",
+          atm:         "none",
           onboarding_credits: "none",
           wallet_purchase:    "none"
         },
@@ -777,12 +770,12 @@ async function _initMpBrick() {
             theme: "default",
             customVariables: {
               baseColor: "#c48a3a",
-              baseColorFirstVariant:  "#a8742f",
-              baseColorSecondVariant: "#e8b870",
-              borderRadiusLarge:  "14px",
-              borderRadiusMedium: "10px",
-              formBackgroundColor:  "#faf8f5",
-              inputBackgroundColor: "#ffffff",
+              baseColorFirstVariant:   "#a8742f",
+              baseColorSecondVariant:  "#e8b870",
+              borderRadiusLarge:       "14px",
+              borderRadiusMedium:      "10px",
+              formBackgroundColor:     "#faf8f5",
+              inputBackgroundColor:    "#ffffff",
               inputFocusedBorderColor: "#c48a3a"
             }
           }
@@ -791,23 +784,53 @@ async function _initMpBrick() {
       callbacks: {
         onReady: () => { if (loading) loading.style.display = "none"; },
         onError: (e) => {
-          console.error("MP Brick error:", e);
+          console.error("Brick error:", e);
           if (loading) loading.style.display = "none";
+          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:20px;font-family:'Inter',sans-serif;">Error al cargar el formulario.<br>Usa Yape, Plin o Agencia.</p>`;
         },
         onSubmit: async ({ formData }) => {
+          // Llamada directa a la API de MP (sin backend, igual que coleccion en GitHub Pages)
           try {
-            await _registrarPago("Tarjeta", null);
+            const payload = {
+              transaction_amount: 150,
+              description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
+              payment_method_id: formData.payment_method_id,
+              payer: {
+                email: formData.payer?.email || currentUser?.email || "cliente@gatomieles.com"
+              }
+            };
+            if (formData.token)        { payload.token = formData.token; payload.installments = formData.installments || 1; }
+            if (formData.issuer_id)    payload.issuer_id = formData.issuer_id;
+            if (formData.payer?.identification?.type) payload.payer.identification = formData.payer.identification;
+            if (formData.payer?.first_name) payload.payer.first_name = formData.payer.first_name;
+            if (formData.payer?.last_name)  payload.payer.last_name  = formData.payer.last_name;
+
+            const resp = await fetch("https://api.mercadopago.com/v1/payments", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
+                "Content-Type": "application/json",
+                "X-Idempotency-Key": `${Date.now()}-${Math.random().toString(36).slice(2)}`
+              },
+              body: JSON.stringify(payload)
+            });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.message || "Error al procesar");
+
+            // Pago procesado → registrar en Firestore como confirmado
+            await _registrarPago("Tarjeta", null, data.status === "approved" ? "confirmado" : "pendiente");
           } catch(e) {
-            console.error("Error registrando pago tarjeta:", e);
+            console.error("Error MP pago:", e);
+            alert("Error al procesar el pago. Intenta nuevamente o usa Yape/Plin.");
           }
           return Promise.resolve();
         }
       }
     });
   } catch(e) {
-    console.error("Error iniciando MP Brick:", e);
+    console.error("Error creando Brick:", e);
     if (loading) loading.style.display = "none";
-    if (container) container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar formulario. Usa Yape, Plin o Agencia.</p>`;
+    container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:20px;font-family:'Inter',sans-serif;">No se pudo cargar el formulario.<br>Usa Yape, Plin o Agencia.</p>`;
   }
 }
 
@@ -853,7 +876,7 @@ window.confirmarPago = async function(metodoLabel) {
 };
 
 // ── Función central de registro ────────────────────────────────────────────
-async function _registrarPago(metodoLabel, archivo) {
+async function _registrarPago(metodoLabel, archivo, estadoOverride) {
   let comprobanteURL = "";
   if (archivo) {
     const ext  = archivo.name.split(".").pop() || "jpg";
@@ -861,6 +884,8 @@ async function _registrarPago(metodoLabel, archivo) {
     const snap = await uploadBytes(storRef(storage, path), archivo);
     comprobanteURL = await getDownloadURL(snap.ref);
   }
+
+  const estado = estadoOverride || "pendiente";
 
   const docRef = await addDoc(collection(db, "membresias"), {
     usuarioEmail:   currentUser.email,
@@ -870,19 +895,35 @@ async function _registrarPago(metodoLabel, archivo) {
     horarioLabel:   horarioElegido,
     metodo:         metodoLabel,
     comprobanteURL: comprobanteURL,
-    estado:         "pendiente",
+    estado:         estado,
     fecha:          serverTimestamp(),
     tallerId:       TALLER_ID,
   });
   const ref = docRef.id.slice(0,8).toUpperCase();
 
+  // Si fue aprobado por MP, incrementar cupos automáticamente
+  if (estado === "confirmado") {
+    try {
+      await runTransaction(db, async tx => {
+        const tallerRef = doc(db,"talleres",TALLER_ID);
+        const snap      = await tx.get(tallerRef);
+        const actuales  = snap.exists() ? (snap.data()[horarioElegidoId] || 0) : 0;
+        tx.update(tallerRef, {[horarioElegidoId]: actuales + 1});
+        tx.update(doc(db,"membresias",docRef.id), {fechaConfirmacion: serverTimestamp()});
+      });
+    } catch(e) { console.error("Error actualizando cupos:", e); }
+  }
+
   cerrarModalPago();
+  const estadoLabel = estado === "confirmado"
+    ? `<span style="color:#155724;font-weight:600">✓ Pago aprobado</span>`
+    : `<span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
   document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
   document.getElementById("exito-resumen").innerHTML =
     `<strong>Método:</strong> ${metodoLabel}<br>` +
     `<strong>Horario:</strong> ${horarioElegido}<br>` +
     `<strong>Referencia:</strong> ${ref}<br>` +
-    `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+    `<strong>Estado:</strong> ${estadoLabel}`;
   document.getElementById("modalExito").style.display = "flex";
   document.body.style.overflow = "hidden";
 }
@@ -1008,7 +1049,7 @@ document.addEventListener("keydown", e => {
   document.querySelectorAll(".ht-modal").forEach(m => {
     if (m.style.display !== "none") { m.style.display = "none"; document.body.style.overflow = ""; }
   });
-  if (_mpBrick) { try { _mpBrick.unmount(); } catch(ee){} _mpBrick = null; _mpInited = false; }
+  if (_mpBrick) { try { _mpBrick.unmount(); } catch(ee){} _mpBrick = null; _tarjetaInicializada = false; }
   document.getElementById("lightbox").style.display = "none";
   document.getElementById("popupLogin").style.display = "none";
 });
