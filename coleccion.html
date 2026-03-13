@@ -365,46 +365,53 @@ onAuthStateChanged(auth, async (user) => {
 
 <!-- ══ MODAL ÉXITO / VALIDACIÓN ══ -->
 <div id="modalExito" class="cl-modal" style="display:none;">
-  <div class="cl-modal-box cl-exito-box">
+  <div style="background:#fff;width:100%;max-width:400px;border-radius:28px;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.45);animation:clModalIn .5s cubic-bezier(.34,1.4,.64,1);">
 
-    <!-- Icono animado -->
-    <div class="cl-exito-icon-wrap">
-      <div class="cl-exito-ring cl-exito-ring-1"></div>
-      <div class="cl-exito-ring cl-exito-ring-2"></div>
-      <div class="cl-exito-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" class="cl-check-path"/></svg>
+    <!-- Hero oscuro con check animado -->
+    <div style="background:linear-gradient(160deg,#100d0a 0%,#1e1610 60%,#0f0c09 100%);padding:36px 28px 28px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(196,138,58,.15),transparent 65%);pointer-events:none;"></div>
+      <!-- Icono check -->
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 12px 32px rgba(196,138,58,.45);position:relative;z-index:1;animation:iconPop .6s cubic-bezier(.34,1.6,.64,1) .1s both;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+          <path d="M20 6L9 17l-5-5" style="stroke-dasharray:30;stroke-dashoffset:30;animation:checkDraw .5s ease .6s forwards;"/>
+        </svg>
       </div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:white;margin:0 0 8px;line-height:1.2;position:relative;z-index:1;">¡Pedido recibido!</h3>
+      <p style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.45);margin:0;position:relative;z-index:1;">Estamos validando tu pago 🐱</p>
     </div>
 
-    <!-- Textos -->
-    <div class="cl-exito-body">
-      <h3 class="cl-exito-title">Estamos validando<br>tu pago</h3>
-      <p id="exitoDetalle" class="cl-exito-detalle"></p>
-
-      <!-- Separador decorativo -->
-      <div class="cl-exito-sep">
-        <div></div><span>mientras tanto</span><div></div>
+    <!-- Resumen del pedido -->
+    <div style="padding:22px 24px 0;">
+      <div id="exito-producto-card" style="background:#faf8f5;border-radius:16px;padding:16px;border:1px solid #ede8de;display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#1a1714,#2d2419);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏺</div>
+        <div style="flex:1;min-width:0;">
+          <div id="exito-nombre" style="font-family:'Playfair Display',serif;font-size:16px;color:#1a1714;font-weight:500;margin-bottom:3px;"></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span id="exito-monto" style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#c48a3a;"></span>
+            <span id="exito-metodo-badge" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;"></span>
+          </div>
+        </div>
+        <span id="exito-estado-badge" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;"></span>
       </div>
 
-      <p class="cl-exito-msg">
-        Vamos coordinando el envío de tu pieza.<br>
-        <strong>Escríbenos y envíanos el comprobante:</strong>
-      </p>
-
-      <!-- Número destacado -->
-      <div class="cl-exito-numero">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 11.29 19.79 19.79 0 01.67 2.68 2 2 0 012.66.5h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8a16 16 0 006.06 6.06l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-        922 402 608
+      <!-- Ref número -->
+      <div id="exito-ref" style="display:flex;align-items:center;justify-content:space-between;background:#f0f9f4;border-radius:12px;padding:10px 14px;margin-bottom:16px;border:1px solid #d1fae5;">
+        <span style="font-family:'Inter',sans-serif;font-size:11px;color:#888;">Nº de referencia</span>
+        <span id="exito-ref-num" style="font-family:monospace;font-size:13px;font-weight:700;color:#065f46;letter-spacing:.08em;"></span>
       </div>
 
-      <!-- Botones -->
-      <a id="btnWspComprobante" href="#" target="_blank" class="cl-exito-btn-wsp">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        Enviar comprobante por WhatsApp
+      <!-- Mensaje entrega -->
+      <div id="exito-entrega-info" style="background:#faf7f4;border-radius:12px;padding:12px 14px;margin-bottom:16px;border:1px solid #ede8de;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.6;"></div>
+    </div>
+
+    <!-- Botones -->
+    <div style="padding:0 24px 24px;display:flex;flex-direction:column;gap:8px;">
+      <a id="btnWspComprobante" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 6px 18px rgba(34,197,94,.3);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        Contactar por WhatsApp
       </a>
-
-      <button onclick="cerrarExito()" class="cl-exito-btn-cerrar">
-        Ya lo envié · Cerrar
+      <button onclick="cerrarExito()" style="padding:12px;background:none;border:1.5px solid #e8e0d8;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#aaa;cursor:pointer;">
+        Cerrar
       </button>
     </div>
 
@@ -990,6 +997,7 @@ function seleccionarAvatar(img) {
 
 async function comprar(nombre, monto) {
   productoActual = { nombre, monto };
+  window.productoActual = productoActual; // expose to module scripts
 
   // Reset tabs al abrir
   document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
@@ -1100,10 +1108,30 @@ function confirmarPagoQR(metodo) {
   window.irAFormEntrega(metodo);
 }
 
+window.mostrarModalExito = mostrarModalExito;
 function mostrarModalExito(nombre, monto, metodo) {
-  document.getElementById("exitoDetalle").textContent = `${nombre} · S/ ${monto} via ${metodo}`;
-  // Link WhatsApp con info del pedido
-  const texto = encodeURIComponent(`Hola! 🐱 Acabo de pagar *${nombre} - S/ ${monto}* via *${metodo}*. Te envío el comprobante.`);
+  const mColors = {yape:"#6c2fa5",plin:"#0077aa",tarjeta:"#555","agencia/bcp":"#5a7a2a"};
+  const mBgs    = {yape:"#f0e6fa",plin:"#e0f4fc",tarjeta:"#f5f5f5","agencia/bcp":"#f0f4e8"};
+  const mk = (metodo||"").toLowerCase();
+  const ref = Math.random().toString(36).slice(2,10).toUpperCase();
+
+  document.getElementById("exito-nombre").textContent   = nombre || "—";
+  document.getElementById("exito-monto").textContent    = `S/ ${monto || "—"}`;
+  document.getElementById("exito-ref-num").textContent  = ref;
+
+  const badge = document.getElementById("exito-metodo-badge");
+  badge.textContent = metodo || "—";
+  badge.style.background = mBgs[mk] || "#f5f5f5";
+  badge.style.color = mColors[mk] || "#555";
+
+  const estado = document.getElementById("exito-estado-badge");
+  estado.textContent = "⏳ Pendiente";
+  estado.style.background = "#fff3cd"; estado.style.color = "#856404";
+
+  const entrega = document.getElementById("exito-entrega-info");
+  entrega.innerHTML = `📦 <strong>Revisaremos tu comprobante</strong> y te confirmamos en menos de 24h.<br>¿Tienes dudas? Escríbenos al <strong>922 402 608</strong>`;
+
+  const texto = encodeURIComponent(`Hola 🐱 Acabo de pedir *${nombre} - S/ ${monto}* via *${metodo}*. Ref: ${ref}`);
   document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
   document.getElementById("modalExito").style.display = "flex";
 }
@@ -1489,17 +1517,18 @@ document.addEventListener("keydown", e => {
 
       <!-- Mapa solo si delivery -->
       <div id="bloque-mapa" style="display:none;flex-direction:column;gap:8px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">📍 Marca tu ubicación en el mapa</label>
+        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">📍 Dirección de entrega *</label>
+        <input id="fe-direccion" type="text" placeholder="Calle, número, distrito, referencia..."
+          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;"
+          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'"
+          oninput="actualizarMapaDireccion(this.value)">
         <div style="border-radius:12px;overflow:hidden;border:1.5px solid #ede8de;">
           <iframe id="mapa-entrega"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d249736.38587774815!2d-77.13282769121086!3d-12.046373699067564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c5f619ee3ec7%3A0x14206caad5efdb85!2sLima!5e0!3m2!1ses!2spe!4v1710000000000!5m2!1ses!2spe"
-            width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy">
+            src="https://maps.google.com/maps?q=Lima,Peru&output=embed&z=12"
+            width="100%" height="180" style="border:0;display:block;" allowfullscreen="" loading="lazy">
           </iframe>
         </div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Dirección de entrega *</label>
-          <input id="fe-direccion" type="text" placeholder="Calle, número, distrito, referencia..." style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-        </div>
+        <p style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;text-align:center;margin:0;">El mapa se actualiza automáticamente con tu dirección</p>
       </div>
 
       <!-- Info recoger -->
@@ -1693,10 +1722,7 @@ window.enviarPedidoColeccion = async function() {
     const prod = window.productoActual?.nombre || "—";
     const monto = window.productoActual?.monto || "—";
     const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
-    document.getElementById("exitoDetalle").textContent = `${prod} · S/ ${monto} via ${metodoFinal2}`;
-    const texto = encodeURIComponent(`Hola! 🐱 Realicé mi pedido: *${prod} - S/ ${monto}* via *${metodoFinal2}*`);
-    document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
-    document.getElementById("modalExito").style.display = "flex";
+    window.mostrarModalExito?.(prod, monto, metodoFinal2);
     window._compFileCol = null;
     window._metodoColActual = null;
 
@@ -1705,6 +1731,16 @@ window.enviarPedidoColeccion = async function() {
     btn.disabled = false;
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Confirmar pedido';
   }
+};
+
+window.actualizarMapaDireccion = function(direccion) {
+  if (!direccion || direccion.length < 5) return;
+  clearTimeout(window._mapTimer);
+  window._mapTimer = setTimeout(() => {
+    const q = encodeURIComponent(direccion + ", Lima, Peru");
+    const mapa = document.getElementById("mapa-entrega");
+    if (mapa) mapa.src = `https://maps.google.com/maps?q=${q}&output=embed&z=15`;
+  }, 800);
 };
 
 // ── Panel Admin ──
@@ -1721,40 +1757,62 @@ function _renderAdminPedidos() {
   const lista = document.getElementById("lista-admin-pedidos");
   if (!lista) return;
   const items = _filtroPedidos === "todos" ? _todosLosPedidos : _todosLosPedidos.filter(p => p.estado === _filtroPedidos);
-  if (!items.length) { lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Sin registros</div>`; return; }
+  if (!items.length) {
+    lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="font-size:32px;opacity:.3;">🛍</div>Sin registros en esta categoría</div>`;
+    return;
+  }
   lista.innerHTML = "";
-  items.forEach(p => {
+  items.forEach((p, i) => {
     const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-    const eLabel = {pendiente:"Pendiente",confirmado:"Confirmado",rechazado:"Rechazado"}[p.estado]||p.estado;
+    const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
+    const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
+    const eIcon  = p.estado==="confirmado"?"✓ Confirmado":p.estado==="rechazado"?"✕ Rechazado":"⏳ Pendiente";
+    const mColors = {"yape":"#6c2fa5","agencia/bcp":"#5a7a2a","plin":"#0077aa","tarjeta":"#555"};
+    const mBgs    = {"yape":"#f0e6fa","agencia/bcp":"#f0f4e8","plin":"#e0f4fc","tarjeta":"#f5f5f5"};
+    const mk = (p.metodo||"").toLowerCase();
+    const ref = p.id.slice(0,8).toUpperCase();
+    const entregaHtml = p.tipoEntrega ? `
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:${p.tipoEntrega==='recoger'?'#f0f9f4':'#f0f4ff'};border-radius:8px;border:1px solid ${p.tipoEntrega==='recoger'?'#d1fae5':'#dde5ff'};">
+        <span style="font-size:14px;">${p.tipoEntrega==='recoger'?'🏺':'🚚'}</span>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.08em;">${p.tipoEntrega==='recoger'?'Recojo en estudio':'Envío a domicilio'}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:12px;color:#666;margin-top:2px;">${p.direccion||''}</div>
+        </div>
+      </div>` : "";
     const compImg = p.comprobanteURL
-      ? `<img src="${p.comprobanteURL}" class="adm-comp-img-col" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'" style="cursor:zoom-in;" alt="Ver comprobante">`
-      : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:6px 0;text-align:center;">Sin comprobante</p>`;
-    const entregaInfo = p.tipoEntrega ? `<strong>Entrega:</strong> ${p.tipoEntrega === "recoger" ? "🏺 Recoger en estudio" : "🚚 " + (p.direccion||"—")}<br>` : "";
-    const contactoInfo = p.celular ? `<strong>Celular:</strong> ${p.celular}<br>` : "";
+      ? `<div style="margin:6px 0;"><img src="${p.comprobanteURL}" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'" style="width:100%;max-height:160px;object-fit:contain;border-radius:10px;cursor:zoom-in;border:1px solid #ede8de;display:block;" alt="Comprobante"></div>` : "";
     const acciones = p.estado === "pendiente" ? `
-      <div class="adm-acciones-col">
-        <button class="adm-btn-confirmar-col" onclick="confirmarPedidoAdmin('${p.id}',this)">✓ Confirmar</button>
-        <button class="adm-btn-rechazar-col" onclick="rechazarPedidoAdmin('${p.id}')">✕ Rechazar</button>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button onclick="confirmarPedidoAdmin('${p.id}',this)" style="flex:1;padding:10px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;">✓ Confirmar pago</button>
+        <button onclick="rechazarPedidoAdmin('${p.id}')" style="flex:1;padding:10px;border:none;border-radius:10px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;">✕ Rechazar</button>
       </div>` : "";
     const div = document.createElement("div");
-    div.className = "adm-card-col";
+    div.style.cssText = `background:#fff;border:1px solid #ede8de;border-radius:16px;overflow:hidden;margin-bottom:2px;`;
     div.innerHTML = `
-      <div class="adm-card-col-header">
-        <span class="adm-nombre-col">${p.nombre||p.email||"—"}</span>
-        <span class="adm-estado-col ${p.estado}">${eLabel}</span>
+      <div style="background:linear-gradient(135deg,#faf8f5,#f5f0ea);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ede8de;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;background:linear-gradient(135deg,#1a1714,#2d2419);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;">🛍</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;">${p.producto||"—"}</div>
+            <div style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;">Ref: <strong style="color:#888;font-family:monospace;">${ref}</strong> · ${fecha}</div>
+          </div>
+        </div>
+        <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBg};color:${eColor};white-space:nowrap;">${eIcon}</span>
       </div>
-      <div class="adm-info-col">
-        <strong>Email:</strong> ${p.email||"—"}<br>
-        ${contactoInfo}
-        <strong>Producto:</strong> ${p.producto||"—"}<br>
-        <strong>Monto:</strong> S/ ${p.monto||"—"}<br>
-        <strong>Método:</strong> ${p.metodo||"—"}<br>
-        ${entregaInfo}
-        <strong>Ref:</strong> ${p.id.slice(0,8).toUpperCase()}<br>
-        <strong>Fecha:</strong> ${fecha}
-      </div>
-      ${compImg}
-      ${acciones}`;
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:'Playfair Display',serif;font-size:22px;color:#c48a3a;">S/ ${p.monto||"—"}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
+        </div>
+        <div style="background:#faf8f5;border-radius:10px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:12px;color:#666;line-height:1.8;border:1px solid #f0ebe3;">
+          <div>👤 ${p.nombre||"—"}</div>
+          <div>✉️ ${p.email||"—"}</div>
+          ${p.celular?`<div>📱 <a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;text-decoration:none;">${p.celular}</a></div>`:""}
+        </div>
+        ${entregaHtml}
+        ${compImg}
+        ${acciones}
+      </div>`;
     lista.appendChild(div);
   });
 }
