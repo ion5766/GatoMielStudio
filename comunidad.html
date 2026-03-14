@@ -2,6 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#c48a3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gato Miel">
+<link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comunidad | Gato Miel Estudio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -977,7 +984,6 @@ onSnapshot(postsQ,snapshot=>{
 });
 </script>
 
-<script src="movil-ui.js"></script>
 <script type="module" src="Js/src/chat.js"></script>
 
 <!-- ═══ POP-UP NECESITA LOGIN ═══ -->
@@ -1164,6 +1170,7 @@ document.addEventListener("keydown", e => {
 });
 </script>
 
+<script type="module" src="pwa.js"></script>
 </body>
 
 </html>
