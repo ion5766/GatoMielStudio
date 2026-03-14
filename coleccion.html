@@ -1950,13 +1950,39 @@ window.togglePedidoCard = function(pid) {
 };
 
 window.confirmarPedidoAdmin = async (id, btn) => {
-  btn.disabled = true; btn.textContent = "Confirmando...";
-  try { await updateDoc(doc(_dbP,"pedidos",id), {estado:"confirmado",fechaConfirmacion:serverTimestamp()}); }
-  catch(e) { alert("Error: "+e.message); btn.disabled=false; btn.textContent="✓ Confirmar pago"; }
+  btn.disabled = true;
+  btn.innerHTML = `<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;"></span>Confirmando...`;
+  try {
+    await updateDoc(doc(_dbP,"pedidos",id), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
+    // El onSnapshot refresca el panel automáticamente
+  } catch(e) {
+    alert("Error al confirmar: " + e.message);
+    btn.disabled = false;
+    btn.textContent = "✓ Confirmar pago";
+  }
 };
+
 window.rechazarPedidoAdmin = async (id) => {
-  if (!confirm("¿Rechazar este pedido?")) return;
-  await updateDoc(doc(_dbP,"pedidos",id), {estado:"rechazado"});
+  // Modal de confirmación propio en lugar del confirm() del browser
+  const overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.75);backdrop-filter:blur(8px);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;";
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:28px;max-width:340px;width:100%;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3);">
+      <div style="font-size:36px;margin-bottom:14px;">⚠️</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:#1a1714;margin:0 0 10px;">¿Rechazar este pedido?</h3>
+      <p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;line-height:1.6;margin:0 0 22px;">El cliente será notificado del estado. Esta acción se puede revertir confirmando el pedido.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button id="btn-cancelar-rechazo" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button>
+        <button id="btn-confirmar-rechazo" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sí, rechazar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById("btn-cancelar-rechazo").onclick = () => overlay.remove();
+  document.getElementById("btn-confirmar-rechazo").onclick = async () => {
+    overlay.remove();
+    try { await updateDoc(doc(_dbP,"pedidos",id), {estado:"rechazado", fechaRechazo:serverTimestamp()}); }
+    catch(e) { alert("Error: " + e.message); }
+  };
 };
 
 document.addEventListener("keydown", e => {
