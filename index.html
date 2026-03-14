@@ -1,80 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gato Miel Estudio</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
+<title>Talleres – Gato Miel Estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/Styles.css">
 <link rel="stylesheet" href="movil-ui.css">
-
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-// Web pública — NO redirigir si no hay usuario
-onAuthStateChanged(auth, async (user) => {
-  const avatar    = document.querySelector(".user-avatar");
-  const loginBtn  = document.getElementById("btn-login-header");
-  const userMenu  = document.querySelector(".user-menu");
+const _fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _auth = getAuth(_app);
+onAuthStateChanged(_auth, (user) => {
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  const avatar   = document.querySelector(".user-avatar");
   if (user) {
-    await user.reload().catch(()=>{});
-    if (!user.photoURL) {
-      try {
-        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-        await user.reload();
-      } catch(e) {}
-    }
-    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
     if (loginBtn) loginBtn.style.display = "none";
     if (userMenu) userMenu.style.display = "flex";
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
   } else {
-    // Invitado: mostrar botón login, ocultar menú de usuario
     if (loginBtn) loginBtn.style.display = "flex";
     if (userMenu) userMenu.style.display = "none";
-    if (avatar)   avatar.src = "Assets/Img/Avatares/GatoMiel.jpeg";
   }
-  // Exponer usuario globalmente para que otras partes del page lo lean
-  window._firebaseUser = user || null;
 });
 </script>
-
 </head>
 <body>
 
-<!-- ══ HEADER ══ -->
 <header class="header">
   <div class="logo">
     <span>Gato Miel Estudio</span>
-    <img src="Assets/Img/Logo.jpg" class="logo-img">
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
   </div>
   <nav class="nav">
     <a href="index.html">Inicio</a>
-    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="historial-De_Talleres.html" class="active">Talleres</a>
     <a href="coleccion.html">Colección</a>
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <!-- Botón para invitados -->
-    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
-      🐾 Iniciar sesión
-    </a>
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">🐾 Iniciar sesión</a>
     <div class="user-menu" style="display:none;">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
-        class="user-avatar" onclick="toggleUserMenu()">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E" class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
         <button onclick="abrirModalCompras()">🛍 Mis compras</button>
         <button onclick="abrirModalMembresias()">🎫 Mis membresías</button>
@@ -85,125 +56,328 @@ onAuthStateChanged(auth, async (user) => {
   </nav>
 </header>
 
-<!-- ══ HERO ══ -->
-<section class="ix-hero">
-  <video autoplay muted loop playsinline disablepictureinpicture class="ix-hero-video">
-    <source src="Assets/Video/hero-video.mp4" type="video/mp4">
-  </video>
-  <div class="ix-hero-overlay"></div>
-  <div class="ix-hero-content">
-    <span class="ix-eyebrow">Cerámica artesanal · Lima</span>
-    <h1>
-      Arte en<br>
-      <em>cerámica.</em><br>
-      Manos en<br>
-      la tierra.
-    </h1>
-    <p>Talleres y piezas hechas a mano con alma artesanal.</p>
-    <a href="#talleres" class="ix-btn-hero">Ver Talleres</a>
-  </div>
-  <div class="ix-hero-scroll">
-    <div class="ix-scroll-line"></div>
-    <span>Explorar</span>
-  </div>
-</section>
+<main>
+  <section class="ht-hero">
+    <div class="ht-hero-inner">
+      <span class="ht-eyebrow">Gato Miel Estudio</span>
+      <h1>Talleres de<br><em>cerámica</em></h1>
+      <p>Espacios creativos para explorar el barro, aprender con las manos y encontrar tu propio ritmo.</p>
+    </div>
+    <div class="ht-hero-deco"><div class="ht-hero-line"></div></div>
+  </section>
 
-<!-- ══ STRIP SEPARADOR ══ -->
-<div class="ix-strip">
-  <span>Cerámica hecha a mano</span>
-  <div class="ix-strip-dot"></div>
-  <span>Talleres presenciales</span>
-  <div class="ix-strip-dot"></div>
-  <span>Colección única</span>
-  <div class="ix-strip-dot"></div>
-  <span>Comunidad creativa</span>
+  <section class="ht-seccion" id="actuales">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-activo">Inscripciones abiertas</span>
+      <h2>Talleres actuales</h2>
+    </div>
+    <div class="ht-grid">
+      <article class="ht-card">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <span class="ht-badge ht-badge-open">Abierto</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>Arcilla Nocturna</h3>
+          <p>Taller semanal para experimentar técnicas de modelado en un ambiente creativo y relajado.</p>
+          <div class="ht-cupos-resumen">
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="num-h0"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="num-h1"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
+          </div>
+          <div class="ht-card-footer">
+            <button class="ht-btn-solid" onclick="abrirPagoMembresia()">Pagar membresía</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="ht-divisor"></div>
+
+  <section class="ht-seccion ht-seccion-pronto" id="proximos">
+    <div class="ht-seccion-header">
+      <span class="ht-label ht-label-pronto">Próximamente</span>
+      <h2>Talleres por venir</h2>
+    </div>
+    <div class="ht-grid">
+      <article class="ht-card ht-card-dim">
+        <div class="ht-card-img">
+          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <span class="ht-badge ht-badge-soon">Pronto</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>Iniciación al Torno</h3>
+          <p>Curso intensivo para aprender desde cero el trabajo en torno cerámico.</p>
+          <div class="ht-card-footer ht-card-footer-soon">
+            <span class="ht-aviso">Avisarme cuando abra</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+<footer class="footer"><p>© 2026 Gato Miel Estudio</p></footer>
+
+<!-- ═══ POPUP LOGIN ═══ -->
+<div id="popupLogin" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.82);backdrop-filter:blur(14px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">Inicia sesión para continuar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;">Para reservar un taller necesitas una cuenta.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
+    <button onclick="document.getElementById('popupLogin').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
 </div>
 
-<!-- ══ TALLERES ══ -->
-<section class="ix-talleres" id="talleres">
-  <div class="ix-talleres-header">
-    <span class="ix-eyebrow ix-eyebrow-dark">Nuestros talleres</span>
-    <h2>Aprende a crear<br>con tus manos</h2>
-    <p>Talleres presenciales en pequeño grupo, para todos los niveles.</p>
+<!-- ═══ MODAL PASO 1: HORARIO ═══ -->
+<div id="modalHorario" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalHorario()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub">elige tu horario · S/ 150</span>
+        </div>
+      </div>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
+      </div>
+    </div>
+    <div style="padding:20px 22px 24px;">
+      <p class="ht-step-label">Selecciona un horario disponible</p>
+      <div class="ht-horarios" id="lista-horarios"></div>
+      <button class="ht-btn-confirm" onclick="irAPago()" style="margin-top:16px;"><span>Continuar al pago →</span></button>
+    </div>
   </div>
+</div>
 
-  <div class="ix-cards">
-
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura1.jpg" alt="Iniciación a la cerámica"
-             onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80'">
-        <span class="ix-card-badge">6 cupos</span>
-      </div>
-      <div class="ix-card-body">
-        <h3>Iniciación a la cerámica</h3>
-        <p>Bases del torneado y el modelado a mano. Ideal para quienes se acercan por primera vez al barro.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$45.000 CLP</span>
-          <a href="taller-1.html" class="ix-link">Ver más →</a>
+<!-- ═══ MODAL PASO 2: PAGO ═══ -->
+<div id="modalPago" class="ht-modal">
+  <div class="ht-modal-box">
+    <div class="ht-modal-hero">
+      <button class="ht-modal-cerrar" onclick="cerrarModalPago()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="ht-modal-hero-brand">
+        <img src="Assets/Img/Logo.jpg" alt="Logo" class="ht-modal-logo">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
+          <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
+          <span class="ht-modal-hero-sub" id="pago-horario-sub">—</span>
         </div>
       </div>
-    </article>
-
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura2.jpg" alt="Esmaltes y acabados"
-             onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=600&q=80'">
-        <span class="ix-card-badge">8 cupos</span>
+      <div class="ht-modal-hero-deco">
+        <div class="ht-deco-ring ht-deco-ring-1"></div>
+        <div class="ht-deco-ring ht-deco-ring-2"></div>
+        <div class="ht-deco-dot"></div>
       </div>
-      <div class="ix-card-body">
-        <h3>Esmaltes y acabados</h3>
-        <p>Descubre el universo del color en cerámica. Aprende a esmaltar y decorar tus piezas con técnicas artesanales.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$38.000 CLP</span>
-          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
+    </div>
+
+    <!-- Pills -->
+    <div class="ht-metodo-selector">
+      <button class="ht-metodo-pill active" onclick="switchMetodo('yape',this)"><span class="ht-pill-dot" style="background:#6c2fa5;"></span>Yape</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('plin',this)"><span class="ht-pill-dot" style="background:#00a3e0;"></span>Plin</button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('tarjeta',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Tarjeta
+      </button>
+      <button class="ht-metodo-pill" onclick="switchMetodo('agencia',this)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Agencia
+      </button>
+    </div>
+
+    <div class="ht-modal-body">
+
+      <!-- TAB YAPE -->
+      <div id="tab-yape" class="ht-tab active">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-yape">
+            <img src="Assets/Img/yape.jpeg" alt="QR Yape" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-yape">Yape</div>
+          </div>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
+          </div>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-yape" onclick="document.getElementById('file-yape').click()">
+              <div id="ph-yape" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-yape" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-yape" accept="image/*" style="display:none" onchange="previewComp('yape',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-yape" onclick="confirmarPago('Yape')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué · Enviar comprobante
+          </button>
         </div>
       </div>
-    </article>
 
-    <article class="ix-card">
-      <div class="ix-card-img">
-        <img src="Assets/Img/Escultura3.jpg" alt="Taller libre"
-             onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=600&q=80'">
-        <span class="ix-card-badge">10 cupos</span>
-      </div>
-      <div class="ix-card-body">
-        <h3>Taller libre</h3>
-        <p>Ven a crear con total libertad. Acceso al estudio, materiales y acompañamiento para hacer lo que quieras.</p>
-        <div class="ix-card-footer">
-          <span class="ix-precio">$25.000 CLP</span>
-          <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
+      <!-- TAB PLIN -->
+      <div id="tab-plin" class="ht-tab">
+        <div class="ht-qr-pane">
+          <div class="ht-qr-frame ht-qr-plin">
+            <img src="Assets/Img/plin.jpeg" alt="QR Plin" class="ht-qr-img" onerror="this.style.display='none'">
+            <div class="ht-qr-badge ht-badge-plin">Plin</div>
+          </div>
+          <div class="ht-qr-info">
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <p class="ht-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
+          </div>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu comprobante de pago</p>
+            <div class="ht-comp-zona" id="zona-plin" onclick="document.getElementById('file-plin').click()">
+              <div id="ph-plin" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir captura</span></div>
+              <div id="pr-plin" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-plin" accept="image/*" style="display:none" onchange="previewComp('plin',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-plin" onclick="confirmarPago('Plin')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya pagué · Enviar comprobante
+          </button>
         </div>
       </div>
-    </article>
 
+      <!-- TAB TARJETA — Mercado Pago Brick -->
+      <div id="tab-tarjeta" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:10px;padding:8px 0;">
+          <div style="width:100%;background:#faf8f5;border-radius:14px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,138,58,.9)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+                <span style="font-family:'Playfair Display',serif;font-size:15px;color:white;">Tarjeta de crédito/débito</span>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#1A1F71"/><rect y="4" width="28" height="5" fill="#F7B600"/></svg>
+                <svg width="22" height="15" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="3" fill="#252525"/><circle cx="11" cy="10" r="6" fill="#EB001B"/><circle cx="17" cy="10" r="6" fill="#F79E1B"/><path d="M14 5.5a6 6 0 0 1 0 9 6 6 0 0 1 0-9z" fill="#FF5F00"/></svg>
+              </div>
+            </div>
+            <div style="padding:10px 16px 12px;font-family:'Inter',sans-serif;font-size:11px;display:flex;justify-content:space-between;color:#888;">
+              <span>Horario: <strong id="tarjeta-horario-val" style="color:#1a1714;">—</strong></span>
+              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 150</strong></span>
+            </div>
+          </div>
+          <!-- Mercado Pago Brick container -->
+          <div id="mp-loading" style="width:100%;text-align:center;padding:20px 0;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;">
+            <div style="width:28px;height:28px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:htSpin .8s linear infinite;margin:0 auto 10px;"></div>
+            Cargando formulario...
+          </div>
+          <div id="mpCardBrick_container" style="width:100%;"></div>
+        </div>
+      </div>
+
+      <!-- TAB AGENCIA -->
+      <div id="tab-agencia" class="ht-tab">
+        <div class="ht-qr-pane" style="gap:14px;">
+          <div style="width:100%;background:#faf8f5;border-radius:18px;border:1px solid #ede8de;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 18px;display:flex;align-items:baseline;gap:10px;">
+              <span style="font-family:'Playfair Display',serif;font-size:20px;color:#c48a3a;">BCP</span>
+              <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;">Banco de Crédito del Perú</span>
+            </div>
+            <div style="padding:0 18px;">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Titular</span><span style="color:#1a1714;font-weight:500;">Gato Miel Estudio</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Cuenta</span><span style="font-family:monospace;color:#1a1714;">000-00000000-0-00</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">CCI</span><span style="font-family:monospace;color:#1a1714;">00200000000000000000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
+            </div>
+          </div>
+          <div class="ht-comp-wrap">
+            <p class="ht-comp-label">📎 Adjunta tu voucher de depósito</p>
+            <div class="ht-comp-zona" id="zona-agencia" onclick="document.getElementById('file-agencia').click()">
+              <div id="ph-agencia" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir voucher</span></div>
+              <div id="pr-agencia" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            </div>
+            <input type="file" id="file-agencia" accept="image/*" style="display:none" onchange="previewComp('agencia',this)">
+          </div>
+          <button class="ht-btn-pagar ht-btn-agencia" onclick="confirmarPago('Agencia')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Ya deposité · Enviar voucher
+          </button>
+        </div>
+      </div>
+
+    </div><!-- end ht-modal-body -->
   </div>
-</section>
+</div>
 
-<!-- ══ CTA CENTRAL ══ -->
-<section class="ix-cta">
-  <span class="ix-eyebrow">Colección</span>
-  <h2>Piezas únicas,<br><em>hechas para durar.</em></h2>
-  <a href="coleccion.html" class="ix-btn-cta">Ver colección</a>
-</section>
+<!-- ═══ MODAL ÉXITO ═══ -->
+<div id="modalExito" class="ht-modal" style="z-index:10001;">
+  <div class="ht-modal-box" style="max-width:380px;">
+    <div style="padding:36px 28px 28px;text-align:center;">
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 12px 32px rgba(196,138,58,.3);">✓</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:500;color:#1a1714;margin-bottom:8px;">¡Gracias por tu pago!</h3>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#888;line-height:1.7;margin-bottom:4px;">Revisaremos tu comprobante y activaremos tu plaza.</p>
+      <p id="exito-detalle" style="font-family:'Inter',sans-serif;font-size:14px;color:#c48a3a;font-weight:500;margin-bottom:20px;"></p>
+      <div id="exito-resumen" style="background:#faf7f4;border-radius:14px;padding:16px;margin-bottom:20px;text-align:left;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:2;border:1px solid #f0ebe4;"></div>
+      <p style="font-family:'Inter',sans-serif;font-size:11px;color:#ccc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px;">Te confirmaremos en menos de 24h 🐾</p>
+      <button onclick="document.getElementById('modalExito').style.display='none';document.body.style.overflow='';" style="background:transparent;border:1.5px solid #e8d5b7;color:#888;border-radius:50px;padding:10px 28px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">Cerrar</button>
+    </div>
+  </div>
+</div>
 
-<footer class="footer">
-  <p>© 2026 Gato Miel Estudio</p>
-</footer>
+<!-- ═══ LIGHTBOX ═══ -->
+<div id="lightbox" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="lightbox-img" src="" style="max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6);">
+</div>
 
-<!-- MODAL PERFIL -->
+<!-- ═══ FAB ADMIN ═══ -->
+<div id="panelAdminMem" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
+  <button onclick="abrirPanelAdmin()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
+    🎫 Membresías
+    <span id="badge-mem" style="background:#c48a3a;color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;"></span>
+  </button>
+</div>
+
+<!-- ═══ MODAL PANEL ADMIN ═══ -->
+<div id="modalAdminMem" class="ht-modal" style="z-index:9998;">
+  <div class="ht-modal-box" style="max-width:560px;">
+    <div class="ht-modal-hero" style="padding:20px 22px 16px;">
+      <button class="ht-modal-cerrar" onclick="cerrarPanelAdmin()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="ht-modal-hero-brand">
+        <div>
+          <span class="ht-modal-hero-eyebrow">Panel Admin</span>
+          <h2 class="ht-modal-hero-title">Membresías recibidas</h2>
+          <span class="ht-modal-hero-sub">Valida pagos · activa plazas</span>
+        </div>
+      </div>
+      <div class="ht-modal-hero-deco"><div class="ht-deco-ring ht-deco-ring-1"></div><div class="ht-deco-ring ht-deco-ring-2"></div></div>
+    </div>
+    <div class="ht-modal-body">
+      <div class="adm-tabs">
+        <button class="adm-tab activo" onclick="filtrarMem('pendiente',this)">Pendientes</button>
+        <button class="adm-tab" onclick="filtrarMem('confirmado',this)">Confirmados</button>
+        <button class="adm-tab" onclick="filtrarMem('rechazado',this)">Rechazados</button>
+        <button class="adm-tab" onclick="filtrarMem('todos',this)">Todos</button>
+      </div>
+      <div id="lista-mem-admin"><div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL PERFIL ═══ -->
 <div id="perfilModal" class="perfil-modal">
   <div class="perfil-box">
     <h3>Personalizar perfil</h3>
     <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
     <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
     <div class="avatar-selector">
-      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
-      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
-      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
-      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
-      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
-      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)">
     </div>
     <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
     <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
@@ -214,481 +388,654 @@ onAuthStateChanged(auth, async (user) => {
   </div>
 </div>
 
-<!-- Botón panel admin -->
-<a id="btn-panel-admin" href="panel-admin.html" style="
-  display:none; position:fixed; bottom:28px; right:28px;
-  background:#1a1714; color:white; text-decoration:none;
-  padding:13px 20px; border-radius:50px; font-family:'Inter',sans-serif;
-  font-size:13px; font-weight:500; letter-spacing:0.06em;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25); z-index:8887;
-  align-items:center; gap:8px; transition:background 0.2s,transform 0.2s;"
-  onmouseover="this.style.background='#c48a3a';this.style.transform='translateY(-2px)'"
-  onmouseout="this.style.background='#1a1714';this.style.transform='none'">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  </svg>
-  Panel de mensajes
-</a>
-
 <style>
-/* ── Variables ── */
-:root {
-  --gold:  #c48a3a;
-  --ink:   #1a1714;
-  --sand:  #f8f5f1;
-  --warm:  #f3ece3;
-  --muted: #888;
-}
-
-/* ── Eyebrow ── */
-.ix-eyebrow {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  display: block; margin-bottom: 20px;
-}
-.ix-eyebrow-dark { color: var(--gold); }
-
-/* ══ HERO ══ */
-.ix-hero {
-  position: relative; height: 100vh;
-  display: flex; align-items: flex-end;
-  padding: 0 9% 10vh;
-  overflow: hidden;
-}
-.ix-hero-video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; z-index: 0;
-}
-.ix-hero-overlay {
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(
-    160deg,
-    rgba(0,0,0,0.1) 0%,
-    rgba(15,12,9,0.65) 60%,
-    rgba(15,12,9,0.85) 100%
-  );
-}
-.ix-hero-content {
-  position: relative; z-index: 2;
-  max-width: 700px;
-}
-.ix-hero-content h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(54px, 8vw, 100px);
-  font-weight: 400; line-height: 1.0;
-  color: white; letter-spacing: -0.02em;
-  margin-bottom: 28px;
-}
-.ix-hero-content h1 em {
-  font-style: italic; color: var(--gold);
-}
-.ix-hero-content p {
-  font-size: 17px; color: rgba(255,255,255,0.65);
-  font-weight: 300; margin-bottom: 36px;
-  max-width: 420px; line-height: 1.7;
-}
-.ix-btn-hero {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 15px 32px; background: var(--gold); color: white;
-  text-decoration: none; border-radius: 50px;
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-  transition: all 0.3s ease;
-  box-shadow: 0 12px 30px rgba(196,138,58,0.35);
-}
-.ix-btn-hero:hover {
-  background: #a8742f; transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(196,138,58,0.45);
-}
-.ix-hero-scroll {
-  position: absolute; right: 9%; bottom: 10vh; z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
-.ix-scroll-line {
-  width: 1px; height: 60px;
-  background: linear-gradient(white, transparent);
-  animation: scrollPulse 2s ease infinite;
-}
-@keyframes scrollPulse {
-  0%,100% { opacity: 0.3; transform: scaleY(1); }
-  50%      { opacity: 0.9; transform: scaleY(1.1); }
-}
-.ix-hero-scroll span {
-  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif;
-  writing-mode: vertical-rl;
-}
-
-/* ══ STRIP ══ */
-.ix-strip {
-  background: var(--ink); color: rgba(255,255,255,0.5);
-  display: flex; align-items: center; justify-content: center;
-  gap: 28px; padding: 18px 8%;
-  font-family: 'Inter', sans-serif; font-size: 11px;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  flex-wrap: wrap;
-}
-.ix-strip-dot {
-  width: 3px; height: 3px; border-radius: 50%;
-  background: var(--gold); flex-shrink: 0;
-}
-
-/* ══ TALLERES ══ */
-.ix-talleres {
-  padding: 110px 9%; background: var(--sand);
-}
-.ix-talleres-header {
-  max-width: 560px; margin-bottom: 70px;
-}
-.ix-talleres-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(36px, 4.5vw, 56px); font-weight: 400;
-  color: var(--ink); line-height: 1.1;
-  letter-spacing: -0.01em; margin-bottom: 16px;
-}
-.ix-talleres-header p {
-  font-size: 16px; color: var(--muted);
-  font-weight: 300; line-height: 1.7;
-}
-
-.ix-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.ix-card {
-  background: white; border-radius: 16px; overflow: hidden;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-  display: flex; flex-direction: column;
-  position: relative;
-}
-.ix-card::after {
-  content: ""; position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; background: linear-gradient(90deg, var(--gold), #e8b870);
-  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
-}
-.ix-card:hover { transform: translateY(-8px); box-shadow: 0 24px 50px rgba(0,0,0,0.11); }
-.ix-card:hover::after { transform: scaleX(1); }
-
-.ix-card-img {
-  overflow: hidden; position: relative; height: 240px;
-}
-.ix-card-img img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.6s ease, filter 0.4s ease;
-  filter: saturate(88%);
-}
-.ix-card:hover .ix-card-img img {
-  transform: scale(1.06); filter: saturate(100%);
-}
-.ix-card-badge {
-  position: absolute; top: 14px; right: 14px;
-  background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
-  color: var(--gold); font-size: 10px; font-weight: 500;
-  letter-spacing: 0.08em; padding: 5px 12px; border-radius: 20px;
-  font-family: 'Inter', sans-serif;
-}
-
-.ix-card-body {
-  padding: 26px 24px 28px; flex: 1;
-  display: flex; flex-direction: column;
-}
-.ix-card-body h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px; font-weight: 500;
-  color: var(--ink); margin-bottom: 10px;
-}
-.ix-card-body p {
-  font-size: 14px; color: #777; line-height: 1.7;
-  flex: 1; margin-bottom: 22px; font-weight: 300;
-}
-.ix-card-footer {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding-top: 16px; border-top: 1px solid #f0ebe4;
-}
-.ix-precio {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px; font-weight: 500; color: var(--gold);
-}
-.ix-link {
-  font-size: 13px; font-weight: 500; color: #333;
-  text-decoration: none; letter-spacing: 0.04em;
-  transition: color 0.2s, letter-spacing 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-.ix-link:hover { color: var(--gold); letter-spacing: 0.08em; }
-
-/* ══ CTA ══ */
-.ix-cta {
-  background: var(--ink); padding: 120px 9%;
-  text-align: center;
-}
-.ix-cta h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(38px, 5vw, 66px); font-weight: 400;
-  color: white; line-height: 1.1;
-  letter-spacing: -0.01em; margin-bottom: 44px;
-}
-.ix-cta h2 em { font-style: italic; color: var(--gold); }
-.ix-btn-cta {
-  display: inline-flex; align-items: center;
-  padding: 15px 40px; border: 1px solid rgba(255,255,255,0.25);
-  color: white; text-decoration: none; border-radius: 50px;
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
-  transition: all 0.3s ease;
-}
-.ix-btn-cta:hover {
-  background: var(--gold); border-color: var(--gold);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(196,138,58,0.4);
-}
-
-/* ── Avatar selector ── */
-.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
-.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
-.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
-.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .ix-hero { padding: 0 7% 12vh; }
-  .ix-hero-scroll { display: none; }
-  .ix-hero-content h1 { font-size: clamp(44px, 12vw, 68px); }
-  .ix-talleres { padding: 80px 7%; }
-  .ix-cards { grid-template-columns: 1fr; max-width: 440px; }
-  .ix-cta { padding: 80px 7%; }
-  .ix-strip { gap: 18px; }
-}
-@media (max-width: 1100px) and (min-width: 901px) {
-  .ix-cards { grid-template-columns: repeat(2, 1fr); }
+:root{--gold:#c48a3a;--ink:#1a1714;--sand:#f8f5f1}
+.ht-eyebrow{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:18px}
+.ht-label{display:inline-block;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.ht-label-activo{background:rgba(196,138,58,.12);color:var(--gold)}
+.ht-label-pronto{background:rgba(0,0,0,.05);color:#aaa}
+.ht-hero{background:var(--ink);padding:120px 9% 100px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;min-height:52vh}
+.ht-hero-inner{max-width:560px}
+.ht-hero-inner .ht-eyebrow{color:rgba(196,138,58,.8)}
+.ht-hero-inner h1{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,86px);font-weight:400;color:white;line-height:1;letter-spacing:-.02em;margin-bottom:24px}
+.ht-hero-inner h1 em{font-style:italic;color:var(--gold)}
+.ht-hero-inner p{font-size:16px;color:rgba(255,255,255,.5);font-weight:300;line-height:1.75;max-width:420px}
+.ht-hero-deco{align-self:flex-start;padding-top:8px}
+.ht-hero-line{width:1px;height:80px;background:linear-gradient(var(--gold),transparent);opacity:.5}
+.ht-seccion{padding:100px 9%;background:var(--sand)}
+.ht-seccion-pronto{background:white}
+.ht-seccion-header{margin-bottom:56px}
+.ht-seccion-header h2{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);font-weight:400;color:var(--ink);letter-spacing:-.01em}
+.ht-divisor{height:1px;background:linear-gradient(90deg,transparent,#e8d5b7,transparent);margin:0 9%}
+.ht-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,360px));gap:28px}
+.ht-card{background:white;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 16px rgba(0,0,0,.06);transition:transform .35s ease,box-shadow .35s ease;position:relative}
+.ht-card::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),#e8b870);transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+.ht-card:hover{transform:translateY(-8px);box-shadow:0 24px 50px rgba(0,0,0,.11)}
+.ht-card:hover::after{transform:scaleX(1)}
+.ht-card-dim{opacity:.68}.ht-card-dim:hover{opacity:1}
+.ht-card-img{position:relative;height:230px;overflow:hidden}
+.ht-card-img img{width:100%;height:100%;object-fit:cover;filter:saturate(88%);transition:transform .6s ease,filter .4s ease}
+.ht-card:hover .ht-card-img img{transform:scale(1.06);filter:saturate(100%)}
+.ht-badge{position:absolute;top:14px;right:14px;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:5px 13px;border-radius:20px;backdrop-filter:blur(4px)}
+.ht-badge-open{background:var(--gold);color:white}
+.ht-badge-soon{background:rgba(255,255,255,.88);color:#888}
+.ht-card-body{padding:24px 22px 26px;flex:1;display:flex;flex-direction:column}
+.ht-card-body h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--ink);margin-bottom:10px}
+.ht-card-body p{font-size:14px;color:#777;line-height:1.7;flex:1;margin-bottom:16px;font-weight:300}
+.ht-card-footer{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid #f0ebe4}
+.ht-card-footer-soon{border:none;padding:0}
+.ht-cupos-resumen{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.ht-cupo-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#faf7f4;border-radius:10px;border:1px solid #f0ebe4}
+.ht-cupo-label{font-family:'Inter',sans-serif;font-size:11px;color:#888}
+.ht-cupo-num{display:flex;gap:4px;align-items:center}
+.ht-cupo-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);display:inline-block;transition:all .3s}
+.ht-cupo-dot.vacio{background:#e8e0d8}
+.ht-cupo-agotado{font-family:'Inter',sans-serif;font-size:10px;color:#e55;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ht-btn-solid{display:block;text-align:center;padding:12px 20px;background:var(--gold);color:white;text-decoration:none;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:.06em;font-family:'Inter',sans-serif;transition:all .3s ease;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(196,138,58,.28);width:100%}
+.ht-btn-solid:hover{background:#a8742f;transform:translateY(-2px)}
+.ht-aviso{font-size:13px;color:#aaa;font-family:'Inter',sans-serif;letter-spacing:.04em;text-align:center;padding:6px 0}
+/* Modal */
+.ht-modal{display:none;position:fixed;inset:0;background:rgba(15,12,9,.72);backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:9999;padding:20px}
+.ht-modal-box{background:white;width:100%;max-width:440px;max-height:90vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;animation:htModalIn .38s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 80px rgba(0,0,0,.25)}
+@keyframes htModalIn{from{transform:scale(.88) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.ht-modal-hero{padding:22px 22px 18px;background:linear-gradient(135deg,#1a1714,#2a1f10);position:relative;overflow:hidden;flex-shrink:0}
+.ht-modal-hero-brand{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+.ht-modal-logo{width:42px;height:42px;border-radius:10px;object-fit:cover;border:2px solid rgba(196,138,58,.4)}
+.ht-modal-hero-eyebrow{font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block}
+.ht-modal-hero-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:500;color:white;margin:2px 0}
+.ht-modal-hero-sub{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.05em}
+.ht-modal-cerrar{position:absolute;top:16px;right:16px;z-index:3;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);transition:all .2s}
+.ht-modal-cerrar:hover{background:rgba(255,255,255,.2);color:white}
+.ht-deco-ring{position:absolute;border-radius:50%;border:1px solid rgba(196,138,58,.15)}
+.ht-deco-ring-1{width:120px;height:120px;bottom:-40px;right:-30px}
+.ht-deco-ring-2{width:80px;height:80px;bottom:-20px;right:10px}
+.ht-deco-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(196,138,58,.4);bottom:18px;right:60px}
+.ht-modal-hero-deco{position:absolute;inset:0;pointer-events:none}
+.ht-modal-body{padding:18px 22px 24px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#e5ddd3 transparent;flex:1}
+.ht-step-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#bbb;text-align:center;margin-bottom:16px}
+/* Horarios */
+.ht-horarios{display:flex;flex-direction:column;gap:10px}
+.ht-horario{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid #f0ebe4;background:#faf7f4;cursor:pointer;transition:all .22s ease}
+.ht-horario:hover:not(.sin-cupo){border-color:#e8d5b7;background:#fdf6ec;transform:translateY(-2px);box-shadow:0 6px 16px rgba(196,138,58,.1)}
+.ht-horario.seleccionado{border-color:var(--gold);background:#fdf6ec;box-shadow:0 6px 20px rgba(196,138,58,.18)}
+.ht-horario.sin-cupo{opacity:.4;cursor:not-allowed}
+.ht-horario-left{display:flex;flex-direction:column;min-width:70px}
+.ht-horario-dia{font-family:'Playfair Display',serif;font-size:14px;font-weight:500;color:var(--ink)}
+.ht-horario-fecha{font-size:11px;color:#888;font-family:'Inter',sans-serif;margin-top:1px}
+.ht-horario-hora{font-size:14px;font-weight:500;color:var(--gold);font-family:'Inter',sans-serif;flex:1;text-align:right}
+.ht-horario-cupo{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px}
+.ht-cupo-dots-mini{display:flex;gap:3px}
+.ht-cupo-dot-mini{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ht-cupo-dot-mini.vacio{background:#e8e0d8}
+.ht-cupo-txt{font-size:9px;color:#aaa;font-family:'Inter',sans-serif;text-align:center;white-space:nowrap}
+.sin-cupo .ht-cupo-txt{color:#e55;font-weight:700}
+.ht-horario-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s;flex-shrink:0}
+.ht-horario.seleccionado .ht-horario-check{background:var(--gold);border-color:var(--gold);color:white}
+/* Pills */
+.ht-metodo-selector{display:flex;gap:6px;padding:12px 18px 0;border-top:1px solid #f5f0ea;flex-shrink:0}
+.ht-metodo-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;border-radius:10px;border:1.5px solid #f0ebe4;background:#faf8f5;cursor:pointer;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;color:#888;letter-spacing:.04em;transition:all .2s;white-space:nowrap}
+.ht-metodo-pill:hover{border-color:#e8d5b7;color:var(--ink)}
+.ht-metodo-pill.active{background:var(--ink);color:white;border-color:var(--ink)}
+.ht-pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* Tabs */
+.ht-tab{display:none}.ht-tab.active{display:block}
+.ht-qr-pane{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0}
+.ht-qr-frame{position:relative;border-radius:16px;overflow:hidden;width:160px;height:160px;flex-shrink:0}
+.ht-qr-img{width:100%;height:100%;object-fit:cover}
+.ht-qr-yape{box-shadow:0 8px 24px rgba(108,47,165,.25)}
+.ht-qr-plin{box-shadow:0 8px 24px rgba(0,163,224,.25)}
+.ht-qr-badge{position:absolute;bottom:0;left:0;right:0;padding:5px 0;text-align:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ht-badge-yape{background:#6c2fa5;color:white}
+.ht-badge-plin{background:#00a3e0;color:white}
+.ht-qr-info{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.ht-monto-pill{display:flex;align-items:center;justify-content:space-between;width:100%;background:#faf7f4;border-radius:12px;padding:10px 16px;border:1px solid #f0ebe4;font-family:'Inter',sans-serif;font-size:12px}
+.ht-monto-pill span{color:#aaa}
+.ht-monto-pill strong{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold)}
+.ht-qr-hint{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;line-height:1.5;margin:0}
+/* Comprobante */
+.ht-comp-wrap{width:100%;display:flex;flex-direction:column;gap:6px}
+.ht-comp-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:100%}
+.ht-comp-zona:hover,.ht-comp-zona.has-file{border-color:var(--gold);background:#fdf6ec}
+.ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
+.ht-comp-check{position:absolute;top:8px;right:8px;background:var(--gold);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+/* Botones pagar */
+.ht-btn-pagar{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:all .25s;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.ht-btn-pagar:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.ht-btn-yape{background:linear-gradient(135deg,#6c2fa5,#8b3ccf);color:white}
+.ht-btn-yape:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,47,165,.4)}
+.ht-btn-plin{background:linear-gradient(135deg,#0090c8,#00a3e0);color:white}
+.ht-btn-plin:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,163,224,.4)}
+.ht-btn-agencia{background:linear-gradient(135deg,#1a1714,#2a2420);color:white}
+.ht-btn-agencia:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+/* Confirm btn */
+.ht-btn-confirm{width:100%;padding:15px;border:none;background:var(--ink);color:white;border-radius:50px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;font-family:'Inter',sans-serif;position:relative;overflow:hidden}
+.ht-btn-confirm::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#e8b870);opacity:0;transition:opacity .35s ease}
+.ht-btn-confirm:hover::before{opacity:1}
+.ht-btn-confirm span{position:relative;z-index:1}
+.ht-btn-confirm:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(196,138,58,.38)}
+/* Admin */
+.adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.adm-tab{flex:1;min-width:60px;padding:8px 4px;border:1.5px solid #f0ebe4;background:#faf7f4;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;color:#888;transition:all .2s}
+.adm-tab.activo{background:var(--ink);color:white;border-color:var(--ink)}
+.adm-card{background:#faf7f4;border-radius:14px;padding:16px;margin-bottom:10px;border:1.5px solid #f0ebe4}
+.adm-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.adm-nombre{font-family:'Playfair Display',serif;font-size:15px;font-weight:500;color:var(--ink)}
+.adm-estado{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.adm-estado.pendiente{background:#fff3cd;color:#856404}
+.adm-estado.confirmado{background:#d4edda;color:#155724}
+.adm-estado.rechazado{background:#f8d7da;color:#721c24}
+.adm-info{font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.9}
+.adm-info strong{color:var(--ink);font-weight:500}
+.adm-comp-img{width:100%;max-height:150px;object-fit:contain;border-radius:10px;margin-top:10px;border:1px solid #f0ebe4;cursor:zoom-in;display:block}
+.adm-acciones{display:flex;gap:8px;margin-top:12px}
+.adm-btn-confirmar{flex:1;padding:9px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.adm-btn-confirmar:hover:not(:disabled){background:#a8742f;transform:translateY(-1px)}
+.adm-btn-confirmar:disabled{background:#ccc;cursor:not-allowed}
+.adm-btn-rechazar{padding:9px 14px;background:#fff0f0;color:#e74c3c;border:1px solid #ffd5d5;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s}
+.adm-btn-rechazar:hover{background:#ffe0e0}
+.avatar-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.avatar-opcion{width:100%;aspect-ratio:1/1;border-radius:50%;object-fit:cover;cursor:pointer;border:3px solid transparent;transition:.2s}
+.avatar-opcion:hover{transform:scale(1.08);border-color:#c48a3a}
+.avatar-opcion.seleccionado{border-color:#c48a3a;box-shadow:0 0 0 3px rgba(196,138,58,.3)}
+@keyframes htFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes htSpin{to{transform:rotate(360deg)}}
+@media(max-width:900px){
+  .ht-hero{padding:90px 7% 70px;flex-direction:column;min-height:auto}
+  .ht-hero-deco{display:none}
+  .ht-seccion{padding:70px 7%}
+  .ht-divisor{margin:0 7%}
+  .ht-grid{grid-template-columns:1fr;max-width:380px}
 }
 </style>
 
 <script>
-let avatarSeleccionado = null;
-
-function toggleUserMenu() {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
-});
-function seleccionarAvatar(img) {
-  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
-  img.classList.add("seleccionado");
-  document.getElementById("previewAvatar").src = img.src;
-  avatarSeleccionado = img.src;
-}
+let _avatarSeleccionado = null;
+function toggleUserMenu(){ const m=document.getElementById("userDropdown"); m.style.display=m.style.display==="block"?"none":"block"; }
+document.addEventListener("click",(e)=>{ if(!e.target.closest(".user-menu")){ const d=document.getElementById("userDropdown"); if(d) d.style.display="none"; }});
+function seleccionarAvatar(img){ document.querySelectorAll(".avatar-opcion").forEach(el=>el.classList.remove("seleccionado")); img.classList.add("seleccionado"); document.getElementById("previewAvatar").src=img.src; _avatarSeleccionado=img.src; }
+window.abrirPanelAdmin  = () => { document.getElementById("modalAdminMem").style.display="flex"; document.body.style.overflow="hidden"; };
+window.cerrarPanelAdmin = () => { document.getElementById("modalAdminMem").style.display="none"; document.body.style.overflow=""; };
+window.verLightbox = function(url){ document.getElementById("lightbox-img").src=url; document.getElementById("lightbox").style.display="flex"; };
 </script>
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const modal  = document.getElementById("perfilModal");
-const status = document.getElementById("perfilStatus");
-
-window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
-
-window.abrirPersonalizar = () => {
-  modal.style.display = "flex"; avatarSeleccionado = null; status.textContent = "";
-  const user = auth.currentUser;
-  document.getElementById("nuevoNombre").value = user?.displayName || "";
-  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-  document.getElementById("previewAvatar").src = fotoActual;
-  document.querySelectorAll(".avatar-opcion").forEach(el => {
-    el.classList.remove("seleccionado");
-    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
-  });
-};
-window.cerrarPersonalizar = () => { modal.style.display = "none"; };
-window.guardarPerfil = async () => {
-  const user = auth.currentUser;
-  const nombre = document.getElementById("nuevoNombre").value.trim();
-  status.textContent = "Guardando...";
-  try {
-    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
-    await user.reload();
-    document.querySelector(".user-avatar").src = photoURL;
-    status.textContent = "✨ ¡Perfil actualizado!";
-    setTimeout(() => cerrarPersonalizar(), 1200);
-  } catch (error) { status.textContent = "❌ Error: " + error.message; }
-};
-</script>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signOut, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, doc, updateDoc, setDoc,
+  onSnapshot, query, orderBy, getDoc, serverTimestamp, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref as storRef, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
-  authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio",
-  storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458",
-  appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const TALLER_ID    = "arcilla-nocturna";
+const CUPOS_MAX    = 4;
+const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
+const HORARIOS = [
+  {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
+  {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
+  {id:"h2", dia:"Lunes",   fecha:"9 de marzo",  hora:"12:00 PM", label:"Lun 9 mar · 12:00 PM"},
+];
+const fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const app     = getApps().length ? getApps()[0] : initializeApp(fc);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
-onAuthStateChanged(auth, (user) => {
-  if (user && ADMIN_EMAILS.includes(user.email?.toLowerCase())) {
-    const btn = document.getElementById("btn-panel-admin");
-    btn.style.display = "flex";
-    const q = query(collection(db, "chats"), where("noLeidosAdmin", "==", true));
-    onSnapshot(q, (snap) => {
-      const ex = document.getElementById("admin-badge");
-      if (ex) ex.remove();
-      if (!snap.empty) {
-        const badge = document.createElement("span");
-        badge.id = "admin-badge";
-        badge.textContent = snap.size;
-        badge.style.cssText = "background:#e74c3c;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;";
-        btn.appendChild(badge);
-      }
-    });
+let currentUser      = null;
+let cuposData        = {};
+let horarioElegidoId = null;
+let horarioElegido   = null;
+let compFiles        = {};
+let filtroPanelAdmin = "pendiente";
+let todasLasMembresias = [];
+
+// ── Mercado Pago Brick state ───────────────────────────────────────────────
+let _mp = null, _mpBuilder = null, _mpBrick = null, _mpInited = false;
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (!user) return;
+  const esAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase());
+  if (esAdmin) {
+    document.getElementById("panelAdminMem").style.display = "block";
+    escucharMembresiasAdmin();
   }
+  await _initCupos();
+  escucharCupos();
 });
-</script>
 
-<!-- ══ MODAL HISTORIAL ══ -->
-<div id="modalHistorial" class="cl-modal ix-hist-modal" style="display:none;">
-  <div class="cl-modal-box ix-hist-box">
-    <div class="ix-hist-header">
-      <div>
-        <span class="ix-hist-eyebrow">Gato Miel Estudio</span>
-        <h3 class="ix-hist-title">Mis pedidos</h3>
-      </div>
-      <button onclick="document.getElementById('modalHistorial').style.display='none'" class="ix-hist-cerrar">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div id="historialLista" class="ix-hist-lista">
-      <div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;">Cargando...</div>
-    </div>
-  </div>
-</div>
+async function _initCupos() {
+  const ref  = doc(db, "talleres", TALLER_ID);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) await setDoc(ref, {h0:0, h1:0, h2:0});
+}
 
-<style>
-.cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
-.cl-modal.open,.ix-hist-modal[style*="flex"] { display:flex !important; }
-.ix-hist-box { background:#fff; width:100%; max-width:440px; max-height:80vh; border-radius:24px; display:flex; flex-direction:column; overflow:hidden; animation:clModalIn 0.4s cubic-bezier(0.34,1.4,0.64,1); box-shadow:0 50px 120px rgba(0,0,0,0.5); }
-@keyframes clModalIn { from{transform:scale(0.86) translateY(32px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
-.ix-hist-header { background:linear-gradient(135deg,#100d0a,#1e1610); padding:20px 22px; display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0; }
-.ix-hist-eyebrow { display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:rgba(196,138,58,0.6); margin-bottom:5px; }
-.ix-hist-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:400; color:white; margin:0; }
-.ix-hist-cerrar { width:26px; height:26px; border-radius:50%; border:none; background:rgba(255,255,255,0.08); cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.2s; }
-.ix-hist-cerrar:hover { background:rgba(196,138,58,0.25); color:white; transform:rotate(90deg); }
-.ix-hist-lista { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin; }
-.ix-hist-item { background:#faf8f5; border:1px solid #ede8de; border-radius:14px; padding:14px 16px; display:flex; align-items:flex-start; gap:12px; animation:fadeUp 0.3s ease both; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.ix-hist-icon { width:36px; height:36px; border-radius:10px; flex-shrink:0; background:linear-gradient(135deg,#1a1714,#2d2419); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.ix-hist-info { flex:1; min-width:0; }
-.ix-hist-nombre { font-family:'Playfair Display',serif; font-size:15px; font-weight:500; color:#1a1714; margin-bottom:3px; }
-.ix-hist-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
-.ix-hist-monto { font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#c48a3a; }
-.ix-hist-badge { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px; }
-.ix-hist-yape { background:#f0e6fa; color:#6c2fa5; }
-.ix-hist-plin  { background:#e0f4fc; color:#0077aa; }
-.ix-hist-tarjeta { background:#f5f5f5; color:#555; }
-.ix-hist-agencia { background:#f0f4e8; color:#5a7a2a; }
-.ix-hist-fecha { font-family:'Inter',sans-serif; font-size:10px; color:#bbb; }
-.ix-hist-estado { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; }
-.ix-hist-pendiente { color:#e8a020; }
-.ix-hist-confirmado { color:#22c55e; }
-.ix-hist-wsp { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; flex-shrink:0; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; text-decoration:none; transition:transform 0.2s; }
-.ix-hist-wsp:hover { transform:scale(1.1); }
-</style>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs", authDomain: "gato-miel-estudio.firebaseapp.com",
-  projectId: "gato-miel-estudio", storageBucket: "gato-miel-estudio.firebasestorage.app",
-  messagingSenderId: "150671559458", appId: "1:150671559458:web:6daaf4a78150706db0337b"
-};
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Helper: esperar a que Firebase Auth resuelva el usuario actual
-function esperarUsuario() {
-  return new Promise(resolve => {
-    if (auth.currentUser !== null) { resolve(auth.currentUser); return; }
-    const unsub = onAuthStateChanged(auth, user => { unsub(); resolve(user); });
+function escucharCupos() {
+  onSnapshot(doc(db,"talleres",TALLER_ID), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    HORARIOS.forEach(h => { cuposData[h.id] = d[h.id] || 0; });
+    actualizarCuposCard();
+    renderHorarios();
   });
 }
 
-// Reemplazar botón "Mis pedidos" para abrir modal
-document.addEventListener("DOMContentLoaded", () => {
-  const btns = document.querySelectorAll("#userDropdown button");
-  btns.forEach(b => { if(b.textContent.includes("compras")) b.onclick = abrirHistorialIndex; });
-});
-
-async function abrirHistorialIndex() {
-  document.getElementById("userDropdown").style.display = "none";
-  const modal = document.getElementById("modalHistorial");
-  modal.style.display = "flex";
-  const lista = document.getElementById("historialLista");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:28px;height:28px;border:2.5px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin 0.7s linear infinite;"></div><span>Cargando pedidos...</span></div>`;
-  const user = await esperarUsuario();
-  if (!user) { lista.innerHTML = `<p style="text-align:center;padding:30px;color:#bbb;font-family:'Inter',sans-serif;">Inicia sesión para ver tus pedidos.</p>`; return; }
-  try {
-    const q = query(collection(db,"pedidos"), where("uid","==",user.uid));
-    const snap = await getDocs(q);
-    if (snap.empty) { lista.innerHTML = `<p style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes pedidos 🐱</p>`; return; }
-    // ordenar por fecha desc en cliente
-    const docs = [];
-    snap.forEach(d => docs.push(d.data()));
-    docs.sort((a,b) => { const ta=a.fecha?.toMillis?a.fecha.toMillis():0; const tb=b.fecha?.toMillis?b.fecha.toMillis():0; return tb-ta; });
-    lista.innerHTML = "";
-    docs.forEach(d => {
-      const fecha = d.fecha?.toDate ? d.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const m = (d.metodo||"").toLowerCase();
-      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
-      const el = document.createElement("div");
-      el.className = "ix-hist-item";
-      el.innerHTML = `
-        <div class="ix-hist-icon">🛍</div>
-        <div class="ix-hist-info">
-          <div class="ix-hist-nombre">${d.producto}</div>
-          <div class="ix-hist-meta">
-            <span class="ix-hist-monto">S/ ${d.monto}</span>
-            <span class="ix-hist-badge ix-hist-${m}">${d.metodo}</span>
-            <span class="ix-hist-fecha">${fecha}</span>
-          </div>
-          <div class="ix-hist-estado ${d.estado==='confirmado'?'ix-hist-confirmado':'ix-hist-pendiente'}">${d.estado==='confirmado'?'✓ Confirmado':'⏳ Validando pago'}</div>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspText}" target="_blank" class="ix-hist-wsp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(el);
-    });
-  } catch(e) { console.error("Error pedidos:", e); lista.innerHTML = `<p style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`; }
+function actualizarCuposCard() {
+  HORARIOS.forEach((h, i) => {
+    const el = document.getElementById(`num-h${i}`);
+    if (!el) return;
+    const libres = CUPOS_MAX - (cuposData[h.id] || 0);
+    el.innerHTML = "";
+    if (libres <= 0) {
+      el.innerHTML = `<span class="ht-cupo-agotado">Agotado</span>`;
+    } else {
+      for (let j = 0; j < CUPOS_MAX; j++) {
+        const dot = document.createElement("span");
+        dot.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
+        el.appendChild(dot);
+      }
+    }
+  });
 }
+
+function renderHorarios() {
+  const lista = document.getElementById("lista-horarios");
+  if (!lista) return;
+  lista.innerHTML = "";
+  HORARIOS.forEach(h => {
+    const libres  = CUPOS_MAX - (cuposData[h.id] || 0);
+    const sinCupo = libres <= 0;
+    const selec   = (horarioElegidoId === h.id);
+    const div = document.createElement("div");
+    div.className = `ht-horario${selec?" seleccionado":""}${sinCupo?" sin-cupo":""}`;
+    if (!sinCupo) div.onclick = () => _elegirHorario(div, h);
+    let dots = "";
+    for (let j = 0; j < CUPOS_MAX; j++) dots += `<span class="ht-cupo-dot-mini${j<libres?"":" vacio"}"></span>`;
+    div.innerHTML = `
+      <div class="ht-horario-left">
+        <span class="ht-horario-dia">${h.dia}</span>
+        <span class="ht-horario-fecha">${h.fecha}</span>
+      </div>
+      <span class="ht-horario-hora">${h.hora}</span>
+      <div class="ht-horario-cupo">
+        <div class="ht-cupo-dots-mini">${dots}</div>
+        <span class="ht-cupo-txt">${sinCupo?"AGOTADO":libres+" libre"+(libres!==1?"s":"")}</span>
+      </div>
+      <div class="ht-horario-check">✓</div>`;
+    lista.appendChild(div);
+  });
+}
+
+function _elegirHorario(el, h) {
+  document.querySelectorAll(".ht-horario").forEach(x => x.classList.remove("seleccionado"));
+  el.classList.add("seleccionado");
+  horarioElegidoId = h.id;
+  horarioElegido   = h.label;
+}
+
+// ── Abrir / cerrar ─────────────────────────────────────────────────────────
+window.abrirPagoMembresia = function() {
+  if (!window._firebaseUser) {
+    document.getElementById("popupLogin").style.display = "flex";
+    return;
+  }
+  horarioElegidoId = null; horarioElegido = null;
+  renderHorarios();
+  document.getElementById("modalHorario").style.display = "flex";
+  document.body.style.overflow = "hidden";
+};
+
+window.cerrarModalHorario = function() {
+  document.getElementById("modalHorario").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+window.cerrarModalPago = function() {
+  document.getElementById("modalPago").style.display = "none";
+  document.body.style.overflow = "";
+  // desmontar brick si existe
+  if (_mpBrick) { try { _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
+  _mpInited = false;
+  compFiles = {};
+  ["yape","plin","agencia"].forEach(m => {
+    const ph   = document.getElementById("ph-"+m);
+    const pr   = document.getElementById("pr-"+m);
+    const zona = document.getElementById("zona-"+m);
+    const inp  = document.getElementById("file-"+m);
+    if (ph)   ph.style.display = "flex";
+    if (pr)   { pr.style.display = "none"; pr.innerHTML = ""; }
+    if (zona) zona.classList.remove("has-file");
+    if (inp)  inp.value = "";
+  });
+  // resetear contenedor MP
+  const mpCont = document.getElementById("mpCardBrick_container");
+  if (mpCont) mpCont.innerHTML = "";
+  const mpLoad = document.getElementById("mp-loading");
+  if (mpLoad) mpLoad.style.display = "block";
+};
+
+window.irAPago = function() {
+  if (!horarioElegidoId) { alert("Selecciona un horario primero."); return; }
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+  document.getElementById("modalHorario").style.display = "none";
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
+  document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
+  // resetear pills → Yape activo
+  document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
+  document.querySelectorAll(".ht-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+  document.getElementById("modalPago").style.display = "flex";
+};
+
+window.switchMetodo = function(metodo, btn) {
+  document.querySelectorAll(".ht-metodo-pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".ht-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("tab-"+metodo).classList.add("active");
+  // Iniciar MP Brick solo cuando el usuario selecciona Tarjeta
+  if (metodo === "tarjeta" && !_mpInited) {
+    _mpInited = true;
+    _initMpBrick();
+  }
+};
+
+// ── Mercado Pago Brick ─────────────────────────────────────────────────────
+async function _initMpBrick() {
+  const loading   = document.getElementById("mp-loading");
+  const container = document.getElementById("mpCardBrick_container");
+  if (!container) return;
+  try {
+    // Cargar SDK si aún no está
+    if (!window.MercadoPago) {
+      await new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = "https://sdk.mercadopago.com/js/v2";
+        s.onload = res; s.onerror = () => rej(new Error("No se pudo cargar SDK de MP"));
+        document.head.appendChild(s);
+      });
+    }
+    if (!_mp) {
+      _mp = new window.MercadoPago(MP_PUBLIC_KEY, {locale:"es-PE"});
+      _mpBuilder = _mp.bricks();
+    }
+    if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} }
+    container.innerHTML = "";
+    if (loading) loading.style.display = "none";
+
+    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
+      initialization: {
+        amount: 150,
+        payer: { email: currentUser?.email || "" }
+      },
+      customization: {
+        visual: {
+          style: {
+            theme: "default",
+            customVariables: {
+              baseColor: "#c48a3a",
+              baseColorFirstVariant: "#a8742f",
+              baseColorSecondVariant: "#e8b870",
+              borderRadiusLarge: "14px",
+              borderRadiusMedium: "10px",
+              formBackgroundColor: "#faf8f5",
+              inputBackgroundColor: "#ffffff",
+              inputFocusedBorderColor: "#c48a3a"
+            }
+          }
+        }
+      },
+      callbacks: {
+        onReady: () => { if (loading) loading.style.display = "none"; },
+        onError: (e) => {
+          console.error("MP Brick error:", e);
+          if (loading) loading.style.display = "none";
+          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
+        },
+        onSubmit: async (formData) => {
+          try {
+            const resp = await fetch("/api/pagar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                transaction_amount: 150,
+                description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
+                payment_method_id: formData.payment_method_id,
+                token:        formData.token,
+                installments: formData.installments || 1,
+                issuer_id:    formData.issuer_id,
+                payer: {
+                  email:          formData.payer?.email || currentUser?.email || "",
+                  identification: formData.payer?.identification || {}
+                }
+              })
+            });
+            const data = await resp.json();
+            const estado = data.status === "approved" ? "confirmado" : "pendiente";
+            await _registrarPago("Tarjeta", null, estado);
+          } catch(e) {
+            console.error("Error pago tarjeta:", e);
+            alert("Error al procesar. Intenta con Yape, Plin o Agencia.");
+          }
+          return Promise.resolve();
+        }
+      }
+    });
+  } catch(e) {
+    console.error("Error iniciando MP Brick:", e);
+    if (loading) loading.style.display = "none";
+    if (container) container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">No se pudo cargar el formulario de tarjeta.<br>Usa Yape, Plin o Agencia.</p>`;
+  }
+}
+
+// ── Preview comprobante ────────────────────────────────────────────────────
+window.previewComp = function(metodo, input) {
+  const file = input.files[0];
+  if (!file) return;
+  compFiles[metodo] = file;
+  const ph   = document.getElementById("ph-"+metodo);
+  const pr   = document.getElementById("pr-"+metodo);
+  const zona = document.getElementById("zona-"+metodo);
+  const url  = URL.createObjectURL(file);
+  pr.innerHTML = `<img src="${url}" style="max-width:100%;max-height:130px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
+  pr.style.display = "block";
+  ph.style.display = "none";
+  zona.classList.add("has-file");
+};
+
+// ── Confirmar pago (Yape / Plin / Agencia) ─────────────────────────────────
+window.confirmarPago = async function(metodoLabel) {
+  if (!currentUser) { alert("Debes iniciar sesión."); return; }
+  if (!horarioElegidoId) { alert("No hay horario seleccionado."); return; }
+  const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
+  if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+
+  const archivo = compFiles[metodoLabel.toLowerCase()] || null;
+  if (!archivo) {
+    alert("Por favor adjunta el comprobante de pago antes de continuar.");
+    return;
+  }
+
+  const tabId     = "tab-" + metodoLabel.toLowerCase();
+  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Enviando..."; }
+
+  try {
+    await _registrarPago(metodoLabel, archivo);
+  } catch(err) {
+    console.error("Error:", err);
+    alert("Ha ocurrido un error: " + err.message);
+    if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
+  }
+};
+
+// ── Función central de registro ────────────────────────────────────────────
+async function _registrarPago(metodoLabel, archivo, estadoOverride) {
+  let comprobanteURL = "";
+  if (archivo) {
+    const ext  = archivo.name.split(".").pop() || "jpg";
+    const path = `comprobantes/${currentUser.uid}/${Date.now()}.${ext}`;
+    const snap = await uploadBytes(storRef(storage, path), archivo);
+    comprobanteURL = await getDownloadURL(snap.ref);
+  }
+
+  const estado = estadoOverride || "pendiente";
+  const docRef = await addDoc(collection(db, "membresias"), {
+    usuarioEmail:   currentUser.email,
+    usuarioNombre:  currentUser.displayName || currentUser.email,
+    usuarioAvatar:  currentUser.photoURL || "",
+    horarioId:      horarioElegidoId,
+    horarioLabel:   horarioElegido,
+    metodo:         metodoLabel,
+    comprobanteURL: comprobanteURL,
+    estado:         estado,
+    fecha:          serverTimestamp(),
+    tallerId:       TALLER_ID,
+  });
+  const ref = docRef.id.slice(0,8).toUpperCase();
+  const estadoLabel = estado === "confirmado"
+    ? `<span style="color:#065f46;font-weight:600">✓ Pago aprobado</span>`
+    : `<span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
+
+  cerrarModalPago();
+  document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
+  document.getElementById("exito-resumen").innerHTML =
+    `<strong>Método:</strong> ${metodoLabel}<br>` +
+    `<strong>Horario:</strong> ${horarioElegido}<br>` +
+    `<strong>Referencia:</strong> ${ref}<br>` +
+    `<strong>Estado:</strong> ${estadoLabel}`;
+  document.getElementById("modalExito").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+// ── Panel Admin ────────────────────────────────────────────────────────────
+function escucharMembresiasAdmin() {
+  const q = query(collection(db,"membresias"), orderBy("fecha","desc"));
+  onSnapshot(q, snap => {
+    todasLasMembresias = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const pendientes = todasLasMembresias.filter(m => m.estado === "pendiente").length;
+    const badge = document.getElementById("badge-mem");
+    badge.style.display = pendientes > 0 ? "flex" : "none";
+    badge.textContent   = pendientes;
+    renderPanelAdmin();
+  });
+}
+
+function renderPanelAdmin() {
+  const lista = document.getElementById("lista-mem-admin");
+  if (!lista) return;
+  const items = filtroPanelAdmin === "todos"
+    ? todasLasMembresias
+    : todasLasMembresias.filter(m => m.estado === filtroPanelAdmin);
+  if (!items.length) {
+    lista.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;font-family:'Inter',sans-serif;">Sin registros</div>`;
+    return;
+  }
+  lista.innerHTML = "";
+  items.forEach(m => {
+    const fecha = m.fecha?.toDate
+      ? m.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"})
+      : "—";
+    const div = document.createElement("div");
+    div.className = "adm-card";
+    const estadoLabel = {pendiente:"Pendiente",confirmado:"Confirmado",rechazado:"Rechazado"}[m.estado] || m.estado;
+    const compImg = m.comprobanteURL
+      ? `<img src="${m.comprobanteURL}" class="adm-comp-img" onclick="verLightbox('${m.comprobanteURL}')" alt="Ver comprobante">`
+      : `<p style="font-family:'Inter',sans-serif;font-size:11px;color:#bbb;margin:8px 0;text-align:center;">Sin comprobante adjunto</p>`;
+    const acciones = m.estado === "pendiente" ? `
+      <div class="adm-acciones">
+        <button class="adm-btn-confirmar" onclick="validarPago('${m.id}','${m.horarioId}',this)">✓ Confirmar pago</button>
+        <button class="adm-btn-rechazar" onclick="rechazarPago('${m.id}')">✕ Rechazar</button>
+      </div>` : "";
+    div.innerHTML = `
+      <div class="adm-card-header">
+        <span class="adm-nombre">${m.usuarioNombre || m.usuarioEmail}</span>
+        <span class="adm-estado ${m.estado}">${estadoLabel}</span>
+      </div>
+      <div class="adm-info">
+        <strong>Email:</strong> ${m.usuarioEmail}<br>
+        <strong>Horario:</strong> ${m.horarioLabel}<br>
+        <strong>Método:</strong> ${m.metodo}<br>
+        <strong>Ref:</strong> ${m.id.slice(0,8).toUpperCase()}<br>
+        <strong>Fecha:</strong> ${fecha}
+      </div>
+      ${compImg}
+      ${acciones}`;
+    lista.appendChild(div);
+  });
+}
+
+window.filtrarMem = function(filtro, btn) {
+  filtroPanelAdmin = filtro;
+  document.querySelectorAll(".adm-tab").forEach(b => b.classList.remove("activo"));
+  btn.classList.add("activo");
+  renderPanelAdmin();
+};
+
+window.validarPago = async function(memId, horarioId, btn) {
+  btn.disabled = true; btn.textContent = "Confirmando...";
+  try {
+    await runTransaction(db, async tx => {
+      const tallerRef = doc(db,"talleres",TALLER_ID);
+      const snap      = await tx.get(tallerRef);
+      const actuales  = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
+      if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos.");
+      tx.update(tallerRef, {[horarioId]: actuales + 1});
+      tx.update(doc(db,"membresias",memId), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
+    });
+  } catch(e) {
+    alert("Error: " + e.message);
+    btn.disabled = false; btn.textContent = "✓ Confirmar pago";
+  }
+};
+
+window.rechazarPago = async function(memId) {
+  if (!confirm("¿Rechazar este pago?")) return;
+  await updateDoc(doc(db,"membresias",memId), {estado:"rechazado"});
+};
+
+// ── Perfil ─────────────────────────────────────────────────────────────────
+const perfilModal  = document.getElementById("perfilModal");
+const perfilStatus = document.getElementById("perfilStatus");
+window.cerrarSesion      = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+window.abrirPersonalizar = () => {
+  perfilModal.style.display = "flex"; perfilStatus.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const foto = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = foto;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.src === foto || el.getAttribute("src") === foto) el.classList.add("seleccionado");
+  });
+};
+window.cerrarPersonalizar = () => { perfilModal.style.display = "none"; };
+window.guardarPerfil = async () => {
+  const user   = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  perfilStatus.textContent = "Guardando...";
+  try {
+    const photoURL = _avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, {displayName: nombre || user.displayName, photoURL});
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    perfilStatus.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => window.cerrarPersonalizar(), 1200);
+  } catch(e) { perfilStatus.textContent = "❌ Error: " + e.message; }
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll(".ht-modal").forEach(m => {
+    if (m.style.display !== "none") { m.style.display = "none"; document.body.style.overflow = ""; }
+  });
+  if (_mpBrick) { try { _mpBrick.unmount(); } catch(ee){} _mpBrick = null; _mpInited = false; }
+  document.getElementById("lightbox").style.display = "none";
+  document.getElementById("popupLogin").style.display = "none";
+});
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
@@ -865,4 +1212,5 @@ document.addEventListener("keydown", e => {
 });
 </script>
 
-</body></html>
+</body>
+</html>
