@@ -509,13 +509,6 @@ onAuthStateChanged(auth, async (user) => {
 /* ══ MODAL ══ */
 .cl-modal { display:none; position:fixed; inset:0; background:rgba(8,6,4,0.88); backdrop-filter:blur(18px); justify-content:center; align-items:center; z-index:9999; padding:16px; }
 .cl-modal.open { display:flex; }
-/* ═══ MOBILE: modal pago desde abajo ═══ */
-@media (max-width: 768px) {
-  .cl-modal { padding: 0 !important; align-items: flex-end !important; }
-  .cl-modal-box { max-width: 100% !important; max-height: 90vh !important; border-radius: 24px 24px 0 0 !important; }
-  .cl-modal-cerrar { width: 34px !important; height: 34px !important; background: rgba(255,255,255,0.2) !important; top: 10px !important; right: 10px !important; color: white !important; opacity: 1 !important; }
-}
-
 .cl-modal-box {
   background:#fff; width:100%; max-width:400px; max-height:92vh;
   border-radius:24px; display:flex; flex-direction:column; overflow:hidden;
@@ -1012,7 +1005,7 @@ function seleccionarAvatar(img) {
 
 async function comprar(nombre, monto) {
   if (!window._firebaseUser) {
-    if (confirm("Para comprar necesitas iniciar sesión.\n¿Ir a la página de acceso?")) window.location.href = "entrada.html";
+    document.getElementById("popupLoginColeccion").style.display = "flex";
     return;
   }
   productoActual = { nombre, monto };
