@@ -1,82 +1,44 @@
-import { initializeApp, getApps }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+/* ═══════════════════════════════════════════════
+   PWA.JS — Notificaciones via OneSignal (simple)
+   ═══════════════════════════════════════════════ */
+import { initializeApp, getApps }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, collection, query, where, orderBy, limit, onSnapshot }
+import { getFirestore, collection, query, where, orderBy, limit, onSnapshot }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getMessaging, getToken, onMessage }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const FC = {
   apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs", authDomain:"gato-miel-estudio.firebaseapp.com",
   projectId:"gato-miel-estudio", storageBucket:"gato-miel-estudio.firebasestorage.app",
   messagingSenderId:"150671559458", appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-const VAPID_KEY  = "BOXc74eAxBMYQpwrWThCtU8Db7du05d8p3Js2rrEEwsF_-wkol0qbdwE9iMq7RIYrRKT4_r3T8bN_hHJpYL8bns";
-const ADMINS     = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
-const NOTIFY_URL = "/api/notify";
-const SECRET     = "gatomiel2026secret";  /* mismo valor que en Vercel env NOTIFY_SECRET */
-
+const ADMINS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const app  = getApps().length ? getApps()[0] : initializeApp(FC);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-/* ── Llamar al endpoint de Vercel para enviar push ── */
-async function notificar(tipo, datos) {
+/* ── Enviar notificación via OneSignal REST API ── */
+async function notificar(titulo, cuerpo, url) {
   try {
-    await fetch(NOTIFY_URL, {
+    await fetch("https://onesignal.com/api/v1/notifications", {
       method: "POST",
-      headers: { "Content-Type":"application/json", "x-notify-secret": SECRET },
-      body: JSON.stringify({ tipo, datos })
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Basic " + window._osKey   // se setea abajo
+      },
+      body: JSON.stringify({
+        app_id:             window._osAppId,
+        included_segments:  ["All"],
+        headings:           { en: titulo, es: titulo },
+        contents:           { en: cuerpo, es: cuerpo },
+        url:                "https://gato-miel-studio.vercel.app" + url,
+        chrome_web_icon:    "https://gato-miel-studio.vercel.app/Assets/Img/Logo.jpg",
+        firefox_icon:       "https://gato-miel-studio.vercel.app/Assets/Img/Logo.jpg"
+      })
     });
-  } catch(e) { console.warn("notify fetch error:", e); }
+  } catch(e) { console.warn("OneSignal error:", e); }
 }
 
-/* ── Registrar SW ── */
-async function registrarSW() {
-  if (!("serviceWorker" in navigator)) return null;
-  try {
-    const reg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-    await navigator.serviceWorker.ready;
-    return reg;
-  } catch(e) { return null; }
-}
-
-/* ── Iniciar FCM ── */
-async function iniciarFCM(user) {
-  try {
-    if (!("Notification" in window)) return;
-    const perm = await Notification.requestPermission();
-    if (perm !== "granted") return;
-
-    const reg = await registrarSW();
-    if (!reg) return;
-
-    const messaging = getMessaging(app);
-    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
-    if (!token) return;
-
-    /* Guardar token en Firestore */
-    await setDoc(doc(db, "users", user.uid), {
-      fcmToken:  token,
-      email:     user.email || "",
-      nombre:    user.displayName || user.email?.split("@")[0] || "",
-      esAdmin:   ADMINS.includes(user.email?.toLowerCase()),
-      updatedAt: new Date()
-    }, { merge: true });
-
-    /* Mensajes en primer plano */
-    onMessage(messaging, payload => {
-      const n = payload.notification || {};
-      const d = payload.data || {};
-      const notif = new Notification(n.title||"Gato Miel 🐾", {
-        body: n.body||d.body||"", icon:"/Assets/Img/Logo.jpg", badge:"/Assets/Img/Logo.jpg"
-      });
-      notif.onclick = () => { window.focus(); window.location.href = d.url||"/index.html"; notif.close(); };
-    });
-
-  } catch(err) { console.warn("FCM error:", err.message); }
-}
-
-/* ── Escuchar Firestore y disparar push via /api/notify ── */
+/* ── Escuchar Firestore y disparar notificaciones ── */
 let _unsubs = [];
 let _primerChats=true, _primerPosts=true, _primerPagos=true, _ultimoPost=null;
 
@@ -87,10 +49,9 @@ onAuthStateChanged(auth, async user => {
   _primerChats=true; _primerPosts=true; _primerPagos=true;
   if (!user) return;
 
-  await iniciarFCM(user);
   const esAdmin = ADMINS.includes(user.email?.toLowerCase());
 
-  /* ADMIN: mensajes de clientes no leídos */
+  /* ADMIN: mensajes nuevos de clientes */
   if (esAdmin) {
     _unsubs.push(onSnapshot(
       query(collection(db,"chats"), where("noLeidosAdmin","==",true)),
@@ -99,7 +60,7 @@ onAuthStateChanged(auth, async user => {
         snap.docChanges().forEach(ch => {
           if (ch.type==="added"||ch.type==="modified") {
             const d = ch.doc.data();
-            notificar("chat_cliente", { uid:ch.doc.id, nombre:d.nombreUsuario||d.email, texto:d.ultimoMensaje });
+            notificar(`💬 ${d.nombreUsuario||"Cliente"}`, d.ultimoMensaje||"Te escribió", "/panel-admin.html");
           }
         });
       }
@@ -113,7 +74,7 @@ onAuthStateChanged(auth, async user => {
         snap.docChanges().forEach(ch => {
           if (ch.type==="added") {
             const d = ch.doc.data();
-            notificar("nuevo_pago", { id:ch.doc.id, producto:d.producto, nombre:d.nombre||d.email, monto:d.monto, metodo:d.metodo });
+            notificar(`💰 Nuevo pago`, `${d.nombre||"Cliente"} · S/ ${d.monto||"—"}`, "/panel-admin.html");
           }
         });
       }
@@ -125,39 +86,39 @@ onAuthStateChanged(auth, async user => {
         snap.docChanges().forEach(ch => {
           if (ch.type==="added") {
             const d = ch.doc.data();
-            notificar("nueva_membresia", { id:ch.doc.id, taller:d.tallerId, nombre:d.usuarioNombre||d.usuarioEmail, precio:d.precio||d.monto });
+            notificar(`🎫 Nueva membresía`, `${d.usuarioNombre||"Cliente"} · ${d.tallerId||"Taller"}`, "/panel-admin.html");
           }
         });
       }
     ));
   }
 
-  /* CLIENTE: respuestas del admin */
+  /* CLIENTE: respuesta del admin */
   if (!esAdmin) {
+    let primerResp = true;
     _unsubs.push(onSnapshot(
       query(collection(db,"chats",user.uid,"mensajes"), where("rol","==","admin"), orderBy("fecha","desc"), limit(1)),
       snap => {
-        if (_primerChats) { _primerChats=false; return; }
+        if (primerResp) { primerResp=false; return; }
         snap.docChanges().forEach(ch => {
           if (ch.type==="added") {
-            const d = ch.doc.data();
-            notificar("chat_admin", { uid:user.uid, texto:d.texto });
+            notificar("🐾 Gato Miel te respondió", ch.doc.data().texto||"Tienes una respuesta", "/index.html");
           }
         });
       }
     ));
   }
 
-  /* TODOS: posts nuevos en comunidad */
+  /* TODOS: post nuevo en comunidad */
   _unsubs.push(onSnapshot(
     query(collection(db,"posts"), orderBy("fecha","desc"), limit(1)),
     snap => {
       if (_primerPosts) { _primerPosts=false; if(!snap.empty) _ultimoPost=snap.docs[0].id; return; }
       snap.docChanges().forEach(ch => {
         if (ch.type==="added" && ch.doc.id!==_ultimoPost) {
-          _ultimoPost = ch.doc.id;
-          const d = ch.doc.data();
-          notificar("nuevo_post", { postId:ch.doc.id, autor:d.nombreUsuario||d.autor });
+          _ultimoPost=ch.doc.id;
+          const d=ch.doc.data();
+          notificar("🏺 Nueva obra en Comunidad", `${d.nombreUsuario||"Alguien"} compartió una pieza`, "/comunidad.html");
         }
       });
     }
