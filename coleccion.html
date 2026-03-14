@@ -1813,14 +1813,14 @@ function _renderAdminPedidos() {
 
   const pend = _todosLosPedidos.filter(p => p.estado==="pendiente").length;
   const cnt = document.getElementById("adm-cnt-pendiente");
-  if (cnt) cnt.textContent = pend ? pend : "";
+  if (cnt) cnt.textContent = pend || "";
   const total = document.getElementById("adm-total-badge");
   if (total) total.textContent = `${_todosLosPedidos.length} pedidos en total`;
 
   let items = filtro === "todos" ? [..._todosLosPedidos] : _todosLosPedidos.filter(p => p.estado === filtro);
   if (buscar) {
     items = items.filter(p =>
-      (p.referencia||p.id||'').toLowerCase().includes(buscar) ||
+      (p.referencia||p.id||"").toLowerCase().includes(buscar) ||
       (p.nombre||"").toLowerCase().includes(buscar) ||
       (p.producto||"").toLowerCase().includes(buscar) ||
       (p.email||"").toLowerCase().includes(buscar)
@@ -1828,161 +1828,137 @@ function _renderAdminPedidos() {
   }
 
   if (!items.length) {
-    lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:16px;color:#bbb;font-style:italic;">${buscar ? "Sin resultados" : "Sin pedidos aquí"}</div>`;
+    lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:16px;color:#bbb;font-style:italic;">${buscar?"Sin resultados":"Sin pedidos aquí"}</div>`;
     return;
   }
 
   lista.innerHTML = "";
-
-  const mColors = {"yape":"#6c2fa5","agencia/bcp":"#5a7a2a","plin":"#0077aa","tarjeta":"#555"};
-  const mBgs    = {"yape":"#f0e6fa","agencia/bcp":"#e8f5e9","plin":"#e0f4fc","tarjeta":"#f5f5f5"};
+  const eDots  = {confirmado:"#22c55e",rechazado:"#ef4444",pendiente:"#f59e0b"};
+  const eBgs   = {confirmado:"#d1fae5",rechazado:"#fee2e2",pendiente:"#fef3c7"};
+  const eColors= {confirmado:"#065f46",rechazado:"#991b1b",pendiente:"#92400e"};
+  const eTexts = {confirmado:"Confirmado",rechazado:"Rechazado",pendiente:"Pendiente"};
+  const mColors= {yape:"#6c2fa5","agencia/bcp":"#5a7a2a",plin:"#0077aa",tarjeta:"#555"};
+  const mBgs   = {yape:"#f0e6fa","agencia/bcp":"#e8f5e9",plin:"#e0f4fc",tarjeta:"#f5f5f5"};
 
   items.forEach(p => {
-    const fecha = p.fecha?.toDate
-      ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"})
-      : "—";
+    const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
     const mk    = (p.metodo||"").toLowerCase();
     const ref   = p.referencia || p.id.slice(0,8).toUpperCase();
+    const estado= p.estado || "pendiente";
 
-    // Estado
-    const eDot  = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
-    const eColor= p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#92400e";
-    const eBg   = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fef3c7";
-    const eText = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente";
+    const row = document.createElement("div");
+    row.style.cssText = "background:white;border-radius:14px;border:1px solid #e5ddd3;padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:box-shadow .2s;";
+    row.onmouseover = () => row.style.boxShadow = "0 4px 16px rgba(0,0,0,.08)";
+    row.onmouseout  = () => row.style.boxShadow = "none";
+    row.onclick = () => abrirDetallePedido(p.id);
 
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "background:white;border-radius:16px;border:1px solid #e5ddd3;overflow:hidden;";
-
-    // ── HEADER (siempre visible) ──
-    const hdr = document.createElement("div");
-    hdr.style.cssText = "padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;";
-    hdr.onclick = () => togglePedidoCard(p.id);
-    hdr.innerHTML = `
-      <div style="width:9px;height:9px;border-radius:50%;background:${eDot};flex-shrink:0;"></div>
-      <div style="flex:1;overflow:hidden;">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+    row.innerHTML = `
+      <div style="width:9px;height:9px;border-radius:50%;background:${eDots[estado]||"#f59e0b"};flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;overflow:hidden;">
+        <div style="font-family:'Playfair Display',serif;font-size:14px;color:#1a1714;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
           ${p.producto||"—"} <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#c48a3a;">S/ ${p.monto||"—"}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;">
-          <code style="font-size:10px;font-weight:700;color:#999;background:#f5f5f5;padding:1px 6px;border-radius:4px;">${ref}</code>
-          <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:1px 8px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
-          <span style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;">${fecha}</span>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:nowrap;overflow:hidden;">
+          <code style="font-size:10px;font-weight:700;color:#aaa;background:#f5f5f5;padding:1px 6px;border-radius:4px;white-space:nowrap;">${ref}</code>
+          <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:1px 7px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};white-space:nowrap;">${p.metodo||"—"}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;white-space:nowrap;">${fecha}</span>
         </div>
       </div>
-      <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBg};color:${eColor};white-space:nowrap;flex-shrink:0;">${eText}</span>
-      <svg id="chv-${p.id}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" style="flex-shrink:0;transition:transform .22s;"><path d="M6 9l6 6 6-6"/></svg>`;
+      <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBgs[estado]};color:${eColors[estado]};white-space:nowrap;flex-shrink:0;">${eTexts[estado]}</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" style="flex-shrink:0;"><path d="M9 18l6-6-6-6"/></svg>`;
 
-    // ── BODY (expandible) ──
-    const body = document.createElement("div");
-    body.id = "body-" + p.id;
-    body.style.cssText = "display:none;border-top:1px solid #f0ebe3;padding:14px 16px;flex-direction:column;gap:10px;";
-
-    // Cliente
-    const celHtml = p.celular
-      ? `<a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;font-weight:600;text-decoration:none;">${p.celular} <small>↗ WhatsApp</small></a>`
-      : "—";
-    const clienteDiv = document.createElement("div");
-    clienteDiv.style.cssText = "background:#faf8f5;border-radius:10px;padding:12px 14px;border:1px solid #ede8de;font-family:'Inter',sans-serif;font-size:12px;color:#555;line-height:2;";
-    clienteDiv.innerHTML = `
-      <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c48a3a;margin-bottom:8px;">Cliente</div>
-      <div><strong style="color:#1a1714;display:inline-block;min-width:52px;">Nombre</strong> ${p.nombre||"—"}</div>
-      <div><strong style="color:#1a1714;display:inline-block;min-width:52px;">Email</strong> ${p.email||"—"}</div>
-      <div><strong style="color:#1a1714;display:inline-block;min-width:52px;">Celular</strong> ${celHtml}</div>`;
-    body.appendChild(clienteDiv);
-
-    // ACCIONES PRIMERO — siempre visibles al abrir
-    if (p.estado === "pendiente") {
-      const btnRow = document.createElement("div");
-      btnRow.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;";
-      btnRow.innerHTML = `
-        <button onclick="confirmarPedidoAdmin('${p.id}',this)" style="padding:13px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;box-shadow:0 4px 14px rgba(34,197,94,.3);">✓ Confirmar pago</button>
-        <button onclick="rechazarPedidoAdmin('${p.id}')" style="padding:13px;border:none;border-radius:12px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">✕ Rechazar</button>`;
-      body.appendChild(btnRow);
-    }
-
-    // Entrega
-    if (p.tipoEntrega) {
-      const entDiv = document.createElement("div");
-      const esR = p.tipoEntrega === "recoger";
-      entDiv.style.cssText = `display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:${esR?'#f0fdf4':'#eff6ff'};border-radius:10px;border:1px solid ${esR?'#bbf7d0':'#bfdbfe'};font-family:'Inter',sans-serif;`;
-      entDiv.innerHTML = `
-        <span style="font-size:18px;line-height:1.3;">${esR?'🏺':'🚚'}</span>
-        <div>
-          <div style="font-size:10px;font-weight:700;color:${esR?'#15803d':'#1d4ed8'};text-transform:uppercase;letter-spacing:.1em;">${esR?'Recojo en estudio':'Envío a domicilio'}</div>
-          ${p.direccion?`<div style="font-size:12px;color:#555;margin-top:3px;">${p.direccion}</div>`:''}
-        </div>`;
-      body.appendChild(entDiv);
-    }
-
-    // Comprobante
-    if (p.comprobanteURL) {
-      const imgWrap = document.createElement("div");
-      imgWrap.style.cssText = "border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;cursor:zoom-in;";
-      imgWrap.onclick = () => {
-        document.getElementById("lightboxPedidoImg").src = p.comprobanteURL;
-        document.getElementById("lightboxPedido").style.display = "flex";
-      };
-      imgWrap.innerHTML = `
-        <img src="${p.comprobanteURL}" style="width:100%;max-height:200px;object-fit:contain;display:block;background:#fafafa;" alt="Comprobante">
-        <div style="padding:7px;background:#fafafa;text-align:center;font-family:'Inter',sans-serif;font-size:10px;color:#bbb;border-top:1px solid #f0ebe3;">🔍 Toca para ampliar</div>`;
-      body.appendChild(imgWrap);
-    } else {
-      const noComp = document.createElement("div");
-      noComp.style.cssText = "padding:12px;background:#fafafa;border-radius:10px;border:1px dashed #ddd;text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;";
-      noComp.textContent = "Sin comprobante adjunto";
-      body.appendChild(noComp);
-    }
-
-    wrap.appendChild(hdr);
-    wrap.appendChild(body);
-    lista.appendChild(wrap);
+    lista.appendChild(row);
   });
+
+  // Guardar para acceso en popup
+  window._pedidosMap = {};
+  items.forEach(p => window._pedidosMap[p.id] = p);
+  _todosLosPedidos.forEach(p => window._pedidosMap[p.id] = p);
 }
 
-window.togglePedidoCard = function(pid) {
-  const body = document.getElementById("body-" + pid);
-  const chv  = document.getElementById("chv-"  + pid);
-  if (!body) return;
-  const open = body.style.display === "flex";
-  body.style.display     = open ? "none" : "flex";
-  body.style.flexDirection = "column";
-  if (chv) chv.style.transform = open ? "rotate(0deg)" : "rotate(180deg)";
-};
+// ── POPUP DETALLE PEDIDO ──
+window.abrirDetallePedido = function(pid) {
+  const p = window._pedidosMap?.[pid];
+  if (!p) return;
 
-window.confirmarPedidoAdmin = async (id, btn) => {
-  btn.disabled = true;
-  btn.innerHTML = `<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;"></span>Confirmando...`;
-  try {
-    await updateDoc(doc(_dbP,"pedidos",id), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
-    // El onSnapshot refresca el panel automáticamente
-  } catch(e) {
-    alert("Error al confirmar: " + e.message);
-    btn.disabled = false;
-    btn.textContent = "✓ Confirmar pago";
-  }
-};
+  const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
+  const mk    = (p.metodo||"").toLowerCase();
+  const ref   = p.referencia || p.id.slice(0,8).toUpperCase();
+  const estado= p.estado || "pendiente";
+  const mColors= {yape:"#6c2fa5","agencia/bcp":"#5a7a2a",plin:"#0077aa",tarjeta:"#555"};
+  const mBgs   = {yape:"#f0e6fa","agencia/bcp":"#e8f5e9",plin:"#e0f4fc",tarjeta:"#f5f5f5"};
+  const eBgs   = {confirmado:"#d1fae5",rechazado:"#fee2e2",pendiente:"#fef3c7"};
+  const eColors= {confirmado:"#065f46",rechazado:"#991b1b",pendiente:"#92400e"};
+  const eTexts = {confirmado:"✓ Confirmado",rechazado:"✕ Rechazado",pendiente:"⏳ Pendiente"};
 
-window.rechazarPedidoAdmin = async (id) => {
-  // Modal de confirmación propio en lugar del confirm() del browser
+  // Remove existing popup
+  document.getElementById("popupDetallePedido")?.remove();
+
   const overlay = document.createElement("div");
-  overlay.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.75);backdrop-filter:blur(8px);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;";
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:28px;max-width:340px;width:100%;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3);">
-      <div style="font-size:36px;margin-bottom:14px;">⚠️</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:#1a1714;margin:0 0 10px;">¿Rechazar este pedido?</h3>
-      <p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;line-height:1.6;margin:0 0 22px;">El cliente será notificado del estado. Esta acción se puede revertir confirmando el pedido.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <button id="btn-cancelar-rechazo" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button>
-        <button id="btn-confirmar-rechazo" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sí, rechazar</button>
+  overlay.id = "popupDetallePedido";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.82);backdrop-filter:blur(16px);z-index:20000;display:flex;align-items:center;justify-content:center;padding:16px;";
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+
+  const compImg = p.comprobanteURL
+    ? `<div style="border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;cursor:zoom-in;" onclick="document.getElementById('lightboxPedidoImg').src='${p.comprobanteURL}';document.getElementById('lightboxPedido').style.display='flex'">
+        <img src="${p.comprobanteURL}" style="width:100%;max-height:220px;object-fit:contain;display:block;background:#fafafa;">
+        <div style="padding:6px;background:#fafafa;text-align:center;font-family:'Inter',sans-serif;font-size:10px;color:#bbb;border-top:1px solid #f0ebe3;">🔍 Toca para ampliar</div>
+       </div>`
+    : `<div style="padding:14px;background:#fafafa;border-radius:10px;border:1px dashed #ddd;text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;">Sin comprobante adjunto</div>`;
+
+  const entregaHtml = p.tipoEntrega ? (() => {
+    const esR = p.tipoEntrega==="recoger";
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:${esR?'#f0fdf4':'#eff6ff'};border-radius:12px;border:1px solid ${esR?'#bbf7d0':'#bfdbfe'};">
+      <span style="font-size:20px;">${esR?'🏺':'🚚'}</span>
+      <div>
+        <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:${esR?'#15803d':'#1d4ed8'};text-transform:uppercase;letter-spacing:.1em;">${esR?'Recojo en estudio':'Envío a domicilio'}</div>
+        ${p.direccion?`<div style="font-family:'Inter',sans-serif;font-size:13px;color:#555;margin-top:4px;">${p.direccion}</div>`:''}
       </div>
     </div>`;
+  })() : "";
+
+  const accionesHtml = estado==="pendiente" ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+      <button onclick="confirmarPedidoAdmin('${pid}',this)" style="padding:14px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(34,197,94,.3);">✓ Confirmar pago</button>
+      <button onclick="rechazarPedidoAdmin('${pid}')" style="padding:14px;border:none;border-radius:14px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;">✕ Rechazar</button>
+    </div>` : `
+    <div style="text-align:center;padding:12px;background:${eBgs[estado]};border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:${eColors[estado]};">${eTexts[estado]}</div>`;
+
+  overlay.innerHTML = `
+    <div style="background:white;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.4);">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#1a1714,#2a1f10);padding:18px 20px;flex-shrink:0;position:relative;">
+        <button onclick="document.getElementById('popupDetallePedido').remove()" style="position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+          <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div style="font-family:'Playfair Display',serif;font-size:19px;color:white;font-weight:400;margin-bottom:6px;">${p.producto||"—"}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#c48a3a;">S/ ${p.monto||"—"}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
+          <code style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.08);padding:2px 7px;border-radius:4px;">${ref}</code>
+          <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);">${fecha}</span>
+        </div>
+      </div>
+      <!-- Body con scroll -->
+      <div style="flex:1;overflow-y:auto;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;">
+        ${accionesHtml}
+        <!-- Cliente -->
+        <div style="background:#faf8f5;border-radius:12px;padding:14px 16px;border:1px solid #ede8de;">
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c48a3a;margin-bottom:10px;">Cliente</div>
+          <div style="font-family:'Inter',sans-serif;font-size:13px;color:#555;display:flex;flex-direction:column;gap:7px;line-height:1.4;">
+            <div><strong style="color:#1a1714;display:inline-block;width:56px;">Nombre</strong>${p.nombre||"—"}</div>
+            <div><strong style="color:#1a1714;display:inline-block;width:56px;">Email</strong>${p.email||"—"}</div>
+            <div><strong style="color:#1a1714;display:inline-block;width:56px;">Celular</strong>
+              ${p.celular?`<a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;font-weight:600;text-decoration:none;">${p.celular} <small>↗ WhatsApp</small></a>`:"—"}
+            </div>
+          </div>
+        </div>
+        ${entregaHtml}
+        ${compImg}
+      </div>
+    </div>`;
+
   document.body.appendChild(overlay);
-  document.getElementById("btn-cancelar-rechazo").onclick = () => overlay.remove();
-  document.getElementById("btn-confirmar-rechazo").onclick = async () => {
-    overlay.remove();
-    try { await updateDoc(doc(_dbP,"pedidos",id), {estado:"rechazado", fechaRechazo:serverTimestamp()}); }
-    catch(e) { alert("Error: " + e.message); }
-  };
 };
 
 document.addEventListener("keydown", e => {
