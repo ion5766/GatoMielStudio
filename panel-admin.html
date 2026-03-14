@@ -6,7 +6,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#c48a3a">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes"
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Gato Miel">
 <link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
@@ -520,15 +520,14 @@ body {
 </style>
 </style>
 
-
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({ appId: "TU_APP_ID_AQUI" });
+    await OneSignal.init({
+      appId: "0bd6234e-b932-43b7-bb66-4606557f79be",
+    });
   });
-  window._osAppId = "0bd6234e-b932-43b7-bb66-4606557f79be;
-  window._osKey   = "v7beupzoqubuf734gfuxy6j2w";
 </script>
   
 </head>
