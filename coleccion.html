@@ -938,6 +938,48 @@ onAuthStateChanged(auth, async (user) => {
 @media (max-width:1100px) { .cl-grid { grid-template-columns:repeat(2,1fr); } }
 @media (max-width:900px) { .cl-hero { padding:90px 7% 70px; flex-direction:column; min-height:auto; } .cl-hero-deco { display:none; } .cl-tienda { padding:70px 7%; } }
 @media (max-width:600px) { .cl-grid { grid-template-columns:1fr; max-width:380px; } }
+
+
+/* ═══ MOBILE FIXES MODAL PAGO ═══ */
+@media (max-width: 768px) {
+  .cl-modal {
+    padding: 10px 8px !important;
+    align-items: flex-end !important; /* modal desde abajo en móvil */
+  }
+  .cl-modal-box {
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 24px 24px 0 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .cl-modal-body {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cl-modal-pie {
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+  }
+  /* X de cerrar más grande y visible */
+  .cl-modal-cerrar {
+    width: 34px !important;
+    height: 34px !important;
+    background: rgba(255,255,255,0.15) !important;
+    top: 10px !important; right: 10px !important;
+  }
+  .cl-modal-cerrar svg {
+    width: 14px !important; height: 14px !important;
+  }
+  /* Imagen comprobante más compacta */
+  .ht-comp-zone {
+    min-height: 80px !important;
+    padding: 14px !important;
+  }
+  /* QR más pequeño */
+  .yape-qr-wrapper img, .plin-qr-wrapper img {
+    max-width: 160px !important;
+  }
+}
 </style>
 
 <!-- SDK Mercado Pago -->
@@ -996,6 +1038,12 @@ function seleccionarAvatar(img) {
 }
 
 async function comprar(nombre, monto) {
+  // Si es invitado, mostrar popup de login en vez de modal de pago
+  if (!window._firebaseUser) {
+    const ok = confirm("Para comprar necesitas iniciar sesión.\n\n¿Ir a la página de acceso?");
+    if (ok) window.location.href = "entrada.html";
+    return;
+  }
   productoActual = { nombre, monto };
   window.productoActual = productoActual; // expose to module scripts
 
@@ -2077,6 +2125,5 @@ document.addEventListener("keydown", e => {
 #lista-admin-pedidos::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
 #lista-admin-pedidos::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
 </style>
-
 </body>
 </html>
