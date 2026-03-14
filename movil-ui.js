@@ -4,15 +4,23 @@
 
   var path = window.location.pathname.toLowerCase();
   var esEntrada = path.includes("entrada");
-  if (esEntrada) { document.body.classList.add("mu-entrada"); return; }
+  var esAdmin   = path.includes("panel-admin");
+
+  // En entrada y panel-admin no inyectar nada
+  if (esEntrada || esAdmin) {
+    document.body.classList.add("mu-entrada");
+    return;
+  }
 
   var paginaActual =
-    path.includes("historial") || path.includes("taller") ? "talleres"
+    path.includes("historial") || (path.includes("taller") && !path.includes("tablon")) ? "talleres"
     : path.includes("coleccion")  ? "coleccion"
     : path.includes("comunidad")  ? "comunidad"
     : path.includes("tablon")     ? "tablon"
     : path.includes("quienes")    ? "quienes"
     : "inicio";
+
+  var ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 
   /* ══ TOPBAR ══ */
   var topbar = document.createElement("div");
@@ -25,7 +33,7 @@
     '<div class="mu-topbar-right" id="mu-topbar-right"></div>';
   document.body.insertBefore(topbar, document.body.firstChild);
 
-  /* ══ NAVBAR INFERIOR ══ */
+  /* ══ NAVBAR ══ */
   var PAGINAS = [
     { id:"talleres",  href:"historial-De_Talleres.html", label:"Talleres",
       svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>' },
@@ -41,6 +49,7 @@
 
   var navbar = document.createElement("nav");
   navbar.className = "mu-navbar";
+  navbar.id = "mu-navbar";
 
   PAGINAS.forEach(function(item) {
     var a = document.createElement("a");
@@ -57,30 +66,37 @@
   });
   document.body.appendChild(navbar);
 
-  /* ══ SWIPE táctil ══ */
+  /* ══ SWIPE ══ */
   var ORDEN = ["talleres","coleccion","inicio","comunidad","tablon"];
-  var HREFS  = {
-    talleres:"historial-De_Talleres.html", coleccion:"coleccion.html",
-    inicio:"index.html", comunidad:"comunidad.html", tablon:"tablon-de-anuncios.html"
-  };
+  var HREFS  = { talleres:"historial-De_Talleres.html", coleccion:"coleccion.html", inicio:"index.html", comunidad:"comunidad.html", tablon:"tablon-de-anuncios.html" };
   var idxActual = ORDEN.indexOf(paginaActual);
-  var touchX = 0, touchY = 0;
+  var touchX = 0, touchY = 0, swipeOK = false;
 
   document.addEventListener("touchstart", function(e) {
     touchX = e.changedTouches[0].clientX;
     touchY = e.changedTouches[0].clientY;
+    swipeOK = true;
+  }, { passive:true });
+
+  // Cancelar swipe si el usuario está interactuando con un modal/scroll interno
+  document.addEventListener("touchmove", function(e) {
+    var dy = Math.abs(e.changedTouches[0].clientY - touchY);
+    var dx = Math.abs(e.changedTouches[0].clientX - touchX);
+    if (dy > dx) swipeOK = false; // swipe vertical cancela
   }, { passive:true });
 
   document.addEventListener("touchend", function(e) {
+    if (!swipeOK) return;
     var dx = e.changedTouches[0].clientX - touchX;
     var dy = e.changedTouches[0].clientY - touchY;
-    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+    // No swipear si hay un modal abierto
+    if (document.querySelector('.cl-modal.open, [id*="modal"][style*="flex"], [id*="Modal"][style*="flex"]')) return;
     var destIdx = dx < 0 ? idxActual + 1 : idxActual - 1;
     if (destIdx < 0 || destIdx >= ORDEN.length) return;
-    var dest = HREFS[ORDEN[destIdx]];
     document.body.style.opacity = "0";
     document.body.style.transition = "opacity 0.15s";
-    setTimeout(function(){ window.location.href = dest; }, 150);
+    setTimeout(function(){ window.location.href = HREFS[ORDEN[destIdx]]; }, 150);
   }, { passive:true });
 
   /* ══ OVERLAY + SHEET ══ */
@@ -116,10 +132,19 @@
   function setupAuth(user) {
     var tr = document.getElementById("mu-topbar-right");
     if (!tr) return;
+    var isAdmin = user && ADMIN_EMAILS.indexOf(user.email ? user.email.toLowerCase() : '') !== -1;
 
     if (user) {
       var src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-      tr.innerHTML = '<img class="mu-topbar-avatar" id="mu-topbar-avatar" src="' + src + '" onerror="this.src=\'Assets/Img/Avatares/GatoMiel.jpeg\'">';
+      var topbarHTML = '<img class="mu-topbar-avatar" id="mu-topbar-avatar" src="' + src + '" onerror="this.src=\'Assets/Img/Avatares/GatoMiel.jpeg\'">';
+      // Si es admin, agregar icono de panel de mensajes
+      if (isAdmin) {
+        topbarHTML += '<a href="panel-admin.html" class="mu-admin-btn" id="mu-admin-btn" title="Panel de mensajes">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+          '<span id="mu-admin-badge" style="display:none;"></span>' +
+        '</a>';
+      }
+      tr.innerHTML = topbarHTML;
       var av = document.getElementById("mu-topbar-avatar");
       if (av) av.addEventListener("click", abrirSheet);
 
@@ -130,14 +155,27 @@
 
       var sb = document.getElementById("mu-sheet-btns");
       if (sb) {
-        var acc = [
-          {l:"🛍 Mis pedidos",      f:"abrirModalCompras"},
-          {l:"🎫 Mis membresías",   f:"abrirModalMembresias"},
-          {l:"Personalizar perfil", f:"abrirPersonalizar"},
-          {l:"Cerrar sesión",       f:"cerrarSesion", d:true},
-        ];
+        var acc = [];
+        if (!isAdmin) {
+          acc.push({l:"🛍 Mis pedidos",      f:"abrirModalCompras"});
+          acc.push({l:"🎫 Mis membresías",   f:"abrirModalMembresias"});
+        } else {
+          acc.push({l:"💬 Panel de mensajes", href:"panel-admin.html"});
+        }
+        acc.push({l:"Personalizar perfil", f:"abrirPersonalizar"});
+        acc.push({l:"Cerrar sesión",       f:"cerrarSesion", d:true});
+
         sb.innerHTML = "";
         acc.forEach(function(a) {
+          if (a.href) {
+            var link = document.createElement("a");
+            link.href = a.href;
+            link.className = "mu-sheet-btn";
+            link.style.textDecoration = "none";
+            link.textContent = a.l;
+            sb.appendChild(link);
+            return;
+          }
           var btn = document.createElement("button");
           btn.className = "mu-sheet-btn";
           if (a.d) btn.style.color = "#f87171";
@@ -148,19 +186,34 @@
               if (typeof window[a.f] === "function") {
                 window[a.f]();
               } else {
-                // Fallback: buscar en userDropdown si la función no existe globalmente
+                // fallback: click button in dropdown
                 var btns = document.querySelectorAll("#userDropdown button");
-                btns.forEach(function(b){
-                  if (b.textContent.toLowerCase().includes(a.l.toLowerCase().replace(/[🛍🎫]/g,'').trim())) {
-                    b.click();
+                for (var i=0; i<btns.length; i++) {
+                  var t = btns[i].textContent.toLowerCase();
+                  if ((a.f.includes("Compras") && t.includes("compra")) ||
+                      (a.f.includes("Membresias") && t.includes("membres")) ||
+                      (a.f.includes("Personalizar") && t.includes("personal")) ||
+                      (a.f.includes("cerrar") && t.includes("cerrar"))) {
+                    btns[i].click(); break;
                   }
-                });
+                }
               }
             }, 250);
           });
           sb.appendChild(btn);
         });
       }
+
+      // Badge de mensajes no leídos para admin (Firestore)
+      if (isAdmin) {
+        setTimeout(function() {
+          try {
+            var scripts = document.querySelectorAll('script[type="module"]');
+            // El badge se actualiza via index.html admin script ya existente
+          } catch(e) {}
+        }, 2000);
+      }
+
     } else {
       tr.innerHTML = '<a href="entrada.html" class="mu-topbar-login">🐾 Entrar</a>';
       var sn = document.getElementById("mu-sheet-name");  if(sn) sn.textContent = "Invitado";
@@ -173,13 +226,8 @@
   var tries = 0;
   var t = setInterval(function() {
     tries++;
-    if (typeof window._firebaseUser !== "undefined") {
-      clearInterval(t);
-      setupAuth(window._firebaseUser);
-    } else if (tries > 60) {
-      clearInterval(t);
-      setupAuth(null);
-    }
+    if (typeof window._firebaseUser !== "undefined") { clearInterval(t); setupAuth(window._firebaseUser); }
+    else if (tries > 60) { clearInterval(t); setupAuth(null); }
   }, 100);
 
 })();
