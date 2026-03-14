@@ -3,10 +3,16 @@
 <head>
 
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#c48a3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gato Miel">
+<link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Admin | Gato Miel Estudio</title>
 
-<link rel="stylesheet" href="movil-ui.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
@@ -727,6 +733,9 @@ function abrirConversacion(uid, data) {
 
   area.innerHTML = `
     <div class="chat-top">
+      <button class="mu-back-chat-btn" onclick="volverALista()" title="Volver">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
       <div class="chat-top-info">
         <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
@@ -788,6 +797,14 @@ function abrirConversacion(uid, data) {
         </svg>
       </button>
     </div>`;
+
+  // Móvil: mostrar chat a pantalla completa
+  if (window.innerWidth <= 768) {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = 'none';
+    area.style.display = 'flex';
+    area.classList.add('mu-abierto');
+  }
 
   // Escuchar mensajes
   if (unsubMensajes) unsubMensajes();
@@ -1081,167 +1098,83 @@ window.cancelarArchivoAdmin = function() {
   if (p) { p.style.display="none"; document.getElementById("admin-preview-img").src=""; document.getElementById("admin-preview-name").textContent=""; }
 };
 
+
+
+// ── Móvil: volver a lista ──
+window.volverALista = function() {
+  if (window.innerWidth > 768) return;
+  const sidebar  = document.querySelector('.sidebar');
+  const chatArea = document.getElementById('chat-area');
+  if (sidebar)  { sidebar.style.display  = ''; sidebar.style.width = ''; }
+  if (chatArea) { chatArea.style.display = 'none'; }
+  chatArea.innerHTML = '<div class="chat-placeholder" id="chat-placeholder"><span>💬</span><p>Selecciona una conversación<br>para responder</p></div>';
+  salaActiva = null;
+  if (unsubMensajes) { unsubMensajes(); unsubMensajes = null; }
+  if (unsubSala)     { unsubSala();     unsubSala = null; }
+};
+
 </script>
 
 
 <style>
-/* ═══════════════════════════════════
-   PANEL ADMIN — MÓVIL ESTILO WHATSAPP
-   ═══════════════════════════════════ */
+/* ═══ PANEL ADMIN MÓVIL — WHATSAPP STYLE ═══ */
 @media (max-width: 768px) {
-  /* Anular padding de movil-ui */
-  body { padding-top: 0 !important; padding-bottom: 0 !important; overflow: hidden; }
-  .mu-topbar, .mu-navbar, .mu-user-sheet, .mu-overlay { display: none !important; }
+  body { overflow: hidden; }
+  .mu-topbar, .mu-navbar, .mu-overlay, .mu-user-sheet { display: none !important; }
 
-  /* Header compacto */
   .admin-header { padding: 10px 14px; }
-  .admin-header-title { font-size: 14px; }
-  .admin-header-sub   { font-size: 10px; }
+  .admin-header-title { font-size: 15px; }
 
-  /* Tabs scrollables */
-  .tabs-bar { padding: 0 6px; overflow-x: auto; scrollbar-width: none; }
+  .tabs-bar { overflow-x: auto; scrollbar-width: none; padding: 0 6px; }
   .tabs-bar::-webkit-scrollbar { display: none; }
-  .tab-btn { padding: 10px 11px; font-size: 11px; white-space: nowrap; }
+  .tab-btn { font-size: 11px; padding: 10px 11px; }
 
-  /* Body completo */
-  .admin-body { height: calc(100vh - 90px); }
+  .admin-body { height: calc(100vh - 88px); }
 
-  /* SIDEBAR: pantalla completa por defecto */
+  /* Sidebar ocupa toda la pantalla */
   .sidebar {
     width: 100% !important;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
     border-right: none !important;
-    transition: transform 0.25s ease;
-  }
-  .sidebar.mu-oculto {
-    display: none !important;
   }
 
-  /* CHAT AREA: oculta por defecto, aparece al seleccionar */
+  /* Chat area: oculto hasta que se selecciona un chat */
   .chat-area {
-    display: none !important;
+    display: none;
     position: fixed !important;
     inset: 0 !important;
     z-index: 9000 !important;
     background: #f3ece3;
     flex-direction: column;
   }
-  .chat-area.mu-chat-visible {
+  .chat-area.mu-abierto {
     display: flex !important;
   }
 
-  /* Botón volver WhatsApp style */
-  .mu-back-btn {
+  /* Botón ← dentro del header del chat */
+  .mu-back-chat-btn {
     display: flex !important;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background: #1a1714;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    flex-shrink: 0;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: none; border: none;
+    color: #c48a3a; cursor: pointer;
+    flex-shrink: 0; border-radius: 50%;
     -webkit-tap-highlight-color: transparent;
-    width: 100%;
-    text-align: left;
+    margin-right: 4px;
   }
-  .mu-back-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .mu-back-chat-btn:active { background: rgba(196,138,58,0.1); }
 
-  /* Chat top info */
-  .chat-top { padding: 10px 14px !important; }
   .chat-top img { width: 38px !important; height: 38px !important; }
-  .chat-top-name { font-size: 14px !important; }
-  .chat-top-email { font-size: 10px !important; }
-
-  /* Mensajes */
-  #admin-messages { padding: 10px !important; }
-  .chat-msg { max-width: 88% !important; font-size: 13px !important; }
-
-  /* Input */
-  .chat-bottom { padding: 8px 10px !important; gap: 6px !important; }
-  #admin-input { font-size: 14px !important; }
-
-  /* Items lista más grandes para touch */
-  .user-item { padding: 13px 14px !important; }
+  .chat-top { padding: 10px 12px !important; gap: 8px !important; }
+  .user-item { padding: 13px 14px !important; min-height: 64px; }
   .user-item img { width: 44px !important; height: 44px !important; }
-  .user-item-name { font-size: 14px !important; }
-  .user-item-preview { font-size: 12px !important; }
-
-  /* Sidebar list ocupa todo */
-  .sidebar-list { flex: 1; overflow-y: auto; }
-
-  /* Botones de acción más pequeños */
-  .btn-accion { padding: 6px 10px !important; font-size: 11px !important; }
+  .chat-bottom { padding: 8px 10px !important; }
+  #admin-messages { padding: 10px !important; }
+  .chat-msg { max-width: 88% !important; }
 }
 @media (min-width: 769px) {
-  .mu-back-btn { display: none !important; }
+  .mu-back-chat-btn { display: none !important; }
 }
 </style>
-
-<script>
-/* Panel admin — navegación móvil WhatsApp */
-(function() {
-  if (window.innerWidth > 768) return;
-
-  var sidebar  = document.querySelector('.sidebar');
-  var chatArea = document.getElementById('chat-area');
-  if (!sidebar || !chatArea) return;
-
-  /* Botón ← Chats */
-  var backBtn = document.createElement('button');
-  backBtn.className = 'mu-back-btn';
-  backBtn.innerHTML =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
-    '<span>Chats</span>';
-  backBtn.addEventListener('click', function() {
-    chatArea.classList.remove('mu-chat-visible');
-    sidebar.classList.remove('mu-oculto');
-    // Actualizar unread badge
-  });
-  chatArea.insertBefore(backBtn, chatArea.firstChild);
-
-  /* Interceptar clicks en user-item para mostrar chat */
-  document.addEventListener('click', function(e) {
-    var item = e.target.closest('.user-item');
-    if (item && window.innerWidth <= 768) {
-      setTimeout(function() {
-        sidebar.classList.add('mu-oculto');
-        chatArea.classList.add('mu-chat-visible');
-        // Scroll al final de mensajes
-        var msgs = document.getElementById('admin-messages');
-        if (msgs) setTimeout(function(){ msgs.scrollTop = msgs.scrollHeight; }, 200);
-      }, 80);
-    }
-  });
-
-  /* Notificaciones push via Notification API */
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
-
-  /* Observar cambios en la lista para notificar mensajes nuevos */
-  var _knownUnread = 0;
-  setInterval(function() {
-    var dots = document.querySelectorAll('.unread-dot');
-    var n = dots.length;
-    if (n > _knownUnread && _knownUnread >= 0) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Gato Miel Chat 🐾', {
-          body: 'Tienes ' + n + ' mensaje(s) nuevo(s)',
-          icon: 'Assets/Img/Logo.jpg'
-        });
-      }
-    }
-    _knownUnread = n;
-  }, 3000);
-
-})();
-</script>
-
+<script type="module" src="pwa.js"></script>
 </body>
 </html>
