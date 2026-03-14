@@ -141,7 +141,7 @@
       if (isAdmin) {
         topbarHTML += '<a href="panel-admin.html" class="mu-admin-btn" id="mu-admin-btn" title="Panel de mensajes">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-          '<span id="mu-admin-badge" style="display:none;"></span>' +
+          '<span id="mu-admin-badge"></span>' +
         '</a>';
       }
       tr.innerHTML = topbarHTML;
@@ -204,14 +204,33 @@
         });
       }
 
-      // Badge de mensajes no leídos para admin (Firestore)
+      // Badge de mensajes no leídos para admin — Firestore listener
       if (isAdmin) {
         setTimeout(function() {
           try {
-            var scripts = document.querySelectorAll('script[type="module"]');
-            // El badge se actualiza via index.html admin script ya existente
+            // Importar Firebase dinámicamente para el badge
+            var s = document.createElement('script');
+            s.type = 'module';
+            s.textContent = [
+              'import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";',
+              'import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";',
+              'const _a = getApps().length ? getApps()[0] : initializeApp({apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"});',
+              'const _db = getFirestore(_a);',
+              'const _q  = query(collection(_db,"chats"), where("noLeidosAdmin","==",true));',
+              'onSnapshot(_q, function(snap) {',
+              '  var badge = document.getElementById("mu-admin-badge");',
+              '  if (!badge) return;',
+              '  if (snap.size > 0) {',
+              '    badge.textContent = snap.size > 9 ? "9+" : snap.size;',
+              '    badge.style.display = "flex";',
+              '  } else {',
+              '    badge.style.display = "none";',
+              '  }',
+              '});'
+            ].join('\n');
+            document.head.appendChild(s);
           } catch(e) {}
-        }, 2000);
+        }, 1500);
       }
 
     } else {
