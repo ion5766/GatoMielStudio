@@ -4,605 +4,18 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Admin | Gato Miel Estudio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Quiénes Somos | Gato Miel Estudio</title>
 
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f3ece3;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ── HEADER ── */
-.admin-header {
-  background: #1a1714;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-.admin-header-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px;
-  color: white;
-  font-weight: 500;
-}
-.admin-header-sub {
-  font-size: 11px;
-  color: #c48a3a;
-  margin-top: 2px;
-}
-.btn-salir {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.7);
-  padding: 7px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: 0.2s;
-}
-.btn-salir:hover { background: rgba(255,255,255,0.15); color: white; }
-
-/* ── TABS ── */
-.tabs-bar {
-  background: white;
-  border-bottom: 1px solid #f0ebe4;
-  padding: 0 20px;
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.tab-btn {
-  padding: 12px 16px;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  color: #aaa;
-  border: none;
-  background: none;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: 0.2s;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-.tab-btn:hover { color: #555; }
-.tab-btn.activo { color: #c48a3a; border-bottom-color: #c48a3a; }
-.tab-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px; height: 16px;
-  background: #e74c3c;
-  color: white;
-  border-radius: 50%;
-  font-size: 9px;
-  margin-left: 6px;
-  font-weight: 700;
-}
-
-/* ── LAYOUT PRINCIPAL ── */
-.admin-body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 270px;
-  background: white;
-  border-right: 1px solid #f0ebe4;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
-.sidebar-section {
-  padding: 12px 16px 8px;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #bbb;
-  font-weight: 400;
-  border-bottom: 1px solid #faf7f4;
-}
-.sidebar-list {
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #f0ebe4 transparent;
-}
-
-/* Item conversación */
-.user-item {
-  padding: 12px 14px;
-  cursor: pointer;
-  border-bottom: 1px solid #faf7f4;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background 0.15s;
-  position: relative;
-}
-.user-item:hover { background: #fdf8f3; }
-.user-item.activo { background: #fdf6ec; border-left: 3px solid #c48a3a; padding-left: 11px; }
-.user-item.cerrado { opacity: 0.45; }
-
-.user-item img {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.user-item-info { flex: 1; overflow: hidden; }
-.user-item-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: #1a1714;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.user-item-preview {
-  font-size: 11px;
-  color: #aaa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 2px;
-}
-.user-item-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.unread-dot {
-  width: 9px; height: 9px;
-  background: #e74c3c;
-  border-radius: 50%;
-}
-.estado-tag {
-  font-size: 9px;
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-.estado-tag.abierto { background: #e8f5e9; color: #2e7d32; }
-.estado-tag.cerrado { background: #f5f5f5; color: #999; }
-
-.sidebar-empty {
-  padding: 30px 16px;
-  text-align: center;
-  color: #bbb;
-  font-size: 12px;
-  line-height: 1.7;
-}
-
-/* ── CHAT AREA ── */
-.chat-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-}
-
-.chat-placeholder {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: #bbb;
-  font-size: 13px;
-  text-align: center;
-  line-height: 1.6;
-}
-.chat-placeholder span { font-size: 44px; }
-
-/* Chat top bar */
-.chat-top {
-  padding: 12px 18px;
-  background: white;
-  border-bottom: 1px solid #f0ebe4;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-.chat-top img {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.chat-top-info { flex: 1; }
-.chat-top-name { font-size: 14px; font-weight: 500; color: #1a1714; }
-.chat-top-email { font-size: 11px; color: #aaa; margin-top: 1px; }
-
-/* Botones acción */
-.chat-acciones {
-  display: flex;
-  gap: 8px;
-}
-.btn-accion {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: 0.2s;
-  letter-spacing: 0.04em;
-  border: none;
-}
-.btn-cerrar-chat {
-  background: #fff0f0;
-  color: #e74c3c;
-  border: 1px solid #ffd5d5;
-}
-.btn-cerrar-chat:hover { background: #ffe0e0; }
-.btn-reabrir-chat {
-  background: #f0fdf0;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
-}
-.btn-reabrir-chat:hover { background: #e0f7e0; }
-
-/* ── Timer de inactividad ── */
-#timer-container {
-  display: flex; align-items: center; gap: 8px;
-  background: #fdf8f2; border: 1px solid #f0e4cc;
-  border-radius: 20px; padding: 4px 12px 4px 10px;
-}
-#timer-bar-wrap {
-  width: 60px; height: 5px; background: #f0ebe4;
-  border-radius: 10px; overflow: hidden;
-}
-#timer-bar {
-  height: 100%; border-radius: 10px;
-  background: #c48a3a;
-  transition: width 1s linear, background 0.5s;
-}
-#timer-label {
-  font-family: 'Inter', sans-serif; font-size: 12px;
-  font-weight: 600; color: #c48a3a; min-width: 32px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Etiqueta de quién escribió (admin) ── */
-.admin-msg-label {
-  font-family: 'Inter', sans-serif; font-size: 10px;
-  color: #c48a3a; letter-spacing: 0.05em;
-  text-align: right; padding: 6px 4px 2px;
-  opacity: 0.7;
-}
-
-/* ── Tag admin en sidebar ── */
-.tag-admin-resp {
-  display: inline-block;
-  background: #fdf0dd; color: #c48a3a;
-  font-size: 9px; font-weight: 600;
-  padding: 1px 6px; border-radius: 8px;
-  letter-spacing: 0.04em; margin-left: 4px;
-  vertical-align: middle;
-}
-
-/* Aviso chat cerrado */
-.chat-cerrado-aviso {
-  background: #faf7f4;
-  border-top: 1px solid #f0ebe4;
-  padding: 12px 18px;
-  text-align: center;
-  font-size: 12px;
-  color: #aaa;
-  font-style: italic;
-}
-
-/* Mensajes */
-#admin-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #faf7f4;
-  scrollbar-width: thin;
-  scrollbar-color: #f0ebe4 transparent;
-}
-
-.chat-msg {
-  max-width: 72%;
-  padding: 9px 13px;
-  border-radius: 14px;
-  font-size: 13px;
-  line-height: 1.55;
-  word-break: break-word;
-}
-.chat-msg.usuario {
-  align-self: flex-start;
-  background: white;
-  color: #1a1714;
-  border: 1px solid #f0ebe4;
-  border-bottom-left-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-}
-.chat-msg.admin {
-  align-self: flex-end;
-  background: #1a1714;
-  color: white;
-  border-bottom-right-radius: 4px;
-}
-.chat-msg-meta {
-  font-size: 10px;
-  opacity: 0.4;
-  margin-top: 3px;
-  display: block;
-}
-.chat-msg.usuario .chat-msg-meta { text-align: left; }
-.chat-msg.admin .chat-msg-meta { text-align: right; }
-
-.chat-msg.bot-msg {
-  align-self: flex-start;
-  background: #fdf6ec;
-  color: #c48a3a;
-  border: 1px solid #f0e0b8;
-  border-bottom-left-radius: 4px;
-  font-style: italic;
-  font-size: 12px;
-}
-
-/* Footer input */
-.chat-bottom {
-  padding: 10px 14px;
-  border-top: 1px solid #f0ebe4;
-  background: white;
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-#admin-input {
-  flex: 1;
-  border: 1.5px solid #f0ebe4;
-  border-radius: 20px;
-  padding: 9px 14px;
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
-  resize: none;
-  outline: none;
-  max-height: 80px;
-  overflow-y: auto;
-  transition: border-color 0.2s;
-  line-height: 1.4;
-}
-#admin-input:focus { border-color: #c48a3a; }
-.btn-enviar-admin {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: #c48a3a;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s, transform 0.2s;
-}
-.btn-enviar-admin:hover { background: #a8742f; transform: scale(1.08); }
-
-/* Límite de chats */
-.limite-aviso {
-  background: #fff8e1;
-  border: 1px solid #ffe082;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #795548;
-  margin: 10px 14px 0;
-  display: none;
-}
-
-/* Botones adjuntar */
-.admin-attach-btn {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: #f0ebe4; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: background 0.2s;
-  font-size: 17px; line-height: 1;
-}
-.admin-attach-btn:hover, .admin-attach-btn:active { background: #e3d9cc; }
-.admin-attach-btn.grabando { background: #e74c3c !important; animation: pulseRec 1s infinite; }
-@keyframes pulseRec { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
-
-/* Preview archivo admin */
-.admin-preview {
-  padding: 8px 14px; background: #f8f5f1;
-  border-top: 1px solid #f0ebe4;
-  display: none; align-items: center; gap: 8px;
-}
-.admin-preview img {
-  width: 38px; height: 38px; border-radius: 8px; object-fit: cover;
-}
-.admin-preview-name {
-  flex: 1; font-size: 12px; color: #666;
-  font-family: 'Inter', sans-serif;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.admin-preview-cancel {
-  background: none; border: none; color: #aaa;
-  font-size: 16px; cursor: pointer; padding: 0;
-}
-.admin-preview-cancel:hover { color: #e74c3c; }
-/* Emoji picker admin */
-.admin-emoji-picker {
-  position: absolute;
-  bottom: 62px; left: 14px;
-  background: white;
-  border: 1px solid #f0ebe4;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.13);
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 9999;
-  width: 290px;
-}
-.admin-emoji-picker.visible { display: flex; }
-.emoji-picker-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 11px; color: #c48a3a;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 2px 4px 4px;
-  border-bottom: 1px solid #f5f0ea;
-}
-.emoji-grid { display: flex; flex-wrap: wrap; gap: 2px; }
-.emoji-btn {
-  width: 34px; height: 34px;
-  background: none; border: none; border-radius: 8px;
-  cursor: pointer; font-size: 20px; line-height: 1;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
-.emoji-btn:hover { background: #f5f0ea; }
-.emoji-section-label {
-  font-size: 10px; color: #bbb;
-  font-family: 'Inter', sans-serif;
-  width: 100%; padding: 4px 2px 1px;
-  letter-spacing: 0.05em;
-}
-</style>
-
-<!-- Inputs ocultos para el admin -->
-<input type="file" id="admin-file-input" accept="image/*" style="display:none">
-<input type="file" id="admin-audio-input" accept="audio/*" style="display:none">
-
-<style>
-#sin-acceso {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  text-align: center;
-  padding: 40px;
-}
-#sin-acceso h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 500;
-  color: #1a1714;
-}
-#sin-acceso p { font-size: 14px; color: #888; line-height: 1.7; }
-#sin-acceso a { font-size: 14px; color: #c48a3a; font-weight: 500; text-decoration: none; }
-</style>
-</style>
-
-</head>
-<body>
-
-<!-- Sin acceso -->
-<div id="sin-acceso">
-  <span style="font-size:44px;">🔒</span>
-  <h2>Verificando acceso...</h2>
-  <p>Un momento por favor.</p>
-</div>
-
-<!-- Panel -->
-<div id="panel" style="display:none; flex-direction:column; height:100vh;">
-
-  <div class="admin-header">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <a href="index.html" style="
-        display:flex;align-items:center;gap:6px;
-        color:rgba(255,255,255,0.5);text-decoration:none;
-        font-size:12px;font-family:'Inter',sans-serif;
-        transition:color 0.2s;
-      " onmouseover="this.style.color='#c48a3a'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        Inicio
-      </a>
-      <div>
-        <div class="admin-header-title">Panel de mensajes</div>
-        <div class="admin-header-sub">Gato Miel Estudio</div>
-      </div>
-    </div>
-    <button class="btn-salir" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
-  </div>
-
-  <!-- Tabs -->
-  <div class="tabs-bar">
-    <button class="tab-btn activo" onclick="cambiarTab('abiertos', this)">
-      Abiertos <span id="badge-abiertos" class="tab-badge" style="display:none"></span>
-    </button>
-    <button class="tab-btn" onclick="cambiarTab('cerrados', this)">
-      Cerrados
-    </button>
-    <button class="tab-btn" onclick="cambiarTab('todos', this)">
-      Todos
-    </button>
-  </div>
-
-  <!-- Aviso límite -->
-  <div class="limite-aviso" id="limite-aviso">
-    ⚠️ Tienes 4 chats abiertos. Cierra uno antes de reabrir otro.
-  </div>
-
-  <div class="admin-body">
-
-    <div class="sidebar">
-      <div class="sidebar-list" id="sidebar-list">
-        <div class="sidebar-empty">Cargando conversaciones...</div>
-      </div>
-    </div>
-
-    <div class="chat-area" id="chat-area">
-      <div class="chat-placeholder" id="chat-placeholder">
-        <span>💬</span>
-        <p>Selecciona una conversación<br>para responder</p>
-      </div>
-    </div>
-
-  </div>
-</div>
-
+<link rel="stylesheet" href="CSS/Styles.css">
+<link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore, collection, addDoc,
-  query, orderBy, where, onSnapshot,
-  doc, updateDoc, setDoc, getDoc, getDocs,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const ADMIN_EMAILS = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
-const MAX_CHATS_ABIERTOS = 4;
-const MSG_AVISO     = "¿Sigues ahí? 🐾";
-const MSG_DESPEDIDA = "Parece que te fuiste 😊 No te preocupes, aquí estaremos cuando nos necesites 🐾";
-const TIMER_TOTAL   = 5 * 60 * 1000;  // 5 min
-const TIMER_AVISO   = 3 * 60 * 1000;  // 3 min → mensaje ¿Sigues ahí?
-
-const firebaseConfig = {
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const _fc = {
   apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
   authDomain:"gato-miel-estudio.firebaseapp.com",
   projectId:"gato-miel-estudio",
@@ -610,478 +23,702 @@ const firebaseConfig = {
   messagingSenderId:"150671559458",
   appId:"1:150671559458:web:6daaf4a78150706db0337b"
 };
-
-const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-let salaActiva     = null;
-let salaActivaData = null;
-let unsubMensajes  = null;
-let unsubSala      = null;   // para escuchar cambios de la sala activa
-let tabActual      = "abiertos";
-let todasLasSalas  = [];
-let adminEmail     = "";
-
-// ── Timers por sala: { uid: { timerAviso, timerCierre, intervalo, inicio } }
-const _timers = {};
-
-// ══════════════════════════════════════════
-//  AUTH
-// ══════════════════════════════════════════
-onAuthStateChanged(auth, (user) => {
-  const sinAcceso = document.getElementById("sin-acceso");
-  const panel     = document.getElementById("panel");
-
-  if (!user) {
-    sinAcceso.innerHTML = `<span style="font-size:44px">🔒</span><h2>Acceso restringido</h2><p>Inicia sesión como administradora.</p><a href="entrada.html">Iniciar sesión →</a>`;
-    return;
-  }
-  if (!ADMIN_EMAILS.includes(user.email?.toLowerCase())) {
-    sinAcceso.innerHTML = `<span style="font-size:44px">🚫</span><h2>Sin acceso</h2><p>Esta página es solo para las administradoras.</p><a href="index.html">← Volver al inicio</a>`;
-    return;
-  }
-  adminEmail = user.email?.toLowerCase();
-  sinAcceso.style.display = "none";
-  panel.style.display     = "flex";
-  cargarConversaciones();
-});
-
-// ══════════════════════════════════════════
-//  SIDEBAR
-// ══════════════════════════════════════════
-function cargarConversaciones() {
-  const q = query(collection(db,"chats"), orderBy("ultimaFecha","desc"));
-  onSnapshot(q, snap => {
-    todasLasSalas = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-    renderSidebar();
-    actualizarBadges();
-  });
-}
-
-function renderSidebar() {
-  const lista = document.getElementById("sidebar-list");
-  let filtradas = todasLasSalas;
-  if (tabActual === "abiertos") filtradas = todasLasSalas.filter(s => s.estado !== "cerrado");
-  if (tabActual === "cerrados") filtradas = todasLasSalas.filter(s => s.estado === "cerrado");
-
-  if (!filtradas.length) {
-    lista.innerHTML = `<div class="sidebar-empty">${tabActual==="abiertos"?"No hay chats abiertos 🐱":tabActual==="cerrados"?"No hay chats cerrados":"Sin conversaciones"}</div>`;
-    return;
-  }
-  lista.innerHTML = "";
-  filtradas.forEach(sala => {
-    const cerrado = sala.estado === "cerrado";
-    const div = document.createElement("div");
-    div.className = `user-item${salaActiva===sala.id?" activo":""}${cerrado?" cerrado":""}`;
-    div.onclick = () => abrirConversacion(sala.id, sala);
-
-    // Etiqueta: quién respondió por última vez (admin)
-    const ultimoAdmin = sala.ultimoAdmin
-      ? `<span class="tag-admin-resp" title="${sala.ultimoAdmin}">${sala.ultimoAdmin === "jhonanibal576@gmail.com" ? "Jhon" : "GatoMiel"}</span>`
-      : "";
-
-    div.innerHTML = `
-      <img src="${sala.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
-      <div class="user-item-info">
-        <div class="user-item-name">${sala.nombreUsuario||sala.email||"Usuario"} ${ultimoAdmin}</div>
-        <div class="user-item-preview">${sala.ultimoMensaje||"Sin mensajes"}</div>
-      </div>
-      <div class="user-item-meta">
-        ${sala.noLeidosAdmin&&!cerrado?'<div class="unread-dot"></div>':""}
-        <span class="estado-tag ${cerrado?"cerrado":"abierto"}">${cerrado?"Cerrado":"Abierto"}</span>
-      </div>`;
-    lista.appendChild(div);
-  });
-}
-
-function actualizarBadges() {
-  const n = todasLasSalas.filter(s => s.noLeidosAdmin && s.estado !== "cerrado").length;
-  const b = document.getElementById("badge-abiertos");
-  b.style.display = n > 0 ? "inline-flex" : "none";
-  if (n > 0) b.textContent = n;
-}
-
-window.cambiarTab = function(tab, btn) {
-  tabActual = tab;
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
-  btn.classList.add("activo");
-  renderSidebar();
-};
-
-// ══════════════════════════════════════════
-//  ABRIR CONVERSACIÓN
-// ══════════════════════════════════════════
-function abrirConversacion(uid, data) {
-  salaActiva     = uid;
-  salaActivaData = data;
-  if (data.noLeidosAdmin) updateDoc(doc(db,"chats",uid), { noLeidosAdmin:false });
-  renderSidebar();
-
-  // Detener escucha anterior de sala
-  if (unsubSala) { unsubSala(); unsubSala = null; }
-
-  const cerrado = data.estado === "cerrado";
-  const area = document.getElementById("chat-area");
-
-  area.innerHTML = `
-    <div class="chat-top">
-      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
-      <div class="chat-top-info">
-        <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
-        <div class="chat-top-email">${data.email||""}</div>
-      </div>
-      <div class="chat-acciones">
-        <div id="timer-container" style="display:none">
-          <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
-          <span id="timer-label">5:00</span>
-        </div>
-        ${cerrado
-          ? `<button class="btn-accion btn-reabrir-chat" onclick="cambiarEstadoChat('abierto')">↩ Reabrir</button>`
-          : `<button class="btn-accion btn-cerrar-chat" onclick="cambiarEstadoChat('cerrado')">✕ Cerrar chat</button>`
-        }
-      </div>
-    </div>
-
-    <div id="admin-messages"></div>
-
-    <div id="admin-emoji-picker" class="admin-emoji-picker">
-      <div class="emoji-picker-title">🐱 Gato Miel</div>
-      <div class="emoji-grid">
-        <span class="emoji-section-label">Gatitos</span>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🐱')">🐱</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🐈')">🐈</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('😺')">😺</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('😸')">😸</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('😻')">😻</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🐾')">🐾</button>
-        <span class="emoji-section-label">Cerámica & arte</span>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🏺')">🏺</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🌿')">🌿</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('✨')">✨</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🎨')">🎨</button>
-        <span class="emoji-section-label">Caras & corazones</span>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🥰')">🥰</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('😊')">😊</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('💛')">💛</button>
-        <button class="emoji-btn" onclick="insertEmojiAdmin('🫶')">🫶</button>
-      </div>
-    </div>
-
-    <div id="admin-preview" class="admin-preview">
-      <img id="admin-preview-img" src="" style="display:none;">
-      <span id="admin-preview-name"></span>
-      <button class="admin-preview-cancel" onclick="cancelarArchivoAdmin()">✕</button>
-    </div>
-    <div class="chat-bottom">
-      <button class="admin-attach-btn" title="Emojis" onclick="toggleEmojiAdmin(event)">😊</button>
-      <button class="admin-attach-btn" title="Enviar imagen" onclick="document.getElementById('admin-file-input').click()">🖼</button>
-      <textarea id="admin-input" placeholder="Responder..." rows="1"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarRespuesta()}"
-        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
-      ></textarea>
-      <button class="btn-enviar-admin" onclick="enviarRespuesta()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
-          <line x1="22" y1="2" x2="11" y2="13" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white"/>
-        </svg>
-      </button>
-    </div>`;
-
-  // Escuchar mensajes
-  if (unsubMensajes) unsubMensajes();
-  const q = query(collection(db,"chats",uid,"mensajes"), orderBy("fecha","asc"));
-  unsubMensajes = onSnapshot(q, snap => {
-    const container = document.getElementById("admin-messages");
-    if (!container) return;
-    container.innerHTML = "";
-    if (snap.empty) {
-      container.innerHTML = `<div style="text-align:center;padding:30px;color:#bbb;font-size:13px;">Sin mensajes aún</div>`;
-      return;
-    }
-
-    let prevAdmin = null; // para mostrar etiqueta de admin que escribió
-    snap.forEach(docSnap => {
-      const m = docSnap.data();
-      const esAdmin = m.rol === "admin";
-      const esBot   = m.rol === "bot";
-      const hora    = m.fecha?.toDate ? m.fecha.toDate().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"}) : "";
-
-      // ── Etiqueta encima del mensaje si es admin y cambió quién escribe
-      if (esAdmin && m.adminEmail && m.adminEmail !== prevAdmin) {
-        prevAdmin = m.adminEmail;
-        const label = document.createElement("div");
-        label.className = "admin-msg-label";
-        label.textContent = `✍ ${m.adminEmail === "jhonanibal576@gmail.com" ? "Jhon" : "Gato Miel"} (${m.adminEmail})`;
-        container.appendChild(label);
-      } else if (!esAdmin) {
-        prevAdmin = null; // reset cuando habla el cliente
-      }
-
-      const div = document.createElement("div");
-      div.className = `chat-msg ${esBot?"bot-msg":esAdmin?"admin":"usuario"}`;
-
-      if (m.tipo === "imagen") {
-        div.innerHTML = `<img src="${m.url}" style="max-width:100%;border-radius:10px;cursor:pointer;max-height:200px;object-fit:cover;display:block;margin-bottom:4px;" onclick="window.open('${m.url}','_blank')"><span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
-      } else if (m.tipo === "audio") {
-        div.innerHTML = `<audio controls src="${m.url}" style="max-width:220px;border-radius:8px;"></audio><span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
-      } else {
-        div.innerHTML = `${m.texto}<span class="chat-msg-meta">${esAdmin?"Tú":m.nombre} · ${hora}</span>`;
-      }
-      container.appendChild(div);
-    });
-    container.scrollTop = container.scrollHeight;
-
-    // Si el cliente responde → pausar/cancelar timer de esta sala
-    const msgs = snap.docs.map(d => d.data());
-    const ultimo = msgs[msgs.length - 1];
-    if (ultimo?.rol === "usuario") {
-      _cancelarTimer(uid);
-      _ocultarTimer();
-    }
-  });
-
-  // Escuchar estado de sala para actualizar botón cerrar/reabrir en tiempo real
-  unsubSala = onSnapshot(doc(db,"chats",uid), snap => {
-    if (!snap.exists()) return;
-    const d = snap.data();
-    salaActivaData = { id: uid, ...d };
-    const cerrado = d.estado === "cerrado";
-    const acciones = document.querySelector(".chat-acciones");
-    if (!acciones) return;
-    const btnExistente = acciones.querySelector(".btn-cerrar-chat, .btn-reabrir-chat");
-    if (btnExistente) {
-      btnExistente.className = `btn-accion ${cerrado?"btn-reabrir-chat":"btn-cerrar-chat"}`;
-      btnExistente.textContent = cerrado ? "↩ Reabrir" : "✕ Cerrar chat";
-      btnExistente.onclick = () => cambiarEstadoChat(cerrado ? "abierto" : "cerrado");
-    }
-    if (cerrado) { _cancelarTimer(uid); _ocultarTimer(); }
-  });
-
-  // Si hay timer activo para esta sala, mostrar el countdown
-  if (_timers[uid]?.intervalo) _mostrarTimer(uid);
-}
-
-// ══════════════════════════════════════════
-//  ENVIAR RESPUESTA
-// ══════════════════════════════════════════
-window.enviarRespuesta = async function() {
-  if (!salaActiva) return;
-
-  if (_archivoAdmin) {
-    const archivo = _archivoAdmin;
-    window.cancelarArchivoAdmin();
-    const base64 = await new Promise((res,rej) => {
-      const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej;
-      r.readAsDataURL(archivo);
-    });
-    await addDoc(collection(db,"chats",salaActiva,"mensajes"), {
-      url:base64, rol:"admin", adminEmail, nombre:"Gato Miel",
-      fecha:serverTimestamp(), leido:false, tipo:"imagen"
-    });
-    await updateDoc(doc(db,"chats",salaActiva), {
-      ultimoMensaje:"Tú: 🖼 Imagen", ultimaFecha:serverTimestamp(),
-      noLeidosAdmin:false, ultimoAdmin:adminEmail
-    });
-    _iniciarTimer(salaActiva);
-    return;
-  }
-
-  const input = document.getElementById("admin-input");
-  if (!input) return;
-  const texto = input.value.trim();
-  if (!texto) return;
-  input.value = ""; input.style.height = "auto";
-
-  await addDoc(collection(db,"chats",salaActiva,"mensajes"), {
-    texto, rol:"admin", adminEmail, nombre:"Gato Miel",
-    fecha:serverTimestamp(), leido:false, tipo:"texto"
-  });
-  await updateDoc(doc(db,"chats",salaActiva), {
-    ultimoMensaje:`Tú: ${texto}`, ultimaFecha:serverTimestamp(),
-    noLeidosAdmin:false, ultimoAdmin:adminEmail
-  });
-
-  _iniciarTimer(salaActiva);
-};
-
-// ══════════════════════════════════════════
-//  CERRAR / REABRIR CHAT
-// ══════════════════════════════════════════
-window.cambiarEstadoChat = async function(nuevoEstado) {
-  if (!salaActiva) return;
-
-  if (nuevoEstado === "cerrado") {
-    // Cierre MANUAL → NO enviar bot de despedida (el admin ya se despidió)
-    _cancelarTimer(salaActiva);
-    _ocultarTimer();
-    await updateDoc(doc(db,"chats",salaActiva), {
-      estado:"cerrado", ultimaFecha:serverTimestamp(), noLeidosAdmin:false
-    });
+const _app  = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _auth = getAuth(_app);
+onAuthStateChanged(_auth, (user) => {
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  const avatar   = document.querySelector(".user-avatar");
+  if (user) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+    if (avatar)   avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
   } else {
-    const abiertos = todasLasSalas.filter(s => s.estado !== "cerrado").length;
-    if (abiertos >= MAX_CHATS_ABIERTOS) {
-      const aviso = document.getElementById("limite-aviso");
-      aviso.style.display = "block";
-      setTimeout(() => aviso.style.display = "none", 4000);
-      return;
-    }
-    await updateDoc(doc(db,"chats",salaActiva), { estado:"abierto" });
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
   }
-};
-
-// ══════════════════════════════════════════
-//  TIMER DE INACTIVIDAD (5 min)
-//  Solo visible para el admin en la sala activa
-// ══════════════════════════════════════════
-function _iniciarTimer(uid) {
-  _cancelarTimer(uid); // reiniciar si ya había uno
-
-  const inicio = Date.now();
-  let avisoEnviado = false;
-
-  // Intervalo que actualiza la barra cada segundo
-  const intervalo = setInterval(() => {
-    const elapsed = Date.now() - inicio;
-    const restante = TIMER_TOTAL - elapsed;
-
-    if (restante <= 0) { clearInterval(intervalo); return; }
-
-    // Mostrar timer solo si esta sala está activa
-    if (salaActiva === uid) _actualizarTimer(restante, TIMER_TOTAL);
-
-    // A los 3 min → enviar "¿Sigues ahí?"
-    if (!avisoEnviado && elapsed >= TIMER_AVISO) {
-      avisoEnviado = true;
-      addDoc(collection(db,"chats",uid,"mensajes"), {
-        texto:MSG_AVISO, rol:"bot", nombre:"Gato Miel Bot",
-        fecha:serverTimestamp(), leido:false, tipo:"texto"
-      });
-    }
-  }, 1000);
-
-  // A los 5 min → cerrar y enviar despedida
-  const timerCierre = setTimeout(async () => {
-    clearInterval(intervalo);
-    if (_timers[uid]) delete _timers[uid];
-    if (salaActiva === uid) _ocultarTimer();
-
-    // Verificar que el último mensaje siga siendo del admin (no respondió)
-    const snap = await getDocs(query(collection(db,"chats",uid,"mensajes"), orderBy("fecha","desc")));
-    const ultimo = snap.docs[0]?.data();
-    if (ultimo && ultimo.rol === "usuario") return; // cliente respondió, no cerrar
-
-    await addDoc(collection(db,"chats",uid,"mensajes"), {
-      texto:MSG_DESPEDIDA, rol:"bot", nombre:"Gato Miel Bot",
-      fecha:serverTimestamp(), leido:false, tipo:"texto"
-    });
-    await updateDoc(doc(db,"chats",uid), {
-      estado:"cerrado", ultimaFecha:serverTimestamp(), noLeidosAdmin:false
-    });
-  }, TIMER_TOTAL);
-
-  _timers[uid] = { intervalo, timerCierre, inicio };
-
-  // Mostrar timer si la sala activa es esta
-  if (salaActiva === uid) {
-    const tc = document.getElementById("timer-container");
-    if (tc) tc.style.display = "flex";
-  }
-}
-
-function _cancelarTimer(uid) {
-  if (!_timers[uid]) return;
-  clearInterval(_timers[uid].intervalo);
-  clearTimeout(_timers[uid].timerCierre);
-  delete _timers[uid];
-}
-
-function _mostrarTimer(uid) {
-  const tc = document.getElementById("timer-container");
-  if (!tc || !_timers[uid]) return;
-  tc.style.display = "flex";
-  const elapsed  = Date.now() - _timers[uid].inicio;
-  const restante = TIMER_TOTAL - elapsed;
-  _actualizarTimer(restante, TIMER_TOTAL);
-}
-
-function _ocultarTimer() {
-  const tc = document.getElementById("timer-container");
-  if (tc) tc.style.display = "none";
-}
-
-function _actualizarTimer(restante, total) {
-  const label = document.getElementById("timer-label");
-  const bar   = document.getElementById("timer-bar");
-  if (!label || !bar) return;
-  const seg   = Math.ceil(restante / 1000);
-  const min   = Math.floor(seg / 60);
-  const s     = seg % 60;
-  label.textContent = `${min}:${String(s).padStart(2,"0")}`;
-  const pct = (restante / total) * 100;
-  bar.style.width   = pct + "%";
-  bar.style.background = pct > 50 ? "#c48a3a" : pct > 20 ? "#e8a020" : "#e55";
-}
-
-// ══════════════════════════════════════════
-//  CERRAR SESIÓN
-// ══════════════════════════════════════════
-window.cerrarSesionAdmin = async () => {
-  await signOut(auth);
-  window.location.replace("entrada.html");
-};
-
-// ══════════════════════════════════════════
-//  EMOJI PICKER
-// ══════════════════════════════════════════
-window.toggleEmojiAdmin = function(e) {
-  e.stopPropagation();
-  const picker = document.getElementById("admin-emoji-picker");
-  if (!picker) return;
-  if (picker.classList.contains("visible")) { picker.classList.remove("visible"); return; }
-  const rect = e.currentTarget.getBoundingClientRect();
-  const pw = 290;
-  picker.style.left   = Math.max(8, Math.min(rect.left, window.innerWidth - pw - 8)) + "px";
-  picker.style.bottom = (window.innerHeight - rect.top + 6) + "px";
-  picker.classList.add("visible");
-};
-window.insertEmojiAdmin = function(emoji) {
-  const input = document.getElementById("admin-input");
-  if (!input) return;
-  const s = input.selectionStart, e2 = input.selectionEnd;
-  input.value = input.value.slice(0,s) + emoji + input.value.slice(e2);
-  input.selectionStart = input.selectionEnd = s + emoji.length;
-  input.focus();
-  input.style.height = "auto";
-  input.style.height = input.scrollHeight + "px";
-};
-document.addEventListener("click", () => {
-  const p = document.getElementById("admin-emoji-picker");
-  if (p) p.classList.remove("visible");
 });
-
-// ══════════════════════════════════════════
-//  ARCHIVO ADMIN
-// ══════════════════════════════════════════
-let _archivoAdmin = null;
-document.getElementById("admin-file-input").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  _archivoAdmin = file;
-  const preview = document.getElementById("admin-preview");
-  const img     = document.getElementById("admin-preview-img");
-  const name    = document.getElementById("admin-preview-name");
-  if (preview) { img.src = URL.createObjectURL(file); img.style.display="block"; name.textContent=file.name; preview.style.display="flex"; }
-  e.target.value = "";
-});
-window.cancelarArchivoAdmin = function() {
-  _archivoAdmin = null;
-  const p = document.getElementById("admin-preview");
-  if (p) { p.style.display="none"; document.getElementById("admin-preview-img").src=""; document.getElementById("admin-preview-name").textContent=""; }
-};
-
 </script>
 
-</body>
-</html>
+</head>
+<body>
 
+<!-- HEADER — idéntico al index.html -->
+<header class="header">
+  <div class="logo">
+    <span>Gato Miel Estudio</span>
+    <img src="Assets/Img/Logo.jpg" alt="Logo" class="logo-img">
+  </div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="historial-De_Talleres.html">Talleres</a>
+    <a href="coleccion.html">Colección</a>
+    <a href="comunidad.html">Comunidad</a>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">
+      🐾 Iniciar sesión
+    </a>
+    <div class="user-menu" style="display:none;">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
+        class="user-avatar" onclick="toggleUserMenu()">
+      <div id="userDropdown" class="user-dropdown">
+        <button onclick="abrirModalCompras()">🛍 Mis compras</button>
+        <button onclick="abrirModalMembresias()">🎫 Mis membresías</button>
+        <button onclick="abrirPersonalizar()">Personalizar</button>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ── HERO ── -->
+  <section class="qs-hero">
+    <div class="qs-hero-img">
+      <img src="Assets/Img/Quienes_Somos.jpeg" alt="Gato Miel Estudio">
+    </div>
+    <div class="qs-hero-text">
+      <span class="qs-eyebrow">Nuestra historia</span>
+      <h1>Manos.<br>Barro.<br>Intención.</h1>
+      <p>Gato Miel Estudio nace del deseo de volver a lo esencial — crear con las manos, habitar el proceso y encontrar belleza en lo imperfecto.</p>
+    </div>
+  </section>
+
+  <!-- ── MANIFIESTO ── -->
+  <section class="qs-manifiesto">
+    <div class="qs-linea"></div>
+    <blockquote>
+      "Creemos en lo hecho con intención.<br>
+      En el valor de las manos.<br>
+      En el tiempo como parte del proceso."
+    </blockquote>
+    <div class="qs-linea"></div>
+  </section>
+
+  <!-- ── FUNDADORA ── -->
+  <section class="qs-fundadora">
+    <div class="qs-fundadora-foto">
+      <img src="Assets/Img/jessie.jpg" alt="Fundadora">
+    </div>
+    <div class="qs-fundadora-info">
+      <span class="qs-eyebrow">Fundadora & Ceramista</span>
+      <h2>Jessie</h2>
+      <p>Desde pequeña encontró en el barro un refugio creativo. Hoy lidera un espacio donde la estética natural y la creación consciente se convierten en experiencia.</p>
+      <p>Su misión es que cada persona descubra el valor de lo tangible, lo imperfecto y lo auténtico.</p>
+    </div>
+  </section>
+
+  <!-- ── VIDEO ── -->
+  <section class="qs-video">
+    <div class="qs-video-header">
+      <span class="qs-eyebrow">El espacio</span>
+      <h2>Conoce el estudio</h2>
+      <p>Un vistazo íntimo al proceso y la energía que se vive dentro.</p>
+    </div>
+    <div class="qs-video-wrapper">
+      <video id="videoEstudio" autoplay muted loop playsinline disablepictureinpicture>
+        <source src="Assets/video/xd.mp4" type="video/mp4">
+      </video>
+      <button class="qs-btn-sonido" id="btnSonido">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        Activar sonido
+      </button>
+    </div>
+  </section>
+
+  <!-- ── EQUIPO ── -->
+  <section class="qs-equipo">
+    <span class="qs-eyebrow" style="text-align:center;display:block;">Las personas detrás</span>
+    <h2>Nuestro equipo</h2>
+    <div class="qs-equipo-grid">
+      <div class="qs-miembro">
+        <div class="qs-miembro-foto">
+          <img src="Assets/Img/disenador.jpg" alt="Director Creativo">
+        </div>
+        <h3>Director Creativo</h3>
+        <span>Identidad visual & Branding</span>
+      </div>
+      <div class="qs-miembro">
+        <div class="qs-miembro-foto">
+          <img src="Assets/Img/desarrollador.jpg" alt="Desarrollador Web">
+        </div>
+        <h3>Desarrollador Web</h3>
+        <span>Estrategia digital & estructura</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 Gato Miel Estudio</p>
+</footer>
+
+<!-- MODAL PERFIL -->
+<div id="perfilModal" class="perfil-modal">
+  <div class="perfil-box">
+    <h3>Personalizar perfil</h3>
+    <img id="previewAvatar" class="perfil-preview" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <p style="font-size:13px;color:#888;margin-top:14px;margin-bottom:10px;">Elige tu avatar:</p>
+    <div class="avatar-selector">
+      <img src="Assets/Img/Avatares/GatoEscarlata.png" class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Escarlata">
+      <img src="Assets/Img/Avatares/GatoLima.jpg"      class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Lima">
+      <img src="Assets/Img/Avatares/GatoMiel.jpeg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Miel">
+      <img src="Assets/Img/Avatares/GatoMorado.jpg"    class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Morado">
+      <img src="Assets/Img/Avatares/GatoNegro.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Negro">
+      <img src="Assets/Img/Avatares/GatoVerde.jpg"     class="avatar-opcion" onclick="seleccionarAvatar(this)" title="Gato Verde">
+    </div>
+    <input type="text" id="nuevoNombre" placeholder="Nombre de usuario">
+    <p id="perfilStatus" style="font-size:13px;color:#888;margin-top:8px;min-height:18px;"></p>
+    <div class="perfil-actions">
+      <button onclick="guardarPerfil()" class="btn-guardar">Guardar</button>
+      <button onclick="cerrarPersonalizar()" class="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Variables ── */
+:root {
+  --gold: #c48a3a;
+  --ink:  #1a1714;
+  --sand: #f8f5f1;
+  --warm: #f3ece3;
+  --muted: #888;
+}
+
+/* ── Eyebrow labels ── */
+.qs-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════
+   HERO — split layout
+══════════════════════════════════════ */
+.qs-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 90vh;
+}
+.qs-hero-img {
+  overflow: hidden;
+}
+.qs-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(85%);
+  transition: transform 8s ease;
+}
+.qs-hero-img:hover img { transform: scale(1.04); }
+
+.qs-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 9%;
+  background: var(--sand);
+}
+.qs-hero-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 6vw, 88px);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 32px;
+  letter-spacing: -0.01em;
+}
+.qs-hero-text p {
+  font-size: 17px;
+  color: #666;
+  line-height: 1.75;
+  font-weight: 300;
+  max-width: 420px;
+}
+
+/* ══════════════════════════════════════
+   MANIFIESTO
+══════════════════════════════════════ */
+.qs-manifiesto {
+  padding: 100px 12%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+.qs-linea {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+}
+.qs-manifiesto blockquote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.8vw, 30px);
+  line-height: 1.7;
+  color: var(--ink);
+  text-align: center;
+  max-width: 680px;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ══════════════════════════════════════
+   FUNDADORA
+══════════════════════════════════════ */
+.qs-fundadora {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 0;
+  background: var(--warm);
+}
+.qs-fundadora-foto {
+  overflow: hidden;
+  max-height: 620px;
+}
+.qs-fundadora-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 6s ease;
+}
+.qs-fundadora-foto:hover img { transform: scale(1.04); }
+
+.qs-fundadora-info {
+  padding: 90px 9%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.qs-fundadora-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 4vw, 60px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+.qs-fundadora-info p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 480px;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════
+   VIDEO
+══════════════════════════════════════ */
+.qs-video {
+  padding: 110px 9%;
+  background: var(--ink);
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 80px;
+  align-items: center;
+}
+.qs-video-header .qs-eyebrow { color: #c48a3a; opacity: 0.85; }
+.qs-video-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 400;
+  color: white;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.qs-video-header p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.75;
+  font-weight: 300;
+}
+.qs-video-wrapper {
+  position: relative;
+}
+.qs-video-wrapper video {
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.qs-btn-sonido {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.qs-btn-sonido:hover { background: rgba(255,255,255,0.22); }
+
+/* ══════════════════════════════════════
+   EQUIPO
+══════════════════════════════════════ */
+.qs-equipo {
+  padding: 110px 9%;
+  background: white;
+  text-align: center;
+}
+.qs-equipo h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 3.5vw, 48px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 70px;
+  letter-spacing: -0.01em;
+}
+.qs-equipo-grid {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+.qs-miembro { max-width: 240px; }
+.qs-miembro-foto {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 24px;
+  border: 1px solid #f0ebe4;
+}
+.qs-miembro-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.qs-miembro:hover .qs-miembro-foto img { transform: scale(1.08); }
+.qs-miembro h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.qs-miembro span {
+  font-size: 13px;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+/* ══════════════════════════════════════
+   AVATAR SELECTOR (perfil)
+══════════════════════════════════════ */
+.avatar-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.avatar-opcion { width:100%; aspect-ratio:1/1; border-radius:50%; object-fit:cover; cursor:pointer; border:3px solid transparent; transition:0.2s ease; }
+.avatar-opcion:hover { transform:scale(1.08); border-color:#c48a3a; }
+.avatar-opcion.seleccionado { border-color:#c48a3a; box-shadow:0 0 0 3px rgba(196,138,58,0.3); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .qs-hero { grid-template-columns: 1fr; min-height: auto; }
+  .qs-hero-img { height: 55vw; min-height: 280px; }
+  .qs-hero-text { padding: 60px 7%; }
+  .qs-hero-text h1 { font-size: clamp(42px, 10vw, 64px); }
+  .qs-fundadora { grid-template-columns: 1fr; }
+  .qs-fundadora-foto { max-height: 60vw; }
+  .qs-fundadora-info { padding: 60px 7%; }
+  .qs-video { grid-template-columns: 1fr; gap: 40px; padding: 70px 7%; }
+  .qs-equipo { padding: 80px 7%; }
+  .qs-equipo-grid { gap: 50px; }
+  .qs-manifiesto { padding: 70px 7%; }
+}
+</style>
+
+<script>
+let avatarSeleccionado = null;
+
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user-menu")) document.getElementById("userDropdown").style.display = "none";
+});
+function seleccionarAvatar(img) {
+  document.querySelectorAll(".avatar-opcion").forEach(el => el.classList.remove("seleccionado"));
+  img.classList.add("seleccionado");
+  document.getElementById("previewAvatar").src = img.src;
+  avatarSeleccionado = img.src;
+}
+
+// Botón sonido video
+const video = document.getElementById("videoEstudio");
+const btn = document.getElementById("btnSonido");
+btn.addEventListener("click", () => {
+  if (video.muted) {
+    video.muted = false; video.play();
+    btn.querySelector("svg").innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    btn.lastChild.textContent = " Silenciar";
+  } else {
+    video.muted = true;
+    btn.querySelector("svg").innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+    btn.lastChild.textContent = " Activar sonido";
+  }
+});
+</script>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
+  authDomain: "gato-miel-estudio.firebaseapp.com",
+  projectId: "gato-miel-estudio",
+  storageBucket: "gato-miel-estudio.firebasestorage.app",
+  messagingSenderId: "150671559458",
+  appId: "1:150671559458:web:6daaf4a78150706db0337b"
+};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const modal  = document.getElementById("perfilModal");
+const status = document.getElementById("perfilStatus");
+
+window.cerrarSesion = async () => { await signOut(auth); window.location.replace("entrada.html"); };
+
+window.abrirPersonalizar = () => {
+  modal.style.display = "flex";
+  avatarSeleccionado = null; status.textContent = "";
+  const user = auth.currentUser;
+  document.getElementById("nuevoNombre").value = user?.displayName || "";
+  const fotoActual = user?.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  document.getElementById("previewAvatar").src = fotoActual;
+  document.querySelectorAll(".avatar-opcion").forEach(el => {
+    el.classList.remove("seleccionado");
+    if (el.getAttribute("src") === fotoActual || el.src === fotoActual) el.classList.add("seleccionado");
+  });
+};
+
+window.cerrarPersonalizar = () => { modal.style.display = "none"; };
+
+window.guardarPerfil = async () => {
+  const user = auth.currentUser;
+  const nombre = document.getElementById("nuevoNombre").value.trim();
+  status.textContent = "Guardando...";
+  try {
+    const photoURL = avatarSeleccionado || user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    await updateProfile(user, { displayName: nombre || user.displayName, photoURL });
+    await user.reload();
+    document.querySelector(".user-avatar").src = photoURL;
+    status.textContent = "✨ ¡Perfil actualizado!";
+    setTimeout(() => cerrarPersonalizar(), 1200);
+  } catch (error) {
+    status.textContent = "❌ Error: " + error.message;
+  }
+};
+</script>
+
+<script src="movil-ui.js"></script>
+<script type="module" src="Js/src/chat.js"></script>
+
+
+<!-- ═══ MODAL MIS MEMBRESÍAS (global) ═══ -->
+<div id="modalGlobalMembresias" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
+  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
+    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
+      <button onclick="cerrarModalMembresias()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis membresías</h3>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Talleres reservados · pagos pendientes o confirmados</span>
+    </div>
+    <div id="lista-global-membresias" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const _fcM = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _appM  = getApps().length ? getApps()[0] : initializeApp(_fcM);
+const _authM = getAuth(_appM);
+const _dbM   = getFirestore(_appM);
+
+window.abrirModalMembresias = async () => {
+  const user = _authM.currentUser;
+  if (!user) { window.location.href = "entrada.html"; return; }
+  const modal = document.getElementById("modalGlobalMembresias");
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  const lista = document.getElementById("lista-global-membresias");
+  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando membresías...</div>`;
+  try {
+    const q = query(collection(_dbM,"membresias"), where("usuarioEmail","==",user.email));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes membresías 🐱</div>`;
+      return;
+    }
+    const docs = [];
+    snap.forEach(d => docs.push({id:d.id,...d.data()}));
+    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
+    lista.innerHTML = "";
+    docs.forEach(m => {
+      const fecha = m.fecha?.toDate ? m.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+      const eColor = m.estado==="confirmado"?"#065f46":m.estado==="rechazado"?"#991b1b":"#856404";
+      const eBg    = m.estado==="confirmado"?"#d1fae5":m.estado==="rechazado"?"#fee2e2":"#fff3cd";
+      const eIcon  = m.estado==="confirmado"?"✓":m.estado==="rechazado"?"✕":"⏳";
+      const eText  = m.estado==="confirmado"?"Confirmado":m.estado==="rechazado"?"Rechazado":"Pendiente de validación";
+      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[m.metodo?.toLowerCase()]||"#888";
+      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[m.metodo?.toLowerCase()]||"#f5f5f5";
+      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi membresía: *${m.tallerId||"Arcilla Nocturna"} · ${m.horarioLabel||""}* via *${m.metodo}* del ${fecha}`);
+      const div = document.createElement("div");
+      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
+      div.innerHTML = `
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎫</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${m.tallerId||"Arcilla Nocturna"}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin-bottom:6px;">${m.horarioLabel||"—"}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ 150</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${m.metodo||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
+        </div>
+        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        </a>`;
+      lista.appendChild(div);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
+  }
+};
+
+window.cerrarModalMembresias = () => {
+  document.getElementById("modalGlobalMembresias").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") window.cerrarModalMembresias();
+});
+</script>
+
+
+<!-- ═══ MODAL MIS COMPRAS (global) ═══ -->
+<div id="modalGlobalCompras" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
+  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
+    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
+      <button onclick="cerrarModalCompras()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
+        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis compras</h3>
+      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Piezas de colección · pendientes o confirmadas</span>
+    </div>
+    <div id="lista-global-compras" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const _fcC = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _appC  = getApps().length ? getApps()[0] : initializeApp(_fcC);
+const _authC = getAuth(_appC);
+const _dbC   = getFirestore(_appC);
+
+window.abrirModalCompras = async () => {
+  const user = _authC.currentUser;
+  if (!user) { window.location.href = "entrada.html"; return; }
+  const modal = document.getElementById("modalGlobalCompras");
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  const lista = document.getElementById("lista-global-compras");
+  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando compras...</div>`;
+  try {
+    const q = query(collection(_dbC,"pedidos"), where("uid","==",user.uid));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes compras 🐱</div>`;
+      return;
+    }
+    const docs = [];
+    snap.forEach(d => docs.push({id:d.id,...d.data()}));
+    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
+    lista.innerHTML = "";
+    docs.forEach(p => {
+      const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+      const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
+      const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
+      const eIcon  = p.estado==="confirmado"?"✓":p.estado==="rechazado"?"✕":"⏳";
+      const eText  = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente de validación";
+      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[p.metodo?.toLowerCase()]||"#888";
+      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[p.metodo?.toLowerCase()]||"#f5f5f5";
+      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi compra: *${p.producto||"—"} - S/ ${p.monto||"—"}* via *${p.metodo}* del ${fecha}`);
+      const div = document.createElement("div");
+      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
+      div.innerHTML = `
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛍</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${p.producto||"—"}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ ${p.monto||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${p.metodo||"—"}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
+        </div>
+        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        </a>`;
+      lista.appendChild(div);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
+  }
+};
+
+window.cerrarModalCompras = () => {
+  document.getElementById("modalGlobalCompras").style.display = "none";
+  document.body.style.overflow = "";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") window.cerrarModalCompras?.();
+});
+</script>
+
+
+</body>
+
+</html>
