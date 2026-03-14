@@ -798,13 +798,10 @@ function abrirConversacion(uid, data) {
       </button>
     </div>`;
 
-  // Móvil: mostrar chat pantalla completa
   if (window.innerWidth <= 768) {
-    const sb = document.querySelector(".sidebar");
-    if (sb) sb.style.display = "none";
-    area.style.display = "flex";
+    const sb = document.querySelector(".sidebar"); if(sb) sb.style.display="none";
+    area.style.display="flex";
   }
-
   // Escuchar mensajes
   if (unsubMensajes) unsubMensajes();
   const q = query(collection(db,"chats",uid,"mensajes"), orderBy("fecha","asc"));
@@ -1098,79 +1095,6 @@ window.cancelarArchivoAdmin = function() {
 };
 
 </script>
-
-
-<style>
-/* ═══ PANEL ADMIN MÓVIL — WHATSAPP ═══ */
-@media (max-width: 768px) {
-  body { overflow: hidden; }
-  .mu-topbar,.mu-navbar,.mu-overlay,.mu-user-sheet { display: none !important; }
-  .admin-header { padding: 10px 14px; }
-  .admin-header-title { font-size: 15px; }
-  .tabs-bar { overflow-x: auto; scrollbar-width: none; padding: 0 6px; }
-  .tabs-bar::-webkit-scrollbar { display: none; }
-  .tab-btn { font-size: 11px; padding: 10px 11px; }
-  .admin-body { height: calc(100vh - 88px); }
-  .sidebar { width: 100% !important; border-right: none !important; }
-  .chat-area {
-    display: none;
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 9000 !important;
-    background: #f3ece3;
-    flex-direction: column;
-  }
-  .mu-back-chat-btn {
-    display: flex !important;
-    align-items: center; justify-content: center;
-    width: 38px; height: 38px;
-    background: none; border: none;
-    color: #c48a3a; cursor: pointer; flex-shrink: 0;
-    border-radius: 50%; -webkit-tap-highlight-color: transparent;
-    margin-right: 6px;
-  }
-  .mu-back-chat-btn:active { background: rgba(196,138,58,0.12); }
-  .chat-top { padding: 10px 12px !important; gap: 6px !important; }
-  .chat-top img { width: 38px !important; height: 38px !important; }
-  .user-item { padding: 13px 14px !important; min-height: 64px; }
-  .user-item img { width: 44px !important; height: 44px !important; }
-  .chat-bottom { padding: 8px 10px !important; }
-  #admin-messages { padding: 10px !important; }
-  .chat-msg { max-width: 88% !important; }
-  .sidebar-list { flex: 1; overflow-y: auto; }
-}
-@media (min-width: 769px) {
-  .mu-back-chat-btn { display: none !important; }
-}
-</style>
-
-<script>
-window.volverALista = function() {
-  if (window.innerWidth > 768) return;
-  var sb   = document.querySelector(".sidebar");
-  var area = document.getElementById("chat-area");
-  if (sb)   { sb.style.display = ""; }
-  if (area) {
-    area.style.display = "none";
-    area.innerHTML = '<div class="chat-placeholder"><span>💬</span><p>Selecciona una conversación<br>para responder</p></div>';
-  }
-  if (typeof salaActiva !== "undefined") salaActiva = null;
-  if (typeof unsubMensajes !== "undefined" && unsubMensajes) { unsubMensajes(); unsubMensajes = null; }
-  if (typeof unsubSala !== "undefined" && unsubSala)         { unsubSala();     unsubSala = null; }
-};
-
-/* Notificaciones push en móvil */
-if ("Notification" in window && Notification.permission === "default") {
-  Notification.requestPermission();
-}
-setInterval(function() {
-  var dots = document.querySelectorAll(".unread-dot");
-  if (dots.length > 0 && "Notification" in window && Notification.permission === "granted" && document.hidden) {
-    new Notification("Gato Miel 🐾", { body: dots.length + " mensaje(s) sin leer", icon: "Assets/Img/Logo.jpg" });
-  }
-}, 15000);
-</script>
-<script type="module" src="pwa.js"></script>
 
 </body>
 </html>
