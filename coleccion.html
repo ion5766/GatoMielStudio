@@ -1922,7 +1922,7 @@ window.abrirDetallePedido = function(pid) {
 
   // BODY (scrollable)
   const body = document.createElement("div");
-  body.style.cssText = "flex:1;overflow-y:auto;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:#c48a3a #f0ebe3;-webkit-overflow-scrolling:touch;";
+  body.style.cssText = "flex:1;overflow-y:scroll;min-height:0;padding:16px 20px 16px 16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:auto;scrollbar-color:#c48a3a #e8e3dc;-webkit-overflow-scrolling:touch;";
 
   // ACCIONES
   if (estado === "pendiente") {
@@ -1933,18 +1933,32 @@ window.abrirDetallePedido = function(pid) {
     btnConfirmar.textContent = "✓ Confirmar pago";
     btnConfirmar.onclick = async () => {
       btnConfirmar.disabled = true;
-      btnConfirmar.innerHTML = `<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;"></span>Confirmando...`;
+      btnConfirmar.textContent = "Confirmando...";
       try {
-        await window.confirmarPedidoAdmin(pid, btnConfirmar);
+        await updateDoc(doc(_dbP,"pedidos",pid), {estado:"confirmado",fechaConfirmacion:serverTimestamp()});
         overlay.remove();
-      } catch(e) { alert("Error: "+e.message); }
+      } catch(e) {
+        alert("Error: "+e.message);
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = "✓ Confirmar pago";
+      }
     };
     const btnRechazar = document.createElement("button");
     btnRechazar.style.cssText = "padding:14px;border:none;border-radius:14px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;";
     btnRechazar.textContent = "✕ Rechazar";
     btnRechazar.onclick = async () => {
-      await window.rechazarPedidoAdmin(pid);
-      overlay.remove();
+      const ov2 = document.createElement("div");
+      ov2.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.8);backdrop-filter:blur(8px);z-index:30001;display:flex;align-items:center;justify-content:center;padding:20px;";
+      ov2.innerHTML = `<div style="background:white;border-radius:20px;padding:28px 24px;max-width:300px;width:100%;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⚠️</div><h3 style="font-family:'Playfair Display',serif;font-size:18px;color:#1a1714;margin:0 0 10px;">¿Rechazar pedido?</h3><p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;margin:0 0 20px;line-height:1.5;">El cliente verá el estado como <strong>Rechazado</strong>.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><button id="rno" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button><button id="rsi" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Rechazar</button></div></div>`;
+      document.body.appendChild(ov2);
+      ov2.querySelector("#rno").onclick = () => ov2.remove();
+      ov2.querySelector("#rsi").onclick = async () => {
+        ov2.remove();
+        try {
+          await updateDoc(doc(_dbP,"pedidos",pid), {estado:"rechazado",fechaRechazo:serverTimestamp()});
+          overlay.remove();
+        } catch(e) { alert("Error: "+e.message); }
+      };
     };
     btnRow.appendChild(btnConfirmar);
     btnRow.appendChild(btnRechazar);
@@ -2010,6 +2024,41 @@ window.abrirDetallePedido = function(pid) {
   box.appendChild(body);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
+};
+
+// ── CONFIRMAR / RECHAZAR ──
+window.confirmarPedidoAdmin = async (id, btn) => {
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Confirmando...";
+  }
+  await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
+};
+
+window.rechazarPedidoAdmin = (id) => {
+  return new Promise((resolve) => {
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.8);backdrop-filter:blur(8px);z-index:30001;display:flex;align-items:center;justify-content:center;padding:20px;";
+    ov.innerHTML = `
+      <div style="background:white;border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;">
+        <div style="font-size:34px;margin-bottom:12px;">⚠️</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:#1a1714;margin:0 0 10px;">¿Rechazar este pedido?</h3>
+        <p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;margin:0 0 20px;line-height:1.6;">El cliente verá el estado como <strong>Rechazado</strong> en sus compras.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <button id="adm-no" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button>
+          <button id="adm-si" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sí, rechazar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    ov.querySelector("#adm-no").onclick = () => { ov.remove(); resolve(false); };
+    ov.querySelector("#adm-si").onclick = async () => {
+      ov.remove();
+      try {
+        await updateDoc(doc(_dbP, "pedidos", id), { estado: "rechazado", fechaRechazo: serverTimestamp() });
+        resolve(true);
+      } catch(e) { alert("Error: " + e.message); resolve(false); }
+    };
+  });
 };
 
 document.addEventListener("keydown", e => {
