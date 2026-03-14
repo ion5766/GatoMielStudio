@@ -1,0 +1,38 @@
+{
+  "name": "Gato Miel Estudio",
+  "short_name": "Gato Miel",
+  "description": "Arte cerámico hecho a mano · Lima",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1a1714",
+  "theme_color": "#c48a3a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "Assets/Img/Logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Assets/Img/Logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "shopping", "art"],
+  "lang": "es",
+  "shortcuts": [
+    {
+      "name": "Talleres",
+      "url": "/historial-De_Talleres.html",
+      "description": "Ver talleres disponibles"
+    },
+    {
+      "name": "Colección",
+      "url": "/coleccion.html",
+      "description": "Ver piezas únicas"
+    }
+  ]
+}
