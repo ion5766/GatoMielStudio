@@ -40,6 +40,17 @@ input:focus{ border-color:#c48a3a; background:rgba(255,255,255,0.15); }
 .ring{ width:40px; height:40px; border:3px solid rgba(255,255,255,0.12); border-top-color:#c48a3a; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 </style>
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({ appId: "TU_APP_ID_AQUI" });
+  });
+  window._osAppId = "0bd6234e-b932-43b7-bb66-4606557f79be;
+  window._osKey   = "TU_REST_API_KEY_AQUI";
+</script>
+  
 </head>
 <body>
 
