@@ -69,17 +69,16 @@
     border-radius: 20px; text-decoration: none;
   }
 
-  /* padding-top general para todas las páginas */
+  /* Todas las páginas bajan el contenido bajo la topbar */
   body { padding-top: var(--mu-top-h) !important; }
 
-  /* entrada.html: el video está fixed y ocupa toda la pantalla,
-     solo el .contenido necesita bajar */
-  body.page-entrada { padding-top: 0 !important; }
-  body.page-entrada .contenido { padding-top: var(--mu-top-h) !important; }
-
-  /* index.html: el hero tiene height:100vh, le añadimos padding-top
-     para que el contenido no quede bajo la topbar */
-  .ix-hero { padding-top: var(--mu-top-h) !important; }
+  /* ── index.html: hero ajustado para no quedar cortado ── */
+  .ix-hero {
+    height: calc(100vh - var(--mu-top-h)) !important;
+    padding: 0 6% 10vh !important;
+    align-items: flex-end;
+  }
+  /* El video del hero ya es position:absolute inset:0 → ocupa todo el hero, OK */
 }
 
 /* ══════════════════════════════════════════════
@@ -149,7 +148,7 @@
 }
 
 /* ══════════════════════════════════════════════
-   4. LABEL FLOTANTE (solo al hacer scroll)
+   4. LABEL FLOTANTE (solo al hacer scroll abajo)
 ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .mu-page-label {
@@ -183,16 +182,21 @@
   .ix-cta { padding: 60px 6% !important; }
   .ix-strip { gap: 10px !important; padding: 12px 5% !important; font-size: 9px !important; }
   .ix-hero-scroll { display: none !important; }
-  .ix-hero { padding: 0 6% 8vh !important; align-items: flex-end; }
   .ix-hero-content h1 { font-size: clamp(36px,11vw,54px) !important; }
   .footer { margin-bottom: calc(var(--mu-bar-h) + 8px); }
 
-  /* Chat bubble sube para no tapar la barra inferior */
+  /* Chat bubble sube */
   #chat-widget-container,
   [id*="chat-btn"],
   [class*="chat-fab"],
   [class*="chat-bubble"] {
     bottom: calc(var(--mu-bar-h) + 12px) !important;
+  }
+
+  /* Logo del header (ya oculto, pero por si acaso) */
+  .logo-img {
+    max-width: 36px !important; max-height: 36px !important;
+    width: 36px !important; height: 36px !important;
   }
 }
 
