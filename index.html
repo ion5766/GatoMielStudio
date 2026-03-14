@@ -3,6 +3,13 @@
 <head>
 
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#c48a3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gato Miel">
+<link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gato Miel Estudio</title>
 
@@ -692,7 +699,6 @@ async function abrirHistorialIndex() {
 }
 </script>
 
-<script src="movil-ui.js"></script>
 <script type="module" src="Js/src/chat.js"></script>
 
 <!-- ═══════════════════════════════════════════════
@@ -1272,4 +1278,5 @@ window.admVerChat = async (uid) => {
 window.abrirModalMembresias = window.abrirModalMembresias || function(){};
 window.abrirModalCompras    = window.abrirModalCompras    || function(){};
 </script>
+<script type="module" src="pwa.js"></script>
 </body></html>
