@@ -1615,7 +1615,7 @@ document.addEventListener("keydown", e => {
 </div>
 
 <!-- Lightbox pedidos -->
-<div id="lightboxPedido" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10001;justify-content:center;align-items:center;" onclick="this.style.display='none'">
+<div id="lightboxPedido" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:30000;justify-content:center;align-items:center;" onclick="this.style.display='none'">
   <img id="lightboxPedidoImg" src="" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;">
 </div>
 
@@ -1940,7 +1940,7 @@ window.abrirDetallePedido = function(pid) {
         </div>
       </div>
       <!-- Body con scroll -->
-      <div style="flex:1;overflow-y:auto;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;">
+      <div style="flex:1;overflow-y:auto;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;">
         ${accionesHtml}
         <!-- Cliente -->
         <div style="background:#faf8f5;border-radius:12px;padding:14px 16px;border:1px solid #ede8de;">
