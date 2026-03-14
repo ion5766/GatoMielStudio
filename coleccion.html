@@ -1901,14 +1901,14 @@ window.abrirDetallePedido = function(pid) {
 
   // BOX
   const box = document.createElement("div");
-  box.style.cssText = "background:white;width:100%;max-width:480px;max-height:86vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.45);";
+  box.style.cssText = "background:white;width:100%;max-width:480px;height:82vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.45);";
 
   // HEADER
   const hdr = document.createElement("div");
   hdr.style.cssText = "background:linear-gradient(135deg,#1a1714,#2a1f10);padding:18px 20px 16px;flex-shrink:0;position:relative;";
   const closeBtn = document.createElement("button");
-  closeBtn.style.cssText = "position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;";
-  closeBtn.innerHTML = `<svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  closeBtn.style.cssText = "position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:10;";
+  closeBtn.textContent = "✕";
   closeBtn.onclick = () => overlay.remove();
   hdr.innerHTML = `
     <div style="font-family:'Playfair Display',serif;font-size:19px;color:white;font-weight:400;margin-bottom:8px;padding-right:36px;">${p.producto||"—"}</div>
@@ -1922,7 +1922,7 @@ window.abrirDetallePedido = function(pid) {
 
   // BODY (scrollable)
   const body = document.createElement("div");
-  body.style.cssText = "flex:1;overflow-y:scroll;min-height:0;padding:16px 20px 16px 16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:auto;scrollbar-color:#c48a3a #e8e3dc;-webkit-overflow-scrolling:touch;";
+  body.style.cssText = "flex:1;overflow-y:scroll;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch;";
 
   // ACCIONES
   if (estado === "pendiente") {
@@ -2066,5 +2066,15 @@ document.addEventListener("keydown", e => {
 });
 </script>
 
+
+<style>
+#popupDetallePedido ::-webkit-scrollbar { width: 8px; }
+#popupDetallePedido ::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
+#popupDetallePedido ::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
+#popupDetallePedido ::-webkit-scrollbar-thumb:hover { background: #a8742f; }
+#lista-admin-pedidos::-webkit-scrollbar { width: 8px; }
+#lista-admin-pedidos::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
+#lista-admin-pedidos::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
+</style>
 </body>
 </html>
