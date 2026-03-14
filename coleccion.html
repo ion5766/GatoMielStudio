@@ -1113,7 +1113,7 @@ function mostrarModalExito(nombre, monto, metodo) {
   const mColors = {yape:"#6c2fa5",plin:"#0077aa",tarjeta:"#555","agencia/bcp":"#5a7a2a"};
   const mBgs    = {yape:"#f0e6fa",plin:"#e0f4fc",tarjeta:"#f5f5f5","agencia/bcp":"#f0f4e8"};
   const mk = (metodo||"").toLowerCase();
-  const ref = Math.random().toString(36).slice(2,10).toUpperCase();
+  const ref = window._ultimaRef || Math.random().toString(36).slice(2,10).toUpperCase();
 
   document.getElementById("exito-nombre").textContent   = nombre || "—";
   document.getElementById("exito-monto").textContent    = `S/ ${monto || "—"}`;
@@ -1188,6 +1188,8 @@ window.guardarPedido = async (nombre, monto, metodo) => {
   const user = auth.currentUser;
   if (!user) return;
   try {
+    const _ref = Math.random().toString(36).slice(2,10).toUpperCase();
+    window._ultimaRef = _ref;
     await addDoc(collection(db, "pedidos"), {
       uid: user.uid,
       email: user.email,
@@ -1195,6 +1197,7 @@ window.guardarPedido = async (nombre, monto, metodo) => {
       producto: nombre,
       monto: monto,
       metodo: metodo,
+      referencia: _ref,
       estado: "pendiente",
       fecha: serverTimestamp()
     });
@@ -1238,7 +1241,8 @@ window.abrirHistorial = async () => {
       const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
       const estadoIcon  = d.estado === "confirmado" ? "✓" : "⏳";
       const estadoText  = d.estado === "confirmado" ? "Confirmado" : "Validando pago";
-      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
+      const dRef = d.referencia || d.id.slice(0,8).toUpperCase();
+      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido:\nRef: *${dRef}*\nProducto: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
 
       const item = document.createElement("div");
       item.className = "cl-hist-item";
@@ -1250,6 +1254,9 @@ window.abrirHistorial = async () => {
             <span class="cl-hist-item-monto">S/ ${d.monto}</span>
             <span class="cl-hist-item-metodo ${metodoClass}">${d.metodo}</span>
             <span class="cl-hist-item-fecha">${fecha}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
+            <span style="font-family:monospace;font-size:10px;font-weight:700;color:#888;background:#f5f5f5;padding:1px 7px;border-radius:4px;letter-spacing:.06em;">Ref: ${dRef}</span>
           </div>
           <div class="cl-hist-item-estado ${estadoClass}">${estadoIcon} ${estadoText}</div>
         </div>
@@ -1732,6 +1739,8 @@ window.enviarPedidoColeccion = async function() {
 
     const user = _authP.currentUser;
     const metodoFinal = window._metodoColActual || "Agencia/BCP";
+    const _ref2 = Math.random().toString(36).slice(2,10).toUpperCase();
+    window._ultimaRef = _ref2;
     const { addDoc: addD, collection: col, serverTimestamp: sts } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     await addD(col(_dbP,"pedidos"), {
       uid:            user.uid,
@@ -1742,6 +1751,7 @@ window.enviarPedidoColeccion = async function() {
       producto:       window.productoActual?.nombre || "—",
       monto:          window.productoActual?.monto  || 0,
       metodo:         metodoFinal,
+      referencia:     _ref2,
       comprobanteURL: comprobanteURL,
       tipoEntrega:    _tipoEntrega,
       direccion:      _tipoEntrega === "delivery" ? dir : "Recoger en Gato Miel Estudio",
@@ -1810,7 +1820,7 @@ function _renderAdminPedidos() {
   let items = filtro === "todos" ? [..._todosLosPedidos] : _todosLosPedidos.filter(p => p.estado === filtro);
   if (buscar) {
     items = items.filter(p =>
-      (p.id||"").slice(0,8).toLowerCase().includes(buscar) ||
+      (p.referencia||p.id||'').toLowerCase().includes(buscar) ||
       (p.nombre||"").toLowerCase().includes(buscar) ||
       (p.producto||"").toLowerCase().includes(buscar) ||
       (p.email||"").toLowerCase().includes(buscar)
@@ -1832,7 +1842,7 @@ function _renderAdminPedidos() {
       ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"})
       : "—";
     const mk    = (p.metodo||"").toLowerCase();
-    const ref   = p.id.slice(0,8).toUpperCase();
+    const ref   = p.referencia || p.id.slice(0,8).toUpperCase();
 
     // Estado
     const eDot  = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
