@@ -53,6 +53,17 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 </script>
+
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({ appId: "TU_APP_ID_AQUI" });
+  });
+  window._osAppId = "0bd6234e-b932-43b7-bb66-4606557f79be;
+  window._osKey   = "TU_REST_API_KEY_AQUI";
+</script>
+  
 </head>
 <body>
 
