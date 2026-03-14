@@ -733,8 +733,8 @@ function abrirConversacion(uid, data) {
 
   area.innerHTML = `
     <div class="chat-top">
-      <button class="mu-back-chat-btn" onclick="volverALista()" title="Volver">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <button class="mu-back-chat-btn" onclick="window.volverALista()" title="Volver">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
       <div class="chat-top-info">
@@ -798,12 +798,11 @@ function abrirConversacion(uid, data) {
       </button>
     </div>`;
 
-  // Móvil: mostrar chat a pantalla completa
+  // Móvil: mostrar chat pantalla completa
   if (window.innerWidth <= 768) {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) sidebar.style.display = 'none';
-    area.style.display = 'flex';
-    area.classList.add('mu-abierto');
+    const sb = document.querySelector(".sidebar");
+    if (sb) sb.style.display = "none";
+    area.style.display = "flex";
   }
 
   // Escuchar mensajes
@@ -1098,46 +1097,21 @@ window.cancelarArchivoAdmin = function() {
   if (p) { p.style.display="none"; document.getElementById("admin-preview-img").src=""; document.getElementById("admin-preview-name").textContent=""; }
 };
 
-
-
-// ── Móvil: volver a lista ──
-window.volverALista = function() {
-  if (window.innerWidth > 768) return;
-  const sidebar  = document.querySelector('.sidebar');
-  const chatArea = document.getElementById('chat-area');
-  if (sidebar)  { sidebar.style.display  = ''; sidebar.style.width = ''; }
-  if (chatArea) { chatArea.style.display = 'none'; }
-  chatArea.innerHTML = '<div class="chat-placeholder" id="chat-placeholder"><span>💬</span><p>Selecciona una conversación<br>para responder</p></div>';
-  salaActiva = null;
-  if (unsubMensajes) { unsubMensajes(); unsubMensajes = null; }
-  if (unsubSala)     { unsubSala();     unsubSala = null; }
-};
-
 </script>
 
 
 <style>
-/* ═══ PANEL ADMIN MÓVIL — WHATSAPP STYLE ═══ */
+/* ═══ PANEL ADMIN MÓVIL — WHATSAPP ═══ */
 @media (max-width: 768px) {
   body { overflow: hidden; }
-  .mu-topbar, .mu-navbar, .mu-overlay, .mu-user-sheet { display: none !important; }
-
+  .mu-topbar,.mu-navbar,.mu-overlay,.mu-user-sheet { display: none !important; }
   .admin-header { padding: 10px 14px; }
   .admin-header-title { font-size: 15px; }
-
   .tabs-bar { overflow-x: auto; scrollbar-width: none; padding: 0 6px; }
   .tabs-bar::-webkit-scrollbar { display: none; }
   .tab-btn { font-size: 11px; padding: 10px 11px; }
-
   .admin-body { height: calc(100vh - 88px); }
-
-  /* Sidebar ocupa toda la pantalla */
-  .sidebar {
-    width: 100% !important;
-    border-right: none !important;
-  }
-
-  /* Chat area: oculto hasta que se selecciona un chat */
+  .sidebar { width: 100% !important; border-right: none !important; }
   .chat-area {
     display: none;
     position: fixed !important;
@@ -1146,35 +1120,57 @@ window.volverALista = function() {
     background: #f3ece3;
     flex-direction: column;
   }
-  .chat-area.mu-abierto {
-    display: flex !important;
-  }
-
-  /* Botón ← dentro del header del chat */
   .mu-back-chat-btn {
     display: flex !important;
     align-items: center; justify-content: center;
-    width: 36px; height: 36px;
+    width: 38px; height: 38px;
     background: none; border: none;
-    color: #c48a3a; cursor: pointer;
-    flex-shrink: 0; border-radius: 50%;
-    -webkit-tap-highlight-color: transparent;
-    margin-right: 4px;
+    color: #c48a3a; cursor: pointer; flex-shrink: 0;
+    border-radius: 50%; -webkit-tap-highlight-color: transparent;
+    margin-right: 6px;
   }
-  .mu-back-chat-btn:active { background: rgba(196,138,58,0.1); }
-
+  .mu-back-chat-btn:active { background: rgba(196,138,58,0.12); }
+  .chat-top { padding: 10px 12px !important; gap: 6px !important; }
   .chat-top img { width: 38px !important; height: 38px !important; }
-  .chat-top { padding: 10px 12px !important; gap: 8px !important; }
   .user-item { padding: 13px 14px !important; min-height: 64px; }
   .user-item img { width: 44px !important; height: 44px !important; }
   .chat-bottom { padding: 8px 10px !important; }
   #admin-messages { padding: 10px !important; }
   .chat-msg { max-width: 88% !important; }
+  .sidebar-list { flex: 1; overflow-y: auto; }
 }
 @media (min-width: 769px) {
   .mu-back-chat-btn { display: none !important; }
 }
 </style>
+
+<script>
+window.volverALista = function() {
+  if (window.innerWidth > 768) return;
+  var sb   = document.querySelector(".sidebar");
+  var area = document.getElementById("chat-area");
+  if (sb)   { sb.style.display = ""; }
+  if (area) {
+    area.style.display = "none";
+    area.innerHTML = '<div class="chat-placeholder"><span>💬</span><p>Selecciona una conversación<br>para responder</p></div>';
+  }
+  if (typeof salaActiva !== "undefined") salaActiva = null;
+  if (typeof unsubMensajes !== "undefined" && unsubMensajes) { unsubMensajes(); unsubMensajes = null; }
+  if (typeof unsubSala !== "undefined" && unsubSala)         { unsubSala();     unsubSala = null; }
+};
+
+/* Notificaciones push en móvil */
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+setInterval(function() {
+  var dots = document.querySelectorAll(".unread-dot");
+  if (dots.length > 0 && "Notification" in window && Notification.permission === "granted" && document.hidden) {
+    new Notification("Gato Miel 🐾", { body: dots.length + " mensaje(s) sin leer", icon: "Assets/Img/Logo.jpg" });
+  }
+}, 15000);
+</script>
 <script type="module" src="pwa.js"></script>
+
 </body>
 </html>
