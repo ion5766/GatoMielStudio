@@ -1563,7 +1563,7 @@ document.addEventListener("keydown", e => {
 </div>
 
 <div id="modalAdminPedidos" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.85);backdrop-filter:blur(20px);justify-content:center;align-items:center;z-index:9997;padding:16px;">
-  <div style="background:#f5f2ee;width:100%;max-width:640px;max-height:92vh;border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.4);">
+  <div style="background:#f5f2ee;width:100%;max-width:640px;max-height:92vh;border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.4);min-height:0;">
 
     <!-- HEADER -->
     <div style="background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);padding:22px 24px 20px;flex-shrink:0;position:relative;overflow:hidden;">
@@ -1609,7 +1609,7 @@ document.addEventListener("keydown", e => {
     </div>
 
     <!-- LISTA -->
-    <div id="lista-admin-pedidos" style="flex:1;overflow-y:scroll;padding:14px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:#c48a3a #f0ebe3;-webkit-overflow-scrolling:touch;"></div>
+    <div id="lista-admin-pedidos" style="flex:1;overflow-y:auto;min-height:0;padding:14px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:#c48a3a #f0ebe3;-webkit-overflow-scrolling:touch;"></div>
 
   </div>
 </div>
@@ -1890,6 +1890,16 @@ function _renderAdminPedidos() {
       <div><strong style="color:#1a1714;display:inline-block;min-width:52px;">Celular</strong> ${celHtml}</div>`;
     body.appendChild(clienteDiv);
 
+    // ACCIONES PRIMERO — siempre visibles al abrir
+    if (p.estado === "pendiente") {
+      const btnRow = document.createElement("div");
+      btnRow.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;";
+      btnRow.innerHTML = `
+        <button onclick="confirmarPedidoAdmin('${p.id}',this)" style="padding:13px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;box-shadow:0 4px 14px rgba(34,197,94,.3);">✓ Confirmar pago</button>
+        <button onclick="rechazarPedidoAdmin('${p.id}')" style="padding:13px;border:none;border-radius:12px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;">✕ Rechazar</button>`;
+      body.appendChild(btnRow);
+    }
+
     // Entrega
     if (p.tipoEntrega) {
       const entDiv = document.createElement("div");
@@ -1921,16 +1931,6 @@ function _renderAdminPedidos() {
       noComp.style.cssText = "padding:12px;background:#fafafa;border-radius:10px;border:1px dashed #ddd;text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;";
       noComp.textContent = "Sin comprobante adjunto";
       body.appendChild(noComp);
-    }
-
-    // Acciones
-    if (p.estado === "pendiente") {
-      const btnRow = document.createElement("div");
-      btnRow.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;";
-      btnRow.innerHTML = `
-        <button onclick="confirmarPedidoAdmin('${p.id}',this)" style="padding:12px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;box-shadow:0 4px 12px rgba(34,197,94,.25);">✓ Confirmar pago</button>
-        <button onclick="rechazarPedidoAdmin('${p.id}')" style="padding:12px;border:none;border-radius:12px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;">✕ Rechazar</button>`;
-      body.appendChild(btnRow);
     }
 
     wrap.appendChild(hdr);
