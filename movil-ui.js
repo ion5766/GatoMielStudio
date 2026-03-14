@@ -1,195 +1,214 @@
 /* ═══════════════════════════════════════════════════════════════
-   MOVIL-UI.JS — Navbar móvil estilo Clash Royale
+   MOVIL-UI.CSS — Solo afecta móvil ≤768px. PC sin cambios.
    ═══════════════════════════════════════════════════════════════ */
-(function () {
-  if (window.innerWidth > 768) return;
 
-  /* ── Detectar página ── */
-  const path = window.location.pathname.toLowerCase();
-  const pagina =
-    path.includes("index") || path === "/" || path.endsWith("/") ? "inicio"
-    : path.includes("historial") || path.includes("taller")      ? "talleres"
-    : path.includes("coleccion")                                  ? "coleccion"
-    : path.includes("comunidad")                                  ? "comunidad"
-    : path.includes("tablon")                                     ? "tablon"
-    : path.includes("quienes")                                    ? "quienes"
-    : path.includes("entrada")                                    ? "entrada"
-    : "inicio";
+:root {
+  --mu-gold:  #c48a3a;
+  --mu-gold2: #e8b870;
+  --mu-ink:   #1a1714;
+  --mu-ink2:  #241e18;
+  --mu-ink3:  #2e2720;
+  --mu-bar-h: 68px;
+  --mu-top-h: 52px;
+}
 
-  /* ── Marcar entrada.html para el CSS ── */
-  if (pagina === "entrada") document.body.classList.add("page-entrada");
+/* ─── Ocultar header original ─── */
+@media (max-width: 768px) {
+  .header { display: none !important; }
+  body     { padding-bottom: var(--mu-bar-h) !important;
+             padding-top:    var(--mu-top-h)  !important; }
 
-  /* ══ 1. TOPBAR SUPERIOR ══ */
-  const topbar = document.createElement("div");
-  topbar.className = "mu-topbar";
-  topbar.innerHTML = `
-    <a href="index.html" class="mu-topbar-logo">
-      <img src="Assets/Img/Logo.jpg" alt="Logo" onerror="this.style.display='none'">
-      <span>Gato Miel</span>
-    </a>
-    <div class="mu-topbar-right" id="mu-topbar-right"></div>
-  `;
-  document.body.insertBefore(topbar, document.body.firstChild);
+  /* entrada.html: el video ocupa toda la pantalla,
+     no queremos topbar ni barra ni padding */
+  body.mu-entrada { padding-top: 0 !important;
+                    padding-bottom: 0 !important; }
+  body.mu-entrada .mu-topbar  { display: none !important; }
+  body.mu-entrada .mu-navbar  { display: none !important; }
+  body.mu-entrada .mu-overlay { display: none !important; }
+  body.mu-entrada .mu-user-sheet { display: none !important; }
+  body.mu-entrada .mu-page-label { display: none !important; }
+}
 
-  /* ══ 2. NAVBAR INFERIOR ══ */
-  const items = [
-    { id:"inicio",    href:"index.html",                 label:"Inicio",   svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' },
-    { id:"talleres",  href:"historial-De_Talleres.html", label:"Talleres", svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>' },
-    { id:"tablon",    href:"tablon-de-anuncios.html",    label:"Tablón",   center:true, svg:'<svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>' },
-    { id:"coleccion", href:"coleccion.html",             label:"Tienda",   svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>' },
-    { id:"comunidad", href:"comunidad.html",             label:"Comunidad",svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
-  ];
+/* ─── Topbar superior ─── */
+.mu-topbar { display: none; }
 
-  const navbar = document.createElement("nav");
-  navbar.className = "mu-navbar";
-
-  items.forEach(item => {
-    const el = document.createElement("a");
-    el.href = item.href;
-    el.className = "mu-nav-item" + (item.center ? " mu-center-btn" : "") + (item.id === pagina ? " active" : "");
-    el.setAttribute("aria-label", item.label);
-
-    if (item.center) {
-      el.innerHTML = `<div class="mu-center-circle">${item.svg}</div><span>${item.label}</span>`;
-    } else {
-      el.innerHTML = `${item.svg}<span>${item.label}</span>`;
-    }
-
-    // No recargar si ya estamos en esa página
-    el.addEventListener("click", e => {
-      if (item.id === pagina) { e.preventDefault(); window.scrollTo({top:0,behavior:"smooth"}); }
-    });
-
-    navbar.appendChild(el);
-  });
-
-  document.body.appendChild(navbar);
-
-  /* ══ 3. OVERLAY + SHEET DE USUARIO ══ */
-  const overlay = document.createElement("div");
-  overlay.className = "mu-overlay";
-  overlay.addEventListener("click", cerrarSheet);
-  document.body.appendChild(overlay);
-
-  const sheet = document.createElement("div");
-  sheet.className = "mu-user-sheet";
-  sheet.id = "mu-user-sheet";
-  sheet.innerHTML = `
-    <div class="mu-sheet-handle"></div>
-    <div class="mu-sheet-avatar-row">
-      <img class="mu-sheet-avatar" id="mu-sheet-avatar" src="Assets/Img/Avatares/GatoMiel.jpeg" alt="Avatar">
-      <div>
-        <div class="mu-sheet-name" id="mu-sheet-name">Invitado</div>
-        <div class="mu-sheet-email" id="mu-sheet-email">Sin sesión iniciada</div>
-      </div>
-    </div>
-    <div id="mu-sheet-btns"></div>
-  `;
-  document.body.appendChild(sheet);
-
-  function abrirSheet() {
-    sheet.classList.add("open");
-    overlay.classList.add("visible");
-    document.body.style.overflow = "hidden";
+@media (max-width: 768px) {
+  .mu-topbar {
+    display: flex;
+    position: fixed; top:0; left:0; right:0;
+    height: var(--mu-top-h);
+    background: rgba(26,23,20,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    z-index: 9989;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
   }
-  function cerrarSheet() {
-    sheet.classList.remove("open");
-    overlay.classList.remove("visible");
-    document.body.style.overflow = "";
+  .mu-topbar-logo {
+    display:flex; align-items:center; gap:8px; text-decoration:none;
+  }
+  .mu-topbar-logo img {
+    width:30px; height:30px; border-radius:8px; object-fit:cover;
+    border:1.5px solid rgba(196,138,58,0.4);
+  }
+  .mu-topbar-logo span {
+    font-family:'Playfair Display',serif;
+    font-size:15px; font-weight:500; color:white; letter-spacing:0.02em;
+  }
+  .mu-topbar-right { display:flex; align-items:center; gap:10px; }
+  .mu-topbar-avatar {
+    width:32px; height:32px; border-radius:50%; object-fit:cover;
+    border:2px solid var(--mu-gold); cursor:pointer;
+  }
+  .mu-topbar-login {
+    padding:6px 14px; background:var(--mu-gold); color:white;
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+    border-radius:20px; text-decoration:none;
   }
 
-  /* ══ 4. FIREBASE AUTH ══ */
-  function setupAuth(user) {
-    const topbarRight = document.getElementById("mu-topbar-right");
-    const sheetBtns   = document.getElementById("mu-sheet-btns");
-    const sheetName   = document.getElementById("mu-sheet-name");
-    const sheetEmail  = document.getElementById("mu-sheet-email");
-    const sheetAvatar = document.getElementById("mu-sheet-avatar");
-
-    if (user) {
-      const avatarSrc = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-      const nombre    = user.displayName || "Usuario";
-      const email     = user.email || "";
-
-      topbarRight.innerHTML = `<img class="mu-topbar-avatar" id="mu-topbar-avatar"
-        src="${avatarSrc}" alt="${nombre}"
-        onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">`;
-      document.getElementById("mu-topbar-avatar").addEventListener("click", abrirSheet);
-
-      sheetAvatar.src   = avatarSrc;
-      sheetName.textContent  = nombre;
-      sheetEmail.textContent = email;
-
-      const btns = [
-        { label:"🛍 Mis pedidos",      fn:"abrirModalCompras"    },
-        { label:"🎫 Mis membresías",   fn:"abrirModalMembresias" },
-        { label:"Personalizar perfil", fn:"abrirPersonalizar"    },
-        { label:"Cerrar sesión",       fn:"cerrarSesion", danger:true },
-      ];
-
-      sheetBtns.innerHTML = "";
-      btns.forEach(b => {
-        const btn = document.createElement("button");
-        btn.className = "mu-sheet-btn";
-        if (b.danger) btn.style.color = "#f87171";
-        btn.textContent = b.label;
-        btn.addEventListener("click", () => {
-          cerrarSheet();
-          setTimeout(() => { if (typeof window[b.fn] === "function") window[b.fn](); }, 250);
-        });
-        sheetBtns.appendChild(btn);
-      });
-
-    } else {
-      topbarRight.innerHTML = `<a href="entrada.html" class="mu-topbar-login">🐾 Entrar</a>`;
-      sheetName.textContent  = "Invitado";
-      sheetEmail.textContent = "Explora sin cuenta";
-      sheetBtns.innerHTML = `
-        <a href="entrada.html" style="display:flex;align-items:center;gap:12px;padding:13px 4px;
-          color:#c48a3a;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
-          text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06);">
-          Iniciar sesión
-        </a>`;
-    }
+  /* Hero index: altura ajustada para no tener espacio en blanco */
+  .ix-hero {
+    height: calc(100vh - var(--mu-top-h)) !important;
+    padding: 0 6% 10vh !important;
+    align-items: flex-end;
   }
+  .ix-hero-content h1 { font-size: clamp(36px,11vw,54px) !important; }
+  .ix-hero-scroll { display: none !important; }
+}
 
-  // Esperar a que Firebase auth resuelva el usuario
-  let tries = 0;
-  const waitAuth = setInterval(() => {
-    tries++;
-    if (window._firebaseUser !== undefined) {
-      clearInterval(waitAuth);
-      setupAuth(window._firebaseUser);
-    } else if (tries > 40) {
-      clearInterval(waitAuth);
-      setupAuth(null);
-    }
-  }, 100);
+/* ─── Barra inferior ─── */
+.mu-navbar { display: none; }
 
-  /* ══ 5. LABEL FLOTANTE — solo aparece al hacer scroll hacia abajo ══ */
-  const labels = {
-    inicio:"Inicio", talleres:"Talleres", coleccion:"Colección",
-    comunidad:"Comunidad", tablon:"Tablón", quienes:"Quiénes somos"
-  };
-  const labelText = labels[pagina];
-
-  if (labelText) {
-    const label = document.createElement("div");
-    label.className = "mu-page-label";
-    label.textContent = labelText;
-    document.body.appendChild(label);
-
-    let lastY = 0;
-    window.addEventListener("scroll", () => {
-      const sy = window.scrollY;
-      // Solo mostrar si scrolleó hacia ABAJO y pasó de 100px
-      if (sy > 100 && sy > lastY) {
-        label.classList.add("visible");
-      } else {
-        label.classList.remove("visible");
-      }
-      lastY = sy;
-    }, { passive: true });
+@media (max-width: 768px) {
+  .mu-navbar {
+    display: flex;
+    position: fixed; bottom:0; left:0; right:0;
+    height: var(--mu-bar-h);
+    background: var(--mu-ink);
+    border-top: 1.5px solid var(--mu-ink3);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.45);
+    z-index: 9990;
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 0 4px;
+    border-radius: 20px 20px 0 0;
+    animation: mu-slideUp 0.45s cubic-bezier(0.34,1.4,0.64,1) both;
   }
+  .mu-nav-item {
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; flex:1; gap:3px;
+    text-decoration:none; color:rgba(255,255,255,0.38);
+    font-family:'Inter',sans-serif; font-size:9px; font-weight:600;
+    letter-spacing:0.04em; text-transform:uppercase;
+    transition:color 0.2s,transform 0.15s;
+    position:relative; cursor:pointer;
+    border:none; background:none; padding:0;
+    -webkit-tap-highlight-color:transparent; overflow:hidden;
+  }
+  .mu-nav-item:active { transform: scale(0.88); }
+  .mu-nav-item svg   { width:22px; height:22px; transition:transform 0.2s,filter 0.2s; }
+  .mu-nav-item.active { color: var(--mu-gold); }
+  .mu-nav-item.active svg {
+    filter: drop-shadow(0 0 5px rgba(196,138,58,0.65));
+    transform: translateY(-2px) scale(1.1);
+  }
+  .mu-nav-item.active::before {
+    content:''; position:absolute; top:0; left:20%; right:20%;
+    height:2px;
+    background:linear-gradient(90deg,var(--mu-gold),var(--mu-gold2));
+    border-radius:0 0 4px 4px;
+  }
+  .mu-nav-item.mu-center-btn { flex:0 0 64px; margin-top:-16px; }
+  .mu-center-btn .mu-center-circle {
+    width:50px; height:50px;
+    background:linear-gradient(135deg,var(--mu-gold),#a8742f);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(196,138,58,0.5),0 2px 6px rgba(0,0,0,0.4);
+    border:2.5px solid rgba(255,255,255,0.12); transition:transform 0.2s;
+  }
+  .mu-nav-item.mu-center-btn:active .mu-center-circle { transform:scale(0.9); }
+  .mu-center-btn .mu-center-circle svg { width:24px; height:24px; filter:none; }
+}
 
-})();
+/* ─── Label flotante (solo al scroll) ─── */
+@media (max-width: 768px) {
+  .mu-page-label {
+    position:fixed; top:58px; left:50%;
+    transform:translateX(-50%) translateY(-6px);
+    background:rgba(26,23,20,0.9); backdrop-filter:blur(8px);
+    border:1px solid rgba(196,138,58,0.25); border-radius:20px;
+    padding:5px 16px; font-family:'Inter',sans-serif;
+    font-size:10px; font-weight:600; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--mu-gold);
+    z-index:9988; opacity:0; pointer-events:none;
+    transition:opacity 0.3s,transform 0.3s;
+  }
+  .mu-page-label.visible {
+    opacity:1; transform:translateX(-50%) translateY(0);
+  }
+}
+
+/* ─── Layout general ─── */
+@media (max-width: 768px) {
+  .ix-talleres { padding:24px 5% 20px !important; }
+  .ix-cards    { grid-template-columns:1fr !important; gap:16px !important; }
+  .ix-cta      { padding:60px 6% !important; }
+  .ix-strip    { gap:10px !important; padding:12px 5% !important; font-size:9px !important; }
+  .footer      { margin-bottom:calc(var(--mu-bar-h) + 8px); }
+}
+
+/* ─── Sheet usuario ─── */
+@media (max-width: 768px) {
+  .mu-user-sheet {
+    position:fixed; bottom:var(--mu-bar-h); left:0; right:0;
+    background:var(--mu-ink2);
+    border-top:1.5px solid var(--mu-ink3);
+    border-radius:20px 20px 0 0;
+    padding:20px 20px 16px; z-index:9992;
+    transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
+    box-shadow:0 -8px 32px rgba(0,0,0,0.5);
+  }
+  .mu-user-sheet.open { transform:translateY(0); }
+  .mu-sheet-handle {
+    width:36px; height:3px; background:rgba(255,255,255,0.15);
+    border-radius:2px; margin:0 auto 16px;
+  }
+  .mu-sheet-avatar-row {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:18px; padding-bottom:16px;
+    border-bottom:1px solid var(--mu-ink3);
+  }
+  .mu-sheet-avatar {
+    width:48px; height:48px; border-radius:50%; object-fit:cover;
+    border:2.5px solid var(--mu-gold);
+  }
+  .mu-sheet-name  { font-family:'Playfair Display',serif; font-size:17px; color:white; font-weight:500; }
+  .mu-sheet-email { font-family:'Inter',sans-serif; font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+  .mu-sheet-btn {
+    display:flex; align-items:center; gap:12px;
+    width:100%; padding:13px 4px;
+    background:none; border:none;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    color:rgba(255,255,255,0.75);
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:400;
+    cursor:pointer; text-align:left;
+    -webkit-tap-highlight-color:transparent; transition:color 0.2s;
+  }
+  .mu-sheet-btn:last-child { border-bottom:none; }
+  .mu-sheet-btn:active     { color:var(--mu-gold); }
+  .mu-sheet-btn svg { width:18px; height:18px; opacity:0.5; flex-shrink:0; }
+  .mu-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.5);
+    z-index:9991; opacity:0; pointer-events:none; transition:opacity 0.3s;
+  }
+  .mu-overlay.visible { opacity:1; pointer-events:all; }
+}
+
+/* ─── Animación ─── */
+@keyframes mu-slideUp {
+  from { transform:translateY(100%); opacity:0; }
+  to   { transform:translateY(0);    opacity:1; }
+}
