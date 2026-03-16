@@ -1,94 +1,110 @@
 /* ═══════════════════════════════════════════════════
    VERCEL SERVERLESS FUNCTION — /api/notify
-   Archivo: api/notify.js  (en la raíz del proyecto)
+   Recibe eventos del frontend y envía push via OneSignal
    ═══════════════════════════════════════════════════ */
 
-const { initializeApp, cert, getApps } = require("firebase-admin/app");
-const { getMessaging }                 = require("firebase-admin/messaging");
-const { getFirestore }                 = require("firebase-admin/firestore");
+const OS_APP_ID  = "0bd6234e-b932-43b7-bb66-4606557f79be";
+const OS_API_KEY = process.env.ONESIGNAL_API_KEY;
+const BASE_URL   = "https://gato-miel-studio.vercel.app";
 
-function getAdminApp() {
-  if (getApps().length) return getApps()[0];
-  const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  return initializeApp({ credential: cert(sa) });
+async function enviar(payload) {
+  const resp = await fetch("https://onesignal.com/api/v1/notifications", {
+    method: "POST",
+    headers: {
+      "Content-Type":  "application/json",
+      "Authorization": "Basic " + OS_API_KEY
+    },
+    body: JSON.stringify({
+      app_id: OS_APP_ID,
+      chrome_web_icon: BASE_URL + "/Assets/Img/Logo.jpg",
+      firefox_icon:    BASE_URL + "/Assets/Img/Logo.jpg",
+      ...payload
+    })
+  });
+  return resp.json();
 }
-
-const BASE_URL = "https://gato-miel-studio.vercel.app";
-const ADMINS   = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")   return res.status(405).json({ error: "Method not allowed" });
 
+  /* Verificar secret */
   if (req.headers["x-notify-secret"] !== process.env.NOTIFY_SECRET) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
+  const { tipo, datos } = req.body || {};
+  if (!tipo) return res.status(400).json({ error: "Falta tipo" });
+
   try {
-    const app       = getAdminApp();
-    const messaging = getMessaging(app);
-    const db        = getFirestore(app);
-    const { tipo, datos } = req.body;
-
-    async function getTokens(emails) {
-      const tokens = [];
-      for (const email of emails) {
-        const snap = await db.collection("users").where("email","==",email).limit(1).get();
-        snap.forEach(d => { if (d.data().fcmToken) tokens.push(d.data().fcmToken); });
-      }
-      return tokens;
-    }
-
-    async function getAllTokens() {
-      const snap = await db.collection("users").get();
-      const tokens = [];
-      snap.forEach(d => { if (d.data().fcmToken) tokens.push(d.data().fcmToken); });
-      return tokens;
-    }
-
-    async function push(tokens, title, body, url, tag) {
-      if (!tokens.length) return { sent:0 };
-      const r = await messaging.sendEachForMulticast({
-        tokens,
-        notification: { title, body },
-        data:         { title, body, url, tag: tag||"gm" },
-        webpush: {
-          notification: { icon: BASE_URL+"/Assets/Img/Logo.jpg", badge: BASE_URL+"/Assets/Img/Logo.jpg", vibrate:[200,100,200] },
-          fcmOptions:   { link: BASE_URL + url }
-        },
-        android: { notification: { color:"#c48a3a" } }
-      });
-      return { sent: r.successCount, failed: r.failureCount };
-    }
-
     let result;
+
     switch(tipo) {
+
       case "chat_cliente":
-        result = await push(await getTokens(ADMINS), `💬 ${datos.nombre||"Cliente"}`, datos.texto||"Te escribió", "/panel-admin.html", "chat-"+datos.uid);
+        /* Cliente escribió → notificar SOLO a admins (por segmento o tag) */
+        result = await enviar({
+          included_segments: ["All"],
+          filters: [{ field:"tag", key:"esAdmin", relation:"=", value:"true" }],
+          headings: { en: `💬 ${datos.nombre||"Cliente"} te escribió` },
+          contents: { en: datos.texto||"Nuevo mensaje" },
+          url: BASE_URL + "/panel-admin.html"
+        });
         break;
-      case "chat_admin": {
-        const snap = await db.collection("users").doc(datos.uid).get();
-        const token = snap.data()?.fcmToken;
-        result = token ? await push([token], "🐾 Gato Miel te respondió", datos.texto||"Tienes una respuesta", "/index.html", "resp-"+datos.uid) : {sent:0};
+
+      case "chat_admin":
+        /* Admin respondió → notificar al cliente específico */
+        result = await enviar({
+          include_aliases:  { external_id: [datos.uid] },
+          target_channel:   "push",
+          headings: { en: "🐾 Gato Miel te respondió" },
+          contents: { en: datos.texto||"Tienes una respuesta" },
+          url: BASE_URL + "/index.html"
+        });
         break;
-      }
+
       case "nuevo_post":
-        result = await push(await getAllTokens(), "🏺 Nueva obra en Comunidad", `${datos.autor||"Alguien"} compartió una nueva pieza`, "/comunidad.html", "post-"+datos.postId);
+        /* Post nuevo → notificar a TODOS */
+        result = await enviar({
+          included_segments: ["All"],
+          headings: { en: "🏺 Nueva obra en Comunidad" },
+          contents: { en: `${datos.autor||"Alguien"} compartió una nueva pieza` },
+          url: BASE_URL + "/comunidad.html"
+        });
         break;
+
       case "nuevo_pago":
-        result = await push(await getTokens(ADMINS), `💰 Nuevo pago — ${datos.producto||"Colección"}`, `${datos.nombre||"Cliente"} · S/ ${datos.monto||"—"} via ${datos.metodo||"—"}`, "/panel-admin.html", "pago-"+datos.id);
+        /* Pago nuevo → notificar admins */
+        result = await enviar({
+          included_segments: ["All"],
+          filters: [{ field:"tag", key:"esAdmin", relation:"=", value:"true" }],
+          headings: { en: `💰 Nuevo pago — ${datos.producto||"Colección"}` },
+          contents: { en: `${datos.nombre||"Cliente"} · S/ ${datos.monto||"—"} via ${datos.metodo||"—"}` },
+          url: BASE_URL + "/panel-admin.html"
+        });
         break;
+
       case "nueva_membresia":
-        result = await push(await getTokens(ADMINS), `🎫 Nueva membresía — ${datos.taller||"Taller"}`, `${datos.nombre||"Cliente"} · S/ ${datos.precio||"—"}`, "/panel-admin.html", "memb-"+datos.id);
+        /* Membresía nueva → notificar admins */
+        result = await enviar({
+          included_segments: ["All"],
+          filters: [{ field:"tag", key:"esAdmin", relation:"=", value:"true" }],
+          headings: { en: `🎫 Nueva membresía — ${datos.taller||"Taller"}` },
+          contents: { en: `${datos.nombre||"Cliente"} · S/ ${datos.precio||"—"}` },
+          url: BASE_URL + "/panel-admin.html"
+        });
         break;
+
       default:
-        return res.status(400).json({ error: "tipo desconocido" });
+        return res.status(400).json({ error: "tipo desconocido: " + tipo });
     }
 
-    return res.status(200).json({ ok:true, result });
+    return res.status(200).json({ ok: true, result });
+
   } catch(err) {
-    console.error(err);
+    console.error("notify error:", err);
     return res.status(500).json({ error: err.message });
   }
 };
