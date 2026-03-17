@@ -1028,7 +1028,7 @@ window.rechazarPago = async function(memId) {
   const memSnap = await getDoc(doc(db,"membresias",memId));
   await updateDoc(doc(db,"membresias",memId), {estado:"rechazado", fechaRechazo:serverTimestamp()});
   if (window.notif && memSnap.exists() && memSnap.data().uid) {
-    window.notif.enviarNotif("pago_validado", {
+    window.notif.enviarNotif("pago_rechazado", {
       clienteUid: memSnap.data().uid,
       detalle: "Tu reserva de taller no pudo ser confirmada. Contáctanos por WhatsApp 🐾",
       url: "historial-De_Talleres.html"
