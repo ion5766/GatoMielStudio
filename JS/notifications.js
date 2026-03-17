@@ -1,10 +1,29 @@
+// ═══════════════════════════════════════════════════════════════════
+// JS/notifications.js  —  MÓDULO DE NOTIFICACIONES FCM
+// Gato Miel Estudio
+//
+// USO EN CADA PÁGINA:
+//   <script type="module" src="JS/notifications.js"></script>
+//
+// Funciones globales disponibles:
+//   window.notif.pedirPermiso()
+//   window.notif.enviarNotif(tipo, datos)
+// ═══════════════════════════════════════════════════════════════════
+
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
-import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp, query, where, onSnapshot, updateDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp, query, where, onSnapshot, updateDoc, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const VAPID_KEY = "BOXc74eAxBMYQpwrWThCtU8Db7du05d8p3Js2rrEEwsF_-wkol0qbdwE9iMq7RIYrRKT4_r3T8bN_hHJpYL8bns";
-const ADMIN_EMAIL = "gatomielstudio@gmail.com";
+// ─────────────────────────────────────────────────────────────────
+// CONFIGURACIÓN — REEMPLAZA ESTO:
+// Ve a Firebase Console → Project Settings → Cloud Messaging
+// → Web Push certificates → copia la "Key pair" (VAPID Key)
+// ─────────────────────────────────────────────────────────────────
+const VAPID_KEY = "TU_VAPID_KEY_AQUI"; // 🔑 VER INSTRUCCIONES ABAJO
+
+// Email del admin (el que recibe notificaciones de compras/reservas)
+const ADMIN_EMAIL = "gatomieltaller@gmail.com";
 
 const FC = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -21,6 +40,7 @@ const db   = getFirestore(app);
 let messaging;
 try { messaging = getMessaging(app); } catch(e) {}
 
+// ─── UI de notificaciones in-app ────────────────────────────────
 function crearUI() {
   if (document.getElementById("gm-notif-panel")) return;
   const css = `
@@ -30,7 +50,8 @@ function crearUI() {
       background: #c48a3a; border: none; cursor: pointer;
       box-shadow: 0 4px 20px rgba(196,138,58,0.45);
       display: flex; align-items: center; justify-content: center;
-      transition: transform .2s, background .2s; font-size: 20px;
+      transition: transform .2s, background .2s;
+      font-size: 20px;
     }
     #gm-notif-btn:hover { transform: scale(1.1); background: #a8742f; }
     #gm-notif-badge {
@@ -89,7 +110,9 @@ function crearUI() {
     .gm-notif-texto {
       color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.4; margin: 0;
     }
-    .gm-notif-tiempo { color: rgba(196,138,58,0.6); font-size: 10px; margin-top: 5px; }
+    .gm-notif-tiempo {
+      color: rgba(196,138,58,0.6); font-size: 10px; margin-top: 5px;
+    }
     .gm-notif-empty {
       padding: 40px 20px; text-align: center;
       color: rgba(255,255,255,0.2); font-size: 13px;
@@ -100,7 +123,8 @@ function crearUI() {
       border-radius: 14px; padding: 14px 18px;
       max-width: 300px; display: flex; gap: 12px; align-items: flex-start;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      animation: toastIn .3s ease; font-family: 'Inter', sans-serif;
+      animation: toastIn .3s ease;
+      font-family: 'Inter', sans-serif;
     }
     @keyframes toastIn {
       from { opacity: 0; transform: translateX(20px); }
@@ -141,16 +165,19 @@ function crearUI() {
       #gm-notif-panel { right: 10px; left: 10px; width: auto; bottom: 138px; }
     }
   `;
+
   const style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
 
+  // Botón flotante
   const btn = document.createElement("div");
   btn.id = "gm-notif-btn";
   btn.innerHTML = `🔔<span id="gm-notif-badge"></span>`;
   btn.onclick = togglePanel;
   document.body.appendChild(btn);
 
+  // Panel
   const panel = document.createElement("div");
   panel.id = "gm-notif-panel";
   panel.innerHTML = `
@@ -162,6 +189,7 @@ function crearUI() {
   `;
   document.body.appendChild(panel);
 
+  // Prompt permiso
   const prompt = document.createElement("div");
   prompt.id = "gm-pedir-permiso";
   prompt.innerHTML = `
@@ -175,7 +203,7 @@ function crearUI() {
 function togglePanel() {
   const panel = document.getElementById("gm-notif-panel");
   panel.classList.toggle("visible");
-  if (panel.classList.contains("visible")) actualizarBadge(0);
+  if (panel.classList.contains("visible")) marcarLeidas();
 }
 
 function mostrarToast(icon, title, msg, url) {
@@ -212,6 +240,7 @@ function tiempoRelativo(ts) {
   return Math.floor(diff / 86400) + " d";
 }
 
+// ─── Guardar token FCM en Firestore ─────────────────────────────
 async function guardarToken(user) {
   if (!messaging || !user) return;
   try {
@@ -219,7 +248,10 @@ async function guardarToken(user) {
     if (!token) return;
     const isAdmin = user.email === ADMIN_EMAIL;
     await setDoc(doc(db, "tokens_fcm", user.uid), {
-      token, email: user.email, uid: user.uid, isAdmin,
+      token,
+      email: user.email,
+      uid: user.uid,
+      isAdmin,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch (e) {
@@ -227,6 +259,7 @@ async function guardarToken(user) {
   }
 }
 
+// ─── Escuchar notificaciones en Firestore (in-app) ──────────────
 function escucharNotificaciones(uid) {
   const q = query(
     collection(db, "notificaciones"),
@@ -237,4 +270,196 @@ function escucharNotificaciones(uid) {
   onSnapshot(q, (snap) => {
     const lista = document.getElementById("gm-notif-lista");
     if (!lista) return;
-    const items = snap.docs.map(d
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const noLeidas = items.filter(i => !i.leida).length;
+    actualizarBadge(noLeidas);
+    if (items.length === 0) {
+      lista.innerHTML = `<div class="gm-notif-empty">No hay notificaciones aún 🐾</div>`;
+      return;
+    }
+    lista.innerHTML = items.map(item => `
+      <div class="gm-notif-item ${item.leida ? "" : "no-leida"}" onclick="window._irNotif('${item.id}','${item.url || ""}')">
+        <span class="gm-notif-icon">${item.icon || "🔔"}</span>
+        <div class="gm-notif-body">
+          <p class="gm-notif-titulo">${item.titulo || ""}</p>
+          <p class="gm-notif-texto">${item.texto || ""}</p>
+          <p class="gm-notif-tiempo">${tiempoRelativo(item.createdAt)}</p>
+        </div>
+      </div>
+    `).join("");
+  });
+
+  window._irNotif = async (id, url) => {
+    await updateDoc(doc(db, "notificaciones", id), { leida: true }).catch(() => {});
+    if (url) window.location.href = url;
+  };
+}
+
+async function marcarLeidas() {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+  // Las marcamos como leidas cuando abren el panel
+  // (el badge desaparece pero los items quedan en historial)
+  actualizarBadge(0);
+}
+
+// ─── Función pública: crear notificación en Firestore ────────────
+// Esta función escribe en Firestore → la Cloud Function la detecta y envía el push.
+// También puedes llamarla directamente para notifs in-app sin push.
+async function crearNotificacion({ uid, titulo, texto, icon, url, tipo }) {
+  await addDoc(collection(db, "notificaciones"), {
+    uid,
+    titulo,
+    texto,
+    icon: icon || "🔔",
+    url: url || "",
+    tipo: tipo || "general",
+    leida: false,
+    createdAt: serverTimestamp()
+  });
+}
+
+// ─── Función pública: disparar eventos de negocio ────────────────
+//
+//  TIPOS:
+//  "chat_cliente"    → cliente escribió al admin
+//  "chat_admin"      → admin respondió al cliente
+//  "reserva_nueva"   → cliente reservó cupo en taller
+//  "compra_nueva"    → cliente compró pieza
+//  "pago_validado"   → admin validó el pago del cliente
+//  "post_comunidad"  → alguien publicó en comunidad
+//
+async function enviarNotif(tipo, datos = {}) {
+  const user = auth.currentUser;
+  // Obtener UID del admin desde Firestore
+  let adminUid = null;
+  try {
+    const snap = await getDocs(query(collection(db, "tokens_fcm"), where("isAdmin", "==", true)));
+    if (!snap.empty) adminUid = snap.docs[0].data().uid;
+  } catch (e) {}
+
+  switch (tipo) {
+
+    case "chat_cliente": {
+      // Cliente escribió → notificar al admin
+      if (!adminUid) break;
+      await crearNotificacion({
+        uid: adminUid,
+        titulo: "💬 Nuevo mensaje de cliente",
+        texto: `${datos.nombreCliente || "Un cliente"}: "${datos.preview || ""}"`,
+        icon: "💬", url: "panel-admin.html", tipo
+      });
+      break;
+    }
+
+    case "chat_admin": {
+      // Admin respondió → notificar al cliente
+      if (!datos.clienteUid) break;
+      await crearNotificacion({
+        uid: datos.clienteUid,
+        titulo: "💬 Tienes un mensaje de Gato Miel",
+        texto: datos.preview || "Tenemos una respuesta para ti 🐾",
+        icon: "💬", url: "index.html", tipo
+      });
+      break;
+    }
+
+    case "reserva_nueva": {
+      // Cliente reservó → notificar al admin
+      if (!adminUid) break;
+      await crearNotificacion({
+        uid: adminUid,
+        titulo: "📅 Nueva reserva de taller",
+        texto: `${datos.nombreCliente || "Un cliente"} reservó en ${datos.taller || "un taller"}`,
+        icon: "📅", url: "panel-admin.html", tipo
+      });
+      break;
+    }
+
+    case "compra_nueva": {
+      // Cliente compró → notificar al admin
+      if (!adminUid) break;
+      await crearNotificacion({
+        uid: adminUid,
+        titulo: "🛍 Nueva compra recibida",
+        texto: `${datos.nombreCliente || "Un cliente"} compró: ${datos.pieza || "una pieza"}`,
+        icon: "🛍", url: "panel-admin.html", tipo
+      });
+      break;
+    }
+
+    case "pago_validado": {
+      // Admin validó → notificar al cliente
+      if (!datos.clienteUid) break;
+      await crearNotificacion({
+        uid: datos.clienteUid,
+        titulo: "✅ ¡Tu pago fue confirmado!",
+        texto: datos.detalle || "Tu reserva / pedido ha sido aprobado 🎉",
+        icon: "✅", url: datos.url || "coleccion.html", tipo
+      });
+      break;
+    }
+
+    case "post_comunidad": {
+      // Alguien publicó → notificar a TODOS los usuarios registrados
+      // Escribe una notif "broadcast" que la Cloud Function enviará a todos
+      await addDoc(collection(db, "notificaciones_broadcast"), {
+        titulo: "🌿 Nueva publicación en Comunidad",
+        texto: `${datos.autor || "Alguien"} compartió algo nuevo`,
+        icon: "🌿", url: "comunidad.html",
+        tipo, createdAt: serverTimestamp()
+      });
+      break;
+    }
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+crearUI();
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  // Escuchar notificaciones in-app
+  escucharNotificaciones(user.uid);
+
+  // Pedir permiso de push si no se ha dado / negado
+  const permisoDado = localStorage.getItem("gm-notif-ok");
+  const permisoDenegado = localStorage.getItem("gm-notif-denied");
+  if (!permisoDado && !permisoDenegado && Notification.permission === "default") {
+    setTimeout(() => {
+      const prompt = document.getElementById("gm-pedir-permiso");
+      if (prompt) prompt.style.display = "block";
+    }, 3000);
+  }
+  if (Notification.permission === "granted" && !permisoDado) {
+    await guardarToken(user);
+    localStorage.setItem("gm-notif-ok", "1");
+  }
+
+  // Notificaciones en foreground (app abierta)
+  if (messaging) {
+    onMessage(messaging, (payload) => {
+      const { title, body } = payload.notification || {};
+      mostrarToast("🔔", title || "Gato Miel", body || "", payload.data?.url);
+    });
+  }
+});
+
+// ─── Pedir permiso manualmente ────────────────────────────────────
+async function pedirPermiso(fromButton = false) {
+  const prompt = document.getElementById("gm-pedir-permiso");
+  if (prompt) prompt.style.display = "none";
+  const result = await Notification.requestPermission();
+  if (result === "granted") {
+    localStorage.setItem("gm-notif-ok", "1");
+    const user = auth.currentUser;
+    if (user) await guardarToken(user);
+    if (fromButton) mostrarToast("✅", "¡Listo!", "Las notificaciones están activadas 🐾");
+  } else {
+    localStorage.setItem("gm-notif-denied", "1");
+  }
+}
+
+// ─── API pública ──────────────────────────────────────────────────
+window.notif = { pedirPermiso, enviarNotif, crearNotificacion, mostrarToast };
