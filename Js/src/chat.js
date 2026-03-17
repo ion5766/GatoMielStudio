@@ -427,6 +427,12 @@ window._enviarMensaje = async function() {
     email:_currentUser.email, avatar:_currentUser.photoURL||"",
     noLeidosAdmin:true, uid:_currentUser.uid, estado:"abierto", ultimoMensajeAdmin:null
   }, {merge:true});
+  if (window.notif && _currentUser) {
+    window.notif.enviarNotif("chat_cliente", {
+      nombreCliente: _currentUser.displayName || _currentUser.email,
+      preview: texto.substring(0, 60)
+    });
+  }
   if (esPrimero) {
     setTimeout(async () => {
       await addDoc(collection(db, "chats", _roomId, "mensajes"), {
