@@ -20,7 +20,7 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 /* ── Llamar al endpoint de Vercel ── */
-async function notificar(tipo, datos) {
+window.notificar = async function(tipo, datos) {
   try {
     await fetch("/api/notify", {
       method: "POST",
