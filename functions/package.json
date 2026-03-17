@@ -7,30 +7,3 @@
     "firebase-functions": "^5.0.0"
   }
 }
-```
-
----
-
-### 2. Obtén tu Firebase Token
-
-Ve a **https://shell.cloud.google.com**, abre la terminal y escribe:
-```
-firebase login:ci
-```
-Te da un token largo como `1//0abc123...`. **Cópialo**.
-
----
-
-### 3. Guarda el token en GitHub
-
-En tu repo de GitHub → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
-- Nombre: `FIREBASE_TOKEN`
-- Valor: el token que copiaste
-
----
-
-### 4. Crea el archivo de GitHub Actions
-
-En tu repo crea esta ruta exacta:
-```
-.github/workflows/deploy-functions.yml
