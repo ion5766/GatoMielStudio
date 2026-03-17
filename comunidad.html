@@ -791,6 +791,11 @@ window.publicar=async()=>{
     autor:me.displayName||me.email.split("@")[0],
     autorFoto:me.photoURL||FALLBACK,likes:0,comentarios:[]
   });
+  if (window.notif && me) {
+    window.notif.enviarNotif("post_comunidad", {
+      autor: me.displayName || me.email.split("@")[0]
+    });
+  }
   ["clave","descripcion"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("imagen").value="";
   document.getElementById("cmImgPreview").style.display="none";
