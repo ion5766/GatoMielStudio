@@ -1787,6 +1787,12 @@ window.enviarPedidoColeccion = async function() {
     const monto = window.productoActual?.monto || "—";
     const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
     window.mostrarModalExito?.(prod, monto, metodoFinal2);
+    if (window.notif && _authP.currentUser) {
+      window.notif.enviarNotif("compra_nueva", {
+        nombreCliente: _authP.currentUser.displayName || _authP.currentUser.email,
+        pieza: window.productoActual?.nombre || "una pieza"
+      });
+    }
     window._compFileCol = null;
     window._metodoColActual = null;
 
@@ -2055,6 +2061,17 @@ window.confirmarPedidoAdmin = async (id, btn) => {
     btn.textContent = "Confirmando...";
   }
   await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
+  try {
+    const { getDoc: gDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const pedDoc = await gDoc(doc(_dbP, "pedidos", id));
+    if (pedDoc.exists() && window.notif) {
+      window.notif.enviarNotif("pago_validado", {
+        clienteUid: pedDoc.data().uid,
+        detalle: `Tu pedido de ${pedDoc.data().producto} fue confirmado 🎉`,
+        url: "coleccion.html"
+      });
+    }
+  } catch(e) { console.warn("Notif error:", e.message); }
 };
 
 window.rechazarPedidoAdmin = (id) => {
