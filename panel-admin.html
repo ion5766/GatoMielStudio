@@ -915,7 +915,12 @@ window.enviarRespuesta = async function() {
     ultimoMensaje:`Tú: ${texto}`, ultimaFecha:serverTimestamp(),
     noLeidosAdmin:false, ultimoAdmin:adminEmail
   });
-
+  if (window.notif && salaActiva) {
+    window.notif.enviarNotif("chat_admin", {
+      clienteUid: salaActiva,
+      preview: texto.substring(0, 60)
+    });
+  }
   _iniciarTimer(salaActiva);
 };
 
