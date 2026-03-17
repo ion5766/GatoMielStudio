@@ -1787,6 +1787,12 @@ window.enviarPedidoColeccion = async function() {
     const monto = window.productoActual?.monto || "—";
     const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
     window.mostrarModalExito?.(prod, monto, metodoFinal2);
+    if (window.notif && user) {
+      window.notif.enviarNotif("compra_nueva", {
+        nombreCliente: user.displayName || user.email,
+        pieza: window.productoActual?.nombre || "una pieza"
+      });
+    }
     window._compFileCol = null;
     window._metodoColActual = null;
 
@@ -1957,7 +1963,16 @@ window.abrirDetallePedido = function(pid) {
       btnConfirmar.disabled = true;
       btnConfirmar.textContent = "Confirmando...";
       try {
+        const { getDoc: gDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const pedSnap = await gDoc(doc(_dbP,"pedidos",pid));
         await updateDoc(doc(_dbP,"pedidos",pid), {estado:"confirmado",fechaConfirmacion:serverTimestamp()});
+        if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
+          window.notif.enviarNotif("pago_validado", {
+            clienteUid: pedSnap.data().uid,
+            detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " fue confirmado 🎉",
+            url: "coleccion.html"
+          });
+        }
         overlay.remove();
       } catch(e) {
         alert("Error: "+e.message);
@@ -1977,7 +1992,16 @@ window.abrirDetallePedido = function(pid) {
       ov2.querySelector("#rsi").onclick = async () => {
         ov2.remove();
         try {
+          const { getDoc: gDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const pedSnap = await gDoc(doc(_dbP,"pedidos",pid));
           await updateDoc(doc(_dbP,"pedidos",pid), {estado:"rechazado",fechaRechazo:serverTimestamp()});
+          if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
+            window.notif.enviarNotif("pago_rechazado", {
+              clienteUid: pedSnap.data().uid,
+              detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " no pudo ser confirmado. Contáctanos por WhatsApp 🐾",
+              url: "coleccion.html"
+            });
+          }
           overlay.remove();
         } catch(e) { alert("Error: "+e.message); }
       };
@@ -2050,20 +2074,11 @@ window.abrirDetallePedido = function(pid) {
 
 // ── CONFIRMAR / RECHAZAR ──
 window.confirmarPedidoAdmin = async (id, btn) => {
-  if (btn) { btn.disabled = true; btn.textContent = "Confirmando..."; }
-  try {
-    const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    const pedSnap = await getDoc(doc(_dbP, "pedidos", id));
-    await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
-    if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-      window.notif.enviarNotif("pago_validado", {
-        clienteUid: pedSnap.data().uid,
-        detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " fue confirmado 🎉",
-        url: "coleccion.html"
-      });
-    }
-    if (btn) { btn.disabled = false; btn.textContent = "✓ Confirmado"; }
-  } catch(e) { console.error(e); if (btn) { btn.disabled = false; btn.textContent = "✓ Confirmar pago"; } }
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Confirmando...";
+  }
+  await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
 };
 
 window.rechazarPedidoAdmin = (id) => {
@@ -2085,16 +2100,7 @@ window.rechazarPedidoAdmin = (id) => {
     ov.querySelector("#adm-si").onclick = async () => {
       ov.remove();
       try {
-        const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        const pedSnap = await getDoc(doc(_dbP, "pedidos", id));
         await updateDoc(doc(_dbP, "pedidos", id), { estado: "rechazado", fechaRechazo: serverTimestamp() });
-        if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-          window.notif.enviarNotif("pago_rechazado", {
-            clienteUid: pedSnap.data().uid,
-            detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " no pudo ser confirmado. Contáctanos por WhatsApp 🐾",
-            url: "coleccion.html"
-          });
-        }
         resolve(true);
       } catch(e) { alert("Error: " + e.message); resolve(false); }
     };
