@@ -893,6 +893,7 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride) {
 
   const estado = estadoOverride || "pendiente";
   const docRef = await addDoc(collection(db, "membresias"), {
+    uid:            currentUser.uid,
     usuarioEmail:   currentUser.email,
     usuarioNombre:  currentUser.displayName || currentUser.email,
     usuarioAvatar:  currentUser.photoURL || "",
@@ -904,6 +905,15 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride) {
     fecha:          serverTimestamp(),
     tallerId:       TALLER_ID,
   });
+
+  // Notificar al admin de la nueva reserva
+  if (window.notif && currentUser) {
+    window.notif.enviarNotif("reserva_nueva", {
+      nombreCliente: currentUser.displayName || currentUser.email,
+      taller: "Arcilla Nocturna · " + (horarioElegido || "")
+    });
+  }
+
   const ref = docRef.id.slice(0,8).toUpperCase();
   const estadoLabel = estado === "confirmado"
     ? `<span style="color:#065f46;font-weight:600">✓ Pago aprobado</span>`
@@ -987,14 +997,26 @@ window.filtrarMem = function(filtro, btn) {
 window.validarPago = async function(memId, horarioId, btn) {
   btn.disabled = true; btn.textContent = "Confirmando...";
   try {
+    let clienteUid = null;
     await runTransaction(db, async tx => {
       const tallerRef = doc(db,"talleres",TALLER_ID);
+      const memRef    = doc(db,"membresias",memId);
       const snap      = await tx.get(tallerRef);
+      const memSnap   = await tx.get(memRef);
       const actuales  = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
       if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos.");
+      if (memSnap.exists()) clienteUid = memSnap.data().uid || null;
       tx.update(tallerRef, {[horarioId]: actuales + 1});
-      tx.update(doc(db,"membresias",memId), {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
+      tx.update(memRef, {estado:"confirmado", fechaConfirmacion:serverTimestamp()});
     });
+    // Notificar al cliente que su pago fue validado
+    if (window.notif && clienteUid) {
+      window.notif.enviarNotif("pago_validado", {
+        clienteUid,
+        detalle: "Tu reserva de taller fue confirmada 🎉",
+        url: "historial-De_Talleres.html"
+      });
+    }
   } catch(e) {
     alert("Error: " + e.message);
     btn.disabled = false; btn.textContent = "✓ Confirmar pago";
