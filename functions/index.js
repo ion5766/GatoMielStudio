@@ -7,39 +7,50 @@ initializeApp();
 const db  = getFirestore();
 const fcm = getMessaging();
 
+// ─── Enviar push a TODOS los dispositivos de un UID ──────────────
 async function pushAUid(uid, title, body, url = "/index.html") {
   try {
-    const tokenDoc = await db.collection("tokens_fcm").doc(uid).get();
-    if (!tokenDoc.exists) return;
-    const token = tokenDoc.data().token;
-    if (!token) return;
+    // Leer todos los devices del usuario
+    const devicesSnap = await db.collection("tokens_fcm").doc(uid).collection("devices").get();
+    if (devicesSnap.empty) {
+      console.log("Sin devices para uid:", uid);
+      return;
+    }
+    const tokens = devicesSnap.docs.map(d => d.data().token).filter(Boolean);
+    if (tokens.length === 0) return;
 
-    await fcm.send({
-      token,
+    console.log(`Enviando push a ${tokens.length} dispositivo(s) de uid: ${uid}`);
+
+    await fcm.sendEachForMulticast({
+      tokens,
       notification: { title, body },
       webpush: {
         notification: {
           title, body,
-          icon: "https://gato-miel-estudio.web.app/Assets/Img/Logo.jpg",
-          badge: "https://gato-miel-estudio.web.app/Assets/Img/Logo.jpg",
+          icon: "https://gato-miel-studio.vercel.app/Assets/Img/Logo.jpg",
+          badge: "https://gato-miel-studio.vercel.app/Assets/Img/Logo.jpg",
           vibrate: [200, 100, 200],
           data: { url }
         },
-        fcmOptions: { link: "https://gato-miel-estudio.web.app" + url }
+        fcmOptions: { link: "https://gato-miel-studio.vercel.app" + url }
       }
     });
-  } catch (e) {
+
+  } catch(e) {
     console.log("Push error:", e.message);
-    if (e.code === "messaging/registration-token-not-registered") {
-      await db.collection("tokens_fcm").doc(uid).delete().catch(() => {});
-    }
   }
 }
 
+// ─── Enviar push a TODOS los usuarios ────────────────────────────
 async function pushATodos(title, body, url = "/comunidad.html") {
-  const snap = await db.collection("tokens_fcm").get();
-  const tokens = snap.docs.map(d => d.data().token).filter(Boolean);
+  const usersSnap = await db.collection("tokens_fcm").get();
+  const tokens = [];
+  for (const userDoc of usersSnap.docs) {
+    const devSnap = await userDoc.ref.collection("devices").get();
+    devSnap.docs.forEach(d => { if (d.data().token) tokens.push(d.data().token); });
+  }
   if (tokens.length === 0) return;
+  console.log(`Broadcast a ${tokens.length} dispositivos`);
 
   const chunks = [];
   for (let i = 0; i < tokens.length; i += 500) chunks.push(tokens.slice(i, i + 500));
@@ -50,15 +61,16 @@ async function pushATodos(title, body, url = "/comunidad.html") {
       webpush: {
         notification: {
           title, body,
-          icon: "https://gato-miel-estudio.web.app/Assets/Img/Logo.jpg",
+          icon: "https://gato-miel-studio.vercel.app/Assets/Img/Logo.jpg",
           data: { url }
         },
-        fcmOptions: { link: "https://gato-miel-estudio.web.app" + url }
+        fcmOptions: { link: "https://gato-miel-studio.vercel.app" + url }
       }
-    }).catch(e => console.log("Multicast error:", e.message));
+    }).catch(e => console.log("Broadcast error:", e.message));
   }
 }
 
+// ─── TRIGGER 1: Notificación individual ──────────────────────────
 exports.enviarPushIndividual = onDocumentCreated(
   "notificaciones/{docId}",
   async (event) => {
@@ -70,6 +82,7 @@ exports.enviarPushIndividual = onDocumentCreated(
   }
 );
 
+// ─── TRIGGER 2: Broadcast comunidad ──────────────────────────────
 exports.enviarPushBroadcast = onDocumentCreated(
   "notificaciones_broadcast/{docId}",
   async (event) => {
@@ -78,9 +91,9 @@ exports.enviarPushBroadcast = onDocumentCreated(
     const { titulo, texto, url } = data;
     await pushATodos(
       titulo || "🌿 Nueva publicación",
-      texto || "Algo nuevo en la comunidad de Gato Miel 🐾",
+      texto || "Algo nuevo en comunidad 🐾",
       url || "/comunidad.html"
     );
-    console.log("Push broadcast enviado a todos los usuarios");
+    console.log("Broadcast enviado");
   }
 );
