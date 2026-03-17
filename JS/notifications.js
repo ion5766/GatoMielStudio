@@ -9,7 +9,7 @@ import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/fireb
 import { getFirestore, doc, setDoc, collection, addDoc, getDocs, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const VAPID_KEY = "BOXc74eAxBMYQpwrWThCtU8Db7du05d8p3Js2rrEEwsF_-wkol0qbdwE9iMq7RIYrRKT4_r3T8bN_hHJpYL8bns";
-const ADMIN_EMAIL = "gatomielstudio@gmail.com", "jhonanibal576@gmail.com"];
+const ADMIN_EMAILS = ["gatomielstudio@gmail.com", "jhonanibal576@gmail.com"];
 
 const FC = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
