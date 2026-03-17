@@ -1025,7 +1025,15 @@ window.validarPago = async function(memId, horarioId, btn) {
 
 window.rechazarPago = async function(memId) {
   if (!confirm("¿Rechazar este pago?")) return;
-  await updateDoc(doc(db,"membresias",memId), {estado:"rechazado"});
+  const memSnap = await getDoc(doc(db,"membresias",memId));
+  await updateDoc(doc(db,"membresias",memId), {estado:"rechazado", fechaRechazo:serverTimestamp()});
+  if (window.notif && memSnap.exists() && memSnap.data().uid) {
+    window.notif.enviarNotif("pago_validado", {
+      clienteUid: memSnap.data().uid,
+      detalle: "Tu reserva de taller no pudo ser confirmada. Contáctanos por WhatsApp 🐾",
+      url: "historial-De_Talleres.html"
+    });
+  }
 };
 
 // ── Perfil ─────────────────────────────────────────────────────────────────
@@ -1247,8 +1255,6 @@ document.addEventListener("keydown", e => {
 <script type="module" src="pwa.js"></script>
 
 <script type="module" src="JS/notifications.js"></script>
-
-<script src="pwa-gate.js"></script>
   
 </body>
 </html>
