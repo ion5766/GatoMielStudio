@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
 // JS/notifications.js — NOTIFICACIONES PUSH GATO MIEL
-// Solo hace UNA cosa: guardar el token y enviar notifs reales
+// Guarda token por dispositivo, notifica a todos los devices del user
 // ═══════════════════════════════════════════════════════════════════
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -31,11 +31,22 @@ try {
   console.warn("[Notif] Messaging no disponible:", e.message);
 }
 
+// ─── Genera un ID único por dispositivo ──────────────────────────
+function getDeviceId() {
+  let id = localStorage.getItem("gm_device_id");
+  if (!id) {
+    id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem("gm_device_id", id);
+  }
+  return id;
+}
+
+// ─── Registrar token de ESTE dispositivo ─────────────────────────
 async function iniciarFCM(user) {
   if (!messaging) return;
   try {
     const swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-    console.log("[Notif] SW registrado:", swReg.scope);
+    console.log("[Notif] SW registrado");
 
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
@@ -43,23 +54,35 @@ async function iniciarFCM(user) {
     });
 
     if (!token) {
-      console.warn("[Notif] No se obtuvo token");
+      console.warn("[Notif] No se obtuvo token — revisa permisos");
       return;
     }
 
-    console.log("[Notif] Token:", token.substring(0, 20) + "...");
-
     const isAdmin = ADMIN_EMAILS.includes(user.email);
-    await setDoc(doc(db, "tokens_fcm", user.uid), {
+    const deviceId = getDeviceId();
+
+    // Guardamos en tokens_fcm/{uid}/devices/{deviceId}
+    // Así cada usuario puede tener múltiples dispositivos
+    await setDoc(doc(db, "tokens_fcm", user.uid, "devices", deviceId), {
       token,
+      deviceId,
       email: user.email,
       uid: user.uid,
       isAdmin,
       updatedAt: serverTimestamp()
     }, { merge: true });
 
-    console.log("[Notif] Token guardado ✅ isAdmin:", isAdmin);
+    // También guardamos en el doc principal para que las queries funcionen
+    await setDoc(doc(db, "tokens_fcm", user.uid), {
+      email: user.email,
+      uid: user.uid,
+      isAdmin,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
 
+    console.log("[Notif] Token guardado ✅ isAdmin:", isAdmin, "device:", deviceId.substring(0,8));
+
+    // Notificaciones con app ABIERTA
     onMessage(messaging, (payload) => {
       const { title, body } = payload.notification || {};
       mostrarToastNativo(title || "Gato Miel", body || "");
@@ -70,6 +93,7 @@ async function iniciarFCM(user) {
   }
 }
 
+// ─── Toast cuando la app está abierta ────────────────────────────
 function mostrarToastNativo(title, body) {
   const t = document.createElement("div");
   t.style.cssText = "position:fixed;top:20px;right:20px;z-index:99999;background:#1a1714;border:1px solid rgba(196,138,58,0.5);border-radius:14px;padding:14px 18px;max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,0.5);cursor:pointer;font-family:'Inter',sans-serif;";
@@ -79,14 +103,15 @@ function mostrarToastNativo(title, body) {
   setTimeout(() => t?.remove(), 6000);
 }
 
-async function getAdminUid() {
+// ─── Obtener todos los UIDs de admins ────────────────────────────
+async function getAdminUids() {
   try {
     const snap = await getDocs(query(collection(db, "tokens_fcm"), where("isAdmin", "==", true)));
-    if (!snap.empty) return snap.docs[0].data().uid;
-  } catch(e) {}
-  return null;
+    return snap.docs.map(d => d.data().uid).filter(Boolean);
+  } catch(e) { return []; }
 }
 
+// ─── Crear notificación → Cloud Function la detecta y envía push ─
 async function crearNotif({ uid, titulo, texto, icon, url, tipo }) {
   await addDoc(collection(db, "notificaciones"), {
     uid, titulo, texto,
@@ -99,25 +124,32 @@ async function crearNotif({ uid, titulo, texto, icon, url, tipo }) {
   console.log("[Notif] Creada para uid:", uid, "→", titulo);
 }
 
+// ─── API pública ──────────────────────────────────────────────────
 async function enviarNotif(tipo, datos = {}) {
-  const adminUid = await getAdminUid();
+  const adminUids = await getAdminUids();
+  const primerAdmin = adminUids[0] || null;
 
   switch(tipo) {
     case "chat_cliente":
-      if (!adminUid) { console.warn("[Notif] Admin no encontrado en tokens_fcm"); break; }
-      await crearNotif({ uid: adminUid, titulo: "💬 Nuevo mensaje", texto: `${datos.nombreCliente || "Cliente"}: "${datos.preview || ""}"`, icon: "💬", url: "/panel-admin.html", tipo });
+      if (!primerAdmin) { console.warn("[Notif] Admin no encontrado en tokens_fcm"); break; }
+      // Notificar a TODOS los admins
+      for (const uid of adminUids) {
+        await crearNotif({ uid, titulo: "💬 Nuevo mensaje", texto: `${datos.nombreCliente || "Cliente"}: "${datos.preview || ""}"`, icon: "💬", url: "/panel-admin.html", tipo });
+      }
       break;
     case "chat_admin":
       if (!datos.clienteUid) break;
       await crearNotif({ uid: datos.clienteUid, titulo: "💬 Gato Miel te respondió", texto: datos.preview || "Tienes un nuevo mensaje 🐾", icon: "💬", url: "/index.html", tipo });
       break;
     case "reserva_nueva":
-      if (!adminUid) break;
-      await crearNotif({ uid: adminUid, titulo: "📅 Nueva reserva", texto: `${datos.nombreCliente || "Cliente"} reservó: ${datos.taller || "un taller"}`, icon: "📅", url: "/panel-admin.html", tipo });
+      for (const uid of adminUids) {
+        await crearNotif({ uid, titulo: "📅 Nueva reserva", texto: `${datos.nombreCliente || "Cliente"} reservó: ${datos.taller || "un taller"}`, icon: "📅", url: "/panel-admin.html", tipo });
+      }
       break;
     case "compra_nueva":
-      if (!adminUid) break;
-      await crearNotif({ uid: adminUid, titulo: "🛍 Nueva compra", texto: `${datos.nombreCliente || "Cliente"} compró: ${datos.pieza || "una pieza"}`, icon: "🛍", url: "/panel-admin.html", tipo });
+      for (const uid of adminUids) {
+        await crearNotif({ uid, titulo: "🛍 Nueva compra", texto: `${datos.nombreCliente || "Cliente"} compró: ${datos.pieza || "una pieza"}`, icon: "🛍", url: "/panel-admin.html", tipo });
+      }
       break;
     case "pago_validado":
       if (!datos.clienteUid) break;
@@ -135,6 +167,7 @@ async function enviarNotif(tipo, datos = {}) {
   }
 }
 
+// ─── INIT ─────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (!user) return;
   if (Notification.permission === "default") {
