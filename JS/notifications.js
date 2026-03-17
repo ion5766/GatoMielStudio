@@ -20,7 +20,7 @@ import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp, query, 
 // Ve a Firebase Console → Project Settings → Cloud Messaging
 // → Web Push certificates → copia la "Key pair" (VAPID Key)
 // ─────────────────────────────────────────────────────────────────
-const VAPID_KEY = "TU_VAPID_KEY_AQUI"; // 🔑 VER INSTRUCCIONES ABAJO
+const VAPID_KEY = " BOXc74eAxBMYQpwrWThCtU8Db7du05d8p3Js2rrEEwsF_-wkol0qbdwE9iMq7RIYrRKT4_r3T8bN_hHJpYL8bns "; // 🔑 VER INSTRUCCIONES ABAJO
 
 // Email del admin (el que recibe notificaciones de compras/reservas)
 const ADMIN_EMAIL = "gatomieltaller@gmail.com";
