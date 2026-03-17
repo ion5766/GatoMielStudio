@@ -9,7 +9,7 @@ import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/fireb
 import { getFirestore, doc, setDoc, collection, addDoc, getDocs, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const VAPID_KEY = "BOXc74eAxBMYQpwrWThCtU8Db7du05d8p3Js2rrEEwsF_-wkol0qbdwE9iMq7RIYrRKT4_r3T8bN_hHJpYL8bns";
-const ADMIN_EMAIL = "gatomielstudio@gmail.com";
+const ADMIN_EMAIL = "gatomielstudio@gmail.com", "jhonanibal576@gmail.com"];
 
 const FC = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -49,7 +49,7 @@ async function iniciarFCM(user) {
 
     console.log("[Notif] Token:", token.substring(0, 20) + "...");
 
-    const isAdmin = user.email === ADMIN_EMAIL;
+    const isAdmin = ADMIN_EMAILS.includes(user.email);
     await setDoc(doc(db, "tokens_fcm", user.uid), {
       token,
       email: user.email,
