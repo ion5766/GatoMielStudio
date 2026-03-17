@@ -84,7 +84,7 @@ exports.enviarPushIndividual = onDocumentCreated(
 
 // ─── TRIGGER 2: Broadcast comunidad ──────────────────────────────
 exports.enviarPushBroadcast = onDocumentCreated(
-  "notificaciones_broadcast/{docId}",
+  { document: "notificaciones_broadcast/{docId}", minInstances: 1 },
   async (event) => {
     const data = event.data?.data();
     if (!data) return;
