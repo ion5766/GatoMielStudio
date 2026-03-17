@@ -1653,7 +1653,7 @@ document.addEventListener("keydown", e => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref as storRef2, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const _fcP = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
@@ -2087,7 +2087,7 @@ window.rechazarPedidoAdmin = (id) => {
         const pedSnap = await getDoc(doc(_dbP, "pedidos", id));
         await updateDoc(doc(_dbP, "pedidos", id), { estado: "rechazado", fechaRechazo: serverTimestamp() });
         if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-          window.notif.enviarNotif("pago_validado", {
+          window.notif.enviarNotif("pago_rechazado", {
             clienteUid: pedSnap.data().uid,
             detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " no pudo ser confirmado. Contáctanos por WhatsApp 🐾",
             url: "coleccion.html"
