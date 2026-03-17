@@ -72,7 +72,7 @@ async function pushATodos(title, body, url = "/comunidad.html") {
 
 // ─── TRIGGER 1: Notificación individual ──────────────────────────
 exports.enviarPushIndividual = onDocumentCreated(
-  "notificaciones/{docId}",
+  { document: "notificaciones/{docId}", minInstances: 1 },
   async (event) => {
     const data = event.data?.data();
     if (!data || !data.uid) return;
