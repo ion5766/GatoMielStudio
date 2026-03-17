@@ -59,10 +59,10 @@ async function iniciarFCM(user) {
     }
 
     const isAdmin = ADMIN_EMAILS.includes(user.email);
-    const deviceId = getDeviceId();
+    // Usamos los primeros 40 chars del token como ID único del device
+    // Así el mismo dispositivo siempre sobrescribe el mismo documento
+    const deviceId = token.substring(0, 40).replace(/[^a-zA-Z0-9]/g, "_");
 
-    // Guardamos en tokens_fcm/{uid}/devices/{deviceId}
-    // Así cada usuario puede tener múltiples dispositivos
     await setDoc(doc(db, "tokens_fcm", user.uid, "devices", deviceId), {
       token,
       deviceId,
@@ -153,7 +153,11 @@ async function enviarNotif(tipo, datos = {}) {
       break;
     case "pago_validado":
       if (!datos.clienteUid) break;
-      await crearNotif({ uid: datos.clienteUid, titulo: "✅ Pago confirmado", texto: datos.detalle || "Tu pedido fue aprobado 🎉", icon: "✅", url: datos.url || "/coleccion.html", tipo });
+      await crearNotif({ uid: datos.clienteUid, titulo: "✅ ¡Pago confirmado!", texto: datos.detalle || "Tu pedido fue aprobado 🎉", icon: "✅", url: datos.url || "/coleccion.html", tipo });
+      break;
+    case "pago_rechazado":
+      if (!datos.clienteUid) break;
+      await crearNotif({ uid: datos.clienteUid, titulo: "❌ Pedido rechazado", texto: datos.detalle || "Tu pedido no pudo ser confirmado. Contáctanos por WhatsApp 🐾", icon: "❌", url: datos.url || "/coleccion.html", tipo });
       break;
     case "post_comunidad":
       await addDoc(collection(db, "notificaciones_broadcast"), {
