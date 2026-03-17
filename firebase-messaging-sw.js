@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════════
-// firebase-messaging-sw.js  —  SERVICE WORKER DE NOTIFICACIONES
-// Gato Miel Estudio
-// Ubicación: RAÍZ del proyecto (mismo nivel que index.html)
-// ═══════════════════════════════════════════════════════════════════
-
 importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
 
@@ -18,7 +12,6 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// ─── Notificaciones en background (app cerrada o en otra pestaña) ────
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon, data } = payload.notification || {};
   self.registration.showNotification(title || "Gato Miel Estudio", {
@@ -31,7 +24,6 @@ messaging.onBackgroundMessage((payload) => {
   });
 });
 
-// ─── Clic en notificación → abrir la app ────────────────────────────
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const url = event.notification.data?.url || "/index.html";
