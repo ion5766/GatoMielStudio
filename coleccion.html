@@ -1653,7 +1653,7 @@ document.addEventListener("keydown", e => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref as storRef2, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const _fcP = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
@@ -1957,15 +1957,7 @@ window.abrirDetallePedido = function(pid) {
       btnConfirmar.disabled = true;
       btnConfirmar.textContent = "Confirmando...";
       try {
-        const pedSnap = await getDoc(doc(_dbP,"pedidos",pid));
         await updateDoc(doc(_dbP,"pedidos",pid), {estado:"confirmado",fechaConfirmacion:serverTimestamp()});
-        if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-          window.notif.enviarNotif("pago_validado", {
-            clienteUid: pedSnap.data().uid,
-            detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " fue confirmado 🎉",
-            url: "coleccion.html"
-          });
-        }
         overlay.remove();
       } catch(e) {
         alert("Error: "+e.message);
@@ -2058,11 +2050,20 @@ window.abrirDetallePedido = function(pid) {
 
 // ── CONFIRMAR / RECHAZAR ──
 window.confirmarPedidoAdmin = async (id, btn) => {
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "Confirmando...";
-  }
-  await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
+  if (btn) { btn.disabled = true; btn.textContent = "Confirmando..."; }
+  try {
+    const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const pedSnap = await getDoc(doc(_dbP, "pedidos", id));
+    await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
+    if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
+      window.notif.enviarNotif("pago_validado", {
+        clienteUid: pedSnap.data().uid,
+        detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " fue confirmado 🎉",
+        url: "coleccion.html"
+      });
+    }
+    if (btn) { btn.disabled = false; btn.textContent = "✓ Confirmado"; }
+  } catch(e) { console.error(e); if (btn) { btn.disabled = false; btn.textContent = "✓ Confirmar pago"; } }
 };
 
 window.rechazarPedidoAdmin = (id) => {
@@ -2084,6 +2085,7 @@ window.rechazarPedidoAdmin = (id) => {
     ov.querySelector("#adm-si").onclick = async () => {
       ov.remove();
       try {
+        const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
         const pedSnap = await getDoc(doc(_dbP, "pedidos", id));
         await updateDoc(doc(_dbP, "pedidos", id), { estado: "rechazado", fechaRechazo: serverTimestamp() });
         if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
