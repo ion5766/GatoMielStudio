@@ -151,7 +151,7 @@ onAuthStateChanged(_auth, (user) => {
         <div>
           <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
           <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
-          <span class="ht-modal-hero-sub">elige tu horario · S/ 150</span>
+          <span class="ht-modal-hero-sub">elige tu horario · S/ 1</span>
         </div>
       </div>
       <div class="ht-modal-hero-deco">
@@ -212,7 +212,7 @@ onAuthStateChanged(_auth, (user) => {
             <div class="ht-qr-badge ht-badge-yape">Yape</div>
           </div>
           <div class="ht-qr-info">
-            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 1</strong></div>
             <p class="ht-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
           <div class="ht-comp-wrap">
@@ -238,7 +238,7 @@ onAuthStateChanged(_auth, (user) => {
             <div class="ht-qr-badge ht-badge-plin">Plin</div>
           </div>
           <div class="ht-qr-info">
-            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 1</strong></div>
             <p class="ht-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
           <div class="ht-comp-wrap">
@@ -272,7 +272,7 @@ onAuthStateChanged(_auth, (user) => {
             </div>
             <div style="padding:10px 16px 12px;font-family:'Inter',sans-serif;font-size:11px;display:flex;justify-content:space-between;color:#888;">
               <span>Horario: <strong id="tarjeta-horario-val" style="color:#1a1714;">—</strong></span>
-              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 150</strong></span>
+              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 1</strong></span>
             </div>
           </div>
           <!-- Mercado Pago Brick container -->
@@ -296,7 +296,7 @@ onAuthStateChanged(_auth, (user) => {
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Titular</span><span style="color:#1a1714;font-weight:500;">Gato Miel Estudio</span></div>
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Cuenta</span><span style="font-family:monospace;color:#1a1714;">000-00000000-0-00</span></div>
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">CCI</span><span style="font-family:monospace;color:#1a1714;">00200000000000000000</span></div>
-              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 1</span></div>
             </div>
           </div>
           <div class="ht-comp-wrap">
@@ -781,7 +781,7 @@ window.irAPago = function() {
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
   document.getElementById("modalHorario").style.display = "none";
-  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 1";
   document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
   // resetear pills → Yape activo
   document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
@@ -859,7 +859,7 @@ async function _initMpBrick() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                transaction_amount: 150,
+                transaction_amount: 1,
                 description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
                 payment_method_id: formData.payment_method_id,
                 token:        formData.token,
@@ -1182,7 +1182,7 @@ window.abrirModalMembresias = async () => {
           <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${m.tallerId||"Arcilla Nocturna"}</div>
           <div style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin-bottom:6px;">${m.horarioLabel||"—"}</div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ 150</span>
+            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ 1</span>
             <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${m.metodo||"—"}</span>
             <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
           </div>
