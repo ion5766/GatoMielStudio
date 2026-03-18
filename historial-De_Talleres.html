@@ -826,7 +826,7 @@ async function _initMpBrick() {
 
     _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
       initialization: {
-        amount: 150,
+        amount: 1,
         payer: { email: currentUser?.email || "" }
       },
       customization: {
