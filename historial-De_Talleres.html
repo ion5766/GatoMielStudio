@@ -319,60 +319,6 @@ onAuthStateChanged(_auth, (user) => {
 </div>
 
 <!-- ═══ MODAL ÉXITO ═══ -->
-
-<!-- ═══ MODAL DATOS CLIENTE ═══ -->
-<div id="modalDatosCliente" class="ht-modal" style="z-index:10002;">
-  <div class="ht-modal-box" style="max-width:400px;">
-    <div class="ht-modal-hero">
-      <button class="ht-modal-cerrar" onclick="cerrarModalDatos()">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <div class="ht-modal-hero-brand">
-        <img src="Assets/Img/Logo.jpg" class="ht-modal-logo">
-        <div>
-          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
-          <h2 class="ht-modal-hero-title">Tus datos</h2>
-          <span class="ht-modal-hero-sub">Para coordinar tu taller 🐾</span>
-        </div>
-      </div>
-      <div class="ht-modal-hero-deco"><div class="ht-deco-ring ht-deco-ring-1"></div><div class="ht-deco-ring ht-deco-ring-2"></div><div class="ht-deco-dot"></div></div>
-    </div>
-    <div style="padding:20px 22px 24px;display:flex;flex-direction:column;gap:14px;">
-      <p style="font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center;margin:0;letter-spacing:.04em;">Completa para confirmar tu reserva</p>
-
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Nombre completo *</label>
-        <input id="td-nombre" type="text" placeholder="Tu nombre y apellido"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;transition:border-color .2s;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Celular *</label>
-        <input id="td-celular" type="tel" placeholder="+51 9XX XXX XXX"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;transition:border-color .2s;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Correo *</label>
-        <input id="td-correo" type="email" placeholder="correo@ejemplo.com"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;transition:border-color .2s;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-
-      <p id="td-error" style="font-family:'Inter',sans-serif;font-size:12px;color:#e55;text-align:center;min-height:16px;margin:0;"></p>
-
-      <button onclick="confirmarDatosYPagar()"
-        style="width:100%;padding:14px;background:#1a1714;color:white;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.06em;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;"
-        onmouseover="this.style.background='#c48a3a'" onmouseout="this.style.background='#1a1714'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        Confirmar reserva
-      </button>
-    </div>
-  </div>
-</div>
-
 <div id="modalExito" class="ht-modal" style="z-index:10001;">
   <div class="ht-modal-box" style="max-width:380px;">
     <div style="padding:36px 28px 28px;text-align:center;">
@@ -910,56 +856,33 @@ window.previewComp = function(metodo, input) {
 };
 
 // ── Confirmar pago (Yape / Plin / Agencia) ─────────────────────────────────
-// Guarda el método pendiente mientras se llena el formulario
-let _metodoPendiente = null;
-
-window.confirmarPago = function(metodoLabel) {
+window.confirmarPago = async function(metodoLabel) {
   if (!currentUser) { alert("Debes iniciar sesión."); return; }
   if (!horarioElegidoId) { alert("No hay horario seleccionado."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+
   const archivo = compFiles[metodoLabel.toLowerCase()] || null;
-  if (!archivo) { alert("Por favor adjunta el comprobante de pago antes de continuar."); return; }
-  // Guardar método y abrir formulario de datos
-  _metodoPendiente = metodoLabel;
-  // Prefill con datos del usuario
-  document.getElementById("td-nombre").value  = currentUser.displayName || "";
-  document.getElementById("td-correo").value  = currentUser.email || "";
-  document.getElementById("td-celular").value = "";
-  document.getElementById("td-error").textContent = "";
-  document.getElementById("modalDatosCliente").style.display = "flex";
-};
+  if (!archivo) {
+    alert("Por favor adjunta el comprobante de pago antes de continuar.");
+    return;
+  }
 
-window.cerrarModalDatos = function() {
-  document.getElementById("modalDatosCliente").style.display = "none";
-};
+  const tabId     = "tab-" + metodoLabel.toLowerCase();
+  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Enviando..."; }
 
-window.confirmarDatosYPagar = async function() {
-  const nombre  = document.getElementById("td-nombre").value.trim();
-  const celular = document.getElementById("td-celular").value.trim();
-  const correo  = document.getElementById("td-correo").value.trim();
-  const err     = document.getElementById("td-error");
-  if (!nombre)  { err.textContent = "Ingresa tu nombre completo."; return; }
-  if (!celular) { err.textContent = "Ingresa tu celular."; return; }
-  if (!correo)  { err.textContent = "Ingresa tu correo."; return; }
-  err.textContent = "";
-
-  const btn = document.querySelector("#modalDatosCliente button[onclick='confirmarDatosYPagar()']");
-  if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
-
-  const archivo = compFiles[_metodoPendiente?.toLowerCase()] || null;
   try {
-    await _registrarPago(_metodoPendiente, archivo, undefined, { nombre, celular, correo });
-    document.getElementById("modalDatosCliente").style.display = "none";
-  } catch(err2) {
-    console.error("Error:", err2);
-    err.textContent = "Error: " + err2.message;
-    if (btn) { btn.disabled = false; btn.textContent = "Confirmar reserva"; }
+    await _registrarPago(metodoLabel, archivo);
+  } catch(err) {
+    console.error("Error:", err);
+    alert("Ha ocurrido un error: " + err.message);
+    if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
   }
 };
 
 // ── Función central de registro ────────────────────────────────────────────
-async function _registrarPago(metodoLabel, archivo, estadoOverride, datosCliente) {
+async function _registrarPago(metodoLabel, archivo, estadoOverride) {
   let comprobanteURL = "";
   if (archivo) {
     const ext  = archivo.name.split(".").pop() || "jpg";
@@ -970,13 +893,9 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride, datosCliente
 
   const estado = estadoOverride || "pendiente";
   const docRef = await addDoc(collection(db, "membresias"), {
-    uid:            currentUser.uid,
     usuarioEmail:   currentUser.email,
     usuarioNombre:  currentUser.displayName || currentUser.email,
     usuarioAvatar:  currentUser.photoURL || "",
-    clienteNombre:  datosCliente?.nombre  || currentUser.displayName || "",
-    clienteCelular: datosCliente?.celular || "",
-    clienteCorreo:  datosCliente?.correo  || currentUser.email || "",
     horarioId:      horarioElegidoId,
     horarioLabel:   horarioElegido,
     metodo:         metodoLabel,
