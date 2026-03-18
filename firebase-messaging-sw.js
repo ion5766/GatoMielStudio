@@ -14,13 +14,24 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon, data } = payload.notification || {};
+
+  // Tag único basado en el título — reemplaza notificaciones iguales
+  // en lugar de apilarlas
+  const tag = "gm-" + (title || "notif").toLowerCase().replace(/[^a-z0-9]/g, "-");
+
+  // Cerrar notificaciones anteriores con el mismo tag antes de mostrar la nueva
+  self.registration.getNotifications({ tag }).then(notifs => {
+    notifs.forEach(n => n.close());
+  });
+
   self.registration.showNotification(title || "Gato Miel Estudio", {
     body: body || "",
     icon: icon || "/Assets/Img/Logo.jpg",
     badge: "/Assets/Img/Logo.jpg",
     data: data || {},
     vibrate: [200, 100, 200],
-    tag: "gato-miel-" + Date.now()
+    tag,              // mismo tag = reemplaza la anterior
+    renotify: false   // no vibrar si reemplaza una existente
   });
 });
 
