@@ -28,7 +28,7 @@ const db   = getFirestore(app);
 
 const ADMIN_EMAILS  = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
 const esAdmin = (email) => email && ADMIN_EMAILS.includes(email.toLowerCase());
-const MSG_SALUDO    = "Hola \u{1F43E} bienvenid@ a Gato Miel Estudio! Te respondemos muy pronto \u2728";
+const MSG_SALUDO    = "Hola 🐾 bienvenid@ a Gato Miel Estudio! Te respondemos muy pronto ✨";
 
 /* ── Posición según dispositivo ── */
 const esMovil = () => (window.innerWidth || document.documentElement.clientWidth) <= 768;
@@ -248,12 +248,8 @@ const chatHTML = `
       <button id="chat-preview-cancel" onclick="window._cancelarArchivo()">✕</button>
     </div>
     <div id="chat-footer" style="display:none;">
-      <button class="chat-attach-btn" title="Emojis" onclick="window._toggleEmojiPicker(event)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3"/></svg>
-      </button>
-      <button class="chat-attach-btn" title="Imagen" onclick="document.getElementById('chat-file-input').click()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#888" stroke="none"/><polyline points="21 15 16 10 5 21"/></svg>
-      </button>
+      <button class="chat-attach-btn" title="Emojis" onclick="window._toggleEmojiPicker(event)"><span>😊</span></button>
+      <button class="chat-attach-btn" title="Imagen" onclick="document.getElementById('chat-file-input').click()"><span>🖼️</span></button>
       <textarea id="chat-input" placeholder="Escribe un mensaje..." rows="1"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window._enviarMensaje()}"
         oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
@@ -431,6 +427,12 @@ window._enviarMensaje = async function() {
     email:_currentUser.email, avatar:_currentUser.photoURL||"",
     noLeidosAdmin:true, uid:_currentUser.uid, estado:"abierto", ultimoMensajeAdmin:null
   }, {merge:true});
+  if (window.notif && _currentUser) {
+    window.notif.enviarNotif("chat_cliente", {
+      nombreCliente: _currentUser.displayName || _currentUser.email,
+      preview: texto.substring(0, 60)
+    });
+  }
   if (esPrimero) {
     setTimeout(async () => {
       await addDoc(collection(db, "chats", _roomId, "mensajes"), {
