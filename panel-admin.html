@@ -435,7 +435,6 @@ body {
 .admin-attach-btn.grabando { background: #e74c3c !important; animation: pulseRec 1s infinite; }
 @keyframes pulseRec { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
 
-/* Botón volver móvil */
 .mu-back-chat-btn {
   display: none;
   width: 34px; height: 34px; border-radius: 50%;
@@ -751,7 +750,7 @@ function abrirConversacion(uid, data) {
       <button class="mu-back-chat-btn" onclick="window.volverALista()" title="Volver">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'" onclick="abrirPopupPerfil(this,'${uid}')" style="cursor:pointer;" title="Ver perfil">
       <div class="chat-top-info">
         <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
         <div class="chat-top-email">${data.email||""}</div>
@@ -1147,11 +1146,11 @@ window.abrirPopupPerfil = async function(imgEl, uid) {
     let html = "";
     if (cel) html += "<div class='pp-row'><div class='pp-row-icon'><svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#c48a3a' stroke-width='2'><path d='M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .98h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.42a16 16 0 006.67 6.67l1.91-1.91a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z'/></svg></div><div><span class='pp-row-label'>Celular</span><span class='pp-row-text'>"+cel+"</span></div></div>";
     if (cor) html += "<div class='pp-row'><div class='pp-row-icon'><svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#c48a3a' stroke-width='2'><path d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/><polyline points='22,6 12,13 2,6'/></svg></div><div><span class='pp-row-label'>Correo</span><span class='pp-row-text'>"+cor+"</span></div></div>";
-    if (!html) html = "<div class='pp-empty'>Sin datos de contacto</div>";
+    if (!html) html = "<div class='pp-empty'>Sin datos de contacto adicionales</div>";
     document.getElementById("pp-body").innerHTML = html;
     const tel = cel.replace(/[^0-9]/g,"");
     if (tel) { const w=document.getElementById("pp-wsp-link"); w.href="https://wa.me/"+tel+"?text="+encodeURIComponent("Hola "+nom+" Te escribimos desde Gato Miel Estudio"); w.style.display="flex"; }
-  } catch(e) { document.getElementById("pp-body").innerHTML="<div class='pp-empty'>Sin datos</div>"; }
+  } catch(e) { document.getElementById("pp-body").innerHTML="<div class='pp-empty'>Sin datos adicionales</div>"; }
 };
 
 window.cerrarPopupPerfil = function() {
@@ -1188,7 +1187,6 @@ document.addEventListener("click", (e) => {
 .pp-row-label{font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:1px;}
 .pp-empty{font-family:'Inter',sans-serif;font-size:11px;color:#bbb;text-align:center;font-style:italic;padding:4px 0;}
 </style>
-
 <script type="module" src="JS/notifications.js"></script>
   
 </body>
