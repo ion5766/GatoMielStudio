@@ -517,6 +517,87 @@ body {
 }
 #sin-acceso p { font-size: 14px; color: #888; line-height: 1.7; }
 #sin-acceso a { font-size: 14px; color: #c48a3a; font-weight: 500; text-decoration: none; }
+
+/* ── Popup perfil usuario ── */
+#popup-perfil {
+  position: fixed;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+  padding: 0;
+  z-index: 50001;
+  width: 260px;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  animation: popupIn .22s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popupIn { from{transform:scale(.88) translateY(-8px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+#popup-perfil .pp-header {
+  background: linear-gradient(135deg,#1a1714,#2a1f10);
+  padding: 18px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+#popup-perfil .pp-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(196,138,58,.5);
+}
+#popup-perfil .pp-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 500; color: white;
+  text-align: center;
+}
+#popup-perfil .pp-email {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px; color: rgba(255,255,255,.4);
+  text-align: center; word-break: break-all;
+}
+#popup-perfil .pp-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.5); font-size: 10px;
+  transition: background .2s;
+}
+#popup-perfil .pp-close:hover { background: rgba(255,255,255,.2); color: white; }
+#popup-perfil .pp-body {
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+#popup-perfil .pp-row {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-size: 12px;
+}
+#popup-perfil .pp-row-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: #f0ebe4; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 13px;
+}
+#popup-perfil .pp-row-text { color: #1a1714; word-break: break-all; }
+#popup-perfil .pp-row-label {
+  font-size: 9px; color: #bbb; text-transform: uppercase;
+  letter-spacing: .1em; display: block; margin-bottom: 1px;
+}
+#popup-perfil .pp-empty {
+  font-family: 'Inter', sans-serif; font-size: 11px;
+  color: #bbb; text-align: center; font-style: italic; padding: 4px 0;
+}
+#popup-perfil .pp-wsp {
+  margin: 0 16px 14px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px; background: linear-gradient(135deg,#22c55e,#16a34a);
+  color: white; border-radius: 10px; text-decoration: none;
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+  transition: transform .2s, box-shadow .2s;
+}
+#popup-perfil .pp-wsp:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(34,197,94,.35); }
 </style>
 </style>
   
@@ -736,7 +817,7 @@ function abrirConversacion(uid, data) {
       <button class="mu-back-chat-btn" onclick="window.volverALista()" title="Volver">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'" onclick="abrirPopupPerfil(this, '${uid}')" style="cursor:pointer;" title="Ver perfil">
       <div class="chat-top-info">
         <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
         <div class="chat-top-email">${data.email||""}</div>
@@ -915,12 +996,7 @@ window.enviarRespuesta = async function() {
     ultimoMensaje:`Tú: ${texto}`, ultimaFecha:serverTimestamp(),
     noLeidosAdmin:false, ultimoAdmin:adminEmail
   });
-  if (window.notif && salaActiva) {
-    window.notif.enviarNotif("chat_admin", {
-      clienteUid: salaActiva,
-      preview: texto.substring(0, 60)
-    });
-  }
+
   _iniciarTimer(salaActiva);
 };
 
@@ -1100,6 +1176,24 @@ window.cancelarArchivoAdmin = function() {
 };
 
 </script>
+
+
+<!-- ═══ POPUP PERFIL USUARIO ═══ -->
+<div id="popup-perfil">
+  <div class="pp-header">
+    <button class="pp-close" onclick="cerrarPopupPerfil()">✕</button>
+    <img class="pp-avatar" id="pp-avatar" src="Assets/Img/Avatares/GatoMiel.jpeg">
+    <div class="pp-name" id="pp-name">—</div>
+    <div class="pp-email" id="pp-email">—</div>
+  </div>
+  <div class="pp-body" id="pp-body">
+    <div class="pp-empty">Cargando datos...</div>
+  </div>
+  <a id="pp-wsp-link" href="#" target="_blank" class="pp-wsp" style="display:none;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.016 5.016 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+    Escribir por WhatsApp
+  </a>
+</div>
 
 <script type="module" src="JS/notifications.js"></script>
   
