@@ -99,7 +99,7 @@ onAuthStateChanged(auth, async (user) => {
   <section class="cl-tienda">
     <div class="cl-grid">
 
-      <article class="cl-producto" data-nombre="Taza Arena" data-precio="1">
+      <article class="cl-producto" data-nombre="Taza Arena" data-precio="120">
         <div class="cl-img">
           <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
                onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
@@ -1066,7 +1066,7 @@ async function renderBrick() {
       onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
       onSubmit: async ({ formData }) => {
         try {
-          const resp = await fetch("/.netlify/functions/pagar", {
+          const resp = await fetch("/api/pagar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
@@ -1787,12 +1787,6 @@ window.enviarPedidoColeccion = async function() {
     const monto = window.productoActual?.monto || "—";
     const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
     window.mostrarModalExito?.(prod, monto, metodoFinal2);
-    if (window.notif && user) {
-      window.notif.enviarNotif("compra_nueva", {
-        nombreCliente: user.displayName || user.email,
-        pieza: window.productoActual?.nombre || "una pieza"
-      });
-    }
     window._compFileCol = null;
     window._metodoColActual = null;
 
@@ -1963,16 +1957,7 @@ window.abrirDetallePedido = function(pid) {
       btnConfirmar.disabled = true;
       btnConfirmar.textContent = "Confirmando...";
       try {
-        const { getDoc: gDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        const pedSnap = await gDoc(doc(_dbP,"pedidos",pid));
         await updateDoc(doc(_dbP,"pedidos",pid), {estado:"confirmado",fechaConfirmacion:serverTimestamp()});
-        if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-          window.notif.enviarNotif("pago_validado", {
-            clienteUid: pedSnap.data().uid,
-            detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " fue confirmado 🎉",
-            url: "coleccion.html"
-          });
-        }
         overlay.remove();
       } catch(e) {
         alert("Error: "+e.message);
@@ -1992,16 +1977,7 @@ window.abrirDetallePedido = function(pid) {
       ov2.querySelector("#rsi").onclick = async () => {
         ov2.remove();
         try {
-          const { getDoc: gDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-          const pedSnap = await gDoc(doc(_dbP,"pedidos",pid));
           await updateDoc(doc(_dbP,"pedidos",pid), {estado:"rechazado",fechaRechazo:serverTimestamp()});
-          if (window.notif && pedSnap.exists() && pedSnap.data().uid) {
-            window.notif.enviarNotif("pago_rechazado", {
-              clienteUid: pedSnap.data().uid,
-              detalle: "Tu pedido de " + (pedSnap.data().producto || "una pieza") + " no pudo ser confirmado. Contáctanos por WhatsApp 🐾",
-              url: "coleccion.html"
-            });
-          }
           overlay.remove();
         } catch(e) { alert("Error: "+e.message); }
       };
