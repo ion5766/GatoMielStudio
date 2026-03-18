@@ -435,7 +435,7 @@ body {
 .admin-attach-btn.grabando { background: #e74c3c !important; animation: pulseRec 1s infinite; }
 @keyframes pulseRec { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
 
-/* ── Botón volver móvil ── */
+/* Botón volver móvil */
 .mu-back-chat-btn {
   display: none;
   width: 34px; height: 34px; border-radius: 50%;
@@ -445,7 +445,7 @@ body {
 }
 .mu-back-chat-btn:hover { background: #e3d9cc; }
 @media (max-width: 768px) {
-  .mu-back-chat-btn { display: flex; }
+  .mu-back-chat-btn { display: flex !important; }
   .chat-top-email { display: none; }
   .btn-cerrar-chat, .btn-reabrir-chat { padding: 5px 10px; font-size: 10px; }
 }
@@ -751,7 +751,7 @@ function abrirConversacion(uid, data) {
       <button class="mu-back-chat-btn" onclick="window.volverALista()" title="Volver">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+      <img src="${data.avatar||'Assets/Img/Avatares/GatoMiel.jpeg'}" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'" onclick="abrirPopupPerfil(this,'${uid}')" style="cursor:pointer;border:2px solid transparent;transition:border-color .2s;" onmouseover="this.style.borderColor='#c48a3a'" onmouseout="this.style.borderColor='transparent'">
       <div class="chat-top-info">
         <div class="chat-top-name">${data.nombreUsuario||"Usuario"}</div>
         <div class="chat-top-email">${data.email||""}</div>
@@ -1113,7 +1113,7 @@ window.cancelarArchivoAdmin = function() {
   if (p) { p.style.display="none"; document.getElementById("admin-preview-img").src=""; document.getElementById("admin-preview-name").textContent=""; }
 };
 
-// ── Volver a lista (móvil) ──
+// Volver a lista en movil
 window.volverALista = function() {
   const sb   = document.querySelector(".sidebar");
   const area = document.getElementById("chat-area");
@@ -1121,39 +1121,31 @@ window.volverALista = function() {
   if (area && window.innerWidth <= 768) area.style.display = "none";
   salaActiva = null;
   renderSidebar();
-  // Cerrar popup si estaba abierto
-  const pp = document.getElementById("popup-perfil");
-  if (pp) pp.style.display = "none";
+  window.cerrarPopupPerfil && window.cerrarPopupPerfil();
 };
 
-// ── Popup perfil usuario ──
+// Popup perfil usuario
 window.abrirPopupPerfil = async function(imgEl, uid) {
   const popup = document.getElementById("popup-perfil");
   if (!popup) return;
-
-  // Datos básicos del chat
   const sala = todasLasSalas.find(s => s.id === uid) || salaActivaData || {};
   document.getElementById("pp-avatar").src = sala.avatar || "Assets/Img/Avatares/GatoMiel.jpeg";
   document.getElementById("pp-name").textContent  = sala.nombreUsuario || uid.slice(0,8);
   document.getElementById("pp-email").textContent = sala.email || "";
-  document.getElementById("pp-body").innerHTML    = '<div class="pp-empty">Buscando datos...</div>';
+  document.getElementById("pp-body").innerHTML    = "<div class='pp-empty'>Buscando datos...</div>";
   document.getElementById("pp-wsp-link").style.display = "none";
 
-  // Mostrar popup cerca de la foto
   popup.style.display = "flex";
   const rect = imgEl.getBoundingClientRect();
   let left = rect.right + 10;
   let top  = rect.bottom + 6;
-  if (left + 265 > window.innerWidth - 8)  left = rect.left - 275;
-  if (top  + 300 > window.innerHeight - 8) top  = rect.top - 310;
+  if (left + 265 > window.innerWidth  - 8) left = rect.left - 275;
+  if (top  + 280 > window.innerHeight - 8) top  = window.innerHeight - 290;
   popup.style.left = Math.max(8, left) + "px";
   popup.style.top  = Math.max(8, top)  + "px";
 
-  // Buscar datos de contacto en membresias y pedidos
   try {
     let celular = "", correo = "", nombre = sala.nombreUsuario || "";
-
-    // 1. Buscar en membresias (talleres)
     const membSnap = await getDocs(query(collection(db,"membresias"), where("uid","==",uid)));
     if (!membSnap.empty) {
       const d = membSnap.docs[0].data();
@@ -1161,47 +1153,30 @@ window.abrirPopupPerfil = async function(imgEl, uid) {
       correo  = d.clienteCorreo  || d.correo  || "";
       nombre  = d.clienteNombre  || d.usuarioNombre || nombre;
     }
-
-    // 2. Si no hay celular, buscar en pedidos (colección)
     if (!celular) {
       const pedSnap = await getDocs(query(collection(db,"pedidos"), where("uid","==",uid)));
       if (!pedSnap.empty) {
         const d = pedSnap.docs[0].data();
-        celular = d.celular || d.clienteCelular || "";
-        correo  = d.correo  || d.clienteCorreo  || correo;
-        nombre  = d.nombre  || d.clienteNombre  || nombre;
+        celular = d.clienteCelular || d.celular || "";
+        correo  = d.clienteCorreo  || d.correo  || correo;
+        nombre  = d.clienteNombre  || d.nombre  || nombre;
       }
     }
-
-    // Actualizar nombre si hay uno mejor
     if (nombre) document.getElementById("pp-name").textContent = nombre;
-
-    // Renderizar body
     let html = "";
-    if (celular) html += `
-      <div class="pp-row">
-        <div class="pp-row-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c48a3a" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .98h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.42a16 16 0 006.67 6.67l1.91-1.91a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z"/></svg></div>
-        <div><span class="pp-row-label">Celular</span><span class="pp-row-text">${celular}</span></div>
-      </div>`;
-    if (correo) html += `
-      <div class="pp-row">
-        <div class="pp-row-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c48a3a" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-        <div><span class="pp-row-label">Correo</span><span class="pp-row-text">${correo}</span></div>
-      </div>`;
-    if (!celular && !correo) html = '<div class="pp-empty">Sin datos de contacto aún</div>';
-
+    if (celular) html += "<div class='pp-row'><div class='pp-row-icon'><svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#c48a3a' stroke-width='2'><path d='M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .98h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.42a16 16 0 006.67 6.67l1.91-1.91a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z'/></svg></div><div><span class='pp-row-label'>Celular</span><span class='pp-row-text'>" + celular + "</span></div></div>";
+    if (correo) html += "<div class='pp-row'><div class='pp-row-icon'><svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#c48a3a' stroke-width='2'><path d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/><polyline points='22,6 12,13 2,6'/></svg></div><div><span class='pp-row-label'>Correo</span><span class='pp-row-text'>" + correo + "</span></div></div>";
+    if (!html) html = "<div class='pp-empty'>Sin datos de contacto</div>";
     document.getElementById("pp-body").innerHTML = html;
-
-    // Botón WhatsApp
-    const tel = celular.replace(/\D/g,"");
+    const tel = celular.replace(/[^0-9]/g,"");
     if (tel) {
-      const wsp = document.getElementById("pp-wsp-link");
-      wsp.href = "https://wa.me/" + tel + "?text=" + encodeURIComponent("Hola " + nombre + " 🐾 Te escribimos desde Gato Miel Estudio");
-      wsp.style.display = "flex";
+      const w = document.getElementById("pp-wsp-link");
+      w.href = "https://wa.me/" + tel + "?text=" + encodeURIComponent("Hola " + nombre + " Te escribimos desde Gato Miel Estudio");
+      w.style.display = "flex";
     }
   } catch(e) {
-    document.getElementById("pp-body").innerHTML = '<div class="pp-empty">Sin datos adicionales</div>';
-    console.log("Error perfil:", e);
+    document.getElementById("pp-body").innerHTML = "<div class='pp-empty'>Sin datos adicionales</div>";
+    console.log("Popup error:", e);
   }
 };
 
@@ -1210,7 +1185,6 @@ window.cerrarPopupPerfil = function() {
   if (pp) pp.style.display = "none";
 };
 
-// Cerrar popup al click fuera
 document.addEventListener("click", (e) => {
   const pp = document.getElementById("popup-perfil");
   if (pp && pp.style.display !== "none" && !pp.contains(e.target) && !e.target.closest(".chat-top img")) {
