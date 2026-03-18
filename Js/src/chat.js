@@ -1,6 +1,6 @@
 /* ================================================
-   GATO MIEL — Chat flotante completo
-   MODIFICADO: en móvil el fab y la ventana suben
+   GATO MIEL â Chat flotante completo
+   MODIFICADO: en mÃ³vil el fab y la ventana suben
    por encima de la navbar inferior (68px)
    ================================================ */
 
@@ -28,9 +28,9 @@ const db   = getFirestore(app);
 
 const ADMIN_EMAILS  = ["jhonanibal576@gmail.com", "gatomielstudio@gmail.com"];
 const esAdmin = (email) => email && ADMIN_EMAILS.includes(email.toLowerCase());
-const MSG_SALUDO    = "Hola 🐾 bienvenid@ a Gato Miel Estudio! Te respondemos muy pronto ✨";
+const MSG_SALUDO    = "Hola ð¾ bienvenid@ a Gato Miel Estudio! Te respondemos muy pronto â¨";
 
-/* ── Posición según dispositivo ── */
+/* ââ PosiciÃ³n segÃºn dispositivo ââ */
 const esMovil = () => (window.innerWidth || document.documentElement.clientWidth) <= 768;
 const FAB_BOTTOM_PC    = "28px";
 const FAB_BOTTOM_MOVIL = "86px";   /* navbar 68px + 18px margen */
@@ -38,7 +38,7 @@ const WIN_BOTTOM_PC    = "94px";
 const WIN_BOTTOM_MOVIL = "152px";  /* fab bottom 86 + fab 54 + 12 */
 const FAB_LEFT         = "20px";
 
-// ── HTML ─────────────────────────────────────────────────────────────
+// ââ HTML âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const chatHTML = `
 <style>
   #chat-fab {
@@ -69,7 +69,7 @@ const chatHTML = `
     animation: chatAppear 0.32s cubic-bezier(0.34,1.56,0.64,1);
   }
 
-  /* En móvil, ventana más pequeña */
+  /* En mÃ³vil, ventana mÃ¡s pequeÃ±a */
   @media (max-width: 768px) {
     #chat-window {
       width: calc(100vw - 24px);
@@ -219,7 +219,7 @@ const chatHTML = `
   <img id="chat-lightbox-img" src="">
 </div>
 
-<button id="chat-fab" title="Escríbenos" onclick="window._toggleChat()">
+<button id="chat-fab" title="EscrÃ­benos" onclick="window._toggleChat()">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
@@ -232,24 +232,24 @@ const chatHTML = `
       <img src="Assets/Img/Avatares/GatoMiel.jpeg" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
       <div id="chat-header-info">
         <div id="chat-header-name">Gato Miel Estudio</div>
-        <div id="chat-header-status">● En línea</div>
+        <div id="chat-header-status">â En lÃ­nea</div>
       </div>
-      <button id="chat-close" onclick="window._toggleChat()">✕</button>
+      <button id="chat-close" onclick="window._toggleChat()">â</button>
     </div>
     <div id="chat-nologin" style="display:none;">
-      <span style="font-size:30px;">🐱</span>
-      <p>Inicia sesión para<br>chatear con nosotras.</p>
-      <a href="entrada.html">Iniciar sesión →</a>
+      <span style="font-size:30px;">ð±</span>
+      <p>Inicia sesiÃ³n para<br>chatear con nosotras.</p>
+      <a href="entrada.html">Iniciar sesiÃ³n â</a>
     </div>
     <div id="chat-messages" style="display:none;"></div>
     <div id="chat-preview">
       <img id="chat-preview-img" src="" style="display:none;">
       <span id="chat-preview-name"></span>
-      <button id="chat-preview-cancel" onclick="window._cancelarArchivo()">✕</button>
+      <button id="chat-preview-cancel" onclick="window._cancelarArchivo()">â</button>
     </div>
     <div id="chat-footer" style="display:none;">
-      <button class="chat-attach-btn" title="Emojis" onclick="window._toggleEmojiPicker(event)"><span>😊</span></button>
-      <button class="chat-attach-btn" title="Imagen" onclick="document.getElementById('chat-file-input').click()"><span>🖼️</span></button>
+      <button class="chat-attach-btn" title="Emojis" onclick="window._toggleEmojiPicker(event)"><span>ð</span></button>
+      <button class="chat-attach-btn" title="Imagen" onclick="document.getElementById('chat-file-input').click()"><span>ð¼ï¸</span></button>
       <textarea id="chat-input" placeholder="Escribe un mensaje..." rows="1"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window._enviarMensaje()}"
         oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
@@ -261,44 +261,44 @@ const chatHTML = `
         </svg>
       </button>
     </div>
-    <div id="chat-cerrado-msg" style="display:none;">Este chat fue cerrado · Escríbenos de nuevo 🐾</div>
+    <div id="chat-cerrado-msg" style="display:none;">Este chat fue cerrado Â· EscrÃ­benos de nuevo ð¾</div>
   </div>
 </div>
 
 <div id="chat-emoji-picker">
-  <div class="emoji-picker-title">🐱 Gato Miel</div>
+  <div class="emoji-picker-title">ð± Gato Miel</div>
   <div class="emoji-grid">
     <span class="emoji-section-label">Gatitos</span>
-    <button class="emoji-btn" onclick="window._insertEmoji('🐱')">🐱</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🐈')">🐈</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🐈‍⬛')">🐈‍⬛</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('😺')">😺</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('😸')">😸</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('😻')">😻</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('😽')">😽</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🙀')">🙀</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🐾')">🐾</button>
-    <span class="emoji-section-label">Cerámica & arte</span>
-    <button class="emoji-btn" onclick="window._insertEmoji('🏺')">🏺</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🪴')">🪴</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🍯')">🍯</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🌿')">🌿</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('✨')">✨</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🎨')">🎨</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð±')">ð±</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð')">ð</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ðââ¬')">ðââ¬</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ðº')">ðº</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¸')">ð¸</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð»')">ð»</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð½')">ð½</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð')">ð</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¾')">ð¾</button>
+    <span class="emoji-section-label">CerÃ¡mica & arte</span>
+    <button class="emoji-btn" onclick="window._insertEmoji('ðº')">ðº</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ðª´')">ðª´</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¯')">ð¯</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¿')">ð¿</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('â¨')">â¨</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¨')">ð¨</button>
     <span class="emoji-section-label">Caras & corazones</span>
-    <button class="emoji-btn" onclick="window._insertEmoji('🥰')">🥰</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('😊')">😊</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🥳')">🥳</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('💛')">💛</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🧡')">🧡</button>
-    <button class="emoji-btn" onclick="window._insertEmoji('🫶')">🫶</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¥°')">ð¥°</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð')">ð</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð¥³')">ð¥³</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð')">ð</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð§¡')">ð§¡</button>
+    <button class="emoji-btn" onclick="window._insertEmoji('ð«¶')">ð«¶</button>
   </div>
 </div>
 `;
 
 document.body.insertAdjacentHTML("beforeend", chatHTML);
 
-/* ── Ajustar posición en móvil ── */
+/* ââ Ajustar posiciÃ³n en mÃ³vil ââ */
 function _ajustarPosicionChat() {
   var movil = esMovil();
   var fab = document.getElementById("chat-fab");
@@ -309,7 +309,7 @@ function _ajustarPosicionChat() {
 _ajustarPosicionChat();
 window.addEventListener("resize", _ajustarPosicionChat);
 
-// ── Estado ───────────────────────────────────────────────────────────
+// ââ Estado âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 let _chatAbierto = false;
 let _currentUser = null;
 let _roomId      = null;
@@ -370,7 +370,7 @@ function _escucharMensajes() {
     if (!container) return;
     container.innerHTML = "";
     if (snap.empty) {
-      container.innerHTML = '<div style="text-align:center;padding:28px 16px;color:#bbb;font-size:13px;line-height:1.7;"><span style="display:block;font-size:28px;margin-bottom:8px;">🐱</span>¡Hola! Escríbenos lo que necesitas.</div>';
+      container.innerHTML = '<div style="text-align:center;padding:28px 16px;color:#bbb;font-size:13px;line-height:1.7;"><span style="display:block;font-size:28px;margin-bottom:8px;">ð±</span>Â¡Hola! EscrÃ­benos lo que necesitas.</div>';
       return;
     }
     snap.forEach(docSnap => {
@@ -428,10 +428,13 @@ window._enviarMensaje = async function() {
     noLeidosAdmin:true, uid:_currentUser.uid, estado:"abierto", ultimoMensajeAdmin:null
   }, {merge:true});
   if (window.notif && _currentUser) {
-    window.notif.enviarNotif("chat_cliente", {
-      nombreCliente: _currentUser.displayName || _currentUser.email,
-      preview: texto.substring(0, 60)
-    });
+    clearTimeout(window._chatNotifTimer);
+    window._chatNotifTimer = setTimeout(() => {
+      window.notif.enviarNotif("chat_cliente", {
+        nombreCliente: _currentUser.displayName || _currentUser.email,
+        preview: texto.substring(0, 60)
+      });
+    }, 3000);
   }
   if (esPrimero) {
     setTimeout(async () => {
@@ -459,7 +462,7 @@ async function _subirYEnviarArchivo() {
     fecha:serverTimestamp(), leido:true, tipo:"imagen"
   });
   await setDoc(doc(db, "chats", _roomId), {
-    ultimoMensaje:"🖼 Imagen", ultimaFecha:serverTimestamp(),
+    ultimoMensaje:"ð¼ Imagen", ultimaFecha:serverTimestamp(),
     noLeidosAdmin:true, estado:"abierto",
     nombreUsuario:_currentUser.displayName || _currentUser.email.split("@")[0],
     email:_currentUser.email, avatar:_currentUser.photoURL||"", uid:_currentUser.uid
