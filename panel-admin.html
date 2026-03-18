@@ -916,7 +916,6 @@ window.enviarRespuesta = async function() {
     noLeidosAdmin:false, ultimoAdmin:adminEmail
   });
 
-  // Notificar al cliente que el admin respondió
   if (window.notif && salaActiva) {
     window.notif.enviarNotif("chat_admin", {
       clienteUid: salaActiva,
