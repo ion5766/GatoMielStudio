@@ -2,13 +2,6 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#c48a3a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gato Miel">
-<link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Colección | Gato Miel Estudio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -29,32 +22,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
-  window._firebaseUser = user || null;
-  const loginBtn = document.getElementById("btn-login-header");
-  const userMenu = document.querySelector(".user-menu");
-  if (user) {
-    await user.reload().catch(()=>{});
-    if (!user.photoURL) {
-      try {
-        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-        await user.reload();
-      } catch(e) {}
-    }
-    const avatar = document.querySelector(".user-avatar");
-    if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userMenu) userMenu.style.display = "flex";
-    window._userEmail = user.email || "cliente@gatomiels.com";
-  } else {
-    if (loginBtn) loginBtn.style.display = "flex";
-    if (userMenu) userMenu.style.display = "none";
-    window._userEmail = null;
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e) {}
   }
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  // Guardar email del usuario para el pago
+  window._userEmail = user.email || "cliente@gatomiels.com";
 });
 </script>
-
-  
 </head>
 <body>
 
@@ -97,76 +80,11 @@ onAuthStateChanged(auth, async (user) => {
 
   <!-- ══ GRID PRODUCTOS ══ -->
   <section class="cl-tienda">
-    <div class="cl-grid">
-
-      <article class="cl-producto" data-nombre="Taza Arena" data-precio="1">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
-               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Taza Arena</h3>
-            <span class="cl-precio">S/ 1</span>
-          </div>
-          <p>Cerámica esmaltada en tonos tierra.</p>
-        </div>
-      </article>
-
-      <article class="cl-producto" data-nombre="Plato Bruma" data-precio="150">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
-               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Plato Bruma</h3>
-            <span class="cl-precio">S/ 150</span>
-          </div>
-          <p>Plato decorativo con textura orgánica.</p>
-        </div>
-      </article>
-
-      <article class="cl-producto" data-nombre="Jarrón Eclipse" data-precio="240">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
-               onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Jarrón Eclipse</h3>
-            <span class="cl-precio">S/ 240</span>
-          </div>
-          <p>Pieza única torneada a mano.</p>
-        </div>
-      </article>
-
-      <article class="cl-producto" data-nombre="Cuenco Alba" data-precio="135">
-        <div class="cl-img">
-          <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
-               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-          <div class="cl-img-overlay">
-            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-          </div>
-        </div>
-        <div class="cl-info">
-          <div class="cl-info-top">
-            <h3>Cuenco Alba</h3>
-            <span class="cl-precio">S/ 135</span>
-          </div>
-          <p>Perfecto para decoración minimalista.</p>
-        </div>
-      </article>
-
+    <div class="cl-grid" id="cl-grid-productos">
+      <div style="grid-column:1/-1;text-align:center;padding:50px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:12px;">
+        <div style="width:22px;height:22px;border:2px solid #e8d5b7;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>
+        Cargando colección...
+      </div>
     </div>
   </section>
 </main>
@@ -1013,10 +931,6 @@ function seleccionarAvatar(img) {
 }
 
 async function comprar(nombre, monto) {
-  if (!window._firebaseUser) {
-    document.getElementById("popupLoginColeccion").style.display = "flex";
-    return;
-  }
   productoActual = { nombre, monto };
   window.productoActual = productoActual; // expose to module scripts
 
@@ -1066,7 +980,7 @@ async function renderBrick() {
       onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
       onSubmit: async ({ formData }) => {
         try {
-          const resp = await fetch("/api/pagar", {
+          const resp = await fetch("/.netlify/functions/pagar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
@@ -1328,7 +1242,6 @@ window.guardarPerfil = async () => {
 };
 </script>
 
-<script src="movil-ui.js"></script>
 <script type="module" src="Js/src/chat.js"></script>
 
 <!-- ═══ MODAL MIS MEMBRESÍAS (global) ═══ -->
@@ -2098,9 +2011,63 @@ document.addEventListener("keydown", e => {
 #lista-admin-pedidos::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
 #lista-admin-pedidos::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
 </style>
-<script type="module" src="pwa.js"></script>
-  
-<script type="module" src="JS/notifications.js"></script>
-  
+<!-- ═══ CARGA DINÁMICA COLECCIÓN ═══ -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const _fc2 = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _app2 = getApps().length ? getApps()[0] : initializeApp(_fc2);
+const _db2  = getFirestore(_app2);
+
+// Fallback hardcodeado por si Firestore está vacío
+const FALLBACK_PRODUCTOS = [
+  {nombre:"Taza Arena",   precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",       imagen:"Assets/Img/Escultura1.jpg", stock:1},
+  {nombre:"Plato Bruma",  precio:150, descripcion:"Plato decorativo con textura orgánica.",    imagen:"Assets/Img/Escultura2.jpg", stock:1},
+  {nombre:"Jarrón Eclipse",precio:240,descripcion:"Pieza única torneada a mano.",              imagen:"Assets/Img/Escultura3.jpg", stock:1},
+  {nombre:"Cuenco Alba",  precio:135, descripcion:"Perfecto para decoración minimalista.",     imagen:"Assets/Img/Escultura4.jpg", stock:1},
+];
+
+function crearCardProducto(nombre, precio, descripcion, imagen) {
+  const art = document.createElement("article");
+  art.className = "cl-producto";
+  art.dataset.nombre = nombre;
+  art.dataset.precio = precio;
+  art.innerHTML = `
+    <div class="cl-img">
+      <img src="${imagen}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+      <div class="cl-img-overlay">
+        <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+      </div>
+    </div>
+    <div class="cl-info">
+      <div class="cl-info-top">
+        <h3>${nombre}</h3>
+        <span class="cl-precio">S/ ${precio}</span>
+      </div>
+      <p>${descripcion||""}</p>
+    </div>`;
+  return art;
+}
+
+onSnapshot(collection(_db2, "config_coleccion"), snap => {
+  const grid = document.getElementById("cl-grid-productos");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+  const productos = docs.length > 0 ? docs : FALLBACK_PRODUCTOS;
+
+  productos.forEach(p => {
+    if (p.stock === 0) return; // ocultar agotados
+    grid.appendChild(crearCardProducto(p.nombre, p.precio, p.descripcion, p.imagen));
+  });
+
+  if (grid.children.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:50px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay piezas disponibles en este momento 🐱</div>`;
+  }
+});
+</script>
+
 </body>
 </html>
