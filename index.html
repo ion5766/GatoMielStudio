@@ -991,8 +991,19 @@ window.cerrarModoAdmin = () => {
 // ══════════════════════════════
 // CUPOS — Gestión en tiempo real desde panel admin
 // ══════════════════════════════
-const CUPOS_MAX_ADM = 4;
+let CUPOS_MAX_ADM = 4; // se actualiza desde config_talleres
 const TALLER_ID_ADM = "arcilla-nocturna";
+
+// Cargar cuposMax dinámico desde config_talleres
+(async () => {
+  try {
+    const snap = await getDocs(collection(_db, "config_talleres"));
+    if (!snap.empty) {
+      const arcilla = snap.docs.find(d => (d.data().nombre||"").toLowerCase().includes("arcilla")) || snap.docs[0];
+      if (arcilla?.data().cupos) CUPOS_MAX_ADM = Number(arcilla.data().cupos);
+    }
+  } catch(e) {}
+})();
 const HORARIOS_ADM = [
   {id:"h0", label:"Sáb 7 mar · 10:00 AM"},
   {id:"h1", label:"Dom 8 mar · 6:00 PM"},
@@ -1041,8 +1052,7 @@ function renderCuposAdmin(data) {
           ${ocupados<=0?"disabled":""}>−</button>
         <span style="font-family:'Playfair Display',serif;font-size:20px;color:#c48a3a;font-weight:500;min-width:24px;text-align:center;">${ocupados}</span>
         <button onclick="admCambiarCupo('${h.id}',${ocupados},+1)"
-          style="width:30px;height:30px;border-radius:50%;background:#1a1714;border:1.5px solid #3a3028;color:${ocupados>=CUPOS_MAX_ADM?'#444':'#c48a3a'};font-size:16px;font-weight:700;cursor:${ocupados>=CUPOS_MAX_ADM?'not-allowed':'pointer'};display:flex;align-items:center;justify-content:center;transition:.2s;"
-          ${ocupados>=CUPOS_MAX_ADM?"disabled":""}>+</button>
+          style="width:30px;height:30px;border-radius:50%;background:#1a1714;border:1.5px solid #3a3028;color:#c48a3a;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;">+</button>
       </div>`;
     lista.appendChild(row);
   });
@@ -1060,7 +1070,7 @@ function renderCuposAdmin(data) {
 
 window.admCambiarCupo = async (horarioId, actual, delta) => {
   const nuevo = actual + delta;
-  if (nuevo < 0 || nuevo > CUPOS_MAX_ADM) return;
+  if (nuevo < 0) return;
   try {
     await updateDoc(doc(_db, "talleres", TALLER_ID_ADM), { [horarioId]: nuevo });
     toast(`Cupo ${delta > 0 ? "añadido" : "reducido"} — ${horarioId.replace("h","Horario ")}`);
@@ -1282,9 +1292,18 @@ function admRenderPiezaCard(id, data, container, esTemp=false) {
   const imgSrc = data.imagen || "";
   card.innerHTML = `
     <div class="adm-card-header">
-      <span class="adm-card-title">🏺 <span id="p-title-lbl-${id}">${escHtml(data.nombre||"Pieza")}</span></span>
-      <div style="display:flex;gap:8px;align-items:center;">
-        ${esTemp ? '<span style="font-family:Inter,sans-serif;font-size:9px;color:#f59e0b;background:#f59e0b22;padding:2px 8px;border-radius:20px;">local</span>' : ''}
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+        <span class="adm-card-title">🏺 <span id="p-title-lbl-${id}">${escHtml(data.nombre||"Pieza")}</span></span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          ${(data.stock??1) > 0
+            ? `<span id="p-stock-badge-${id}" style="font-family:'Inter',sans-serif;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;background:#d1fae5;color:#065f46;">✅ En stock · ${data.stock??1} pzas</span>`
+            : `<span id="p-stock-badge-${id}" style="font-family:'Inter',sans-serif;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;background:#fee2e2;color:#991b1b;">🚫 Agotado</span>`
+          }
+          <span style="font-family:'Inter',sans-serif;font-size:9px;color:#888;">S/ ${data.precio||0}</span>
+          ${esTemp ? '<span style="font-family:Inter,sans-serif;font-size:9px;color:#f59e0b;background:#f59e0b22;padding:2px 8px;border-radius:20px;">local</span>' : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
         <button class="adm-btn-save" onclick="admGuardarPieza('${id}',this)">💾 Guardar</button>
         ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarPieza('${id}',this)">Eliminar</button>` : ''}
       </div>
@@ -1296,9 +1315,10 @@ function admRenderPiezaCard(id, data, container, esTemp=false) {
     </div>
     <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="p-desc-${id}">${escHtml(data.descripcion||'')}</textarea></div>
     <div class="adm-grid-2">
-      <div class="adm-field"><label>Stock disponible</label><input class="adm-input" type="number" id="p-stock-${id}" value="${data.stock??1}" min="0"></div>
+      <div class="adm-field"><label>Stock disponible</label><input class="adm-input" type="number" id="p-stock-${id}" value="${data.stock??1}" min="0"
+        oninput="admActualizarStockBadge('${id}',this.value);if(Number(this.value)===0){const s=document.getElementById('p-visible-${id}');if(s)s.value='0';}else{const s=document.getElementById('p-visible-${id}');if(s&&s.value==='0')s.value='1';}"></div>
       <div class="adm-field"><label>Visible en tienda</label>
-        <select class="adm-input" id="p-visible-${id}">
+        <select class="adm-input" id="p-visible-${id}" onchange="admActualizarStockBadge('${id}',document.getElementById('p-stock-${id}')?.value)">
           <option value="1" ${(data.stock??1)>0?'selected':''}>✅ Con stock</option>
           <option value="0">🚫 Agotado (ocultar)</option>
         </select>
@@ -1320,6 +1340,21 @@ window.admPrevImgP = (id, url) => {
   if (!prev || !url) return;
   if (prev.tagName === 'IMG') { prev.src = url; prev.style.display = 'block'; }
   else { prev.outerHTML = `<img id="img-prev-p-${id}" src="${url}" class="adm-img-preview" onerror="this.style.display='none'">`; }
+};
+
+window.admActualizarStockBadge = (id, stockVal) => {
+  const badge  = document.getElementById(`p-stock-badge-${id}`);
+  const visible = document.getElementById(`p-visible-${id}`)?.value;
+  if (!badge) return;
+  const stock = Number(stockVal ?? 1);
+  const enStock = stock > 0 && visible !== "0";
+  if (enStock) {
+    badge.style.background = "#d1fae5"; badge.style.color = "#065f46";
+    badge.textContent = `✅ En stock · ${stock} pzas`;
+  } else {
+    badge.style.background = "#fee2e2"; badge.style.color = "#991b1b";
+    badge.textContent = "🚫 Agotado";
+  }
 };
 
 window.admSubirImagenPieza = async (id, input) => {
@@ -1352,6 +1387,8 @@ window.admGuardarPieza = async (id, btn) => {
       await updateDoc(doc(_db,"config_coleccion",id), data);
     }
     toast("✓ Pieza guardada");
+    // Actualizar badge de stock en la card
+    admActualizarStockBadge(id.startsWith("temp_") ? id : id, data.stock);
   } catch(e) { toast("Error: "+e.message, false); }
   btn.textContent = "💾 Guardar"; btn.disabled = false;
 };
