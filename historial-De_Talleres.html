@@ -571,7 +571,7 @@ import {
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
 const CUPOS_MAX    = 4;
-const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795";
+const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
 const HORARIOS = [
   {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
   {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
@@ -590,41 +590,9 @@ let horarioElegido   = null;
 let compFiles        = {};
 let filtroPanelAdmin = "pendiente";
 let todasLasMembresias = [];
-let _precioTaller    = 150; // precio dinámico — se actualiza desde config_talleres
 
 // ── Mercado Pago Brick state ───────────────────────────────────────────────
 let _mp = null, _mpBuilder = null, _mpBrick = null, _mpInited = false;
-
-// ── Cargar precio dinámico del taller desde config_talleres ──
-function _actualizarPrecioUI(precio) {
-  // Actualizar todos los elementos con precio del taller
-  document.querySelectorAll(".ht-monto-pill strong").forEach(el => {
-    el.textContent = `S/ ${precio}`;
-  });
-  // Sub-título del modal horario
-  const subHorario = document.querySelector("#modalHorario .ht-modal-hero-sub");
-  if (subHorario) subHorario.textContent = `elige tu horario · S/ ${precio}`;
-  // Precio en tab tarjeta
-  const precioTarjeta = document.getElementById("precio-tarjeta-display");
-  if (precioTarjeta) precioTarjeta.textContent = `S/ ${precio}`;
-  // Precio en tab agencia
-  const precioAgencia = document.getElementById("precio-agencia-display");
-  if (precioAgencia) precioAgencia.textContent = `S/ ${precio}`;
-}
-
-(async () => {
-  try {
-    const { getDocs: _gd, collection: _col } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    const snap = await _gd(_col(db, "config_talleres"));
-    if (!snap.empty) {
-      const arcilla = snap.docs.find(d => (d.data().nombre||"").toLowerCase().includes("arcilla")) || snap.docs[0];
-      if (arcilla && arcilla.data().precio) {
-        _precioTaller = Number(arcilla.data().precio);
-        _actualizarPrecioUI(_precioTaller);
-      }
-    }
-  } catch(e) { /* usa precio por defecto 150 */ }
-})();
 
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
@@ -753,9 +721,7 @@ window.irAPago = function() {
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
   document.getElementById("modalHorario").style.display = "none";
-  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ " + _precioTaller;
-  // Re-actualizar precios en las tabs al abrir
-  _actualizarPrecioUI(_precioTaller);
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 150";
   document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
   // resetear pills → Yape activo
   document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
@@ -780,9 +746,8 @@ async function _initMpBrick() {
   const loading   = document.getElementById("mp-loading");
   const container = document.getElementById("mpCardBrick_container");
   if (!container) return;
-  if (loading) loading.style.display = "block";
-  container.innerHTML = "";
   try {
+    // Cargar SDK si aún no está
     if (!window.MercadoPago) {
       await new Promise((res, rej) => {
         const s = document.createElement("script");
@@ -795,27 +760,29 @@ async function _initMpBrick() {
       _mp = new window.MercadoPago(MP_PUBLIC_KEY, {locale:"es-PE"});
       _mpBuilder = _mp.bricks();
     }
-    if (_mpBrick) { try { _mpBrick.unmount(); } catch(e){} _mpBrick = null; }
+    if (_mpBrick) { try { await _mpBrick.unmount(); } catch(e){} }
+    container.innerHTML = "";
+    if (loading) loading.style.display = "none";
 
-    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
+    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
       initialization: {
-        amount: _precioTaller,
+        amount: 150,
         payer: { email: currentUser?.email || "" }
       },
       customization: {
+        paymentMethods: {
+          creditCard: "all",
+          debitCard:  "all",
+          ticket:     "none",
+          bankTransfer: "none",
+          atm:        "none",
+          onboarding_credits: "none",
+          wallet_purchase:    "none"
+        },
         visual: {
           style: {
             theme: "default",
-            customVariables: {
-              baseColor: "#c48a3a",
-              baseColorFirstVariant: "#a8742f",
-              baseColorSecondVariant: "#e8b870",
-              borderRadiusLarge: "14px",
-              borderRadiusMedium: "10px",
-              formBackgroundColor: "#faf8f5",
-              inputBackgroundColor: "#ffffff",
-              inputFocusedBorderColor: "#c48a3a"
-            }
+            customVariables: { baseColor: "#c48a3a" }
           }
         }
       },
@@ -824,34 +791,17 @@ async function _initMpBrick() {
         onError: (e) => {
           console.error("MP Brick error:", e);
           if (loading) loading.style.display = "none";
-          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar. Usa Yape, Plin o Agencia.</p>`;
+          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
         },
-        onSubmit: async (formData) => {
+        onSubmit: async ({ formData }) => {
+          // Sin backend activo, registramos como pendiente igual que los otros métodos
+          // El admin validará manualmente (como acordado)
           try {
-            const resp = await fetch("/api/pagar", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                transaction_amount: _precioTaller,
-                description: "Membresía " + TALLER_ID + " - " + (horarioElegido||""),
-                payment_method_id: formData.payment_method_id,
-                token:        formData.token,
-                installments: formData.installments || 1,
-                issuer_id:    formData.issuer_id,
-                payer: {
-                  email:          formData.payer?.email || currentUser?.email || "",
-                  identification: formData.payer?.identification || {}
-                }
-              })
-            });
-            const data = await resp.json();
-            const estadoFinal = data.status === "approved" ? "confirmado" : "pendiente";
-            await _registrarPago("Tarjeta", null, estadoFinal);
+            await _registrarPago("Tarjeta", null);
           } catch(e) {
-            // Si /api/pagar no existe, registrar como pendiente igual
-            await _registrarPago("Tarjeta", null, "pendiente");
+            console.error("Error registrando pago tarjeta:", e);
           }
-          return Promise.resolve();
+          return Promise.resolve(); // necesario para que el Brick no quede en loading
         }
       }
     });
@@ -904,8 +854,7 @@ window.confirmarPago = async function(metodoLabel) {
 };
 
 // ── Función central de registro ────────────────────────────────────────────
-async function _registrarPago(metodoLabel, archivo, estadoOverride) {
-  const estado = estadoOverride || "pendiente";
+async function _registrarPago(metodoLabel, archivo) {
   let comprobanteURL = "";
   if (archivo) {
     const ext  = archivo.name.split(".").pop() || "jpg";
@@ -915,16 +864,14 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride) {
   }
 
   const docRef = await addDoc(collection(db, "membresias"), {
-    uid:            currentUser.uid,
     usuarioEmail:   currentUser.email,
     usuarioNombre:  currentUser.displayName || currentUser.email,
     usuarioAvatar:  currentUser.photoURL || "",
     horarioId:      horarioElegidoId,
     horarioLabel:   horarioElegido,
     metodo:         metodoLabel,
-    monto:          _precioTaller,
     comprobanteURL: comprobanteURL,
-    estado:         estado,
+    estado:         "pendiente",
     fecha:          serverTimestamp(),
     tallerId:       TALLER_ID,
   });
@@ -1069,5 +1016,6 @@ document.addEventListener("keydown", e => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
+<script src="movil-ui.js"></script>
 </body>
 </html>
