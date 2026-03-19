@@ -2038,77 +2038,64 @@ document.addEventListener("keydown", e => {
 <!-- ═══ CARGA DINÁMICA COLECCIÓN ═══ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const _fc2 = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
 const _app2 = getApps().length ? getApps()[0] : initializeApp(_fc2);
 const _db2  = getFirestore(_app2);
 
-const FALLBACK_PRODUCTOS = [
-  {nombre:"Taza Arena",    precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",       imagen:"Assets/Img/Escultura1.jpg", stock:1},
-  {nombre:"Plato Bruma",   precio:150, descripcion:"Plato decorativo con textura orgánica.",    imagen:"Assets/Img/Escultura2.jpg", stock:1},
-  {nombre:"Jarrón Eclipse",precio:240, descripcion:"Pieza única torneada a mano.",              imagen:"Assets/Img/Escultura3.jpg", stock:1},
-  {nombre:"Cuenco Alba",   precio:135, descripcion:"Perfecto para decoración minimalista.",     imagen:"Assets/Img/Escultura4.jpg", stock:1},
+const FALLBACK = [
+  {nombre:"Taza Arena",    precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",    imagen:"Assets/Img/Escultura1.jpg", stock:1},
+  {nombre:"Plato Bruma",   precio:150, descripcion:"Plato decorativo con textura orgánica.", imagen:"Assets/Img/Escultura2.jpg", stock:1},
+  {nombre:"Jarrón Eclipse",precio:240, descripcion:"Pieza única torneada a mano.",           imagen:"Assets/Img/Escultura3.jpg", stock:1},
+  {nombre:"Cuenco Alba",   precio:135, descripcion:"Perfecto para decoración minimalista.",  imagen:"Assets/Img/Escultura4.jpg", stock:1},
 ];
 
-function crearCardProducto(nombre, precio, descripcion, imagen) {
-  const art = document.createElement("article");
-  art.className = "cl-producto";
-  art.dataset.nombre = String(nombre);
-  art.dataset.precio = String(precio);
-  art.innerHTML = `
-    <div class="cl-img">
-      <img src="${imagen||''}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'" style="width:100%;height:100%;object-fit:cover;">
-      <div class="cl-img-overlay">
-        <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-      </div>
-    </div>
-    <div class="cl-info">
-      <div class="cl-info-top">
-        <h3>${nombre}</h3>
-        <span class="cl-precio">S/ ${precio}</span>
-      </div>
-      <p>${descripcion||""}</p>
-    </div>`;
-  return art;
-}
-
-function renderProductos(docs) {
+function renderGrid(productos) {
   const grid = document.getElementById("cl-grid-productos");
   if (!grid) return;
+  const items = productos.filter(p => p.stock !== 0);
+  if (!items.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay piezas disponibles 🐱</div>`;
+    return;
+  }
   grid.innerHTML = "";
-  const productos = docs.length > 0 ? docs : FALLBACK_PRODUCTOS;
-  productos.forEach(p => {
-    if (p.stock === 0) return;
-    grid.appendChild(crearCardProducto(p.nombre, p.precio, p.descripcion, p.imagen));
+  items.forEach(p => {
+    const art = document.createElement("article");
+    art.className = "cl-producto";
+    art.dataset.nombre = String(p.nombre);
+    art.dataset.precio = String(p.precio);
+    art.innerHTML = `
+      <div class="cl-img">
+        <img src="${p.imagen||''}" alt="${p.nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+        <div class="cl-img-overlay">
+          <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+        </div>
+      </div>
+      <div class="cl-info">
+        <div class="cl-info-top">
+          <h3>${p.nombre}</h3>
+          <span class="cl-precio">S/ ${p.precio}</span>
+        </div>
+        <p>${p.descripcion||""}</p>
+      </div>`;
+    grid.appendChild(art);
   });
-  if (grid.children.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:50px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay piezas disponibles en este momento 🐱</div>`;
+}
+
+// Intentar cargar desde Firestore, con fallback automático
+async function cargarColeccion() {
+  try {
+    const snap = await getDocs(collection(_db2, "config_coleccion"));
+    const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    renderGrid(docs.length > 0 ? docs : FALLBACK);
+  } catch(e) {
+    console.warn("Firestore no disponible, usando fallback:", e.message);
+    renderGrid(FALLBACK);
   }
 }
 
-// Intentar onSnapshot primero (funciona cuando Firestore rules permiten lectura pública)
-try {
-  onSnapshot(collection(_db2, "config_coleccion"), snap => {
-    const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
-    renderProductos(docs);
-  }, err => {
-    console.warn("onSnapshot falló, usando getDocs:", err.message);
-    // Si falla por permisos, intentar getDocs (mismo resultado pero sin tiempo real)
-    getDocs(collection(_db2, "config_coleccion")).then(snap => {
-      renderProductos(snap.docs.map(d => ({id:d.id,...d.data()})));
-    }).catch(() => {
-      // Si todo falla, usar fallback local
-      renderProductos([]);
-    });
-  });
-// Timeout de seguridad: si después de 4s sigue "cargando", mostrar fallback
-setTimeout(() => {
-  const grid = document.getElementById("cl-grid-productos");
-  if (grid && grid.children.length === 1 && grid.innerHTML.includes("Cargando")) {
-    renderProductos([]);
-  }
-}, 4000);
+cargarColeccion();
 </script>
 
 </body>
