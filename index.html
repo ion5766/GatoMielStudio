@@ -736,6 +736,7 @@ async function abrirHistorialIndex() {
     <button class="adm-tab" onclick="admTab('coleccion',this)">🛍 Colección</button>
     <button class="adm-tab" onclick="admTab('pedidos',this)">📦 Pedidos</button>
     <button class="adm-tab" onclick="admTab('membresias',this)">🎫 Membresías</button>
+    <button class="adm-tab" onclick="admTab('comunidad',this)">🖼 Comunidad</button>
     <button class="adm-tab" onclick="admTab('chats',this)">💬 Chats</button>
   </div>
 
@@ -794,6 +795,11 @@ async function abrirHistorialIndex() {
       <div id="adm-chats-lista"></div>
     </div>
 
+    <!-- COMUNIDAD -->
+    <div id="adm-comunidad" class="adm-section">
+      <div id="adm-comunidad-lista"></div>
+    </div>
+
   </div>
 </div>
 
@@ -838,12 +844,13 @@ window.admTab = (id, btn) => {
   document.querySelectorAll(".adm-tab").forEach(b => b.classList.remove("active"));
   document.getElementById("adm-"+id).classList.add("active");
   btn.classList.add("active");
-  if (id==="talleres") admCargarTalleres();
-  if (id==="coleccion") admCargarColeccion();
-  if (id==="pedidos") admCargarPedidos();
+  if (id==="talleres")   admCargarTalleres();
+  if (id==="coleccion")  admCargarColeccion();
+  if (id==="pedidos")    admCargarPedidos();
   if (id==="membresias") admCargarMembresias();
-  if (id==="chats") admCargarChats();
-  if (id==="resumen") admCargarResumen();
+  if (id==="chats")      admCargarChats();
+  if (id==="comunidad")  admCargarComunidad();
+  if (id==="resumen")    admCargarResumen();
 };
 
 // ── Abrir / cerrar ──
@@ -861,212 +868,316 @@ window.cerrarModoAdmin = () => {
 // RESUMEN
 // ══════════════════════════════
 async function admCargarResumen() {
-  const [pedSnap, membSnap] = await Promise.all([
-    getDocs(collection(_db,"pedidos")),
-    getDocs(collection(_db,"membresias"))
-  ]);
-  const peds = pedSnap.docs.map(d=>({id:d.id,...d.data()}));
-  const membs = membSnap.docs.map(d=>({id:d.id,...d.data()}));
-  const pend = [...peds,...membs].filter(x=>x.estado==="pendiente").length;
-  document.getElementById("adm-st-pedidos").textContent = peds.length;
-  document.getElementById("adm-st-memb").textContent = membs.length;
-  document.getElementById("adm-st-pend").textContent = pend;
-
-  // Últimos pedidos
-  const ul = document.getElementById("adm-resumen-ultimos");
-  const recientes = peds.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0)).slice(0,5);
-  ul.innerHTML = `<p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:10px;">Últimos pedidos</p>`;
-  recientes.forEach(p => {
-    const eDot = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
-    const d = document.createElement("div");
-    d.className = "adm-table-row";
-    d.innerHTML = `<div class="adm-table-dot" style="background:${eDot}"></div>
-      <div class="adm-table-info"><div class="adm-table-title">${p.producto||"—"} · S/ ${p.monto||"—"}</div>
-      <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div></div>
-      <span class="adm-table-badge" style="background:${eDot}22;color:${eDot};">${p.estado}</span>`;
-    ul.appendChild(d);
-  });
+  try {
+    const [pedSnap, membSnap] = await Promise.all([
+      getDocs(collection(_db,"pedidos")),
+      getDocs(collection(_db,"membresias"))
+    ]);
+    const peds  = pedSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const membs = membSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const pend  = [...peds,...membs].filter(x=>x.estado==="pendiente").length;
+    document.getElementById("adm-st-pedidos").textContent = peds.length;
+    document.getElementById("adm-st-memb").textContent    = membs.length;
+    document.getElementById("adm-st-pend").textContent    = pend;
+    const ul = document.getElementById("adm-resumen-ultimos");
+    const recientes = peds.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0)).slice(0,5);
+    ul.innerHTML = `<p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:10px;">Últimos pedidos</p>`;
+    recientes.forEach(p => {
+      const eDot = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
+      const d = document.createElement("div");
+      d.className = "adm-table-row";
+      d.innerHTML = `<div class="adm-table-dot" style="background:${eDot}"></div>
+        <div class="adm-table-info"><div class="adm-table-title">${p.producto||"—"} · S/ ${p.monto||"—"}</div>
+        <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div></div>
+        <span class="adm-table-badge" style="background:${eDot}22;color:${eDot};">${p.estado}</span>`;
+      ul.appendChild(d);
+    });
+  } catch(e) { console.error("Resumen error:", e); }
 }
 
 // ══════════════════════════════
-// TALLERES
+// HELPER: subir imagen a Storage y devolver URL
 // ══════════════════════════════
+async function _subirImagen(path, file) {
+  const snap = await uploadBytes(sRef(_stor, path), file);
+  return await getDownloadURL(snap.ref);
+}
+
+// ══════════════════════════════
+// TALLERES — se muestran SIEMPRE aunque Firestore esté vacío
+// ══════════════════════════════
+const _TALLER_DEFAULTS = [
+  {nombre:"Arcilla Nocturna",   descripcion:"Taller semanal de modelado a mano en pequeño grupo.",  precio:150, cupos:4,  imagen:"Assets/Img/Taller1.jpg",    activo:true},
+  {nombre:"Iniciación al Torno",descripcion:"Curso intensivo para aprender el torno cerámico.",     precio:120, cupos:8,  imagen:"Assets/Img/Taller2.jpg",    activo:false},
+  {nombre:"Taller Libre",       descripcion:"Acceso al estudio con materiales y acompañamiento.",   precio:100, cupos:10, imagen:"Assets/Img/Escultura3.jpg", activo:true},
+];
+
+const _COLECCION_DEFAULTS = [
+  {nombre:"Taza Arena",    descripcion:"Cerámica esmaltada en tonos tierra.",     precio:120, stock:3, imagen:"Assets/Img/Escultura1.jpg"},
+  {nombre:"Plato Bruma",   descripcion:"Plato decorativo con textura orgánica.",  precio:150, stock:2, imagen:"Assets/Img/Escultura2.jpg"},
+  {nombre:"Jarrón Eclipse",descripcion:"Pieza única torneada a mano.",            precio:240, stock:1, imagen:"Assets/Img/Escultura3.jpg"},
+  {nombre:"Cuenco Alba",   descripcion:"Perfecto para decoración minimalista.",   precio:135, stock:2, imagen:"Assets/Img/Escultura4.jpg"},
+];
+
 async function admCargarTalleres() {
   const lista = document.getElementById("adm-talleres-lista");
-  lista.innerHTML = `<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Cargando...</p>`;
-  const snap = await getDocs(collection(_db,"config_talleres"));
-  if (snap.empty) {
-    // Seed from hardcoded if empty
+  lista.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando...</div>`;
+  try {
+    const snap = await getDocs(collection(_db,"config_talleres"));
     lista.innerHTML = "";
-    const defaults = [
-      {nombre:"Arcilla Nocturna",descripcion:"Taller presencial de modelado a mano en pequeño grupo.",precio:150,cupos:4,imagen:"Assets/Img/Escultura1.jpg",activo:true},
-      {nombre:"Esmaltes y acabados",descripcion:"Descubre el universo del color en cerámica.",precio:120,cupos:8,imagen:"Assets/Img/Escultura2.jpg",activo:true},
-      {nombre:"Taller libre",descripcion:"Ven a crear con total libertad en el estudio.",precio:100,cupos:10,imagen:"Assets/Img/Escultura3.jpg",activo:true},
-    ];
-    for (const t of defaults) await addDoc(collection(_db,"config_talleres"), t);
-    await admCargarTalleres();
-    return;
+    if (snap.empty) {
+      // Mostrar defaults locales + intentar guardar en Firestore en segundo plano
+      _TALLER_DEFAULTS.forEach((t, i) => {
+        const tempId = "temp_" + i;
+        admRenderTallerCard(tempId, t, lista, true);
+      });
+      // Intentar seed en Firestore (puede fallar si Firestore está vacío por permisos)
+      Promise.all(_TALLER_DEFAULTS.map(t => addDoc(collection(_db,"config_talleres"), t)))
+        .then(() => admCargarTalleres()) // recargar con IDs reales
+        .catch(() => {}); // silenciar error de permisos — las cards locales ya se muestran
+    } else {
+      snap.docs.forEach(d => admRenderTallerCard(d.id, d.data(), lista, false));
+    }
+  } catch(e) {
+    lista.innerHTML = "";
+    _TALLER_DEFAULTS.forEach((t, i) => admRenderTallerCard("temp_"+i, t, lista, true));
+    toast("Modo offline — guarda para sincronizar", false);
   }
-  lista.innerHTML = "";
-  snap.docs.forEach(d => admRenderTallerCard(d.id, d.data(), lista));
 }
 
-function admRenderTallerCard(id, data, container) {
+function admRenderTallerCard(id, data, container, esTemp=false) {
   const card = document.createElement("div");
   card.className = "adm-card";
+  card.id = `tcard-${id}`;
+  const imgSrc = data.imagen || "";
   card.innerHTML = `
     <div class="adm-card-header">
-      <span class="adm-card-title">🏺 ${data.nombre||"Taller"}</span>
-      <div style="display:flex;gap:8px;">
-        <button class="adm-btn-save" onclick="admGuardarTaller('${id}',this)">Guardar</button>
-        <button class="adm-btn-danger" onclick="admEliminarTaller('${id}',this)">Eliminar</button>
+      <span class="adm-card-title">🏺 <span id="t-title-lbl-${id}">${data.nombre||"Taller"}</span></span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        ${esTemp ? '<span style="font-family:Inter,sans-serif;font-size:9px;color:#f59e0b;background:#f59e0b22;padding:2px 8px;border-radius:20px;">local</span>' : ''}
+        <button class="adm-btn-save" onclick="admGuardarTaller('${id}',this)">💾 Guardar</button>
+        ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarTaller('${id}',this)">Eliminar</button>` : ''}
       </div>
     </div>
-    <img id="img-prev-t-${id}" src="${data.imagen||''}" class="adm-img-preview" onerror="this.style.display='none'">
+    ${imgSrc ? `<img id="img-prev-t-${id}" src="${imgSrc}" class="adm-img-preview" onerror="this.style.display='none'">` : `<div id="img-prev-t-${id}" style="width:100%;height:120px;background:#2a2420;border-radius:10px;border:1px dashed #3a3028;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:12px;font-family:Inter,sans-serif;margin-bottom:8px;">Sin imagen</div>`}
     <div class="adm-grid-2">
-      <div class="adm-field"><label>Nombre</label><input class="adm-input" id="t-nom-${id}" value="${data.nombre||''}"></div>
-      <div class="adm-field"><label>Precio (S/)</label><input class="adm-input" type="number" id="t-precio-${id}" value="${data.precio||0}"></div>
+      <div class="adm-field"><label>Nombre</label><input class="adm-input" id="t-nom-${id}" value="${escHtml(data.nombre||'')}" oninput="document.getElementById('t-title-lbl-${id}').textContent=this.value||'Taller'"></div>
+      <div class="adm-field"><label>Precio (S/)</label><input class="adm-input" type="number" id="t-precio-${id}" value="${data.precio||0}" min="0"></div>
     </div>
-    <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="t-desc-${id}">${data.descripcion||''}</textarea></div>
+    <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="t-desc-${id}">${escHtml(data.descripcion||'')}</textarea></div>
     <div class="adm-grid-2">
-      <div class="adm-field"><label>Cupos máx.</label><input class="adm-input" type="number" id="t-cupos-${id}" value="${data.cupos||0}"></div>
+      <div class="adm-field"><label>Cupos máximos</label><input class="adm-input" type="number" id="t-cupos-${id}" value="${data.cupos||0}" min="0"></div>
       <div class="adm-field"><label>Estado</label>
         <select class="adm-input" id="t-activo-${id}">
-          <option value="true" ${data.activo!==false?'selected':''}>Activo</option>
-          <option value="false" ${data.activo===false?'selected':''}>Inactivo</option>
+          <option value="true"  ${data.activo!==false?'selected':''}>✅ Activo</option>
+          <option value="false" ${data.activo===false?'selected':''}>🔒 Inactivo</option>
         </select>
       </div>
     </div>
-    <div class="adm-field"><label>URL imagen (o sube una)</label>
-      <input class="adm-input" id="t-img-${id}" value="${data.imagen||''}" placeholder="https://... o sube abajo">
-    </div>
     <div class="adm-field">
-      <label>Subir imagen</label>
-      <input type="file" accept="image/*" style="color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:12px;" onchange="admSubirImagenTaller('${id}',this)">
+      <label>📎 Subir nueva imagen</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label style="flex:1;padding:9px 12px;background:#2a2420;border:1.5px dashed #c48a3a44;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;color:#c48a3a;text-align:center;display:block;" for="file-t-${id}">📸 Elegir imagen</label>
+        <input type="file" id="file-t-${id}" accept="image/*" style="display:none;" onchange="admSubirImagenTaller('${id}',this)">
+      </div>
+      <input class="adm-input" id="t-img-${id}" value="${escHtml(data.imagen||'')}" placeholder="o pega URL aquí" style="margin-top:6px;" oninput="admPrevImgT('${id}',this.value)">
     </div>`;
   container.appendChild(card);
 }
 
-window.admGuardarTaller = async (id, btn) => {
-  btn.textContent = "Guardando..."; btn.disabled = true;
-  try {
-    await updateDoc(doc(_db,"config_talleres",id), {
-      nombre:      document.getElementById(`t-nom-${id}`).value,
-      precio:      Number(document.getElementById(`t-precio-${id}`).value),
-      descripcion: document.getElementById(`t-desc-${id}`).value,
-      cupos:       Number(document.getElementById(`t-cupos-${id}`).value),
-      imagen:      document.getElementById(`t-img-${id}`).value,
-      activo:      document.getElementById(`t-activo-${id}`).value === "true",
-    });
-    toast("✓ Taller guardado");
-  } catch(e) { toast("Error: "+e.message, false); }
-  btn.textContent = "Guardar"; btn.disabled = false;
-};
-
-window.admEliminarTaller = async (id, btn) => {
-  if (!confirm("¿Eliminar este taller?")) return;
-  await deleteDoc(doc(_db,"config_talleres",id));
-  btn.closest(".adm-card").remove();
-  toast("Taller eliminado");
-};
-
-window.admNuevoTaller = async () => {
-  const ref = await addDoc(collection(_db,"config_talleres"), {nombre:"Nuevo taller",descripcion:"",precio:150,cupos:8,imagen:"",activo:true});
-  const lista = document.getElementById("adm-talleres-lista");
-  admRenderTallerCard(ref.id, {nombre:"Nuevo taller",descripcion:"",precio:150,cupos:8,imagen:"",activo:true}, lista);
-  lista.lastChild.scrollIntoView({behavior:"smooth"});
+window.admPrevImgT = (id, url) => {
+  const prev = document.getElementById(`img-prev-t-${id}`);
+  if (!prev || !url) return;
+  if (prev.tagName === 'IMG') { prev.src = url; prev.style.display = 'block'; }
+  else { prev.outerHTML = `<img id="img-prev-t-${id}" src="${url}" class="adm-img-preview" onerror="this.style.display='none'">`; }
 };
 
 window.admSubirImagenTaller = async (id, input) => {
   const file = input.files[0]; if (!file) return;
-  const snap = await uploadBytes(sRef(_stor,`config/talleres/${id}/${file.name}`), file);
-  const url  = await getDownloadURL(snap.ref);
-  document.getElementById(`t-img-${id}`).value = url;
-  const prev = document.getElementById(`img-prev-t-${id}`);
-  if (prev) { prev.src = url; prev.style.display = "block"; }
-  toast("✓ Imagen subida");
+  const label = input.previousElementSibling;
+  if (label) { label.textContent = "⏳ Subiendo..."; }
+  try {
+    const url = await _subirImagen(`config/talleres/${Date.now()}_${file.name}`, file);
+    document.getElementById(`t-img-${id}`).value = url;
+    admPrevImgT(id, url);
+    toast("✓ Imagen lista — pulsa Guardar");
+    if (label) label.textContent = "📸 Cambiar imagen";
+  } catch(e) { toast("Error subiendo imagen: "+e.message, false); if(label) label.textContent = "📸 Elegir imagen"; }
+};
+
+window.admGuardarTaller = async (id, btn) => {
+  const nombre      = document.getElementById(`t-nom-${id}`)?.value || "";
+  const precio      = Number(document.getElementById(`t-precio-${id}`)?.value || 0);
+  const descripcion = document.getElementById(`t-desc-${id}`)?.value || "";
+  const cupos       = Number(document.getElementById(`t-cupos-${id}`)?.value || 0);
+  const imagen      = document.getElementById(`t-img-${id}`)?.value || "";
+  const activo      = document.getElementById(`t-activo-${id}`)?.value === "true";
+  const data        = { nombre, precio, descripcion, cupos, imagen, activo };
+  btn.textContent = "⏳ Guardando..."; btn.disabled = true;
+  try {
+    if (id.startsWith("temp_")) {
+      const ref = await addDoc(collection(_db,"config_talleres"), data);
+      // Reemplazar card temporal con ID real
+      const card = document.getElementById(`tcard-${id}`);
+      if (card) { const lista = card.parentNode; card.remove(); admRenderTallerCard(ref.id, data, lista, false); }
+    } else {
+      await updateDoc(doc(_db,"config_talleres",id), data);
+    }
+    toast("✓ Taller guardado");
+  } catch(e) { toast("Error: "+e.message, false); }
+  btn.textContent = "💾 Guardar"; btn.disabled = false;
+};
+
+window.admEliminarTaller = async (id, btn) => {
+  if (!confirm("¿Eliminar este taller permanentemente?")) return;
+  try {
+    await deleteDoc(doc(_db,"config_talleres",id));
+    btn.closest(".adm-card").remove();
+    toast("Taller eliminado");
+  } catch(e) { toast("Error: "+e.message, false); }
+};
+
+window.admNuevoTaller = async () => {
+  const lista = document.getElementById("adm-talleres-lista");
+  const data = {nombre:"Nuevo taller",descripcion:"",precio:150,cupos:8,imagen:"",activo:true};
+  try {
+    const ref = await addDoc(collection(_db,"config_talleres"), data);
+    admRenderTallerCard(ref.id, data, lista, false);
+  } catch(e) {
+    admRenderTallerCard("temp_new_"+Date.now(), data, lista, true);
+  }
+  lista.lastElementChild?.scrollIntoView({behavior:"smooth"});
 };
 
 // ══════════════════════════════
-// COLECCIÓN
+// COLECCIÓN — igual que talleres
 // ══════════════════════════════
 async function admCargarColeccion() {
   const lista = document.getElementById("adm-coleccion-lista");
-  lista.innerHTML = `<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Cargando...</p>`;
-  const snap = await getDocs(collection(_db,"config_coleccion"));
-  lista.innerHTML = "";
-  if (snap.empty) {
-    lista.innerHTML = `<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Sin piezas. Añade la primera.</p>`;
-    return;
+  lista.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando...</div>`;
+  try {
+    const snap = await getDocs(collection(_db,"config_coleccion"));
+    lista.innerHTML = "";
+    if (snap.empty) {
+      _COLECCION_DEFAULTS.forEach((p, i) => admRenderPiezaCard("temp_"+i, p, lista, true));
+      Promise.all(_COLECCION_DEFAULTS.map(p => addDoc(collection(_db,"config_coleccion"), p)))
+        .then(() => admCargarColeccion())
+        .catch(() => {});
+    } else {
+      snap.docs.forEach(d => admRenderPiezaCard(d.id, d.data(), lista, false));
+    }
+  } catch(e) {
+    lista.innerHTML = "";
+    _COLECCION_DEFAULTS.forEach((p, i) => admRenderPiezaCard("temp_"+i, p, lista, true));
   }
-  snap.docs.forEach(d => admRenderPiezaCard(d.id, d.data(), lista));
 }
 
-function admRenderPiezaCard(id, data, container) {
+function admRenderPiezaCard(id, data, container, esTemp=false) {
   const card = document.createElement("div");
   card.className = "adm-card";
+  card.id = `pcard-${id}`;
+  const imgSrc = data.imagen || "";
   card.innerHTML = `
     <div class="adm-card-header">
-      <span class="adm-card-title">🏺 ${data.nombre||"Pieza"}</span>
-      <div style="display:flex;gap:8px;">
-        <button class="adm-btn-save" onclick="admGuardarPieza('${id}',this)">Guardar</button>
-        <button class="adm-btn-danger" onclick="admEliminarPieza('${id}',this)">Eliminar</button>
+      <span class="adm-card-title">🏺 <span id="p-title-lbl-${id}">${escHtml(data.nombre||"Pieza")}</span></span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        ${esTemp ? '<span style="font-family:Inter,sans-serif;font-size:9px;color:#f59e0b;background:#f59e0b22;padding:2px 8px;border-radius:20px;">local</span>' : ''}
+        <button class="adm-btn-save" onclick="admGuardarPieza('${id}',this)">💾 Guardar</button>
+        ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarPieza('${id}',this)">Eliminar</button>` : ''}
       </div>
     </div>
-    <img id="img-prev-p-${id}" src="${data.imagen||''}" class="adm-img-preview" onerror="this.style.display='none'">
+    ${imgSrc ? `<img id="img-prev-p-${id}" src="${imgSrc}" class="adm-img-preview" onerror="this.style.display='none'">` : `<div id="img-prev-p-${id}" style="width:100%;height:120px;background:#2a2420;border-radius:10px;border:1px dashed #3a3028;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:12px;font-family:Inter,sans-serif;margin-bottom:8px;">Sin imagen</div>`}
     <div class="adm-grid-2">
-      <div class="adm-field"><label>Nombre</label><input class="adm-input" id="p-nom-${id}" value="${data.nombre||''}"></div>
-      <div class="adm-field"><label>Precio (S/)</label><input class="adm-input" type="number" id="p-precio-${id}" value="${data.precio||0}"></div>
+      <div class="adm-field"><label>Nombre</label><input class="adm-input" id="p-nom-${id}" value="${escHtml(data.nombre||'')}" oninput="document.getElementById('p-title-lbl-${id}').textContent=this.value||'Pieza'"></div>
+      <div class="adm-field"><label>Precio (S/)</label><input class="adm-input" type="number" id="p-precio-${id}" value="${data.precio||0}" min="0"></div>
     </div>
-    <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="p-desc-${id}">${data.descripcion||''}</textarea></div>
-    <div class="adm-field"><label>Stock disponible</label><input class="adm-input" type="number" id="p-stock-${id}" value="${data.stock??1}"></div>
-    <div class="adm-field"><label>URL imagen (o sube una)</label>
-      <input class="adm-input" id="p-img-${id}" value="${data.imagen||''}" placeholder="https://...">
+    <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="p-desc-${id}">${escHtml(data.descripcion||'')}</textarea></div>
+    <div class="adm-grid-2">
+      <div class="adm-field"><label>Stock disponible</label><input class="adm-input" type="number" id="p-stock-${id}" value="${data.stock??1}" min="0"></div>
+      <div class="adm-field"><label>Visible en tienda</label>
+        <select class="adm-input" id="p-visible-${id}">
+          <option value="1" ${(data.stock??1)>0?'selected':''}>✅ Con stock</option>
+          <option value="0">🚫 Agotado (ocultar)</option>
+        </select>
+      </div>
     </div>
-    <div class="adm-field"><label>Subir imagen</label>
-      <input type="file" accept="image/*" style="color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:12px;" onchange="admSubirImagenPieza('${id}',this)">
+    <div class="adm-field">
+      <label>📎 Subir nueva imagen</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label style="flex:1;padding:9px 12px;background:#2a2420;border:1.5px dashed #c48a3a44;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;color:#c48a3a;text-align:center;display:block;" for="file-p-${id}">📸 Elegir imagen</label>
+        <input type="file" id="file-p-${id}" accept="image/*" style="display:none;" onchange="admSubirImagenPieza('${id}',this)">
+      </div>
+      <input class="adm-input" id="p-img-${id}" value="${escHtml(data.imagen||'')}" placeholder="o pega URL aquí" style="margin-top:6px;" oninput="admPrevImgP('${id}',this.value)">
     </div>`;
   container.appendChild(card);
 }
 
-window.admGuardarPieza = async (id, btn) => {
-  btn.textContent = "Guardando..."; btn.disabled = true;
-  try {
-    await updateDoc(doc(_db,"config_coleccion",id), {
-      nombre:      document.getElementById(`p-nom-${id}`).value,
-      precio:      Number(document.getElementById(`p-precio-${id}`).value),
-      descripcion: document.getElementById(`p-desc-${id}`).value,
-      stock:       Number(document.getElementById(`p-stock-${id}`).value),
-      imagen:      document.getElementById(`p-img-${id}`).value,
-    });
-    toast("✓ Pieza guardada");
-  } catch(e) { toast("Error: "+e.message, false); }
-  btn.textContent = "Guardar"; btn.disabled = false;
-};
-
-window.admEliminarPieza = async (id, btn) => {
-  if (!confirm("¿Eliminar esta pieza?")) return;
-  await deleteDoc(doc(_db,"config_coleccion",id));
-  btn.closest(".adm-card").remove();
-  toast("Pieza eliminada");
-};
-
-window.admNuevaPieza = async () => {
-  const ref = await addDoc(collection(_db,"config_coleccion"), {nombre:"Nueva pieza",descripcion:"",precio:150,stock:1,imagen:""});
-  const lista = document.getElementById("adm-coleccion-lista");
-  admRenderPiezaCard(ref.id, {nombre:"Nueva pieza",descripcion:"",precio:150,stock:1,imagen:""}, lista);
-  lista.lastChild.scrollIntoView({behavior:"smooth"});
+window.admPrevImgP = (id, url) => {
+  const prev = document.getElementById(`img-prev-p-${id}`);
+  if (!prev || !url) return;
+  if (prev.tagName === 'IMG') { prev.src = url; prev.style.display = 'block'; }
+  else { prev.outerHTML = `<img id="img-prev-p-${id}" src="${url}" class="adm-img-preview" onerror="this.style.display='none'">`; }
 };
 
 window.admSubirImagenPieza = async (id, input) => {
   const file = input.files[0]; if (!file) return;
-  const snap = await uploadBytes(sRef(_stor,`config/coleccion/${id}/${file.name}`), file);
-  const url  = await getDownloadURL(snap.ref);
-  document.getElementById(`p-img-${id}`).value = url;
-  const prev = document.getElementById(`img-prev-p-${id}`);
-  if (prev) { prev.src = url; prev.style.display = "block"; }
-  toast("✓ Imagen subida");
+  const label = input.previousElementSibling;
+  if (label) label.textContent = "⏳ Subiendo...";
+  try {
+    const url = await _subirImagen(`config/coleccion/${Date.now()}_${file.name}`, file);
+    document.getElementById(`p-img-${id}`).value = url;
+    admPrevImgP(id, url);
+    toast("✓ Imagen lista — pulsa Guardar");
+    if (label) label.textContent = "📸 Cambiar imagen";
+  } catch(e) { toast("Error: "+e.message, false); if(label) label.textContent = "📸 Elegir imagen"; }
 };
+
+window.admGuardarPieza = async (id, btn) => {
+  const nombre      = document.getElementById(`p-nom-${id}`)?.value || "";
+  const precio      = Number(document.getElementById(`p-precio-${id}`)?.value || 0);
+  const descripcion = document.getElementById(`p-desc-${id}`)?.value || "";
+  const stock       = Number(document.getElementById(`p-stock-${id}`)?.value ?? 1);
+  const imagen      = document.getElementById(`p-img-${id}`)?.value || "";
+  const data        = { nombre, precio, descripcion, stock, imagen };
+  btn.textContent = "⏳ Guardando..."; btn.disabled = true;
+  try {
+    if (id.startsWith("temp_")) {
+      const ref = await addDoc(collection(_db,"config_coleccion"), data);
+      const card = document.getElementById(`pcard-${id}`);
+      if (card) { const lista = card.parentNode; card.remove(); admRenderPiezaCard(ref.id, data, lista, false); }
+    } else {
+      await updateDoc(doc(_db,"config_coleccion",id), data);
+    }
+    toast("✓ Pieza guardada");
+  } catch(e) { toast("Error: "+e.message, false); }
+  btn.textContent = "💾 Guardar"; btn.disabled = false;
+};
+
+window.admEliminarPieza = async (id, btn) => {
+  if (!confirm("¿Eliminar esta pieza de la colección?")) return;
+  try {
+    await deleteDoc(doc(_db,"config_coleccion",id));
+    btn.closest(".adm-card").remove();
+    toast("Pieza eliminada");
+  } catch(e) { toast("Error: "+e.message, false); }
+};
+
+window.admNuevaPieza = async () => {
+  const lista = document.getElementById("adm-coleccion-lista");
+  const data = {nombre:"Nueva pieza",descripcion:"",precio:150,stock:1,imagen:""};
+  try {
+    const ref = await addDoc(collection(_db,"config_coleccion"), data);
+    admRenderPiezaCard(ref.id, data, lista, false);
+  } catch(e) {
+    admRenderPiezaCard("temp_new_"+Date.now(), data, lista, true);
+  }
+  lista.lastElementChild?.scrollIntoView({behavior:"smooth"});
+};
+
+// Helper para escapar HTML en inputs
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // ══════════════════════════════
 // PEDIDOS
@@ -1193,7 +1304,7 @@ window.admRechMemb = async (id, btn) => {
 // ══════════════════════════════
 async function admCargarChats() {
   const lista = document.getElementById("adm-chats-lista");
-  lista.innerHTML=`<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Cargando chats...</p>`;
+  lista.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando chats...</div>`;
   try {
     const snap = await getDocs(collection(_db,"chats"));
     if (snap.empty) { lista.innerHTML=`<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Sin conversaciones aún.</p>`; return; }
@@ -1206,7 +1317,6 @@ async function admCargarChats() {
       const ultimo = msgs[msgs.length-1];
       const card = document.createElement("div");
       card.className="adm-card";
-      card.style.cursor="pointer";
       card.innerHTML=`
         <div class="adm-card-header" style="margin-bottom:8px;">
           <div>
@@ -1215,7 +1325,7 @@ async function admCargarChats() {
           </div>
           <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.3);">${ultimo?.fecha?.toDate?.().toLocaleDateString("es-PE")||""}</span>
         </div>
-        <div id="chat-msgs-${uid}" style="display:none;max-height:250px;overflow-y:auto;background:#141210;border-radius:10px;padding:10px;display:none;flex-direction:column;gap:6px;"></div>
+        <div id="chat-msgs-${uid}" style="display:none;max-height:250px;overflow-y:auto;background:#141210;border-radius:10px;padding:10px;flex-direction:column;gap:6px;"></div>
         <button onclick="admVerChat('${uid}')" style="margin-top:8px;padding:7px 14px;background:#2a2420;border:1px solid #3a3028;border-radius:8px;color:#c48a3a;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;">Ver conversación</button>`;
       lista.appendChild(card);
     }
@@ -1224,6 +1334,7 @@ async function admCargarChats() {
 
 window.admVerChat = async (uid) => {
   const box = document.getElementById("chat-msgs-"+uid);
+  if (!box) return;
   if (box.style.display==="flex") { box.style.display="none"; return; }
   box.style.display="flex"; box.style.flexDirection="column";
   box.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:12px;font-family:'Inter',sans-serif;text-align:center;">Cargando...</p>`;
@@ -1239,6 +1350,114 @@ window.admVerChat = async (uid) => {
     box.appendChild(div);
   });
   box.scrollTop=box.scrollHeight;
+};
+
+// ══════════════════════════════
+// COMUNIDAD — gestionar posts y comentarios
+// ══════════════════════════════
+async function admCargarComunidad() {
+  const lista = document.getElementById("adm-comunidad-lista");
+  lista.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando publicaciones...</div>`;
+  try {
+    const q = query(collection(_db,"posts"), orderBy("fecha","desc"));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      lista.innerHTML=`<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:30px;">Sin publicaciones en la comunidad.</p>`;
+      return;
+    }
+    lista.innerHTML = `<p style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(196,138,58,.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">${snap.size} publicaciones · gestiona posts y comentarios</p>`;
+    snap.docs.forEach(d => {
+      const post = {id: d.id, ...d.data()};
+      const fecha = post.fecha?.toDate ? post.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
+      const coms = post.comentarios || [];
+
+      const card = document.createElement("div");
+      card.className = "adm-card";
+      card.id = `post-card-${post.id}`;
+      card.innerHTML = `
+        <!-- Cabecera del post -->
+        <div class="adm-card-header">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+            <img src="${post.autorFoto||'Assets/Img/Avatares/GatoMiel.jpeg'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(196,138,58,.3);" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+            <div style="min-width:0;">
+              <div style="font-family:'Inter',sans-serif;font-size:13px;color:white;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${post.autor||"Anónima"}</div>
+              <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);">${fecha} · ❤️ ${post.likes||0} · 💬 ${coms.length}</div>
+            </div>
+          </div>
+          <button onclick="admEliminarPost('${post.id}')" style="padding:6px 14px;background:#7f1d1d;color:#fca5a5;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;">🗑 Eliminar post</button>
+        </div>
+        <!-- Imagen del post -->
+        ${post.imagen ? `<img src="${post.imagen}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px;" onerror="this.style.display='none'">` : ''}
+        <!-- Descripción -->
+        ${post.descripcion ? `<p style="font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.5);margin:0 0 12px;line-height:1.6;">"${post.descripcion}"</p>` : ''}
+        <!-- Comentarios -->
+        <div style="margin-top:8px;">
+          <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:8px;">💬 ${coms.length} comentario${coms.length!==1?'s':''}</div>
+          ${coms.length === 0
+            ? '<p style="font-family:Inter,sans-serif;font-size:12px;color:rgba(255,255,255,.25);text-align:center;padding:8px;">Sin comentarios</p>'
+            : coms.map((c, ci) => `
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:8px;background:#1a1510;border-radius:8px;margin-bottom:6px;" id="com-${post.id}-${ci}">
+                <img src="${c.foto||'Assets/Img/Avatares/GatoMiel.jpeg'}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:rgba(255,255,255,.7);">${c.usuario||"—"}</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.45);margin-top:2px;">${c.texto||""}</div>
+                  ${(c.respuestas||[]).map((r,ri) => `
+                    <div style="display:flex;align-items:flex-start;gap:6px;margin-top:5px;padding-left:8px;border-left:1px solid rgba(196,138,58,.2);" id="rep-${post.id}-${ci}-${ri}">
+                      <img src="${r.foto||'Assets/Img/Avatares/GatoMiel.jpeg'}" style="width:18px;height:18px;border-radius:50%;object-fit:cover;" onerror="this.src='Assets/Img/Avatares/GatoMiel.jpeg'">
+                      <div style="flex:1;">
+                        <span style="font-family:Inter,sans-serif;font-size:10px;font-weight:600;color:rgba(255,255,255,.5);">${r.usuario||"—"}</span>
+                        <span style="font-family:Inter,sans-serif;font-size:11px;color:rgba(255,255,255,.35);margin-left:5px;">${r.texto||""}</span>
+                      </div>
+                      <button onclick="admEliminarRespuesta('${post.id}',${ci},${ri})" style="padding:2px 8px;background:#7f1d1d55;color:#fca5a5;border:none;border-radius:6px;font-size:9px;cursor:pointer;flex-shrink:0;">✕</button>
+                    </div>`).join('')}
+                </div>
+                <button onclick="admEliminarComentario('${post.id}',${ci})" style="padding:4px 10px;background:#7f1d1d55;color:#fca5a5;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:9px;font-weight:600;cursor:pointer;flex-shrink:0;">✕ borrar</button>
+              </div>`).join('')}
+        </div>`;
+      lista.appendChild(card);
+    });
+  } catch(e) {
+    lista.innerHTML=`<p style="color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`;
+  }
+}
+
+window.admEliminarPost = async (pid) => {
+  if (!confirm("¿Eliminar esta publicación permanentemente?")) return;
+  try {
+    await deleteDoc(doc(_db,"posts",pid));
+    const card = document.getElementById(`post-card-${pid}`);
+    if (card) card.remove();
+    toast("Publicación eliminada");
+  } catch(e) { toast("Error: "+e.message, false); }
+};
+
+window.admEliminarComentario = async (pid, ci) => {
+  if (!confirm("¿Eliminar este comentario?")) return;
+  try {
+    const ref  = doc(_db,"posts",pid);
+    const snap = await getDoc(ref);
+    const coms = [...(snap.data()?.comentarios || [])];
+    coms.splice(ci, 1);
+    await updateDoc(ref, {comentarios: coms});
+    toast("Comentario eliminado");
+    await admCargarComunidad(); // refrescar
+  } catch(e) { toast("Error: "+e.message, false); }
+};
+
+window.admEliminarRespuesta = async (pid, ci, ri) => {
+  if (!confirm("¿Eliminar esta respuesta?")) return;
+  try {
+    const ref  = doc(_db,"posts",pid);
+    const snap = await getDoc(ref);
+    const coms = [...(snap.data()?.comentarios || [])];
+    if (!coms[ci]) return;
+    const reps = [...(coms[ci].respuestas || [])];
+    reps.splice(ri, 1);
+    coms[ci] = {...coms[ci], respuestas: reps};
+    await updateDoc(ref, {comentarios: coms});
+    toast("Respuesta eliminada");
+    await admCargarComunidad();
+  } catch(e) { toast("Error: "+e.message, false); }
 };
 
 // ── Mostrar botón modo admin también en auth state ──
