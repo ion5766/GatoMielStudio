@@ -868,6 +868,18 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){window.cerrarModalC
 
     <!-- TALLERES -->
     <div id="adm-talleres" class="adm-section">
+
+      <!-- GESTIÓN DE CUPOS EN TIEMPO REAL -->
+      <div class="adm-card" style="margin-bottom:18px;">
+        <div class="adm-card-header" style="margin-bottom:12px;">
+          <span class="adm-card-title">🪑 Cupos · <em style="color:#c48a3a;font-style:italic;">Arcilla Nocturna</em></span>
+          <span style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(196,138,58,.6);letter-spacing:.1em;text-transform:uppercase;">Tiempo real</span>
+        </div>
+        <div id="adm-cupos-lista" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="text-align:center;padding:16px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:12px;">Cargando cupos...</div>
+        </div>
+      </div>
+
       <div id="adm-talleres-lista"></div>
       <button class="adm-btn-add" onclick="admNuevoTaller()">+ Añadir nuevo taller</button>
     </div>
@@ -954,7 +966,7 @@ window.admTab = (id, btn) => {
   document.querySelectorAll(".adm-tab").forEach(b => b.classList.remove("active"));
   document.getElementById("adm-"+id).classList.add("active");
   btn.classList.add("active");
-  if (id==="talleres")   admCargarTalleres();
+  if (id==="talleres")   { admCargarTalleres(); admCargarCuposAdmin(); }
   if (id==="coleccion")  admCargarColeccion();
   if (id==="pedidos")    admCargarPedidos();
   if (id==="membresias") admCargarMembresias();
@@ -968,10 +980,91 @@ window.abrirModoAdmin = () => {
   document.getElementById("modoAdminOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
   admCargarResumen();
+  admCargarCuposAdmin(); // iniciar listener cupos
 };
 window.cerrarModoAdmin = () => {
   document.getElementById("modoAdminOverlay").classList.remove("open");
   document.body.style.overflow = "";
+};
+
+
+// ══════════════════════════════
+// CUPOS — Gestión en tiempo real desde panel admin
+// ══════════════════════════════
+const CUPOS_MAX_ADM = 4;
+const TALLER_ID_ADM = "arcilla-nocturna";
+const HORARIOS_ADM = [
+  {id:"h0", label:"Sáb 7 mar · 10:00 AM"},
+  {id:"h1", label:"Dom 8 mar · 6:00 PM"},
+  {id:"h2", label:"Lun 9 mar · 12:00 PM"},
+];
+let _cuposUnsub = null;
+
+function admCargarCuposAdmin() {
+  // Solo iniciar una vez
+  if (_cuposUnsub) return;
+
+  const { onSnapshot: _snap, doc: _doc } = { onSnapshot, doc };
+
+  _cuposUnsub = onSnapshot(_doc(_db, "talleres", TALLER_ID_ADM), (snap) => {
+    const data = snap.exists() ? snap.data() : {};
+    renderCuposAdmin(data);
+  });
+}
+
+function renderCuposAdmin(data) {
+  const lista = document.getElementById("adm-cupos-lista");
+  if (!lista) return;
+  lista.innerHTML = "";
+
+  HORARIOS_ADM.forEach(h => {
+    const ocupados = data[h.id] || 0;
+    const libres   = Math.max(0, CUPOS_MAX_ADM - ocupados);
+    const pct      = ocupados / CUPOS_MAX_ADM;
+    const barColor = pct >= 1 ? "#ef4444" : pct >= 0.75 ? "#f59e0b" : "#22c55e";
+
+    const row = document.createElement("div");
+    row.style.cssText = "background:#2a2420;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;";
+    row.innerHTML = `
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:white;margin-bottom:5px;">${h.label}</div>
+        <div style="height:5px;background:#3a3028;border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${(ocupados/CUPOS_MAX_ADM*100)}%;background:${barColor};border-radius:3px;transition:width .4s;"></div>
+        </div>
+        <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;">
+          ${ocupados}/${CUPOS_MAX_ADM} ocupados · <span style="color:${barColor};font-weight:600;">${libres} libre${libres!==1?'s':''}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <button onclick="admCambiarCupo('${h.id}',${ocupados},-1)"
+          style="width:30px;height:30px;border-radius:50%;background:#1a1714;border:1.5px solid #3a3028;color:${ocupados<=0?'#444':'#c48a3a'};font-size:16px;font-weight:700;cursor:${ocupados<=0?'not-allowed':'pointer'};display:flex;align-items:center;justify-content:center;transition:.2s;"
+          ${ocupados<=0?"disabled":""}>−</button>
+        <span style="font-family:'Playfair Display',serif;font-size:20px;color:#c48a3a;font-weight:500;min-width:24px;text-align:center;">${ocupados}</span>
+        <button onclick="admCambiarCupo('${h.id}',${ocupados},+1)"
+          style="width:30px;height:30px;border-radius:50%;background:#1a1714;border:1.5px solid #3a3028;color:${ocupados>=CUPOS_MAX_ADM?'#444':'#c48a3a'};font-size:16px;font-weight:700;cursor:${ocupados>=CUPOS_MAX_ADM?'not-allowed':'pointer'};display:flex;align-items:center;justify-content:center;transition:.2s;"
+          ${ocupados>=CUPOS_MAX_ADM?"disabled":""}>+</button>
+      </div>`;
+    lista.appendChild(row);
+  });
+
+  // Resumen total
+  const totalOcupados = HORARIOS_ADM.reduce((sum, h) => sum + (data[h.id]||0), 0);
+  const totalMax      = HORARIOS_ADM.length * CUPOS_MAX_ADM;
+  const resumen = document.createElement("div");
+  resumen.style.cssText = "margin-top:6px;padding:10px 14px;background:#1a1714;border-radius:10px;display:flex;align-items:center;justify-content:space-between;";
+  resumen.innerHTML = `
+    <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);">Total general</span>
+    <span style="font-family:'Playfair Display',serif;font-size:15px;color:#c48a3a;">${totalOcupados} / ${totalMax} ocupados</span>`;
+  lista.appendChild(resumen);
+}
+
+window.admCambiarCupo = async (horarioId, actual, delta) => {
+  const nuevo = actual + delta;
+  if (nuevo < 0 || nuevo > CUPOS_MAX_ADM) return;
+  try {
+    await updateDoc(doc(_db, "talleres", TALLER_ID_ADM), { [horarioId]: nuevo });
+    toast(`Cupo ${delta > 0 ? "añadido" : "reducido"} — ${horarioId.replace("h","Horario ")}`);
+  } catch(e) { toast("Error: "+e.message, false); }
 };
 
 // ══════════════════════════════
