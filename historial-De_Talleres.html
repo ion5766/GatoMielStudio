@@ -2,13 +2,6 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#c48a3a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gato Miel">
-<link rel="apple-touch-icon" href="Assets/Img/Logo.jpg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Talleres – Gato Miel Estudio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -35,8 +28,6 @@ onAuthStateChanged(_auth, (user) => {
   }
 });
 </script>
-
-  
 </head>
 <body>
 
@@ -56,8 +47,6 @@ onAuthStateChanged(_auth, (user) => {
     <div class="user-menu" style="display:none;">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E" class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
-        <button onclick="abrirModalCompras()">🛍 Mis compras</button>
-        <button onclick="abrirModalMembresias()">🎫 Mis membresías</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
@@ -151,7 +140,7 @@ onAuthStateChanged(_auth, (user) => {
         <div>
           <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
           <h2 class="ht-modal-hero-title">Arcilla Nocturna</h2>
-          <span class="ht-modal-hero-sub">elige tu horario · S/ 1</span>
+          <span class="ht-modal-hero-sub">elige tu horario · S/ 150</span>
         </div>
       </div>
       <div class="ht-modal-hero-deco">
@@ -212,7 +201,7 @@ onAuthStateChanged(_auth, (user) => {
             <div class="ht-qr-badge ht-badge-yape">Yape</div>
           </div>
           <div class="ht-qr-info">
-            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 1</strong></div>
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
             <p class="ht-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
           <div class="ht-comp-wrap">
@@ -238,7 +227,7 @@ onAuthStateChanged(_auth, (user) => {
             <div class="ht-qr-badge ht-badge-plin">Plin</div>
           </div>
           <div class="ht-qr-info">
-            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 1</strong></div>
+            <div class="ht-monto-pill"><span>Total membresía</span><strong>S/ 150</strong></div>
             <p class="ht-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
           <div class="ht-comp-wrap">
@@ -272,7 +261,7 @@ onAuthStateChanged(_auth, (user) => {
             </div>
             <div style="padding:10px 16px 12px;font-family:'Inter',sans-serif;font-size:11px;display:flex;justify-content:space-between;color:#888;">
               <span>Horario: <strong id="tarjeta-horario-val" style="color:#1a1714;">—</strong></span>
-              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 1</strong></span>
+              <span>Total: <strong style="color:#c48a3a;font-family:'Playfair Display',serif;font-size:14px;">S/ 150</strong></span>
             </div>
           </div>
           <!-- Mercado Pago Brick container -->
@@ -296,7 +285,7 @@ onAuthStateChanged(_auth, (user) => {
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Titular</span><span style="color:#1a1714;font-weight:500;">Gato Miel Estudio</span></div>
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Cuenta</span><span style="font-family:monospace;color:#1a1714;">000-00000000-0-00</span></div>
               <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0ebe3;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">CCI</span><span style="font-family:monospace;color:#1a1714;">00200000000000000000</span></div>
-              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 1</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;font-family:'Inter',sans-serif;font-size:12px;"><span style="color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.06em;">Monto</span><span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ 150</span></div>
             </div>
           </div>
           <div class="ht-comp-wrap">
@@ -315,55 +304,6 @@ onAuthStateChanged(_auth, (user) => {
       </div>
 
     </div><!-- end ht-modal-body -->
-  </div>
-</div>
-
-
-<!-- MODAL DATOS CLIENTE TALLER -->
-<div id="modalDatosTaller" class="ht-modal" style="z-index:10002;">
-  <div class="ht-modal-box" style="max-width:400px;">
-    <div class="ht-modal-hero">
-      <button class="ht-modal-cerrar" onclick="cerrarModalDatosTaller()">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <div class="ht-modal-hero-brand">
-        <img src="Assets/Img/Logo.jpg" class="ht-modal-logo">
-        <div>
-          <span class="ht-modal-hero-eyebrow">Gato Miel Estudio</span>
-          <h2 class="ht-modal-hero-title">Tus datos</h2>
-          <span class="ht-modal-hero-sub">Para coordinar tu taller</span>
-        </div>
-      </div>
-      <div class="ht-modal-hero-deco"><div class="ht-deco-ring ht-deco-ring-1"></div><div class="ht-deco-ring ht-deco-ring-2"></div></div>
-    </div>
-    <div style="padding:20px 22px 24px;display:flex;flex-direction:column;gap:13px;">
-      <p style="font-family:Inter,sans-serif;font-size:12px;color:#bbb;text-align:center;margin:0;">Solo necesitamos esto una vez para coordinar tu reserva</p>
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:Inter,sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Nombre completo *</label>
-        <input id="td-nombre" type="text" placeholder="Tu nombre y apellido"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:Inter,sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;width:100%;box-sizing:border-box;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:Inter,sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Celular *</label>
-        <input id="td-celular" type="tel" placeholder="+51 9XX XXX XXX"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:Inter,sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;width:100%;box-sizing:border-box;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:Inter,sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Correo *</label>
-        <input id="td-correo" type="email" placeholder="correo@ejemplo.com"
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:Inter,sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;width:100%;box-sizing:border-box;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-      <p id="td-error" style="font-family:Inter,sans-serif;font-size:12px;color:#e74c3c;text-align:center;min-height:16px;margin:0;"></p>
-      <button id="td-btn-ok" onclick="confirmarDatosTaller()"
-        style="width:100%;padding:14px;background:#1a1714;color:white;border:none;border-radius:50px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;"
-        onmouseover="this.style.background='#c48a3a'" onmouseout="this.style.background='#1a1714'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        Confirmar reserva
-      </button>
-    </div>
   </div>
 </div>
 
@@ -631,7 +571,7 @@ import {
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
 const CUPOS_MAX    = 4;
-const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
+const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795";
 const HORARIOS = [
   {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
   {id:"h1", dia:"Domingo", fecha:"8 de marzo",  hora:"6:00 PM",  label:"Dom 8 mar · 6:00 PM"},
@@ -650,9 +590,33 @@ let horarioElegido   = null;
 let compFiles        = {};
 let filtroPanelAdmin = "pendiente";
 let todasLasMembresias = [];
+let _precioTaller    = 150; // precio dinámico — se actualiza desde config_talleres
 
 // ── Mercado Pago Brick state ───────────────────────────────────────────────
 let _mp = null, _mpBuilder = null, _mpBrick = null, _mpInited = false;
+
+// ── Cargar precio dinámico del taller desde config_talleres ──
+(async () => {
+  try {
+    const { getDocs: _gd, collection: _col } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const snap = await _gd(_col(db, "config_talleres"));
+    if (!snap.empty) {
+      // Buscar "Arcilla Nocturna" o el primer taller activo
+      const arcilla = snap.docs.find(d => (d.data().nombre||"").toLowerCase().includes("arcilla")) || snap.docs[0];
+      if (arcilla && arcilla.data().precio) {
+        _precioTaller = Number(arcilla.data().precio);
+        // Actualizar textos de precio en la UI
+        document.querySelectorAll(".ht-monto-pill strong").forEach(el => { el.textContent = `S/ ${_precioTaller}`; });
+        const sub = document.querySelector(".ht-modal-hero-sub");
+        if (sub) sub.textContent = `elige tu horario · S/ ${_precioTaller}`;
+        // Precio en tarjeta
+        document.querySelectorAll("[style*='S/ 150']").forEach(el => {
+          el.textContent = el.textContent.replace("S/ 150", `S/ ${_precioTaller}`);
+        });
+      }
+    }
+  } catch(e) { /* usa precio por defecto 150 */ }
+})();
 
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
@@ -781,7 +745,7 @@ window.irAPago = function() {
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
   document.getElementById("modalHorario").style.display = "none";
-  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ 1";
+  document.getElementById("pago-horario-sub").textContent = horarioElegido + " · S/ " + _precioTaller;
   document.getElementById("tarjeta-horario-val").textContent = horarioElegido;
   // resetear pills → Yape activo
   document.querySelectorAll(".ht-metodo-pill").forEach((p,i) => p.classList.toggle("active", i===0));
@@ -824,25 +788,25 @@ async function _initMpBrick() {
     container.innerHTML = "";
     if (loading) loading.style.display = "none";
 
-    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
+    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
       initialization: {
-        amount: 1,
+        amount: _precioTaller,
         payer: { email: currentUser?.email || "" }
       },
       customization: {
+        paymentMethods: {
+          creditCard: "all",
+          debitCard:  "all",
+          ticket:     "none",
+          bankTransfer: "none",
+          atm:        "none",
+          onboarding_credits: "none",
+          wallet_purchase:    "none"
+        },
         visual: {
           style: {
             theme: "default",
-            customVariables: {
-              baseColor: "#c48a3a",
-              baseColorFirstVariant: "#a8742f",
-              baseColorSecondVariant: "#e8b870",
-              borderRadiusLarge: "14px",
-              borderRadiusMedium: "10px",
-              formBackgroundColor: "#faf8f5",
-              inputBackgroundColor: "#ffffff",
-              inputFocusedBorderColor: "#c48a3a"
-            }
+            customVariables: { baseColor: "#c48a3a" }
           }
         }
       },
@@ -853,32 +817,15 @@ async function _initMpBrick() {
           if (loading) loading.style.display = "none";
           container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
         },
-        onSubmit: async (formData) => {
+        onSubmit: async ({ formData }) => {
+          // Sin backend activo, registramos como pendiente igual que los otros métodos
+          // El admin validará manualmente (como acordado)
           try {
-            const resp = await fetch("/api/pagar", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                transaction_amount: 1,
-                description: "Membresía Arcilla Nocturna - " + (horarioElegido || ""),
-                payment_method_id: formData.payment_method_id,
-                token:        formData.token,
-                installments: formData.installments || 1,
-                issuer_id:    formData.issuer_id,
-                payer: {
-                  email:          formData.payer?.email || currentUser?.email || "",
-                  identification: formData.payer?.identification || {}
-                }
-              })
-            });
-            const data = await resp.json();
-            const estado = data.status === "approved" ? "confirmado" : "pendiente";
-            await _registrarPago("Tarjeta", null, estado);
+            await _registrarPago("Tarjeta", null);
           } catch(e) {
-            console.error("Error pago tarjeta:", e);
-            alert("Error al procesar. Intenta con Yape, Plin o Agencia.");
+            console.error("Error registrando pago tarjeta:", e);
           }
-          return Promise.resolve();
+          return Promise.resolve(); // necesario para que el Brick no quede en loading
         }
       }
     });
@@ -905,52 +852,33 @@ window.previewComp = function(metodo, input) {
 };
 
 // ── Confirmar pago (Yape / Plin / Agencia) ─────────────────────────────────
-// Método pendiente mientras se llena el formulario
-let _metodoPendienteTaller = null;
-
-window.confirmarPago = function(metodoLabel) {
+window.confirmarPago = async function(metodoLabel) {
   if (!currentUser) { alert("Debes iniciar sesión."); return; }
   if (!horarioElegidoId) { alert("No hay horario seleccionado."); return; }
   const libres = CUPOS_MAX - (cuposData[horarioElegidoId] || 0);
   if (libres <= 0) { alert("Este horario ya no tiene cupos disponibles."); return; }
+
   const archivo = compFiles[metodoLabel.toLowerCase()] || null;
-  if (!archivo) { alert("Por favor adjunta el comprobante de pago antes de continuar."); return; }
-  // Guardar método y abrir formulario de datos
-  _metodoPendienteTaller = metodoLabel;
-  document.getElementById("td-nombre").value  = currentUser.displayName || "";
-  document.getElementById("td-correo").value  = currentUser.email || "";
-  document.getElementById("td-celular").value = "";
-  document.getElementById("td-error").textContent = "";
-  document.getElementById("modalDatosTaller").style.display = "flex";
-};
+  if (!archivo) {
+    alert("Por favor adjunta el comprobante de pago antes de continuar.");
+    return;
+  }
 
-window.cerrarModalDatosTaller = function() {
-  document.getElementById("modalDatosTaller").style.display = "none";
-};
+  const tabId     = "tab-" + metodoLabel.toLowerCase();
+  const btnActivo = document.querySelector(`#${tabId} .ht-btn-pagar`);
+  if (btnActivo) { btnActivo.disabled = true; btnActivo.textContent = "Enviando..."; }
 
-window.confirmarDatosTaller = async function() {
-  const nombre  = document.getElementById("td-nombre").value.trim();
-  const celular = document.getElementById("td-celular").value.trim();
-  const correo  = document.getElementById("td-correo").value.trim();
-  const err     = document.getElementById("td-error");
-  if (!nombre)  { err.textContent = "Ingresa tu nombre completo."; return; }
-  if (!celular) { err.textContent = "Ingresa tu celular."; return; }
-  if (!correo)  { err.textContent = "Ingresa tu correo."; return; }
-  err.textContent = "";
-  const btn = document.getElementById("td-btn-ok");
-  if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
-  const archivo = compFiles[_metodoPendienteTaller?.toLowerCase()] || null;
   try {
-    await _registrarPago(_metodoPendienteTaller, archivo, undefined, { nombre, celular, correo });
-    document.getElementById("modalDatosTaller").style.display = "none";
-  } catch(errObj) {
-    err.textContent = "Error: " + errObj.message;
-    if (btn) { btn.disabled = false; btn.textContent = "Confirmar reserva"; }
+    await _registrarPago(metodoLabel, archivo);
+  } catch(err) {
+    console.error("Error:", err);
+    alert("Ha ocurrido un error: " + err.message);
+    if (btnActivo) { btnActivo.disabled = false; btnActivo.textContent = "Ya pagué · Enviar comprobante"; }
   }
 };
 
 // ── Función central de registro ────────────────────────────────────────────
-async function _registrarPago(metodoLabel, archivo, estadoOverride, datosCliente) {
+async function _registrarPago(metodoLabel, archivo) {
   let comprobanteURL = "";
   if (archivo) {
     const ext  = archivo.name.split(".").pop() || "jpg";
@@ -959,27 +887,21 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride, datosCliente
     comprobanteURL = await getDownloadURL(snap.ref);
   }
 
-  const estado = estadoOverride || "pendiente";
   const docRef = await addDoc(collection(db, "membresias"), {
     uid:            currentUser.uid,
     usuarioEmail:   currentUser.email,
     usuarioNombre:  currentUser.displayName || currentUser.email,
     usuarioAvatar:  currentUser.photoURL || "",
-    clienteNombre:  datosCliente?.nombre  || currentUser.displayName || "",
-    clienteCelular: datosCliente?.celular || "",
-    clienteCorreo:  datosCliente?.correo  || currentUser.email || "",
     horarioId:      horarioElegidoId,
     horarioLabel:   horarioElegido,
     metodo:         metodoLabel,
+    monto:          _precioTaller,
     comprobanteURL: comprobanteURL,
-    estado:         estado,
+    estado:         "pendiente",
     fecha:          serverTimestamp(),
     tallerId:       TALLER_ID,
   });
   const ref = docRef.id.slice(0,8).toUpperCase();
-  const estadoLabel = estado === "confirmado"
-    ? `<span style="color:#065f46;font-weight:600">✓ Pago aprobado</span>`
-    : `<span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
 
   cerrarModalPago();
   document.getElementById("exito-detalle").textContent = `${metodoLabel} · ${horarioElegido}`;
@@ -987,7 +909,7 @@ async function _registrarPago(metodoLabel, archivo, estadoOverride, datosCliente
     `<strong>Método:</strong> ${metodoLabel}<br>` +
     `<strong>Horario:</strong> ${horarioElegido}<br>` +
     `<strong>Referencia:</strong> ${ref}<br>` +
-    `<strong>Estado:</strong> ${estadoLabel}`;
+    `<strong>Estado:</strong> <span style="color:#856404;font-weight:600">Pendiente de validación</span>`;
   document.getElementById("modalExito").style.display = "flex";
   document.body.style.overflow = "hidden";
 }
@@ -1119,184 +1041,6 @@ document.addEventListener("keydown", e => {
 });
 </script>
 
-<script src="movil-ui.js"></script>
 <script type="module" src="Js/src/chat.js"></script>
-
-<!-- ═══ MODAL MIS MEMBRESÍAS (global) ═══ -->
-<div id="modalGlobalMembresias" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
-  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
-    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
-      <button onclick="cerrarModalMembresias()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis membresías</h3>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Talleres reservados · pagos pendientes o confirmados</span>
-    </div>
-    <div id="lista-global-membresias" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const _fcM = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _appM  = getApps().length ? getApps()[0] : initializeApp(_fcM);
-const _authM = getAuth(_appM);
-const _dbM   = getFirestore(_appM);
-
-window.abrirModalMembresias = async () => {
-  const user = _authM.currentUser;
-  if (!user) { window.location.href = "entrada.html"; return; }
-  const modal = document.getElementById("modalGlobalMembresias");
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  const lista = document.getElementById("lista-global-membresias");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando membresías...</div>`;
-  try {
-    const q = query(collection(_dbM,"membresias"), where("usuarioEmail","==",user.email));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes membresías 🐱</div>`;
-      return;
-    }
-    const docs = [];
-    snap.forEach(d => docs.push({id:d.id,...d.data()}));
-    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
-    lista.innerHTML = "";
-    docs.forEach(m => {
-      const fecha = m.fecha?.toDate ? m.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const eColor = m.estado==="confirmado"?"#065f46":m.estado==="rechazado"?"#991b1b":"#856404";
-      const eBg    = m.estado==="confirmado"?"#d1fae5":m.estado==="rechazado"?"#fee2e2":"#fff3cd";
-      const eIcon  = m.estado==="confirmado"?"✓":m.estado==="rechazado"?"✕":"⏳";
-      const eText  = m.estado==="confirmado"?"Confirmado":m.estado==="rechazado"?"Rechazado":"Pendiente de validación";
-      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[m.metodo?.toLowerCase()]||"#888";
-      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[m.metodo?.toLowerCase()]||"#f5f5f5";
-      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi membresía: *${m.tallerId||"Arcilla Nocturna"} · ${m.horarioLabel||""}* via *${m.metodo}* del ${fecha}`);
-      const div = document.createElement("div");
-      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
-      div.innerHTML = `
-        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎫</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${m.tallerId||"Arcilla Nocturna"}</div>
-          <div style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin-bottom:6px;">${m.horarioLabel||"—"}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ 1</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${m.metodo||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
-          </div>
-          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(div);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
-  }
-};
-
-window.cerrarModalMembresias = () => {
-  document.getElementById("modalGlobalMembresias").style.display = "none";
-  document.body.style.overflow = "";
-};
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") window.cerrarModalMembresias();
-});
-</script>
-
-
-<!-- ═══ MODAL MIS COMPRAS (global) ═══ -->
-<div id="modalGlobalCompras" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
-  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
-    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
-      <button onclick="cerrarModalCompras()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis compras</h3>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Piezas de colección · pendientes o confirmadas</span>
-    </div>
-    <div id="lista-global-compras" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const _fcC = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _appC  = getApps().length ? getApps()[0] : initializeApp(_fcC);
-const _authC = getAuth(_appC);
-const _dbC   = getFirestore(_appC);
-
-window.abrirModalCompras = async () => {
-  const user = _authC.currentUser;
-  if (!user) { window.location.href = "entrada.html"; return; }
-  const modal = document.getElementById("modalGlobalCompras");
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  const lista = document.getElementById("lista-global-compras");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando compras...</div>`;
-  try {
-    const q = query(collection(_dbC,"pedidos"), where("uid","==",user.uid));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes compras 🐱</div>`;
-      return;
-    }
-    const docs = [];
-    snap.forEach(d => docs.push({id:d.id,...d.data()}));
-    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
-    lista.innerHTML = "";
-    docs.forEach(p => {
-      const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
-      const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
-      const eIcon  = p.estado==="confirmado"?"✓":p.estado==="rechazado"?"✕":"⏳";
-      const eText  = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente de validación";
-      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[p.metodo?.toLowerCase()]||"#888";
-      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[p.metodo?.toLowerCase()]||"#f5f5f5";
-      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi compra: *${p.producto||"—"} - S/ ${p.monto||"—"}* via *${p.metodo}* del ${fecha}`);
-      const div = document.createElement("div");
-      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
-      div.innerHTML = `
-        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛍</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${p.producto||"—"}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ ${p.monto||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${p.metodo||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
-          </div>
-          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(div);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
-  }
-};
-
-window.cerrarModalCompras = () => {
-  document.getElementById("modalGlobalCompras").style.display = "none";
-  document.body.style.overflow = "";
-};
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") window.cerrarModalCompras?.();
-});
-</script>
-
-<script type="module" src="pwa.js"></script>
-
-<script type="module" src="JS/notifications.js"></script>
-  
 </body>
 </html>
