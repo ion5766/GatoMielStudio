@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -19,23 +19,31 @@ const firebaseConfig = {
   messagingSenderId: "150671559458",
   appId: "1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.replace("entrada.html"); return; }
-  await user.reload();
-  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
-  if (!user.photoURL) {
-    try {
-      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-      await user.reload();
-    } catch(e) {}
+  window._firebaseUser = user || null;
+  const loginBtn = document.getElementById("btn-login-header");
+  const userMenu = document.querySelector(".user-menu");
+  if (user) {
+    await user.reload().catch(()=>{});
+    if (!user.photoURL) {
+      try {
+        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+        await user.reload();
+      } catch(e) {}
+    }
+    const avatar = document.querySelector(".user-avatar");
+    if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+    if (loginBtn) loginBtn.style.display = "none";
+    if (userMenu) userMenu.style.display = "flex";
+    window._userEmail = user.email || "";
+  } else {
+    if (loginBtn) loginBtn.style.display = "flex";
+    if (userMenu) userMenu.style.display = "none";
+    window._userEmail = null;
   }
-  const avatar = document.querySelector(".user-avatar");
-  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-  // Guardar email del usuario para el pago
-  window._userEmail = user.email || "cliente@gatomiels.com";
 });
 </script>
 </head>
@@ -54,7 +62,8 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <div class="user-menu">
+    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">🐾 Iniciar sesión</a>
+    <div class="user-menu" style="display:none;">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
@@ -92,6 +101,17 @@ onAuthStateChanged(auth, async (user) => {
 <footer class="footer">
   <p>© 2026 Gato Miel Estudio</p>
 </footer>
+
+<!-- ══ POPUP LOGIN ══ -->
+<div id="popupLoginColeccion" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.85);backdrop-filter:blur(16px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🐾</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">Inicia sesión para comprar</h3>
+    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;">Necesitas una cuenta para realizar una compra.</p>
+    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
+    <button onclick="document.getElementById('popupLoginColeccion').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+  </div>
+</div>
 
 <!-- ══ MODAL PAGO ══ -->
 <div id="modalCompra" class="cl-modal">
@@ -931,8 +951,12 @@ function seleccionarAvatar(img) {
 }
 
 async function comprar(nombre, monto) {
+  if (!window._firebaseUser) {
+    document.getElementById("popupLoginColeccion").style.display = "flex";
+    return;
+  }
   productoActual = { nombre, monto };
-  window.productoActual = productoActual; // expose to module scripts
+  window.productoActual = productoActual;
 
   // Reset tabs al abrir
   document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
@@ -962,7 +986,7 @@ async function renderBrick() {
       paymentMethods: {
         creditCard: "all",
         debitCard: "all",
-        mercadoPago: "all"   // billetera Mercado Pago
+        mercadoPago: "all"
       },
       visual: {
         style: {
@@ -980,7 +1004,7 @@ async function renderBrick() {
       onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
       onSubmit: async ({ formData }) => {
         try {
-          const resp = await fetch("/.netlify/functions/pagar", {
+          const resp = await fetch("/api/pagar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
@@ -2014,28 +2038,27 @@ document.addEventListener("keydown", e => {
 <!-- ═══ CARGA DINÁMICA COLECCIÓN ═══ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const _fc2 = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
 const _app2 = getApps().length ? getApps()[0] : initializeApp(_fc2);
 const _db2  = getFirestore(_app2);
 
-// Fallback hardcodeado por si Firestore está vacío
 const FALLBACK_PRODUCTOS = [
-  {nombre:"Taza Arena",   precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",       imagen:"Assets/Img/Escultura1.jpg", stock:1},
-  {nombre:"Plato Bruma",  precio:150, descripcion:"Plato decorativo con textura orgánica.",    imagen:"Assets/Img/Escultura2.jpg", stock:1},
-  {nombre:"Jarrón Eclipse",precio:240,descripcion:"Pieza única torneada a mano.",              imagen:"Assets/Img/Escultura3.jpg", stock:1},
-  {nombre:"Cuenco Alba",  precio:135, descripcion:"Perfecto para decoración minimalista.",     imagen:"Assets/Img/Escultura4.jpg", stock:1},
+  {nombre:"Taza Arena",    precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",       imagen:"Assets/Img/Escultura1.jpg", stock:1},
+  {nombre:"Plato Bruma",   precio:150, descripcion:"Plato decorativo con textura orgánica.",    imagen:"Assets/Img/Escultura2.jpg", stock:1},
+  {nombre:"Jarrón Eclipse",precio:240, descripcion:"Pieza única torneada a mano.",              imagen:"Assets/Img/Escultura3.jpg", stock:1},
+  {nombre:"Cuenco Alba",   precio:135, descripcion:"Perfecto para decoración minimalista.",     imagen:"Assets/Img/Escultura4.jpg", stock:1},
 ];
 
 function crearCardProducto(nombre, precio, descripcion, imagen) {
   const art = document.createElement("article");
   art.className = "cl-producto";
-  art.dataset.nombre = nombre;
-  art.dataset.precio = precio;
+  art.dataset.nombre = String(nombre);
+  art.dataset.precio = String(precio);
   art.innerHTML = `
     <div class="cl-img">
-      <img src="${imagen}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+      <img src="${imagen||''}" alt="${nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'" style="width:100%;height:100%;object-fit:cover;">
       <div class="cl-img-overlay">
         <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
       </div>
@@ -2050,23 +2073,42 @@ function crearCardProducto(nombre, precio, descripcion, imagen) {
   return art;
 }
 
-onSnapshot(collection(_db2, "config_coleccion"), snap => {
+function renderProductos(docs) {
   const grid = document.getElementById("cl-grid-productos");
   if (!grid) return;
   grid.innerHTML = "";
-
-  const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
   const productos = docs.length > 0 ? docs : FALLBACK_PRODUCTOS;
-
   productos.forEach(p => {
-    if (p.stock === 0) return; // ocultar agotados
+    if (p.stock === 0) return;
     grid.appendChild(crearCardProducto(p.nombre, p.precio, p.descripcion, p.imagen));
   });
-
   if (grid.children.length === 0) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:50px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay piezas disponibles en este momento 🐱</div>`;
   }
-});
+}
+
+// Intentar onSnapshot primero (funciona cuando Firestore rules permiten lectura pública)
+try {
+  onSnapshot(collection(_db2, "config_coleccion"), snap => {
+    const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    renderProductos(docs);
+  }, err => {
+    console.warn("onSnapshot falló, usando getDocs:", err.message);
+    // Si falla por permisos, intentar getDocs (mismo resultado pero sin tiempo real)
+    getDocs(collection(_db2, "config_coleccion")).then(snap => {
+      renderProductos(snap.docs.map(d => ({id:d.id,...d.data()})));
+    }).catch(() => {
+      // Si todo falla, usar fallback local
+      renderProductos([]);
+    });
+  });
+// Timeout de seguridad: si después de 4s sigue "cargando", mostrar fallback
+setTimeout(() => {
+  const grid = document.getElementById("cl-grid-productos");
+  if (grid && grid.children.length === 1 && grid.innerHTML.includes("Cargando")) {
+    renderProductos([]);
+  }
+}, 4000);
 </script>
 
 </body>
