@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="movil-ui.css">
 
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -19,31 +19,23 @@ const firebaseConfig = {
   messagingSenderId: "150671559458",
   appId: "1:150671559458:web:6daaf4a78150706db0337b"
 };
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
-  window._firebaseUser = user || null;
-  const loginBtn = document.getElementById("btn-login-header");
-  const userMenu = document.querySelector(".user-menu");
-  if (user) {
-    await user.reload().catch(()=>{});
-    if (!user.photoURL) {
-      try {
-        const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
-        await user.reload();
-      } catch(e) {}
-    }
-    const avatar = document.querySelector(".user-avatar");
-    if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
-    if (loginBtn) loginBtn.style.display = "none";
-    if (userMenu) userMenu.style.display = "flex";
-    window._userEmail = user.email || "";
-  } else {
-    if (loginBtn) loginBtn.style.display = "flex";
-    if (userMenu) userMenu.style.display = "none";
-    window._userEmail = null;
+  if (!user) { window.location.replace("entrada.html"); return; }
+  await user.reload();
+  // Si es usuario nuevo sin avatar, asignar GatoMiel por defecto
+  if (!user.photoURL) {
+    try {
+      const { updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      await updateProfile(user, { photoURL: "Assets/Img/Avatares/GatoMiel.jpeg" });
+      await user.reload();
+    } catch(e) {}
   }
+  const avatar = document.querySelector(".user-avatar");
+  if (avatar) avatar.src = user.photoURL || "Assets/Img/Avatares/GatoMiel.jpeg";
+  // Guardar email del usuario para el pago
+  window._userEmail = user.email || "cliente@gatomiels.com";
 });
 </script>
 </head>
@@ -62,13 +54,10 @@ onAuthStateChanged(auth, async (user) => {
     <a href="comunidad.html">Comunidad</a>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="tablon-de-anuncios.html" class="btn-dorado">Tablón</a>
-    <a id="btn-login-header" href="entrada.html" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.06em;text-decoration:none;transition:.2s;" onmouseover="this.style.background='#a8742f'" onmouseout="this.style.background='#c48a3a'">🐾 Iniciar sesión</a>
-    <div class="user-menu" style="display:none;">
+    <div class="user-menu">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='%23eee' stroke-width='4'/%3E%3Cpath d='M25 5a20 20 0 0 1 20 20' fill='none' stroke='%23c48a3a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
         class="user-avatar" onclick="toggleUserMenu()">
       <div id="userDropdown" class="user-dropdown">
-        <button onclick="abrirModalCompras()">🛍 Mis compras</button>
-        <button onclick="abrirModalMembresias()">🎫 Mis membresías</button>
         <button onclick="abrirPersonalizar()">Personalizar</button>
         <button onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
@@ -89,11 +78,76 @@ onAuthStateChanged(auth, async (user) => {
 
   <!-- ══ GRID PRODUCTOS ══ -->
   <section class="cl-tienda">
-    <div class="cl-grid" id="cl-grid-productos">
-      <div style="grid-column:1/-1;text-align:center;padding:50px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:12px;">
-        <div style="width:22px;height:22px;border:2px solid #e8d5b7;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>
-        Cargando colección...
-      </div>
+    <div class="cl-grid">
+
+      <article class="cl-producto" data-nombre="Taza Arena" data-precio="120">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura1.jpg" alt="Taza Arena"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Taza Arena</h3>
+            <span class="cl-precio">S/ 120</span>
+          </div>
+          <p>Cerámica esmaltada en tonos tierra.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Plato Bruma" data-precio="150">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura2.jpg" alt="Plato Bruma"
+               onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Plato Bruma</h3>
+            <span class="cl-precio">S/ 150</span>
+          </div>
+          <p>Plato decorativo con textura orgánica.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Jarrón Eclipse" data-precio="240">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura3.jpg" alt="Jarrón Eclipse"
+               onerror="this.src='https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Jarrón Eclipse</h3>
+            <span class="cl-precio">S/ 240</span>
+          </div>
+          <p>Pieza única torneada a mano.</p>
+        </div>
+      </article>
+
+      <article class="cl-producto" data-nombre="Cuenco Alba" data-precio="135">
+        <div class="cl-img">
+          <img src="Assets/Img/Escultura4.jpg" alt="Cuenco Alba"
+               onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <div class="cl-img-overlay">
+            <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
+          </div>
+        </div>
+        <div class="cl-info">
+          <div class="cl-info-top">
+            <h3>Cuenco Alba</h3>
+            <span class="cl-precio">S/ 135</span>
+          </div>
+          <p>Perfecto para decoración minimalista.</p>
+        </div>
+      </article>
+
     </div>
   </section>
 </main>
@@ -101,17 +155,6 @@ onAuthStateChanged(auth, async (user) => {
 <footer class="footer">
   <p>© 2026 Gato Miel Estudio</p>
 </footer>
-
-<!-- ══ POPUP LOGIN ══ -->
-<div id="popupLoginColeccion" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.85);backdrop-filter:blur(16px);z-index:99999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:22px;padding:40px 32px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);">
-    <div style="width:64px;height:64px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🐾</div>
-    <h3 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:500;color:#1a1714;margin-bottom:10px;">Inicia sesión para comprar</h3>
-    <p style="font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;font-family:'Inter',sans-serif;">Necesitas una cuenta para realizar una compra.</p>
-    <a href="entrada.html" style="display:block;padding:14px;background:#c48a3a;color:white;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:10px;">Iniciar sesión / Crear cuenta</a>
-    <button onclick="document.getElementById('popupLoginColeccion').style.display='none'" style="background:none;border:none;color:#aaa;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
-  </div>
-</div>
 
 <!-- ══ MODAL PAGO ══ -->
 <div id="modalCompra" class="cl-modal">
@@ -187,17 +230,9 @@ onAuthStateChanged(auth, async (user) => {
             </div>
             <p class="cl-qr-hint">Abre Yape → ícono QR → escanea → confirma</p>
           </div>
-          <div class="ht-comp-wrap" style="width:100%;">
-            <p class="ht-comp-label">📎 Adjunta captura del pago</p>
-            <div class="ht-comp-zona" id="zona-yape-col" onclick="document.getElementById('file-yape-col').click()">
-              <div id="ph-yape-col" class="ht-comp-ph"><span style="font-size:22px">📸</span><span>Toca para subir captura</span></div>
-              <div id="pr-yape-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
-            </div>
-            <input type="file" id="file-yape-col" accept="image/*" style="display:none" onchange="previewColComp('yape',this)">
-          </div>
-          <button class="cl-btn-pagar cl-btn-yape" onclick="irAFormEntrega('Yape')">
+          <button class="cl-btn-pagar cl-btn-yape" onclick="confirmarPagoQR('Yape')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué · Continuar
+            Ya pagué con Yape
           </button>
         </div>
       </div>
@@ -224,17 +259,9 @@ onAuthStateChanged(auth, async (user) => {
             </div>
             <p class="cl-qr-hint">App banco con Plin → Pagar con QR → escanea</p>
           </div>
-          <div class="ht-comp-wrap" style="width:100%;">
-            <p class="ht-comp-label">📎 Adjunta captura del pago</p>
-            <div class="ht-comp-zona" id="zona-plin-col" onclick="document.getElementById('file-plin-col').click()">
-              <div id="ph-plin-col" class="ht-comp-ph"><span style="font-size:22px">📸</span><span>Toca para subir captura</span></div>
-              <div id="pr-plin-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
-            </div>
-            <input type="file" id="file-plin-col" accept="image/*" style="display:none" onchange="previewColComp('plin',this)">
-          </div>
-          <button class="cl-btn-pagar cl-btn-plin" onclick="irAFormEntrega('Plin')">
+          <button class="cl-btn-pagar cl-btn-plin" onclick="confirmarPagoQR('Plin')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya pagué · Continuar
+            Ya pagué con Plin
           </button>
         </div>
       </div>
@@ -251,7 +278,6 @@ onAuthStateChanged(auth, async (user) => {
       <!-- TAB AGENCIA -->
       <div id="tab-agencia" class="cl-tab-content">
         <div class="cl-agencia-pane">
-          <!-- Datos bancarios -->
           <div class="cl-cci-card">
             <div class="cl-cci-card-header">
               <span class="cl-cci-bank-name">BCP</span>
@@ -282,28 +308,26 @@ onAuthStateChanged(auth, async (user) => {
             </div>
           </div>
 
-          <!-- Pasos -->
           <div class="cl-agencia-steps">
-            <div class="cl-agencia-step"><div class="cl-astep-num">1</div><p>Deposita o transfiere usando el CCI</p></div>
-            <div class="cl-agencia-step"><div class="cl-astep-num">2</div><p>Toma captura del comprobante</p></div>
-            <div class="cl-agencia-step"><div class="cl-astep-num">3</div><p>Adjunta el comprobante abajo y completa tus datos de entrega</p></div>
-          </div>
-
-          <!-- Comprobante upload igual que talleres -->
-          <div class="ht-comp-wrap" style="width:100%;">
-            <p class="ht-comp-label">📎 Adjunta tu voucher de depósito</p>
-            <div class="ht-comp-zona" id="zona-agencia-col" onclick="document.getElementById('file-agencia-col').click()">
-              <div id="ph-agencia-col" class="ht-comp-ph"><span style="font-size:24px">📸</span><span>Toca para subir voucher</span></div>
-              <div id="pr-agencia-col" style="display:none;width:100%;text-align:center;position:relative;"></div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">1</div>
+              <p>Deposita o transfiere usando el CCI</p>
             </div>
-            <input type="file" id="file-agencia-col" accept="image/*" style="display:none" onchange="previewAgenciaCol(this)">
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">2</div>
+              <p>Toma captura del comprobante</p>
+            </div>
+            <div class="cl-agencia-step">
+              <div class="cl-astep-num">3</div>
+              <p>Envíala por WhatsApp · <strong>+51 922 402 608</strong></p>
+            </div>
           </div>
 
-          <!-- Botón continuar a formulario -->
-          <button class="ht-btn-pagar ht-btn-agencia" onclick="abrirFormEntrega()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#1a1714,#2a2420);color:white;box-shadow:0 6px 20px rgba(0,0,0,.2);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Ya deposité · Continuar
-          </button>
+          <a href="https://wa.me/51922402608?text=Hola!%20Hice%20un%20depósito%20por%20mi%20pedido%20de%20Gato%20Miel%20Estudio%20🐱"
+             target="_blank" class="cl-btn-whatsapp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+            Enviar comprobante
+          </a>
         </div>
       </div>
 
@@ -320,53 +344,46 @@ onAuthStateChanged(auth, async (user) => {
 
 <!-- ══ MODAL ÉXITO / VALIDACIÓN ══ -->
 <div id="modalExito" class="cl-modal" style="display:none;">
-  <div style="background:#fff;width:100%;max-width:400px;border-radius:28px;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.45);animation:clModalIn .5s cubic-bezier(.34,1.4,.64,1);">
+  <div class="cl-modal-box cl-exito-box">
 
-    <!-- Hero oscuro con check animado -->
-    <div style="background:linear-gradient(160deg,#100d0a 0%,#1e1610 60%,#0f0c09 100%);padding:36px 28px 28px;text-align:center;position:relative;overflow:hidden;">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(196,138,58,.15),transparent 65%);pointer-events:none;"></div>
-      <!-- Icono check -->
-      <div style="width:72px;height:72px;background:linear-gradient(135deg,#c48a3a,#e8b870);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 12px 32px rgba(196,138,58,.45);position:relative;z-index:1;animation:iconPop .6s cubic-bezier(.34,1.6,.64,1) .1s both;">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-          <path d="M20 6L9 17l-5-5" style="stroke-dasharray:30;stroke-dashoffset:30;animation:checkDraw .5s ease .6s forwards;"/>
-        </svg>
+    <!-- Icono animado -->
+    <div class="cl-exito-icon-wrap">
+      <div class="cl-exito-ring cl-exito-ring-1"></div>
+      <div class="cl-exito-ring cl-exito-ring-2"></div>
+      <div class="cl-exito-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5" class="cl-check-path"/></svg>
       </div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:white;margin:0 0 8px;line-height:1.2;position:relative;z-index:1;">¡Pedido recibido!</h3>
-      <p style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.45);margin:0;position:relative;z-index:1;">Estamos validando tu pago 🐱</p>
     </div>
 
-    <!-- Resumen del pedido -->
-    <div style="padding:22px 24px 0;">
-      <div id="exito-producto-card" style="background:#faf8f5;border-radius:16px;padding:16px;border:1px solid #ede8de;display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-        <div style="width:44px;height:44px;background:linear-gradient(135deg,#1a1714,#2d2419);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏺</div>
-        <div style="flex:1;min-width:0;">
-          <div id="exito-nombre" style="font-family:'Playfair Display',serif;font-size:16px;color:#1a1714;font-weight:500;margin-bottom:3px;"></div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span id="exito-monto" style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#c48a3a;"></span>
-            <span id="exito-metodo-badge" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;"></span>
-          </div>
-        </div>
-        <span id="exito-estado-badge" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;"></span>
+    <!-- Textos -->
+    <div class="cl-exito-body">
+      <h3 class="cl-exito-title">Estamos validando<br>tu pago</h3>
+      <p id="exitoDetalle" class="cl-exito-detalle"></p>
+
+      <!-- Separador decorativo -->
+      <div class="cl-exito-sep">
+        <div></div><span>mientras tanto</span><div></div>
       </div>
 
-      <!-- Ref número -->
-      <div id="exito-ref" style="display:flex;align-items:center;justify-content:space-between;background:#f0f9f4;border-radius:12px;padding:10px 14px;margin-bottom:16px;border:1px solid #d1fae5;">
-        <span style="font-family:'Inter',sans-serif;font-size:11px;color:#888;">Nº de referencia</span>
-        <span id="exito-ref-num" style="font-family:monospace;font-size:13px;font-weight:700;color:#065f46;letter-spacing:.08em;"></span>
+      <p class="cl-exito-msg">
+        Vamos coordinando el envío de tu pieza.<br>
+        <strong>Escríbenos y envíanos el comprobante:</strong>
+      </p>
+
+      <!-- Número destacado -->
+      <div class="cl-exito-numero">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 11.29 19.79 19.79 0 01.67 2.68 2 2 0 012.66.5h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8a16 16 0 006.06 6.06l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        922 402 608
       </div>
 
-      <!-- Mensaje entrega -->
-      <div id="exito-entrega-info" style="background:#faf7f4;border-radius:12px;padding:12px 14px;margin-bottom:16px;border:1px solid #ede8de;font-family:'Inter',sans-serif;font-size:12px;color:#888;line-height:1.6;"></div>
-    </div>
-
-    <!-- Botones -->
-    <div style="padding:0 24px 24px;display:flex;flex-direction:column;gap:8px;">
-      <a id="btnWspComprobante" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 6px 18px rgba(34,197,94,.3);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        Contactar por WhatsApp
+      <!-- Botones -->
+      <a id="btnWspComprobante" href="#" target="_blank" class="cl-exito-btn-wsp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
+        Enviar comprobante por WhatsApp
       </a>
-      <button onclick="cerrarExito()" style="padding:12px;background:none;border:1.5px solid #e8e0d8;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#aaa;cursor:pointer;">
-        Cerrar
+
+      <button onclick="cerrarExito()" class="cl-exito-btn-cerrar">
+        Ya lo envié · Cerrar
       </button>
     </div>
 
@@ -951,12 +968,7 @@ function seleccionarAvatar(img) {
 }
 
 async function comprar(nombre, monto) {
-  if (!window._firebaseUser) {
-    document.getElementById("popupLoginColeccion").style.display = "flex";
-    return;
-  }
   productoActual = { nombre, monto };
-  window.productoActual = productoActual;
 
   // Reset tabs al abrir
   document.querySelectorAll(".cl-metodo-pill").forEach((t,i) => t.classList.toggle("active", i===0));
@@ -986,7 +998,7 @@ async function renderBrick() {
       paymentMethods: {
         creditCard: "all",
         debitCard: "all",
-        mercadoPago: "all"
+        mercadoPago: "all"   // billetera Mercado Pago
       },
       visual: {
         style: {
@@ -1004,7 +1016,7 @@ async function renderBrick() {
       onReady: () => { document.getElementById("cl-loading").style.display = "none"; },
       onSubmit: async ({ formData }) => {
         try {
-          const resp = await fetch("/api/pagar", {
+          const resp = await fetch("/.netlify/functions/pagar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...formData, description: productoActual.nombre, transaction_amount: productoActual.monto })
@@ -1041,56 +1053,16 @@ function copiarCCI() {
   });
 }
 
-// Preview comprobante Yape/Plin coleccion
-window.previewColComp = function(metodo, input) {
-  const file = input.files[0];
-  if (!file) return;
-  window._compFilesCol = window._compFilesCol || {};
-  window._compFilesCol[metodo] = file;
-  const ph   = document.getElementById(`ph-${metodo}-col`);
-  const pr   = document.getElementById(`pr-${metodo}-col`);
-  const zona = document.getElementById(`zona-${metodo}-col`);
-  pr.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:110px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
-  pr.style.display = "block"; ph.style.display = "none"; zona.classList.add("has-file");
-};
-
-// Ir al formulario de entrega desde Yape/Plin
-window.irAFormEntrega = function(metodo) {
-  window._metodoColActual = metodo;
-  window._compFileCol = (window._compFilesCol || {})[metodo.toLowerCase()] || null;
-  cerrarModal();
-  window.abrirFormEntrega?.();
-};
-
 function confirmarPagoQR(metodo) {
-  // Ya no se usa directo — pasa por irAFormEntrega
-  window.irAFormEntrega(metodo);
+  cerrarModal();
+  mostrarModalExito(productoActual.nombre, productoActual.monto, metodo);
+  guardarPedido(productoActual.nombre, productoActual.monto, metodo);
 }
 
-window.mostrarModalExito = mostrarModalExito;
 function mostrarModalExito(nombre, monto, metodo) {
-  const mColors = {yape:"#6c2fa5",plin:"#0077aa",tarjeta:"#555","agencia/bcp":"#5a7a2a"};
-  const mBgs    = {yape:"#f0e6fa",plin:"#e0f4fc",tarjeta:"#f5f5f5","agencia/bcp":"#f0f4e8"};
-  const mk = (metodo||"").toLowerCase();
-  const ref = window._ultimaRef || Math.random().toString(36).slice(2,10).toUpperCase();
-
-  document.getElementById("exito-nombre").textContent   = nombre || "—";
-  document.getElementById("exito-monto").textContent    = `S/ ${monto || "—"}`;
-  document.getElementById("exito-ref-num").textContent  = ref;
-
-  const badge = document.getElementById("exito-metodo-badge");
-  badge.textContent = metodo || "—";
-  badge.style.background = mBgs[mk] || "#f5f5f5";
-  badge.style.color = mColors[mk] || "#555";
-
-  const estado = document.getElementById("exito-estado-badge");
-  estado.textContent = "⏳ Pendiente";
-  estado.style.background = "#fff3cd"; estado.style.color = "#856404";
-
-  const entrega = document.getElementById("exito-entrega-info");
-  entrega.innerHTML = `📦 <strong>Revisaremos tu comprobante</strong> y te confirmamos en menos de 24h.<br>¿Tienes dudas? Escríbenos al <strong>922 402 608</strong>`;
-
-  const texto = encodeURIComponent(`Hola 🐱 Acabo de pedir *${nombre} - S/ ${monto}* via *${metodo}*. Ref: ${ref}`);
+  document.getElementById("exitoDetalle").textContent = `${nombre} · S/ ${monto} via ${metodo}`;
+  // Link WhatsApp con info del pedido
+  const texto = encodeURIComponent(`Hola! 🐱 Acabo de pagar *${nombre} - S/ ${monto}* via *${metodo}*. Te envío el comprobante.`);
   document.getElementById("btnWspComprobante").href = `https://wa.me/51922402608?text=${texto}`;
   document.getElementById("modalExito").style.display = "flex";
 }
@@ -1118,8 +1090,7 @@ document.addEventListener("keydown", e => {
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, doc, updateDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref as storRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",
@@ -1132,23 +1103,22 @@ const firebaseConfig = {
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-const storage = getStorage(app);
-
-const ADMIN_EMAILS_COL = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
-let _compFile = null; // comprobante agencia coleccion
 
 const modal  = document.getElementById("perfilModal");
 const status = document.getElementById("perfilStatus");
 
-// Botón historial ya en el HTML estático
+// ── Dropdown: agregar botón historial ──
+const dropdown = document.getElementById("userDropdown");
+const btnHist = document.createElement("button");
+btnHist.textContent = "🛍 Mis pedidos";
+btnHist.onclick = () => { dropdown.style.display = "none"; abrirHistorial(); };
+dropdown.insertBefore(btnHist, dropdown.firstChild);
 
 // ── Guardar pedido en Firestore ──
 window.guardarPedido = async (nombre, monto, metodo) => {
   const user = auth.currentUser;
   if (!user) return;
   try {
-    const _ref = Math.random().toString(36).slice(2,10).toUpperCase();
-    window._ultimaRef = _ref;
     await addDoc(collection(db, "pedidos"), {
       uid: user.uid,
       email: user.email,
@@ -1156,7 +1126,6 @@ window.guardarPedido = async (nombre, monto, metodo) => {
       producto: nombre,
       monto: monto,
       metodo: metodo,
-      referencia: _ref,
       estado: "pendiente",
       fecha: serverTimestamp()
     });
@@ -1200,8 +1169,7 @@ window.abrirHistorial = async () => {
       const estadoClass = d.estado === "confirmado" ? "cl-hist-estado-confirmado" : "cl-hist-estado-pendiente";
       const estadoIcon  = d.estado === "confirmado" ? "✓" : "⏳";
       const estadoText  = d.estado === "confirmado" ? "Confirmado" : "Validando pago";
-      const dRef = d.referencia || d.id.slice(0,8).toUpperCase();
-      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido:\nRef: *${dRef}*\nProducto: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
+      const wspText = encodeURIComponent(`Hola! 🐱 Consulto por mi pedido: *${d.producto} - S/ ${d.monto}* via *${d.metodo}* del ${fecha}`);
 
       const item = document.createElement("div");
       item.className = "cl-hist-item";
@@ -1213,9 +1181,6 @@ window.abrirHistorial = async () => {
             <span class="cl-hist-item-monto">S/ ${d.monto}</span>
             <span class="cl-hist-item-metodo ${metodoClass}">${d.metodo}</span>
             <span class="cl-hist-item-fecha">${fecha}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
-            <span style="font-family:monospace;font-size:10px;font-weight:700;color:#888;background:#f5f5f5;padding:1px 7px;border-radius:4px;letter-spacing:.06em;">Ref: ${dRef}</span>
           </div>
           <div class="cl-hist-item-estado ${estadoClass}">${estadoIcon} ${estadoText}</div>
         </div>
@@ -1267,836 +1232,6 @@ window.guardarPerfil = async () => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
-
-<!-- ═══ MODAL MIS MEMBRESÍAS (global) ═══ -->
-<div id="modalGlobalMembresias" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
-  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
-    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
-      <button onclick="cerrarModalMembresias()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis membresías</h3>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Talleres reservados · pagos pendientes o confirmados</span>
-    </div>
-    <div id="lista-global-membresias" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const _fcM = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _appM  = getApps().length ? getApps()[0] : initializeApp(_fcM);
-const _authM = getAuth(_appM);
-const _dbM   = getFirestore(_appM);
-
-window.abrirModalMembresias = async () => {
-  const user = _authM.currentUser;
-  if (!user) { window.location.href = "entrada.html"; return; }
-  const modal = document.getElementById("modalGlobalMembresias");
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  const lista = document.getElementById("lista-global-membresias");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando membresías...</div>`;
-  try {
-    const q = query(collection(_dbM,"membresias"), where("usuarioEmail","==",user.email));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes membresías 🐱</div>`;
-      return;
-    }
-    const docs = [];
-    snap.forEach(d => docs.push({id:d.id,...d.data()}));
-    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
-    lista.innerHTML = "";
-    docs.forEach(m => {
-      const fecha = m.fecha?.toDate ? m.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const eColor = m.estado==="confirmado"?"#065f46":m.estado==="rechazado"?"#991b1b":"#856404";
-      const eBg    = m.estado==="confirmado"?"#d1fae5":m.estado==="rechazado"?"#fee2e2":"#fff3cd";
-      const eIcon  = m.estado==="confirmado"?"✓":m.estado==="rechazado"?"✕":"⏳";
-      const eText  = m.estado==="confirmado"?"Confirmado":m.estado==="rechazado"?"Rechazado":"Pendiente de validación";
-      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[m.metodo?.toLowerCase()]||"#888";
-      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[m.metodo?.toLowerCase()]||"#f5f5f5";
-      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi membresía: *${m.tallerId||"Arcilla Nocturna"} · ${m.horarioLabel||""}* via *${m.metodo}* del ${fecha}`);
-      const div = document.createElement("div");
-      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
-      div.innerHTML = `
-        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎫</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${m.tallerId||"Arcilla Nocturna"}</div>
-          <div style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin-bottom:6px;">${m.horarioLabel||"—"}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ 150</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${m.metodo||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
-          </div>
-          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(div);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
-  }
-};
-
-window.cerrarModalMembresias = () => {
-  document.getElementById("modalGlobalMembresias").style.display = "none";
-  document.body.style.overflow = "";
-};
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") window.cerrarModalMembresias();
-});
-</script>
-
-
-<!-- ═══ MODAL MIS COMPRAS (global) ═══ -->
-<div id="modalGlobalCompras" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10002;justify-content:center;align-items:center;padding:16px;">
-  <div style="background:#fff;width:100%;max-width:480px;max-height:88vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
-    <div style="padding:20px 22px 16px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
-      <button onclick="cerrarModalCompras()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:4px;">Gato Miel Estudio</span>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:white;margin:0 0 2px;">Mis compras</h3>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Piezas de colección · pendientes o confirmadas</span>
-    </div>
-    <div id="lista-global-compras" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;"></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const _fcC = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _appC  = getApps().length ? getApps()[0] : initializeApp(_fcC);
-const _authC = getAuth(_appC);
-const _dbC   = getFirestore(_appC);
-
-window.abrirModalCompras = async () => {
-  const user = _authC.currentUser;
-  if (!user) { window.location.href = "entrada.html"; return; }
-  const modal = document.getElementById("modalGlobalCompras");
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  const lista = document.getElementById("lista-global-compras");
-  lista.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:26px;height:26px;border:2px solid #f0ebe4;border-top-color:#c48a3a;border-radius:50%;animation:spin .8s linear infinite;"></div>Cargando compras...</div>`;
-  try {
-    const q = query(collection(_dbC,"pedidos"), where("uid","==",user.uid));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:18px;color:#ccc;font-style:italic;">Aún no tienes compras 🐱</div>`;
-      return;
-    }
-    const docs = [];
-    snap.forEach(d => docs.push({id:d.id,...d.data()}));
-    docs.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0));
-    lista.innerHTML = "";
-    docs.forEach(p => {
-      const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-      const eColor = p.estado==="confirmado"?"#065f46":p.estado==="rechazado"?"#991b1b":"#856404";
-      const eBg    = p.estado==="confirmado"?"#d1fae5":p.estado==="rechazado"?"#fee2e2":"#fff3cd";
-      const eIcon  = p.estado==="confirmado"?"✓":p.estado==="rechazado"?"✕":"⏳";
-      const eText  = p.estado==="confirmado"?"Confirmado":p.estado==="rechazado"?"Rechazado":"Pendiente de validación";
-      const mColor = {"yape":"#6c2fa5","plin":"#0077aa","tarjeta":"#555","agencia":"#5a7a2a"}[p.metodo?.toLowerCase()]||"#888";
-      const mBg    = {"yape":"#f0e6fa","plin":"#e0f4fc","tarjeta":"#f5f5f5","agencia":"#f0f4e8"}[p.metodo?.toLowerCase()]||"#f5f5f5";
-      const wspTxt = encodeURIComponent(`Hola 🐱 Consulto por mi compra: *${p.producto||"—"} - S/ ${p.monto||"—"}* via *${p.metodo}* del ${fecha}`);
-      const div = document.createElement("div");
-      div.style.cssText = "background:#faf8f5;border:1px solid #ede8de;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;";
-      div.innerHTML = `
-        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1a1714,#2d2419);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛍</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#1a1714;font-weight:500;margin-bottom:3px;">${p.producto||"—"}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#c48a3a;">S/ ${p.monto||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:${mBg};color:${mColor};">${p.metodo||"—"}</span>
-            <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;">${fecha}</span>
-          </div>
-          <span style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:${eBg};color:${eColor};">${eIcon} ${eText}</span>
-        </div>
-        <a href="https://wa.me/51922402608?text=${wspTxt}" target="_blank" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;text-decoration:none;flex-shrink:0;" title="Consultar por WhatsApp">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.395 5.61L0 24l6.545-1.371A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.724.977.997-3.645-.234-.374A9.818 9.818 0 0112 2.182c5.424 0 9.818 4.394 9.818 9.818 0 5.425-4.394 9.818-9.818 9.818z"/></svg>
-        </a>`;
-      lista.appendChild(div);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div style="text-align:center;color:#e55;font-family:'Inter',sans-serif;padding:20px;font-size:13px;">Error: ${e.message}</div>`;
-  }
-};
-
-window.cerrarModalCompras = () => {
-  document.getElementById("modalGlobalCompras").style.display = "none";
-  document.body.style.overflow = "";
-};
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") window.cerrarModalCompras?.();
-});
-</script>
-
-<!-- ═══ MODAL FORMULARIO ENTREGA ═══ -->
-<div id="modalFormEntrega" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.88);backdrop-filter:blur(18px);z-index:10003;justify-content:center;align-items:center;padding:16px;">
-  <div style="background:#fff;width:100%;max-width:440px;max-height:92vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3);">
-    <!-- Header -->
-    <div style="padding:18px 20px 14px;background:linear-gradient(135deg,#1a1714,#2a1f10);flex-shrink:0;position:relative;">
-      <button onclick="cerrarFormEntrega()" style="position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);">
-        <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:3px;">Último paso</span>
-      <h3 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;color:white;margin:0 0 2px;">Datos de entrega</h3>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">Completa para confirmar tu pedido</span>
-    </div>
-    <!-- Body con scroll -->
-    <div style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;">
-      <!-- Campos -->
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Nombre completo *</label>
-        <input id="fe-nombre" type="text" placeholder="Tu nombre y apellido" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Celular *</label>
-        <input id="fe-cel" type="tel" placeholder="+51 9XX XXX XXX" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Correo *</label>
-        <input id="fe-correo" type="email" placeholder="correo@ejemplo.com" style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;" onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'">
-      </div>
-
-      <!-- Opción entrega -->
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">Tipo de entrega *</label>
-        <div style="display:flex;gap:8px;">
-          <button id="btn-delivery" onclick="seleccionarEntrega('delivery')" style="flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;">
-            🚚 Envío a domicilio
-          </button>
-          <button id="btn-recoger" onclick="seleccionarEntrega('recoger')" style="flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;">
-            🏺 Recoger en estudio
-          </button>
-        </div>
-      </div>
-
-      <!-- Mapa solo si delivery -->
-      <div id="bloque-mapa" style="display:none;flex-direction:column;gap:8px;">
-        <label style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#bbb;">📍 Dirección de entrega *</label>
-        <input id="fe-direccion" type="text" placeholder="Calle, número, distrito, referencia..."
-          style="padding:10px 13px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1714;background:#faf8f5;outline:none;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ede8de'"
-          oninput="actualizarMapaDireccion(this.value)">
-        <div style="border-radius:12px;overflow:hidden;border:1.5px solid #ede8de;">
-          <iframe id="mapa-entrega"
-            src="https://maps.google.com/maps?q=Lima,Peru&output=embed&z=12"
-            width="100%" height="180" style="border:0;display:block;" allowfullscreen="" loading="lazy">
-          </iframe>
-        </div>
-        <p style="font-family:'Inter',sans-serif;font-size:10px;color:#bbb;text-align:center;margin:0;">El mapa se actualiza automáticamente con tu dirección</p>
-      </div>
-
-      <!-- Info recoger -->
-      <div id="bloque-recoger" style="display:none;background:#f8f5f1;border-radius:12px;padding:14px 16px;border:1px solid #ede8de;">
-        <p style="font-family:'Inter',sans-serif;font-size:12px;color:#888;margin:0 0 6px;line-height:1.6;">📍 <strong style="color:#1a1714;">Gato Miel Estudio</strong><br>Te contactaremos para coordinar el horario de recojo.</p>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="padding:14px 20px;background:#faf8f5;border-top:1px solid #f0ebe3;flex-shrink:0;">
-      <button onclick="enviarPedidoColeccion()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a1714,#2a2420);color:white;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" id="btn-enviar-pedido">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-        Confirmar pedido
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ FAB + PANEL ADMIN PEDIDOS ═══ -->
-<div id="fabAdminPedidos" style="display:none;position:fixed;bottom:80px;right:20px;z-index:8000;">
-  <button onclick="abrirAdminPedidos()" style="background:#1a1714;color:white;border:none;border-radius:50px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;">
-    🛍 Pedidos
-    <span id="badge-pedidos" style="background:#c48a3a;color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;"></span>
-  </button>
-</div>
-
-<div id="modalAdminPedidos" style="display:none;position:fixed;inset:0;background:rgba(8,6,4,0.85);backdrop-filter:blur(20px);justify-content:center;align-items:center;z-index:9997;padding:16px;">
-  <div style="background:#f5f2ee;width:100%;max-width:640px;max-height:92vh;border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 50px 100px rgba(0,0,0,.4);min-height:0;">
-
-    <!-- HEADER -->
-    <div style="background:linear-gradient(135deg,#1a1714 0%,#2a1f10 100%);padding:22px 24px 20px;flex-shrink:0;position:relative;overflow:hidden;">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 90% 50%,rgba(196,138,58,.12),transparent 60%);pointer-events:none;"></div>
-      <button onclick="cerrarAdminPedidos()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);transition:.2s;z-index:1;" onmouseover="this.style.background='rgba(196,138,58,.25)';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.4)'">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <div style="position:relative;z-index:1;">
-        <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(196,138,58,.7);display:block;margin-bottom:6px;">Panel Admin · Gato Miel</span>
-        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:white;margin:0 0 4px;line-height:1.1;">Pedidos <em style="font-style:italic;color:#c48a3a;">Colección</em></h2>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span id="adm-total-badge" style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);">cargando...</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- FILTROS + BÚSQUEDA -->
-    <div style="background:#eee9e2;padding:14px 16px;border-bottom:1px solid #ddd8d0;flex-shrink:0;display:flex;flex-direction:column;gap:10px;">
-      <!-- Tabs de estado -->
-      <div style="display:flex;gap:6px;">
-        <button id="adm-f-pendiente" onclick="filtrarAdminPedidos('pendiente')" style="flex:1;padding:9px 6px;border-radius:12px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;background:#1a1714;color:white;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:.2s;">
-          ⏳ Pendientes
-          <span id="adm-cnt-pendiente" style="margin-left:4px;background:rgba(255,255,255,.2);padding:1px 6px;border-radius:20px;font-size:10px;"></span>
-        </button>
-        <button id="adm-f-confirmado" onclick="filtrarAdminPedidos('confirmado')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
-          ✓ Confirmados
-        </button>
-        <button id="adm-f-rechazado" onclick="filtrarAdminPedidos('rechazado')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
-          ✕ Rechazados
-        </button>
-        <button id="adm-f-todos" onclick="filtrarAdminPedidos('todos')" style="flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;">
-          Todos
-        </button>
-      </div>
-      <!-- Búsqueda por ref -->
-      <div style="position:relative;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input id="adm-buscar-ref" type="text" placeholder="Buscar por ref, nombre o producto..."
-          oninput="filtrarAdminPedidos(window._filtroAdm||'pendiente')"
-          style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid #ddd8d0;border-radius:12px;font-family:'Inter',sans-serif;font-size:12px;color:#1a1714;background:white;outline:none;box-sizing:border-box;"
-          onfocus="this.style.borderColor='#c48a3a'" onblur="this.style.borderColor='#ddd8d0'">
-      </div>
-    </div>
-
-    <!-- LISTA -->
-    <div id="lista-admin-pedidos" style="flex:1;overflow-y:auto;min-height:0;padding:14px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:#c48a3a #f0ebe3;-webkit-overflow-scrolling:touch;"></div>
-
-  </div>
-</div>
-
-<!-- Lightbox pedidos -->
-<div id="lightboxPedido" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:30000;justify-content:center;align-items:center;" onclick="this.style.display='none'">
-  <img id="lightboxPedidoImg" src="" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;">
-</div>
-
-<style>
-.ht-comp-wrap{width:100%;display:flex;flex-direction:column;gap:6px}
-.ht-comp-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;text-align:center}
-.ht-comp-zona{border:2px dashed #e8d5b7;border-radius:14px;padding:18px 12px;cursor:pointer;background:#faf7f4;transition:all .2s;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:100%}
-.ht-comp-zona:hover,.ht-comp-zona.has-file{border-color:#c48a3a;background:#fdf6ec}
-.ht-comp-ph{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;text-align:center}
-.ht-comp-check{position:absolute;top:8px;right:8px;background:#c48a3a;color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
-</style>
-
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref as storRef2, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-const _fcP = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _appP   = getApps().length ? getApps()[0] : initializeApp(_fcP);
-const _authP  = getAuth(_appP);
-const _dbP    = getFirestore(_appP);
-const _storP  = getStorage(_appP);
-const ADMINS  = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
-
-let _todosLosPedidos = [], _filtroPedidos = "pendiente";
-let _tipoEntrega = null;
-
-// ── Auth: mostrar FAB admin ──
-onAuthStateChanged(_authP, user => {
-  if (!user) return;
-  if (ADMINS.includes(user.email?.toLowerCase())) {
-    document.getElementById("fabAdminPedidos").style.display = "block";
-    const q = query(collection(_dbP,"pedidos"), orderBy("fecha","desc"));
-    onSnapshot(q, snap => {
-      _todosLosPedidos = snap.docs.map(d => ({id:d.id,...d.data()}));
-      const pend = _todosLosPedidos.filter(p => p.estado==="pendiente").length;
-      const badge = document.getElementById("badge-pedidos");
-      badge.style.display = pend > 0 ? "flex" : "none";
-      badge.textContent = pend;
-      _renderAdminPedidos();
-    });
-  }
-});
-
-// ── Preview comprobante agencia coleccion ──
-window.previewAgenciaCol = function(input) {
-  const file = input.files[0];
-  if (!file) return;
-  window._compFileCol = file;
-  const ph = document.getElementById("ph-agencia-col");
-  const pr = document.getElementById("pr-agencia-col");
-  const zona = document.getElementById("zona-agencia-col");
-  pr.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:130px;border-radius:10px;object-fit:contain;"><div class="ht-comp-check">✓</div>`;
-  pr.style.display = "block"; ph.style.display = "none"; zona.classList.add("has-file");
-};
-
-// ── Abrir formulario entrega ──
-window.abrirFormEntrega = function() {
-  // Pre-rellenar correo del usuario
-  const user = _authP.currentUser;
-  if (user) {
-    document.getElementById("fe-correo").value = user.email || "";
-    document.getElementById("fe-nombre").value = user.displayName || "";
-  }
-  _tipoEntrega = null;
-  document.getElementById("bloque-mapa").style.display = "none";
-  document.getElementById("bloque-recoger").style.display = "none";
-  document.getElementById("btn-delivery").style.cssText = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;";
-  document.getElementById("btn-recoger").style.cssText = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:#faf8f5;color:#888;transition:.2s;";
-  document.getElementById("modalFormEntrega").style.display = "flex";
-  document.body.style.overflow = "hidden";
-};
-window.cerrarFormEntrega = function() {
-  document.getElementById("modalFormEntrega").style.display = "none";
-  document.body.style.overflow = "";
-};
-
-window.seleccionarEntrega = function(tipo) {
-  _tipoEntrega = tipo;
-  const btnD = document.getElementById("btn-delivery");
-  const btnR = document.getElementById("btn-recoger");
-  const estBase = "flex:1;padding:10px;border:1.5px solid #ede8de;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:.2s;";
-  if (tipo === "delivery") {
-    btnD.style.cssText = estBase + "background:#1a1714;color:white;border-color:#1a1714;";
-    btnR.style.cssText = estBase + "background:#faf8f5;color:#888;";
-    document.getElementById("bloque-mapa").style.display = "flex";
-    document.getElementById("bloque-recoger").style.display = "none";
-  } else {
-    btnR.style.cssText = estBase + "background:#1a1714;color:white;border-color:#1a1714;";
-    btnD.style.cssText = estBase + "background:#faf8f5;color:#888;";
-    document.getElementById("bloque-mapa").style.display = "none";
-    document.getElementById("bloque-recoger").style.display = "block";
-  }
-};
-
-// ── Enviar pedido coleccion con todos los datos ──
-window.enviarPedidoColeccion = async function() {
-  const nombre = document.getElementById("fe-nombre").value.trim();
-  const cel    = document.getElementById("fe-cel").value.trim();
-  const correo = document.getElementById("fe-correo").value.trim();
-  const dir    = document.getElementById("fe-direccion")?.value.trim() || "";
-
-  if (!nombre || !cel || !correo) { alert("Por favor completa nombre, celular y correo."); return; }
-  if (!_tipoEntrega) { alert("Selecciona el tipo de entrega."); return; }
-  if (_tipoEntrega === "delivery" && !dir) { alert("Ingresa tu dirección de entrega."); return; }
-
-  const btn = document.getElementById("btn-enviar-pedido");
-  btn.disabled = true; btn.innerHTML = "Enviando...";
-
-  try {
-    let comprobanteURL = "";
-    if (window._compFileCol) {
-      const file = window._compFileCol;
-      const user = _authP.currentUser;
-      const ext  = file.name.split(".").pop() || "jpg";
-      const path = `comprobantes/${user.uid}/${Date.now()}.${ext}`;
-      const snap = await uploadBytes(storRef2(_storP, path), file);
-      comprobanteURL = await getDownloadURL(snap.ref);
-    }
-
-    const user = _authP.currentUser;
-    const metodoFinal = window._metodoColActual || "Agencia/BCP";
-    const _ref2 = Math.random().toString(36).slice(2,10).toUpperCase();
-    window._ultimaRef = _ref2;
-    const { addDoc: addD, collection: col, serverTimestamp: sts } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    await addD(col(_dbP,"pedidos"), {
-      uid:            user.uid,
-      email:          user.email,
-      nombre:         nombre,
-      celular:        cel,
-      correoEntrega:  correo,
-      producto:       window.productoActual?.nombre || "—",
-      monto:          window.productoActual?.monto  || 0,
-      metodo:         metodoFinal,
-      referencia:     _ref2,
-      comprobanteURL: comprobanteURL,
-      tipoEntrega:    _tipoEntrega,
-      direccion:      _tipoEntrega === "delivery" ? dir : "Recoger en Gato Miel Estudio",
-      estado:         "pendiente",
-      fecha:          sts()
-    });
-
-    // Cerrar todo y mostrar éxito
-    window.cerrarFormEntrega();
-    const prod = window.productoActual?.nombre || "—";
-    const monto = window.productoActual?.monto || "—";
-    const metodoFinal2 = window._metodoColActual || "Agencia/BCP";
-    window.mostrarModalExito?.(prod, monto, metodoFinal2);
-    window._compFileCol = null;
-    window._metodoColActual = null;
-
-  } catch(e) {
-    alert("Error al enviar pedido: " + e.message);
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Confirmar pedido';
-  }
-};
-
-window.actualizarMapaDireccion = function(direccion) {
-  if (!direccion || direccion.length < 5) return;
-  clearTimeout(window._mapTimer);
-  window._mapTimer = setTimeout(() => {
-    const q = encodeURIComponent(direccion + ", Lima, Peru");
-    const mapa = document.getElementById("mapa-entrega");
-    if (mapa) mapa.src = `https://maps.google.com/maps?q=${q}&output=embed&z=15`;
-  }, 800);
-};
-
-// ── Panel Admin ──
-window.abrirAdminPedidos  = () => { document.getElementById("modalAdminPedidos").style.display="flex"; document.body.style.overflow="hidden"; };
-window.cerrarAdminPedidos = () => { document.getElementById("modalAdminPedidos").style.display="none"; document.body.style.overflow=""; };
-window._filtroAdm = "pendiente";
-
-window.filtrarAdminPedidos = (filtro) => {
-  window._filtroAdm = filtro;
-  // Update tab styles
-  ["pendiente","confirmado","rechazado","todos"].forEach(f => {
-    const btn = document.getElementById(`adm-f-${f}`);
-    if (!btn) return;
-    if (f === filtro) {
-      btn.style.cssText = `flex:1;padding:9px 6px;border-radius:12px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;background:#1a1714;color:white;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:.2s;`;
-    } else {
-      btn.style.cssText = `flex:1;padding:9px 6px;border-radius:12px;border:1.5px solid #ddd8d0;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;background:white;color:#888;transition:.2s;`;
-    }
-  });
-  _renderAdminPedidos();
-};
-
-function _renderAdminPedidos() {
-  const lista = document.getElementById("lista-admin-pedidos");
-  if (!lista) return;
-  const buscar = (document.getElementById("adm-buscar-ref")?.value || "").toLowerCase().trim();
-  const filtro = window._filtroAdm || "pendiente";
-
-  const pend = _todosLosPedidos.filter(p => p.estado==="pendiente").length;
-  const cnt = document.getElementById("adm-cnt-pendiente");
-  if (cnt) cnt.textContent = pend || "";
-  const total = document.getElementById("adm-total-badge");
-  if (total) total.textContent = `${_todosLosPedidos.length} pedidos en total`;
-
-  let items = filtro === "todos" ? [..._todosLosPedidos] : _todosLosPedidos.filter(p => p.estado === filtro);
-  if (buscar) {
-    items = items.filter(p =>
-      (p.referencia||p.id||"").toLowerCase().includes(buscar) ||
-      (p.nombre||"").toLowerCase().includes(buscar) ||
-      (p.producto||"").toLowerCase().includes(buscar) ||
-      (p.email||"").toLowerCase().includes(buscar)
-    );
-  }
-
-  if (!items.length) {
-    lista.innerHTML = `<div style="text-align:center;padding:50px 20px;font-family:'Playfair Display',serif;font-size:16px;color:#bbb;font-style:italic;">${buscar?"Sin resultados":"Sin pedidos aquí"}</div>`;
-    return;
-  }
-
-  lista.innerHTML = "";
-  const eDots  = {confirmado:"#22c55e",rechazado:"#ef4444",pendiente:"#f59e0b"};
-  const eBgs   = {confirmado:"#d1fae5",rechazado:"#fee2e2",pendiente:"#fef3c7"};
-  const eColors= {confirmado:"#065f46",rechazado:"#991b1b",pendiente:"#92400e"};
-  const eTexts = {confirmado:"Confirmado",rechazado:"Rechazado",pendiente:"Pendiente"};
-  const mColors= {yape:"#6c2fa5","agencia/bcp":"#5a7a2a",plin:"#0077aa",tarjeta:"#555"};
-  const mBgs   = {yape:"#f0e6fa","agencia/bcp":"#e8f5e9",plin:"#e0f4fc",tarjeta:"#f5f5f5"};
-
-  items.forEach(p => {
-    const fecha = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}) : "—";
-    const mk    = (p.metodo||"").toLowerCase();
-    const ref   = p.referencia || p.id.slice(0,8).toUpperCase();
-    const estado= p.estado || "pendiente";
-
-    const row = document.createElement("div");
-    row.style.cssText = "background:white;border-radius:14px;border:1px solid #e5ddd3;padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:box-shadow .2s;";
-    row.onmouseover = () => row.style.boxShadow = "0 4px 16px rgba(0,0,0,.08)";
-    row.onmouseout  = () => row.style.boxShadow = "none";
-    row.onclick = () => abrirDetallePedido(p.id);
-
-    row.innerHTML = `
-      <div style="width:9px;height:9px;border-radius:50%;background:${eDots[estado]||"#f59e0b"};flex-shrink:0;"></div>
-      <div style="flex:1;min-width:0;overflow:hidden;">
-        <div style="font-family:'Playfair Display',serif;font-size:14px;color:#1a1714;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-          ${p.producto||"—"} <span style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#c48a3a;">S/ ${p.monto||"—"}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:nowrap;overflow:hidden;">
-          <code style="font-size:10px;font-weight:700;color:#aaa;background:#f5f5f5;padding:1px 6px;border-radius:4px;white-space:nowrap;">${ref}</code>
-          <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:1px 7px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};white-space:nowrap;">${p.metodo||"—"}</span>
-          <span style="font-family:'Inter',sans-serif;font-size:10px;color:#ccc;white-space:nowrap;">${fecha}</span>
-        </div>
-      </div>
-      <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;background:${eBgs[estado]};color:${eColors[estado]};white-space:nowrap;flex-shrink:0;">${eTexts[estado]}</span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" style="flex-shrink:0;"><path d="M9 18l6-6-6-6"/></svg>`;
-
-    lista.appendChild(row);
-  });
-
-  // Guardar para acceso en popup
-  window._pedidosMap = {};
-  items.forEach(p => window._pedidosMap[p.id] = p);
-  _todosLosPedidos.forEach(p => window._pedidosMap[p.id] = p);
-}
-
-// ── POPUP DETALLE PEDIDO ──
-window.abrirDetallePedido = function(pid) {
-  const p = window._pedidosMap?.[pid];
-  if (!p) return;
-
-  const fecha  = p.fecha?.toDate ? p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—";
-  const mk     = (p.metodo||"").toLowerCase();
-  const ref    = p.referencia || p.id.slice(0,8).toUpperCase();
-  const estado = p.estado || "pendiente";
-  const mColors= {yape:"#6c2fa5","agencia/bcp":"#5a7a2a",plin:"#0077aa",tarjeta:"#555"};
-  const mBgs   = {yape:"#f0e6fa","agencia/bcp":"#e8f5e9",plin:"#e0f4fc",tarjeta:"#f5f5f5"};
-  const eBgs   = {confirmado:"#d1fae5",rechazado:"#fee2e2",pendiente:"#fef3c7"};
-  const eColors= {confirmado:"#065f46",rechazado:"#991b1b",pendiente:"#92400e"};
-  const eTexts = {confirmado:"✓ Confirmado",rechazado:"✕ Rechazado",pendiente:"⏳ Pendiente de validación"};
-
-  document.getElementById("popupDetallePedido")?.remove();
-
-  // OVERLAY
-  const overlay = document.createElement("div");
-  overlay.id = "popupDetallePedido";
-  overlay.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.85);backdrop-filter:blur(18px);z-index:20000;display:flex;align-items:center;justify-content:center;padding:16px;";
-  overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
-
-  // BOX
-  const box = document.createElement("div");
-  box.style.cssText = "background:white;width:100%;max-width:480px;height:82vh;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.45);";
-
-  // HEADER
-  const hdr = document.createElement("div");
-  hdr.style.cssText = "background:linear-gradient(135deg,#1a1714,#2a1f10);padding:18px 20px 16px;flex-shrink:0;position:relative;";
-  const closeBtn = document.createElement("button");
-  closeBtn.style.cssText = "position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:10;";
-  closeBtn.textContent = "✕";
-  closeBtn.onclick = () => overlay.remove();
-  hdr.innerHTML = `
-    <div style="font-family:'Playfair Display',serif;font-size:19px;color:white;font-weight:400;margin-bottom:8px;padding-right:36px;">${p.producto||"—"}</div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span style="font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#c48a3a;">S/ ${p.monto||"—"}</span>
-      <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${mBgs[mk]||'#f5f5f5'};color:${mColors[mk]||'#555'};">${p.metodo||"—"}</span>
-      <code style="font-family:monospace;font-size:10px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.08);padding:2px 7px;border-radius:4px;">${ref}</code>
-      <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);">${fecha}</span>
-    </div>`;
-  hdr.appendChild(closeBtn);
-
-  // BODY (scrollable)
-  const body = document.createElement("div");
-  body.style.cssText = "flex:1;overflow-y:scroll;min-height:0;padding:16px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch;";
-
-  // ACCIONES
-  if (estado === "pendiente") {
-    const btnRow = document.createElement("div");
-    btnRow.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;";
-    const btnConfirmar = document.createElement("button");
-    btnConfirmar.style.cssText = "padding:14px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;box-shadow:0 6px 16px rgba(34,197,94,.3);";
-    btnConfirmar.textContent = "✓ Confirmar pago";
-    btnConfirmar.onclick = async () => {
-      btnConfirmar.disabled = true;
-      btnConfirmar.textContent = "Confirmando...";
-      try {
-        await updateDoc(doc(_dbP,"pedidos",pid), {estado:"confirmado",fechaConfirmacion:serverTimestamp()});
-        overlay.remove();
-      } catch(e) {
-        alert("Error: "+e.message);
-        btnConfirmar.disabled = false;
-        btnConfirmar.textContent = "✓ Confirmar pago";
-      }
-    };
-    const btnRechazar = document.createElement("button");
-    btnRechazar.style.cssText = "padding:14px;border:none;border-radius:14px;cursor:pointer;background:#fee2e2;color:#991b1b;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;";
-    btnRechazar.textContent = "✕ Rechazar";
-    btnRechazar.onclick = async () => {
-      const ov2 = document.createElement("div");
-      ov2.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.8);backdrop-filter:blur(8px);z-index:30001;display:flex;align-items:center;justify-content:center;padding:20px;";
-      ov2.innerHTML = `<div style="background:white;border-radius:20px;padding:28px 24px;max-width:300px;width:100%;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⚠️</div><h3 style="font-family:'Playfair Display',serif;font-size:18px;color:#1a1714;margin:0 0 10px;">¿Rechazar pedido?</h3><p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;margin:0 0 20px;line-height:1.5;">El cliente verá el estado como <strong>Rechazado</strong>.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><button id="rno" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button><button id="rsi" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Rechazar</button></div></div>`;
-      document.body.appendChild(ov2);
-      ov2.querySelector("#rno").onclick = () => ov2.remove();
-      ov2.querySelector("#rsi").onclick = async () => {
-        ov2.remove();
-        try {
-          await updateDoc(doc(_dbP,"pedidos",pid), {estado:"rechazado",fechaRechazo:serverTimestamp()});
-          overlay.remove();
-        } catch(e) { alert("Error: "+e.message); }
-      };
-    };
-    btnRow.appendChild(btnConfirmar);
-    btnRow.appendChild(btnRechazar);
-    body.appendChild(btnRow);
-  } else {
-    const estadoBadge = document.createElement("div");
-    estadoBadge.style.cssText = `text-align:center;padding:14px;background:${eBgs[estado]};border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:${eColors[estado]};`;
-    estadoBadge.textContent = eTexts[estado];
-    body.appendChild(estadoBadge);
-  }
-
-  // CLIENTE
-  const clienteDiv = document.createElement("div");
-  clienteDiv.style.cssText = "background:#faf8f5;border-radius:12px;padding:14px 16px;border:1px solid #ede8de;font-family:'Inter',sans-serif;font-size:13px;color:#555;";
-  const celLink = p.celular
-    ? `<a href="https://wa.me/51${p.celular.replace(/\D/g,'')}" target="_blank" style="color:#16a34a;font-weight:600;text-decoration:none;">${p.celular} <small>↗ WhatsApp</small></a>`
-    : "—";
-  clienteDiv.innerHTML = `
-    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c48a3a;margin-bottom:10px;">Cliente</div>
-    <div style="display:flex;flex-direction:column;gap:8px;line-height:1.4;">
-      <div><strong style="color:#1a1714;display:inline-block;width:58px;">Nombre</strong>${p.nombre||"—"}</div>
-      <div><strong style="color:#1a1714;display:inline-block;width:58px;">Email</strong>${p.email||"—"}</div>
-      <div><strong style="color:#1a1714;display:inline-block;width:58px;">Celular</strong>${celLink}</div>
-    </div>`;
-  body.appendChild(clienteDiv);
-
-  // ENTREGA
-  if (p.tipoEntrega) {
-    const esR = p.tipoEntrega === "recoger";
-    const entDiv = document.createElement("div");
-    entDiv.style.cssText = `display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:${esR?'#f0fdf4':'#eff6ff'};border-radius:12px;border:1px solid ${esR?'#bbf7d0':'#bfdbfe'};`;
-    entDiv.innerHTML = `
-      <span style="font-size:20px;">${esR?'🏺':'🚚'}</span>
-      <div>
-        <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:${esR?'#15803d':'#1d4ed8'};text-transform:uppercase;letter-spacing:.1em;">${esR?'Recojo en estudio':'Envío a domicilio'}</div>
-        ${p.direccion?`<div style="font-family:'Inter',sans-serif;font-size:13px;color:#555;margin-top:4px;">${p.direccion}</div>`:''}
-      </div>`;
-    body.appendChild(entDiv);
-  }
-
-  // COMPROBANTE
-  if (p.comprobanteURL) {
-    const imgWrap = document.createElement("div");
-    imgWrap.style.cssText = "border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;cursor:zoom-in;";
-    imgWrap.onclick = () => {
-      const lb = document.getElementById("lightboxPedidoImg");
-      const lbBox = document.getElementById("lightboxPedido");
-      if (lb) lb.src = p.comprobanteURL;
-      if (lbBox) lbBox.style.display = "flex";
-    };
-    imgWrap.innerHTML = `
-      <img src="${p.comprobanteURL}" style="width:100%;object-fit:contain;display:block;background:#fafafa;" alt="Comprobante">
-      <div style="padding:6px;background:#fafafa;text-align:center;font-family:'Inter',sans-serif;font-size:10px;color:#bbb;border-top:1px solid #f0ebe3;">🔍 Toca para ampliar</div>`;
-    body.appendChild(imgWrap);
-  } else {
-    const noComp = document.createElement("div");
-    noComp.style.cssText = "padding:14px;background:#fafafa;border-radius:10px;border:1px dashed #ddd;text-align:center;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;";
-    noComp.textContent = "Sin comprobante adjunto";
-    body.appendChild(noComp);
-  }
-
-  box.appendChild(hdr);
-  box.appendChild(body);
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
-};
-
-// ── CONFIRMAR / RECHAZAR ──
-window.confirmarPedidoAdmin = async (id, btn) => {
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "Confirmando...";
-  }
-  await updateDoc(doc(_dbP, "pedidos", id), { estado: "confirmado", fechaConfirmacion: serverTimestamp() });
-};
-
-window.rechazarPedidoAdmin = (id) => {
-  return new Promise((resolve) => {
-    const ov = document.createElement("div");
-    ov.style.cssText = "position:fixed;inset:0;background:rgba(8,6,4,.8);backdrop-filter:blur(8px);z-index:30001;display:flex;align-items:center;justify-content:center;padding:20px;";
-    ov.innerHTML = `
-      <div style="background:white;border-radius:20px;padding:28px 24px;max-width:320px;width:100%;text-align:center;">
-        <div style="font-size:34px;margin-bottom:12px;">⚠️</div>
-        <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:#1a1714;margin:0 0 10px;">¿Rechazar este pedido?</h3>
-        <p style="font-family:'Inter',sans-serif;font-size:13px;color:#888;margin:0 0 20px;line-height:1.6;">El cliente verá el estado como <strong>Rechazado</strong> en sus compras.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <button id="adm-no" style="padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:white;font-family:'Inter',sans-serif;font-size:13px;color:#888;cursor:pointer;">Cancelar</button>
-          <button id="adm-si" style="padding:12px;border:none;border-radius:12px;background:#991b1b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sí, rechazar</button>
-        </div>
-      </div>`;
-    document.body.appendChild(ov);
-    ov.querySelector("#adm-no").onclick = () => { ov.remove(); resolve(false); };
-    ov.querySelector("#adm-si").onclick = async () => {
-      ov.remove();
-      try {
-        await updateDoc(doc(_dbP, "pedidos", id), { estado: "rechazado", fechaRechazo: serverTimestamp() });
-        resolve(true);
-      } catch(e) { alert("Error: " + e.message); resolve(false); }
-    };
-  });
-};
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { window.cerrarAdminPedidos?.(); window.cerrarFormEntrega?.(); }
-});
-</script>
-
-
-<style>
-#popupDetallePedido ::-webkit-scrollbar { width: 8px; }
-#popupDetallePedido ::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
-#popupDetallePedido ::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
-#popupDetallePedido ::-webkit-scrollbar-thumb:hover { background: #a8742f; }
-#lista-admin-pedidos::-webkit-scrollbar { width: 8px; }
-#lista-admin-pedidos::-webkit-scrollbar-track { background: #f0ebe3; border-radius: 4px; }
-#lista-admin-pedidos::-webkit-scrollbar-thumb { background: #c48a3a; border-radius: 4px; }
-</style>
-<!-- ═══ CARGA DINÁMICA COLECCIÓN ═══ -->
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const _fc2 = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
-const _app2 = getApps().length ? getApps()[0] : initializeApp(_fc2);
-const _db2  = getFirestore(_app2);
-
-const FALLBACK = [
-  {nombre:"Taza Arena",    precio:120, descripcion:"Cerámica esmaltada en tonos tierra.",    imagen:"Assets/Img/Escultura1.jpg", stock:1},
-  {nombre:"Plato Bruma",   precio:150, descripcion:"Plato decorativo con textura orgánica.", imagen:"Assets/Img/Escultura2.jpg", stock:1},
-  {nombre:"Jarrón Eclipse",precio:240, descripcion:"Pieza única torneada a mano.",           imagen:"Assets/Img/Escultura3.jpg", stock:1},
-  {nombre:"Cuenco Alba",   precio:135, descripcion:"Perfecto para decoración minimalista.",  imagen:"Assets/Img/Escultura4.jpg", stock:1},
-];
-
-function renderGrid(productos) {
-  const grid = document.getElementById("cl-grid-productos");
-  if (!grid) return;
-  const items = productos.filter(p => p.stock !== 0);
-  if (!items.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay piezas disponibles 🐱</div>`;
-    return;
-  }
-  grid.innerHTML = "";
-  items.forEach(p => {
-    const art = document.createElement("article");
-    art.className = "cl-producto";
-    art.dataset.nombre = String(p.nombre);
-    art.dataset.precio = String(p.precio);
-    art.innerHTML = `
-      <div class="cl-img">
-        <img src="${p.imagen||''}" alt="${p.nombre}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-        <div class="cl-img-overlay">
-          <button class="cl-btn-ver" onclick="comprarDesdeCard(this)">Comprar</button>
-        </div>
-      </div>
-      <div class="cl-info">
-        <div class="cl-info-top">
-          <h3>${p.nombre}</h3>
-          <span class="cl-precio">S/ ${p.precio}</span>
-        </div>
-        <p>${p.descripcion||""}</p>
-      </div>`;
-    grid.appendChild(art);
-  });
-}
-
-// Intentar cargar desde Firestore, con fallback automático
-async function cargarColeccion() {
-  try {
-    const snap = await getDocs(collection(_db2, "config_coleccion"));
-    const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
-    renderGrid(docs.length > 0 ? docs : FALLBACK);
-  } catch(e) {
-    console.warn("Firestore no disponible, usando fallback:", e.message);
-    renderGrid(FALLBACK);
-  }
-}
-
-cargarColeccion();
-</script>
-
+<script src="movil-ui.js"></script>
 </body>
 </html>
