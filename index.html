@@ -188,21 +188,7 @@ onAuthStateChanged(auth, async (user) => {
   </div>
 </div>
 
-<!-- Botón panel admin -->
-<a id="btn-panel-admin" href="panel-admin.html" style="
-  display:none; position:fixed; bottom:28px; right:28px;
-  background:#1a1714; color:white; text-decoration:none;
-  padding:13px 20px; border-radius:50px; font-family:'Inter',sans-serif;
-  font-size:13px; font-weight:500; letter-spacing:0.06em;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25); z-index:8887;
-  align-items:center; gap:8px; transition:background 0.2s,transform 0.2s;"
-  onmouseover="this.style.background='#c48a3a';this.style.transform='translateY(-2px)'"
-  onmouseout="this.style.background='#1a1714';this.style.transform='none'">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  </svg>
-  Panel de mensajes
-</a>
+<!-- Floating panel button removed — chats están en el dashboard -->
 
 <style>
 /* ── Variables ── */
@@ -528,18 +514,14 @@ const db = getFirestore(app);
 
 onAuthStateChanged(auth, (user) => {
   if (user && ADMIN_EMAILS.includes(user.email?.toLowerCase())) {
-    const btn = document.getElementById("btn-panel-admin");
-    btn.style.display = "flex";
+    // Chat notifications now in dashboard badge
     const q = query(collection(db, "chats"), where("noLeidosAdmin", "==", true));
     onSnapshot(q, (snap) => {
-      const ex = document.getElementById("admin-badge");
-      if (ex) ex.remove();
-      if (!snap.empty) {
-        const badge = document.createElement("span");
-        badge.id = "admin-badge";
-        badge.textContent = snap.size;
-        badge.style.cssText = "background:#e74c3c;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;";
-        btn.appendChild(badge);
+      // Update badge in sidebar nav
+      const chatBadge = document.getElementById("badge-tab-chats");
+      if (chatBadge) {
+        chatBadge.textContent = snap.size > 0 ? (snap.size > 9 ? "9+" : snap.size) : "";
+        chatBadge.style.display = snap.size > 0 ? "inline-flex" : "none";
       }
     });
   }
@@ -1647,7 +1629,7 @@ window.admRechMemb = async (id, btn) => {
 // ══════════════════════════════
 async function admCargarChats() {
   const lista = document.getElementById("adm-chats-lista");
-  lista.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando chats...</div>`;
+  lista.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando conversaciones...</div>`;
   try {
     const snap = await getDocs(collection(_db,"chats"));
     if (snap.empty) { lista.innerHTML=`<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Sin conversaciones aún.</p>`; return; }
@@ -1658,18 +1640,31 @@ async function admCargarChats() {
       const mensSnap = await getDocs(collection(_db,"chats",uid,"mensajes"));
       const msgs = mensSnap.docs.map(d=>d.data()).sort((a,b)=>(a.fecha?.toMillis?.()??0)-(b.fecha?.toMillis?.()??0));
       const ultimo = msgs[msgs.length-1];
+      const esNoLeido = data.noLeidosAdmin === true;
       const card = document.createElement("div");
-      card.className="adm-card";
+      card.className="adm-panel";
+      card.style.cssText = esNoLeido ? "border-color:rgba(196,138,58,.4);box-shadow:0 0 0 1px rgba(196,138,58,.15);" : "";
       card.innerHTML=`
-        <div class="adm-card-header" style="margin-bottom:8px;">
-          <div>
-            <div style="font-family:'Inter',sans-serif;font-size:13px;color:white;font-weight:500;">${data.nombre||uid.slice(0,8)}</div>
-            <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">${data.email||""} · ${msgs.length} mensajes</div>
+        <div class="adm-panel-header">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+            ${esNoLeido ? '<span style="width:8px;height:8px;border-radius:50%;background:#c48a3a;flex-shrink:0;box-shadow:0 0 6px rgba(196,138,58,.6);"></span>' : '<span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></span>'}
+            <div style="min-width:0;">
+              <div style="font-family:'Playfair Display',serif;font-size:15px;color:white;font-weight:400;">${data.nombre||uid.slice(0,8)}</div>
+              <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">${data.email||""} · ${msgs.length} mensajes</div>
+            </div>
           </div>
-          <span style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.3);">${ultimo?.fecha?.toDate?.().toLocaleDateString("es-PE")||""}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
+            <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);">${ultimo?.fecha?.toDate?.().toLocaleDateString("es-PE",{day:"2-digit",month:"short"})||""}</span>
+            ${esNoLeido ? '<span style="font-family:Inter,sans-serif;font-size:9px;font-weight:700;color:#c48a3a;background:rgba(196,138,58,.15);padding:2px 8px;border-radius:20px;border:1px solid rgba(196,138,58,.3);">• nuevo</span>' : ''}
+          </div>
         </div>
-        <div id="chat-msgs-${uid}" style="display:none;max-height:250px;overflow-y:auto;background:#141210;border-radius:10px;padding:10px;flex-direction:column;gap:6px;"></div>
-        <button onclick="admVerChat('${uid}')" style="margin-top:8px;padding:7px 14px;background:#2a2420;border:1px solid #3a3028;border-radius:8px;color:#c48a3a;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;">Ver conversación</button>`;
+        <div class="adm-panel-body" style="padding-top:8px;">
+          ${ultimo ? `<div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.4);font-style:italic;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${ultimo.texto?.slice(0,60)||"..."}"</div>` : ""}
+          <div id="chat-msgs-${uid}" style="display:none;max-height:280px;overflow-y:auto;background:rgba(0,0,0,.3);border-radius:12px;padding:12px;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+          <button onclick="admVerChat('${uid}')" class="adm-btn-ghost" style="width:100%;">
+            💬 Ver conversación completa
+          </button>
+        </div>`;
       lista.appendChild(card);
     }
   } catch(e) { lista.innerHTML=`<p style="color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`; }
@@ -1839,6 +1834,9 @@ window.admCargarResumen = async () => {
     showBadge("badge-tab-pedidos", pPend);
     showBadge("badge-tab-memb", mPend);
     showBadge("badge-tab-chats", chatSnap.size);
+    // Also update with unread-only count
+    const unreadChats = chatSnap.docs.filter(d=>d.data().noLeidosAdmin===true).length;
+    if (unreadChats > 0) showBadge("badge-tab-chats", unreadChats);
 
     // Side stats panel
     const side = document.getElementById("adm-resumen-stats-side");
