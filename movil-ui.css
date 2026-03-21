@@ -1,175 +1,433 @@
-/* MOVIL-UI.CSS — Clash Royale mobile nav. PC sin cambios. */
-:root {
-  --mu-gold:  #c48a3a;
-  --mu-gold2: #e8b870;
-  --mu-ink:   #1a1714;
-  --mu-ink2:  #241e18;
-  --mu-ink3:  #2e2720;
-  --mu-bar-h: 72px;
-  --mu-top-h: 52px;
-}
-
-/* PC: elementos móviles ocultos */
-.mu-topbar,.mu-navbar,.mu-user-sheet,.mu-overlay { display: none !important; }
-
+/* ═══════════════════════════════════════════════════
+   MOVIL-UI — Gato Miel Estudio
+   Clash Royale style mobile navbar · ≤768px only
+═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* ─ Header original y btn-panel-admin ocultos ─ */
-  .header { display: none !important; }
-  #btn-panel-admin { display: none !important; }
 
+  /* ── Body padding to avoid overlap ── */
   body {
-    padding-top:    var(--mu-top-h)  !important;
-    padding-bottom: var(--mu-bar-h)  !important;
+    padding-top: 52px !important;
+    padding-bottom: 76px !important;
   }
   body.mu-entrada {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
 
-  /* ═══ TOPBAR ═══ */
+  /* ── Hide desktop header nav ── */
+  .header .nav { display: none !important; }
+  .header {
+    display: none !important;
+  }
+
+  /* ════════════════════════════
+     TOPBAR
+  ════════════════════════════ */
   .mu-topbar {
-    display: flex !important;
-    position: fixed; top:0; left:0; right:0;
-    height: var(--mu-top-h);
-    background: rgba(22,19,16,0.97);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    z-index: 99999; align-items: center; justify-content: space-between;
-    padding: 0 16px; box-sizing: border-box;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    background: linear-gradient(180deg, #1a1510 0%, #100d08 100%);
+    border-bottom: 1px solid rgba(196, 138, 58, 0.2);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.5),
+                0 1px 0 rgba(196,138,58,0.15);
   }
-  .mu-topbar-logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
-  .mu-topbar-logo img { width:32px; height:32px; border-radius:8px; object-fit:cover; border:1.5px solid rgba(196,138,58,0.5); flex-shrink:0; }
-  .mu-topbar-logo span { font-family:'Playfair Display',Georgia,serif; font-size:16px; font-weight:500; color:#fff; }
-  .mu-topbar-right { display:flex; align-items:center; gap:8px; }
-  .mu-topbar-avatar { width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid var(--mu-gold); cursor:pointer; }
-  .mu-topbar-login { display:inline-block; padding:7px 16px; background:var(--mu-gold); color:#fff; font-family:'Inter',Arial,sans-serif; font-size:12px; font-weight:600; border-radius:22px; text-decoration:none; }
 
-  /* Botón admin (ícono chat con badge) */
-  .mu-admin-btn {
-    display: flex; align-items:center; justify-content:center;
-    width:36px; height:36px; border-radius:50%;
-    background: rgba(196,138,58,0.15);
+  /* Topbar logo */
+  .mu-topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .mu-topbar-logo img {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    object-fit: cover;
     border: 1.5px solid rgba(196,138,58,0.5);
-    color: var(--mu-gold); text-decoration:none;
+    box-shadow: 0 0 8px rgba(196,138,58,0.3);
+  }
+  .mu-topbar-logo span {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #f0ebe4;
+    letter-spacing: 0.02em;
+  }
+
+  /* Topbar right: avatar + admin */
+  .mu-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mu-topbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(196,138,58,0.55);
+    box-shadow: 0 0 8px rgba(196,138,58,0.25);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .mu-topbar-avatar:active { transform: scale(0.92); }
+
+  .mu-topbar-login {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: #c48a3a;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1.5px solid rgba(196,138,58,0.4);
+    border-radius: 20px;
+    background: rgba(196,138,58,0.08);
+    transition: background 0.2s;
+  }
+  .mu-topbar-login:active { background: rgba(196,138,58,0.18); }
+
+  /* Admin chat button */
+  .mu-admin-btn {
     position: relative;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, rgba(196,138,58,0.2), rgba(196,138,58,0.08));
+    border: 1.5px solid rgba(196,138,58,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c48a3a;
+    text-decoration: none;
+    transition: background 0.2s;
   }
-  .mu-admin-btn svg { width:18px; height:18px; }
-  .mu-admin-btn:active { background: rgba(196,138,58,0.3); }
+  .mu-admin-btn svg {
+    width: 16px; height: 16px;
+  }
+  .mu-admin-btn:active { background: rgba(196,138,58,0.25); }
   #mu-admin-badge {
+    position: absolute;
+    top: -4px; right: -4px;
+    min-width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #ef4444;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
     display: none;
-    position: absolute; top:-4px; right:-4px;
-    background: #e74c3c; color: white;
-    border-radius: 50%; min-width:16px; height:16px;
-    font-size:9px; font-weight:700;
-    align-items:center; justify-content:center;
-    font-family:'Inter',Arial,sans-serif;
-    border: 2px solid rgba(22,19,16,0.97);
-    padding: 0 2px;
-    animation: mu-pulse 2s ease infinite;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    border: 1.5px solid #1a1510;
+    box-shadow: 0 0 6px rgba(239,68,68,0.5);
   }
-  @keyframes mu-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
 
-  /* ═══ NAVBAR INFERIOR ═══ */
+  /* ════════════════════════════
+     BOTTOM NAVBAR — Clash Royale
+  ════════════════════════════ */
   .mu-navbar {
-    display: flex !important;
-    position: fixed; bottom:0; left:0; right:0;
-    height: var(--mu-bar-h);
-    background: var(--mu-ink);
-    border-top: 1.5px solid var(--mu-ink3);
-    box-shadow: 0 -6px 28px rgba(0,0,0,0.6);
-    z-index: 99999; align-items:stretch; justify-content:space-around;
-    padding: 0 2px; border-radius: 18px 18px 0 0; box-sizing: border-box;
-    animation: mu-slideUp 0.4s cubic-bezier(0.34,1.4,0.64,1) both;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    z-index: 9000;
+    display: flex;
+    align-items: stretch;
+
+    /* Clash Royale dark stone base */
+    background: linear-gradient(180deg, #201a12 0%, #141008 100%);
+    border-top: 2px solid rgba(196,138,58,0.35);
+    box-shadow:
+      0 -4px 20px rgba(0,0,0,0.6),
+      0 -1px 0 rgba(255,255,255,0.04),
+      inset 0 1px 0 rgba(196,138,58,0.12);
+
+    /* Subtle inner glow */
+    overflow: hidden;
   }
+
+  /* Stone texture overlay */
+  .mu-navbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255,255,255,0.01) 1px,
+        rgba(255,255,255,0.01) 2px
+      );
+    pointer-events: none;
+  }
+
+  /* ── Nav items ── */
   .mu-nav-item {
-    display: flex !important; flex-direction:column;
-    align-items:center; justify-content:center;
-    flex:1; gap:3px; text-decoration:none;
-    color:rgba(255,255,255,0.32);
-    font-family:'Inter',Arial,sans-serif; font-size:8px; font-weight:700;
-    letter-spacing:0.05em; text-transform:uppercase;
-    position:relative; cursor:pointer; border:none; background:none; padding:0;
-    -webkit-tap-highlight-color:transparent; transition:color 0.15s;
-    box-sizing:border-box; min-width:0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: rgba(240,235,228,0.38);
+    padding: 8px 2px 10px;
+    position: relative;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'Inter', sans-serif;
   }
-  .mu-nav-item svg  { width:22px; height:22px; display:block; flex-shrink:0; }
-  .mu-nav-item span { line-height:1; white-space:nowrap; }
-  .mu-nav-item:active { opacity:0.6; }
-  .mu-nav-item.active { color:var(--mu-gold); }
-  .mu-nav-item.active svg { filter:drop-shadow(0 0 6px rgba(196,138,58,0.7)); transform:translateY(-2px) scale(1.12); }
-  .mu-nav-item.active::after { content:''; position:absolute; top:0; left:20%; right:20%; height:2px; background:var(--mu-gold); border-radius:0 0 3px 3px; }
-  .mu-nav-item.mu-center-btn { flex:0 0 64px; margin-top:-14px; }
+
+  .mu-nav-item svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.34,1.4,0.64,1);
+  }
+
+  .mu-nav-item span {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  /* Active state — Clash Royale gold glow */
+  .mu-nav-item.active {
+    color: #e8b870;
+  }
+  .mu-nav-item.active svg {
+    transform: translateY(-1px) scale(1.12);
+    filter: drop-shadow(0 0 6px rgba(232,184,112,0.6));
+  }
+  .mu-nav-item.active span {
+    color: #c48a3a;
+    font-weight: 600;
+  }
+
+  /* Active indicator bar */
+  .mu-nav-item.active::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c48a3a, #e8b870, #c48a3a, transparent);
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 0 8px rgba(196,138,58,0.6);
+  }
+
+  /* Press effect */
+  .mu-nav-item:active svg {
+    transform: scale(0.88) translateY(1px);
+  }
+
+  /* Divider between items */
+  .mu-nav-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    right: 0; top: 20%; bottom: 20%;
+    width: 1px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* ── CENTER BUTTON (Home) — raised gem style ── */
+  .mu-center-btn {
+    flex: 0 0 72px;
+    position: relative;
+    margin-top: -14px;
+    padding-bottom: 2px;
+  }
+
   .mu-center-circle {
-    width:52px; height:52px;
-    background:linear-gradient(135deg,var(--mu-gold),#9a6b28);
-    border-radius:50%; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 5px 18px rgba(196,138,58,0.55),0 2px 5px rgba(0,0,0,0.5);
-    border:2px solid rgba(255,255,255,0.2); transition:transform 0.15s;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 3px;
+    position: relative;
+
+    /* Clash Royale gem / chest style */
+    background: linear-gradient(160deg, #c48a3a 0%, #8a5e22 60%, #5c3d12 100%);
+    border: 2px solid rgba(232,184,112,0.5);
+    box-shadow:
+      0 6px 20px rgba(0,0,0,0.5),
+      0 2px 0 rgba(232,184,112,0.35),
+      0 -1px 0 rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -2px 0 rgba(0,0,0,0.2),
+      0 0 16px rgba(196,138,58,0.3);
+    transition: transform 0.15s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.15s;
   }
-  .mu-center-circle svg { width:24px; height:24px; }
-  .mu-nav-item.mu-center-btn:active .mu-center-circle { transform:scale(0.88); }
-  .mu-nav-item.mu-center-btn.active::after { display:none; }
 
-  /* ═══ HERO INDEX ═══ */
-  .ix-hero { height:calc(100vh - var(--mu-top-h)) !important; padding:0 6% 9vh !important; align-items:flex-end; }
-  .ix-hero-content h1 { font-size:clamp(34px,10vw,52px) !important; }
-  .ix-hero-scroll { display:none !important; }
+  .mu-center-circle svg {
+    width: 22px;
+    height: 22px;
+    color: white;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+  }
 
-  /* ═══ LAYOUT ═══ */
-  .ix-talleres { padding:24px 5% 20px !important; }
-  .ix-cards    { grid-template-columns:1fr !important; gap:14px !important; }
-  .ix-cta      { padding:56px 6% !important; }
-  .ix-strip    { gap:10px !important; padding:12px 5% !important; font-size:9px !important; }
-  .footer      { margin-bottom:calc(var(--mu-bar-h) + 4px) !important; }
+  /* Shine on center button */
+  .mu-center-circle::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 6px; right: 6px;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.25), transparent);
+    border-radius: 10px 10px 50% 50%;
+    pointer-events: none;
+  }
 
-  /* ═══ MODAL PAGO desde abajo ═══ */
-  .cl-modal { padding:0 !important; align-items:flex-end !important; }
-  .cl-modal-box { max-width:100% !important; max-height:90vh !important; border-radius:24px 24px 0 0 !important; }
-  .cl-modal-cerrar { width:34px !important; height:34px !important; background:rgba(255,255,255,0.2) !important; top:10px !important; right:10px !important; color:white !important; opacity:1 !important; }
+  .mu-center-btn.active .mu-center-circle {
+    background: linear-gradient(160deg, #e8b870 0%, #c48a3a 50%, #8a5e22 100%);
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.5),
+      0 2px 0 rgba(255,210,100,0.4),
+      0 0 20px rgba(232,184,112,0.5);
+    transform: translateY(-2px) scale(1.04);
+  }
 
-  /* ═══ SHEET USUARIO ═══ */
+  .mu-center-btn:active .mu-center-circle {
+    transform: translateY(1px) scale(0.94);
+    box-shadow:
+      0 3px 10px rgba(0,0,0,0.4),
+      0 1px 0 rgba(232,184,112,0.2),
+      inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .mu-center-btn::before { display: none; }
+  .mu-center-btn::after { display: none; }
+
+  /* ════════════════════════════
+     USER SHEET (bottom drawer)
+  ════════════════════════════ */
+  .mu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 9500;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .mu-overlay.visible {
+    display: block;
+    opacity: 1;
+  }
+
   .mu-user-sheet {
-    display: block !important;
-    position:fixed; bottom:0; left:0; right:0;
-    background: var(--mu-ink2);
-    border-top: 1.5px solid var(--mu-ink3);
-    border-radius: 20px 20px 0 0;
-    padding: 18px 20px calc(var(--mu-bar-h) + 16px);
-    z-index: 100000;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 9600;
+    background: linear-gradient(180deg, #1e1a14 0%, #141008 100%);
+    border-top: 2px solid rgba(196,138,58,0.3);
+    border-radius: 22px 22px 0 0;
+    padding: 0 0 80px;
     transform: translateY(100%);
-    visibility: hidden;
-    transition: transform 0.32s cubic-bezier(0.34,1.2,0.64,1), visibility 0s linear 0.32s;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.65); box-sizing:border-box;
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
   }
   .mu-user-sheet.open {
-    transform: translateY(0); visibility: visible;
-    transition: transform 0.32s cubic-bezier(0.34,1.2,0.64,1), visibility 0s linear 0s;
+    transform: translateY(0);
   }
-  .mu-sheet-handle { width:38px; height:3px; background:rgba(255,255,255,0.18); border-radius:2px; margin:0 auto 16px; }
-  .mu-sheet-avatar-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--mu-ink3); }
-  .mu-sheet-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2.5px solid var(--mu-gold); flex-shrink:0; }
-  .mu-sheet-name  { font-family:'Playfair Display',Georgia,serif; font-size:17px; color:#fff; font-weight:500; }
-  .mu-sheet-email { font-family:'Inter',Arial,sans-serif; font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+
+  .mu-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(196,138,58,0.3);
+    border-radius: 2px;
+    margin: 12px auto 20px;
+  }
+
+  .mu-sheet-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .mu-sheet-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(196,138,58,0.5);
+    box-shadow: 0 0 12px rgba(196,138,58,0.3);
+  }
+  .mu-sheet-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #f0ebe4;
+    margin-bottom: 2px;
+  }
+  .mu-sheet-email {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: rgba(240,235,228,0.4);
+    letter-spacing: 0.02em;
+  }
+
+  .mu-sheet-btns {
+    padding: 0 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
   .mu-sheet-btn {
-    display:flex; align-items:center; width:100%; padding:13px 2px;
-    background:none; border:none; border-bottom:1px solid rgba(255,255,255,0.07);
-    color:rgba(255,255,255,0.82); font-family:'Inter',Arial,sans-serif;
-    font-size:14px; font-weight:400; cursor:pointer; text-align:left;
-    -webkit-tap-highlight-color:transparent;
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    color: #f0ebe4;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
   }
-  .mu-sheet-btn:last-child { border-bottom:none; }
-  .mu-sheet-btn:active { opacity:0.55; }
+  .mu-sheet-btn:active { background: rgba(196,138,58,0.12); }
 
-  /* ═══ OVERLAY ═══ */
-  .mu-overlay {
-    display: block !important;
-    position:fixed; inset:0; background:rgba(0,0,0,0.55);
-    z-index:99997; opacity:0; pointer-events:none; transition:opacity 0.28s;
-  }
-  .mu-overlay.visible { opacity:1; pointer-events:all; }
-}
+  /* ── Misc fixes ── */
+  .ix-hero { padding-bottom: 12vh !important; }
+  .cm-fab { bottom: 84px !important; }
+  #panelAdminMem { bottom: 84px !important; }
+  #fab-col-admin { bottom: 84px !important; }
+  #btn-panel-admin { bottom: 84px !important; }
 
-@keyframes mu-slideUp {
-  from { transform:translateY(100%); opacity:0; }
-  to   { transform:translateY(0);    opacity:1; }
+  /* Hide scroll indicator on mobile */
+  .ix-hero-scroll,
+  .cm-hero-scroll,
+  .ht-hero-deco { display: none !important; }
+
+  /* Quiénes somos responsive */
+  .qs-hero { grid-template-columns: 1fr !important; min-height: auto !important; }
+  .qs-hero-img { height: 55vw; min-height: 240px; }
+  .qs-fundadora { grid-template-columns: 1fr !important; }
+  .qs-video { grid-template-columns: 1fr !important; gap: 32px; padding: 60px 6% !important; }
+  .qs-mapa { grid-template-columns: 1fr !important; }
+  .qs-mapa-info { padding: 50px 6% !important; }
+  .qs-mapa-frame { min-height: 300px !important; }
+  .qs-redes-cards { grid-template-columns: 1fr !important; }
 }
