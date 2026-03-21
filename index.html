@@ -782,150 +782,300 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){window.cerrarModalC
 
 <script type="module" src="pwa.js"></script>
 <style>
-.adm-overlay { position:fixed;inset:0;background:rgba(8,6,4,.92);backdrop-filter:blur(20px);z-index:50000;display:none;flex-direction:column;overflow:hidden; }
+/* ══ PANEL ADMIN — Gato Miel ══ */
+.adm-overlay { position:fixed;inset:0;background:rgba(8,6,4,.95);backdrop-filter:blur(24px);z-index:50000;display:none;flex-direction:column;overflow:hidden; }
 .adm-overlay.open { display:flex; }
-.adm-topbar { background:linear-gradient(135deg,#1a1714,#2a1f10);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(196,138,58,.2); }
-.adm-topbar h1 { font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:white;margin:0;flex:1; }
-.adm-topbar span { font-family:'Inter',sans-serif;font-size:10px;color:rgba(196,138,58,.7);letter-spacing:.15em;text-transform:uppercase; }
-.adm-close-btn { background:rgba(255,255,255,.08);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center; }
-.adm-tabs { display:flex;gap:0;background:#111;flex-shrink:0;overflow-x:auto;scrollbar-width:none; }
+
+/* Header del panel */
+.adm-topbar {
+  background:linear-gradient(135deg,#1a1714,#2a1f10);
+  padding:16px 20px;display:flex;align-items:center;gap:14px;
+  flex-shrink:0;border-bottom:1px solid rgba(196,138,58,.2);
+}
+.adm-topbar-logo { width:40px;height:40px;border-radius:10px;object-fit:cover;border:2px solid rgba(196,138,58,.4);flex-shrink:0; }
+.adm-topbar-info { flex:1; }
+.adm-topbar-eyebrow { font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,138,58,.6);display:block; }
+.adm-topbar h1 { font-family:'Playfair Display',serif;font-size:17px;font-weight:400;color:white;margin:2px 0 0; }
+.adm-close-btn { background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0; }
+.adm-close-btn:hover { background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#fca5a5; }
+
+/* Tabs navegación */
+.adm-tabs { display:flex;gap:0;background:rgba(26,23,20,0.9);flex-shrink:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,.06); }
 .adm-tabs::-webkit-scrollbar { display:none; }
-.adm-tab { padding:12px 18px;border:none;background:none;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s; }
-.adm-tab.active { color:#c48a3a;border-bottom-color:#c48a3a; }
-.adm-body { flex:1;overflow-y:auto;padding:20px;scrollbar-width:thin;scrollbar-color:#c48a3a #1a1714; }
-.adm-section { display:none; }
+.adm-tab {
+  padding:13px 16px;border:none;background:none;
+  color:rgba(255,255,255,.35);font-family:'Inter',sans-serif;font-size:11px;
+  font-weight:500;cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.adm-tab:hover { color:rgba(255,255,255,.65);background:rgba(255,255,255,.04); }
+.adm-tab.active { color:#c48a3a;border-bottom-color:#c48a3a;background:rgba(196,138,58,.05); }
+.adm-tab-badge {
+  background:#ef4444;color:white;border-radius:50%;
+  min-width:16px;height:16px;font-size:9px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0 3px;
+}
+
+/* Body */
+.adm-body { flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#c48a3a #1a1714; }
+.adm-section { display:none;padding:20px; }
 .adm-section.active { display:block; }
-.adm-card { background:#1e1a16;border:1px solid #2e2720;border-radius:16px;padding:18px;margin-bottom:14px; }
-.adm-card-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
-.adm-card-title { font-family:'Playfair Display',serif;font-size:16px;color:white;font-weight:400; }
-.adm-field { margin-bottom:12px; }
-.adm-field label { display:block;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(196,138,58,.7);margin-bottom:5px; }
-.adm-input { width:100%;padding:9px 12px;background:#2a2420;border:1.5px solid #3a3028;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:white;outline:none;box-sizing:border-box; }
-.adm-input:focus { border-color:#c48a3a; }
-.adm-textarea { width:100%;padding:9px 12px;background:#2a2420;border:1.5px solid #3a3028;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:white;outline:none;box-sizing:border-box;resize:vertical;min-height:70px; }
+
+/* Cards del admin */
+.adm-card {
+  background:#1e1a16;border:1px solid #2e2720;
+  border-radius:16px;padding:0;margin-bottom:16px;overflow:hidden;
+}
+.adm-card-top {
+  background:linear-gradient(135deg,#252018,#1e1a16);
+  padding:14px 18px;border-bottom:1px solid #2e2720;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+}
+.adm-card-body { padding:16px 18px; }
+.adm-card-title { font-family:'Playfair Display',serif;font-size:16px;color:white;font-weight:400;margin-bottom:3px; }
+.adm-card-subtitle { font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35); }
+
+/* Tip/ayuda */
+.adm-tip {
+  background:rgba(196,138,58,.08);border:1px solid rgba(196,138,58,.2);
+  border-radius:12px;padding:12px 14px;margin-bottom:16px;
+  font-family:'Inter',sans-serif;font-size:12px;color:rgba(196,138,58,.8);
+  display:flex;gap:8px;align-items:flex-start;line-height:1.5;
+}
+.adm-tip-icon { font-size:14px;flex-shrink:0;margin-top:1px; }
+
+/* Campos */
+.adm-field { margin-bottom:14px; }
+.adm-field > label {
+  display:flex;align-items:center;gap:6px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(196,138,58,.7);margin-bottom:6px;
+}
+.adm-field-hint { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:auto; }
+.adm-input {
+  width:100%;padding:10px 13px;background:#2a2420;
+  border:1.5px solid #3a3028;border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:13px;color:white;
+  outline:none;box-sizing:border-box;transition:border-color .2s;
+}
+.adm-input:focus { border-color:#c48a3a;background:#2e2822; }
+.adm-textarea {
+  width:100%;padding:10px 13px;background:#2a2420;
+  border:1.5px solid #3a3028;border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:13px;color:white;
+  outline:none;box-sizing:border-box;resize:vertical;min-height:72px;
+  transition:border-color .2s;
+}
 .adm-textarea:focus { border-color:#c48a3a; }
-.adm-btn-save { padding:10px 20px;background:linear-gradient(135deg,#c48a3a,#a8742f);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer; }
-.adm-btn-danger { padding:10px 20px;background:#7f1d1d;color:#fca5a5;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer; }
-.adm-btn-add { width:100%;padding:12px;background:#2a2420;border:1.5px dashed #3a3028;border-radius:12px;color:#c48a3a;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px; }
-.adm-btn-add:hover { background:#332b22;border-color:#c48a3a; }
-.adm-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
-.adm-img-preview { width:100%;height:120px;border-radius:10px;object-fit:cover;border:1px solid #3a3028;margin-bottom:8px;background:#2a2420; }
-.adm-badge-row { display:flex;align-items:center;gap:8px;background:#2a2420;border-radius:10px;padding:10px 12px; }
-.adm-badge-num { font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:#c48a3a; }
-.adm-badge-lbl { font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.5); }
-/* Stat cards */
+.adm-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+
+/* Botones acción */
+.adm-btn-save {
+  padding:10px 18px;background:linear-gradient(135deg,#c48a3a,#a8742f);
+  color:white;border:none;border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px;
+}
+.adm-btn-save:hover { transform:translateY(-1px);box-shadow:0 4px 14px rgba(196,138,58,.35); }
+.adm-btn-danger {
+  padding:10px 18px;background:rgba(127,29,29,.5);color:#fca5a5;
+  border:1px solid rgba(239,68,68,.2);border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;
+}
+.adm-btn-danger:hover { background:#7f1d1d; }
+.adm-btn-add {
+  width:100%;padding:14px;background:transparent;
+  border:1.5px dashed rgba(196,138,58,.3);border-radius:12px;
+  color:#c48a3a;font-family:'Inter',sans-serif;font-size:13px;
+  font-weight:600;cursor:pointer;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.2s;
+}
+.adm-btn-add:hover { background:rgba(196,138,58,.08);border-color:#c48a3a; }
+
+/* Imagen preview */
+.adm-img-preview { width:100%;height:130px;border-radius:10px;object-fit:cover;border:1px solid #3a3028;margin-bottom:10px;background:#2a2420; }
+
+/* Tabla rows */
 .adm-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px; }
-.adm-stat { background:#1e1a16;border:1px solid #2e2720;border-radius:14px;padding:16px;text-align:center; }
-.adm-stat-num { font-family:'Playfair Display',serif;font-size:26px;color:#c48a3a;margin-bottom:4px; }
-.adm-stat-lbl { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em; }
-/* Tabla pedidos/membresias admin */
-.adm-table-row { background:#1e1a16;border:1px solid #2e2720;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px; }
+.adm-stat { background:#1e1a16;border:1px solid #2e2720;border-radius:14px;padding:18px;text-align:center; }
+.adm-stat-num { font-family:'Playfair Display',serif;font-size:28px;color:#c48a3a;margin-bottom:4px; }
+.adm-stat-lbl { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em; }
+.adm-table-row { background:#1e1a16;border:1px solid #2e2720;border-radius:12px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px; }
 .adm-table-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
 .adm-table-info { flex:1;min-width:0; }
 .adm-table-title { font-family:'Inter',sans-serif;font-size:13px;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.adm-table-sub { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);margin-top:2px; }
-.adm-table-badge { font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0; }
-.adm-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#22c55e;color:white;padding:10px 22px;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;z-index:60000;opacity:0;transition:opacity .3s;pointer-events:none; }
+.adm-table-sub { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);margin-top:2px; }
+.adm-table-badge { font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0; }
+
+/* Toast */
+.adm-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:11px 24px;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;z-index:60000;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap; }
 </style>
 
-<!-- OVERLAY ADMIN -->
+<!-- OVERLAY ADMIN — Panel de Control Gato Miel -->
 <div id="modoAdminOverlay" class="adm-overlay">
-  <!-- Top bar -->
+
+  <!-- Header -->
   <div class="adm-topbar">
-    <div>
-      <span>Panel de control</span>
-      <h1>Modo administrador <em style="color:#c48a3a;font-style:italic;">Gato Miel</em></h1>
+    <img src="Assets/Img/Logo.jpg" class="adm-topbar-logo" onerror="this.style.display='none'">
+    <div class="adm-topbar-info">
+      <span class="adm-topbar-eyebrow">Panel de control · Gato Miel Estudio</span>
+      <h1>Administración</h1>
     </div>
-    <button class="adm-close-btn" onclick="cerrarModoAdmin()">✕</button>
+    <button class="adm-close-btn" onclick="cerrarModoAdmin()" title="Cerrar panel">✕</button>
   </div>
 
-  <!-- Tabs -->
+  <!-- Tabs de navegación -->
   <div class="adm-tabs">
-    <button class="adm-tab active" onclick="admTab('resumen',this)">📊 Resumen</button>
-    <button class="adm-tab" onclick="admTab('talleres',this)">🏺 Talleres</button>
-    <button class="adm-tab" onclick="admTab('coleccion',this)">🛍 Colección</button>
-    <button class="adm-tab" onclick="admTab('pedidos',this)">📦 Pedidos</button>
-    <button class="adm-tab" onclick="admTab('membresias',this)">🎫 Membresías</button>
-    <button class="adm-tab" onclick="admTab('comunidad',this)">🖼 Comunidad</button>
-    <button class="adm-tab" onclick="admTab('chats',this)">💬 Chats</button>
+    <button class="adm-tab active" onclick="admTab('resumen',this)">
+      📊 Resumen
+    </button>
+    <button class="adm-tab" onclick="admTab('talleres',this)">
+      🏺 Mis Talleres
+    </button>
+    <button class="adm-tab" onclick="admTab('coleccion',this)">
+      🛍 Colección
+    </button>
+    <button class="adm-tab" onclick="admTab('pedidos',this)">
+      📦 Pedidos <span class="adm-tab-badge" id="badge-tab-pedidos" style="display:none;"></span>
+    </button>
+    <button class="adm-tab" onclick="admTab('membresias',this)">
+      🎫 Membresías <span class="adm-tab-badge" id="badge-tab-memb" style="display:none;"></span>
+    </button>
+    <button class="adm-tab" onclick="admTab('comunidad',this)">
+      🖼 Comunidad
+    </button>
+    <button class="adm-tab" onclick="admTab('chats',this)">
+      💬 Chats <span class="adm-tab-badge" id="badge-tab-chats" style="display:none;"></span>
+    </button>
   </div>
 
-  <!-- Body -->
+  <!-- Contenido -->
   <div class="adm-body">
 
-    <!-- RESUMEN -->
+    <!-- ════ RESUMEN ════ -->
     <div id="adm-resumen" class="adm-section active">
-      <div class="adm-stats">
-        <div class="adm-stat"><div class="adm-stat-num" id="adm-st-pedidos">—</div><div class="adm-stat-lbl">Pedidos</div></div>
-        <div class="adm-stat"><div class="adm-stat-num" id="adm-st-memb">—</div><div class="adm-stat-lbl">Membresías</div></div>
-        <div class="adm-stat"><div class="adm-stat-num" id="adm-st-pend">—</div><div class="adm-stat-lbl">Pendientes</div></div>
+      <div class="adm-tip">
+        <span class="adm-tip-icon">👋</span>
+        <span>¡Bienvenida! Desde aquí puedes gestionar todo tu estudio. Usa las pestañas de arriba para navegar entre secciones.</span>
       </div>
-      <div class="adm-card">
-        <p style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;margin:0;">Bienvenida al panel de administración. Usa las pestañas para gestionar talleres, colección, pedidos, membresías y chats. Los cambios en talleres y colección se guardan en Firestore y se reflejan en tiempo real en el sitio.</p>
+      <div class="adm-stats">
+        <div class="adm-stat">
+          <div class="adm-stat-num" id="adm-st-pedidos">—</div>
+          <div class="adm-stat-lbl">Pedidos totales</div>
+        </div>
+        <div class="adm-stat">
+          <div class="adm-stat-num" id="adm-st-memb">—</div>
+          <div class="adm-stat-lbl">Membresías</div>
+        </div>
+        <div class="adm-stat">
+          <div class="adm-stat-num" id="adm-st-pend" style="color:#f59e0b;">—</div>
+          <div class="adm-stat-lbl">Pendientes</div>
+        </div>
       </div>
       <div id="adm-resumen-ultimos"></div>
     </div>
 
-    <!-- TALLERES -->
+    <!-- ════ TALLERES ════ -->
     <div id="adm-talleres" class="adm-section">
 
-      <!-- GESTIÓN DE CUPOS EN TIEMPO REAL -->
-      <div class="adm-card" style="margin-bottom:18px;">
-        <div class="adm-card-header" style="margin-bottom:12px;">
-          <span class="adm-card-title">🪑 Cupos · <em style="color:#c48a3a;font-style:italic;">Arcilla Nocturna</em></span>
-          <span style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(196,138,58,.6);letter-spacing:.1em;text-transform:uppercase;">Tiempo real</span>
+      <!-- Cupos en tiempo real -->
+      <div class="adm-card" style="margin-bottom:20px;">
+        <div class="adm-card-top">
+          <div>
+            <div class="adm-card-title">🪑 Cupos disponibles · Arcilla Nocturna</div>
+            <div class="adm-card-subtitle">Actualización en tiempo real · los clientes ven esto al instante</div>
+          </div>
+          <span style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(34,197,94,.7);background:rgba(34,197,94,.1);padding:3px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(34,197,94,.2);">🟢 EN VIVO</span>
         </div>
-        <div id="adm-cupos-lista" style="display:flex;flex-direction:column;gap:8px;">
-          <div style="text-align:center;padding:16px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:12px;">Cargando cupos...</div>
+        <div class="adm-card-body">
+          <div class="adm-tip" style="margin-bottom:12px;">
+            <span class="adm-tip-icon">💡</span>
+            <span>Usa los botones <strong>+</strong> y <strong>−</strong> para ajustar cuántas personas hay inscriptas en cada horario. Cuando está lleno, el horario se marca como "Agotado" para los clientes.</span>
+          </div>
+          <div id="adm-cupos-lista" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
       </div>
 
+      <div class="adm-tip">
+        <span class="adm-tip-icon">📝</span>
+        <span>Aquí editas la información de tus talleres: nombre, precio, descripción, cupos máximos e imagen. Los cambios se reflejan en la web al instante.</span>
+      </div>
       <div id="adm-talleres-lista"></div>
-      <button class="adm-btn-add" onclick="admNuevoTaller()">+ Añadir nuevo taller</button>
+      <button class="adm-btn-add" onclick="admNuevoTaller()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Crear nuevo taller
+      </button>
     </div>
 
-    <!-- COLECCIÓN -->
+    <!-- ════ COLECCIÓN ════ -->
     <div id="adm-coleccion" class="adm-section">
+      <div class="adm-tip">
+        <span class="adm-tip-icon">🏺</span>
+        <span>Administra tus piezas de cerámica. Puedes cambiar el nombre, precio, stock e imagen. Cuando el stock llega a 0, la pieza aparece como "Agotada" en la tienda.</span>
+      </div>
       <div id="adm-coleccion-lista"></div>
-      <button class="adm-btn-add" onclick="admNuevaPieza()">+ Añadir nueva pieza</button>
+      <button class="adm-btn-add" onclick="admNuevaPieza()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Agregar nueva pieza
+      </button>
     </div>
 
-    <!-- PEDIDOS -->
+    <!-- ════ PEDIDOS ════ -->
     <div id="adm-pedidos" class="adm-section">
-      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="adm-tab active" id="adm-fp-pend" onclick="admFiltrarP('pendiente',this)" style="border-radius:50px;border:1.5px solid #3a3028;">⏳ Pendientes</button>
-        <button class="adm-tab" id="adm-fp-conf" onclick="admFiltrarP('confirmado',this)" style="border-radius:50px;border:1.5px solid #3a3028;">✓ Confirmados</button>
-        <button class="adm-tab" id="adm-fp-rech" onclick="admFiltrarP('rechazado',this)" style="border-radius:50px;border:1.5px solid #3a3028;">✕ Rechazados</button>
-        <button class="adm-tab" id="adm-fp-todos" onclick="admFiltrarP('todos',this)" style="border-radius:50px;border:1.5px solid #3a3028;">Todos</button>
+      <div class="adm-tip">
+        <span class="adm-tip-icon">📦</span>
+        <span>Aquí ves las compras de piezas de tu colección. Revisa el comprobante de pago y confirma o rechaza cada pedido.</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="adm-tab active" id="adm-fp-pend" onclick="admFiltrarP('pendiente',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">⏳ Pendientes</button>
+        <button class="adm-tab" id="adm-fp-conf" onclick="admFiltrarP('confirmado',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">✅ Confirmados</button>
+        <button class="adm-tab" id="adm-fp-rech" onclick="admFiltrarP('rechazado',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">❌ Rechazados</button>
+        <button class="adm-tab" id="adm-fp-todos" onclick="admFiltrarP('todos',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">Ver todos</button>
       </div>
       <div id="adm-pedidos-lista"></div>
     </div>
 
-    <!-- MEMBRESÍAS -->
+    <!-- ════ MEMBRESÍAS ════ -->
     <div id="adm-membresias" class="adm-section">
-      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="adm-tab active" id="adm-fm-pend" onclick="admFiltrarM('pendiente',this)" style="border-radius:50px;border:1.5px solid #3a3028;">⏳ Pendientes</button>
-        <button class="adm-tab" id="adm-fm-conf" onclick="admFiltrarM('confirmado',this)" style="border-radius:50px;border:1.5px solid #3a3028;">✓ Confirmadas</button>
-        <button class="adm-tab" id="adm-fm-rech" onclick="admFiltrarM('rechazado',this)" style="border-radius:50px;border:1.5px solid #3a3028;">✕ Rechazadas</button>
-        <button class="adm-tab" id="adm-fm-todos" onclick="admFiltrarM('todos',this)" style="border-radius:50px;border:1.5px solid #3a3028;">Todas</button>
+      <div class="adm-tip">
+        <span class="adm-tip-icon">🎫</span>
+        <span>Aquí ves las inscripciones a tus talleres. Revisa el comprobante y confirma el pago para reservar la plaza. Al confirmar, el cupo se descuenta automáticamente.</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="adm-tab active" id="adm-fm-pend" onclick="admFiltrarM('pendiente',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">⏳ Pendientes</button>
+        <button class="adm-tab" id="adm-fm-conf" onclick="admFiltrarM('confirmado',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">✅ Confirmadas</button>
+        <button class="adm-tab" id="adm-fm-rech" onclick="admFiltrarM('rechazado',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">❌ Rechazadas</button>
+        <button class="adm-tab" id="adm-fm-todos" onclick="admFiltrarM('todos',this)" style="border-radius:50px;border:1.5px solid #3a3028;background:#1e1a16;font-size:11px;">Ver todas</button>
       </div>
       <div id="adm-membresias-lista"></div>
     </div>
 
-    <!-- CHATS -->
+    <!-- ════ CHATS ════ -->
     <div id="adm-chats" class="adm-section">
+      <div class="adm-tip">
+        <span class="adm-tip-icon">💬</span>
+        <span>Mensajes de tus clientes. Puedes ver el historial de conversaciones.</span>
+      </div>
       <div id="adm-chats-lista"></div>
     </div>
 
-    <!-- COMUNIDAD -->
+    <!-- ════ COMUNIDAD ════ -->
     <div id="adm-comunidad" class="adm-section">
+      <div class="adm-tip">
+        <span class="adm-tip-icon">🖼</span>
+        <span>Publicaciones de tu comunidad. Puedes eliminar posts o comentarios inapropiados.</span>
+      </div>
       <div id="adm-comunidad-lista"></div>
     </div>
 
   </div>
 </div>
 
-<!-- Toast -->
+<!-- Toast de notificaciones -->
 <div id="adm-toast" class="adm-toast"></div>
 
 <script type="module">
@@ -955,9 +1105,12 @@ onAuthStateChanged(_auth, user => {
 function toast(msg, ok=true) {
   const t = document.getElementById("adm-toast");
   t.textContent = msg;
-  t.style.background = ok ? "#22c55e" : "#dc2626";
+  t.style.background = ok ? "linear-gradient(135deg,#22c55e,#16a34a)" : "linear-gradient(135deg,#dc2626,#b91c1c)";
+  t.style.color = "white";
+  t.style.boxShadow = ok ? "0 6px 20px rgba(34,197,94,.4)" : "0 6px 20px rgba(220,38,38,.4)";
   t.style.opacity = "1";
-  setTimeout(() => t.style.opacity="0", 2500);
+  t.style.transform = "translateX(-50%) translateY(0)";
+  setTimeout(() => { t.style.opacity="0"; t.style.transform="translateX(-50%) translateY(10px)"; }, 2800);
 }
 
 // ── Tabs ──
@@ -1092,17 +1245,34 @@ async function admCargarResumen() {
     document.getElementById("adm-st-pedidos").textContent = peds.length;
     document.getElementById("adm-st-memb").textContent    = membs.length;
     document.getElementById("adm-st-pend").textContent    = pend;
+    // Actualizar badges en tabs
+    const pendPed  = peds.filter(x=>x.estado==="pendiente").length;
+    const pendMemb = membs.filter(x=>x.estado==="pendiente").length;
+    const bTP = document.getElementById("badge-tab-pedidos");
+    const bTM = document.getElementById("badge-tab-memb");
+    if (bTP) { bTP.textContent=pendPed; bTP.style.display=pendPed>0?"inline-flex":"none"; }
+    if (bTM) { bTM.textContent=pendMemb; bTM.style.display=pendMemb>0?"inline-flex":"none"; }
+
     const ul = document.getElementById("adm-resumen-ultimos");
     const recientes = peds.sort((a,b)=>(b.fecha?.toMillis?.()??0)-(a.fecha?.toMillis?.()??0)).slice(0,5);
-    ul.innerHTML = `<p style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:10px;">Últimos pedidos</p>`;
+    ul.innerHTML = '';
+    if (recientes.length) {
+      const hdr = document.createElement("p");
+      hdr.style.cssText = "font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,138,58,.6);margin-bottom:10px;";
+      hdr.textContent = "Últimos pedidos recibidos";
+      ul.appendChild(hdr);
+    }
     recientes.forEach(p => {
       const eDot = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
+      const eText = p.estado==="confirmado"?"✅ Confirmado":p.estado==="rechazado"?"❌ Rechazado":"⏳ Pendiente";
       const d = document.createElement("div");
       d.className = "adm-table-row";
       d.innerHTML = `<div class="adm-table-dot" style="background:${eDot}"></div>
-        <div class="adm-table-info"><div class="adm-table-title">${p.producto||"—"} · S/ ${p.monto||"—"}</div>
-        <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div></div>
-        <span class="adm-table-badge" style="background:${eDot}22;color:${eDot};">${p.estado}</span>`;
+        <div class="adm-table-info">
+          <div class="adm-table-title">${p.producto||"—"} · <span style="color:#c48a3a;">S/ ${p.monto||"—"}</span></div>
+          <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div>
+        </div>
+        <span class="adm-table-badge" style="background:${eDot}22;color:${eDot};">${eText}</span>`;
       ul.appendChild(d);
     });
   } catch(e) { console.error("Resumen error:", e); }
@@ -1163,40 +1333,78 @@ function admRenderTallerCard(id, data, container, esTemp=false) {
   card.className = "adm-card";
   card.id = `tcard-${id}`;
   const imgSrc = data.imagen || "";
+  const activo = data.activo !== false;
   card.innerHTML = `
-    <div class="adm-card-header">
-      <span class="adm-card-title">🏺 <span id="t-title-lbl-${id}">${data.nombre||"Taller"}</span></span>
-      <div style="display:flex;gap:8px;align-items:center;">
-        ${esTemp ? '<span style="font-family:Inter,sans-serif;font-size:9px;color:#f59e0b;background:#f59e0b22;padding:2px 8px;border-radius:20px;">local</span>' : ''}
+    <div class="adm-card-top">
+      <div>
+        <div class="adm-card-title">🏺 <span id="t-title-lbl-${id}">${data.nombre||"Nuevo taller"}</span></div>
+        <div class="adm-card-subtitle" style="margin-top:4px;display:flex;gap:8px;align-items:center;">
+          <span style="padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600;${activo?'background:rgba(34,197,94,.15);color:#22c55e;':'background:rgba(255,255,255,.08);color:#888;'}">${activo?'✅ Activo':'🔒 Inactivo'}</span>
+          <span>S/ ${data.precio||0} · ${data.cupos||0} cupos máx.</span>
+          ${esTemp?'<span style="background:#f59e0b22;color:#f59e0b;padding:2px 8px;border-radius:20px;font-size:9px;">sin guardar</span>':''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
         <button class="adm-btn-save" onclick="admGuardarTaller('${id}',this)">💾 Guardar</button>
-        ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarTaller('${id}',this)">Eliminar</button>` : ''}
+        ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarTaller('${id}',this)">🗑</button>` : ''}
       </div>
     </div>
-    ${imgSrc ? `<img id="img-prev-t-${id}" src="${imgSrc}" class="adm-img-preview" onerror="this.style.display='none'">` : `<div id="img-prev-t-${id}" style="width:100%;height:120px;background:#2a2420;border-radius:10px;border:1px dashed #3a3028;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:12px;font-family:Inter,sans-serif;margin-bottom:8px;">Sin imagen</div>`}
-    <div class="adm-grid-2">
-      <div class="adm-field"><label>Nombre</label><input class="adm-input" id="t-nom-${id}" value="${escHtml(data.nombre||'')}" oninput="document.getElementById('t-title-lbl-${id}').textContent=this.value||'Taller'"></div>
-      <div class="adm-field"><label>Precio (S/)</label><input class="adm-input" type="number" id="t-precio-${id}" value="${data.precio||0}" min="0"></div>
-    </div>
-    <div class="adm-field"><label>Descripción</label><textarea class="adm-textarea" id="t-desc-${id}">${escHtml(data.descripcion||'')}</textarea></div>
-    <div class="adm-grid-2">
-      <div class="adm-field"><label>Cupos máximos</label><input class="adm-input" type="number" id="t-cupos-${id}" value="${data.cupos||0}" min="0"></div>
-      <div class="adm-field"><label>Estado</label>
-        <select class="adm-input" id="t-activo-${id}">
-          <option value="true"  ${data.activo!==false?'selected':''}>✅ Activo</option>
-          <option value="false" ${data.activo===false?'selected':''}>🔒 Inactivo</option>
-        </select>
+    <div class="adm-card-body">
+      ${imgSrc ? `<img id="img-prev-t-${id}" src="${imgSrc}" class="adm-img-preview" onerror="this.style.display='none'">` : `<div id="img-prev-t-${id}" style="width:100%;height:110px;background:#2a2420;border-radius:10px;border:1px dashed #3a3028;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:12px;font-family:Inter,sans-serif;margin-bottom:12px;gap:8px;"><span style="font-size:24px">📷</span><span>Sin imagen todavía</span></div>`}
+
+      <div class="adm-grid-2">
+        <div class="adm-field">
+          <label>📌 Nombre del taller <span class="adm-field-hint">Lo ven los clientes</span></label>
+          <input class="adm-input" id="t-nom-${id}" value="${escHtml(data.nombre||'')}"
+            oninput="document.getElementById('t-title-lbl-${id}').textContent=this.value||'Nuevo taller'">
+        </div>
+        <div class="adm-field">
+          <label>💰 Precio <span class="adm-field-hint">en S/ (soles)</span></label>
+          <input class="adm-input" type="number" id="t-precio-${id}" value="${data.precio||0}" min="0" placeholder="150">
+        </div>
       </div>
-    </div>
-    <div class="adm-field">
-      <label>📎 Subir nueva imagen</label>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <label style="flex:1;padding:9px 12px;background:#2a2420;border:1.5px dashed #c48a3a44;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;color:#c48a3a;text-align:center;display:block;" for="file-t-${id}">📸 Elegir imagen</label>
-        <input type="file" id="file-t-${id}" accept="image/*" style="display:none;" onchange="admSubirImagenTaller('${id}',this)">
+
+      <div class="adm-field">
+        <label>📝 Descripción <span class="adm-field-hint">Aparece en la card del taller</span></label>
+        <textarea class="adm-textarea" id="t-desc-${id}" placeholder="Describe el taller: qué se aprende, para quién es, qué incluye...">${escHtml(data.descripcion||'')}</textarea>
       </div>
-      <input class="adm-input" id="t-img-${id}" value="${escHtml(data.imagen||'')}" placeholder="o pega URL aquí" style="margin-top:6px;" oninput="admPrevImgT('${id}',this.value)">
+
+      <div class="adm-grid-2">
+        <div class="adm-field">
+          <label>🪑 Cupos máximos <span class="adm-field-hint">Total de lugares</span></label>
+          <input class="adm-input" type="number" id="t-cupos-${id}" value="${data.cupos||0}" min="1" placeholder="8">
+        </div>
+        <div class="adm-field">
+          <label>📣 Visibilidad <span class="adm-field-hint">¿Se muestra en la web?</span></label>
+          <select class="adm-input" id="t-activo-${id}" onchange="admActualizarEstadoTaller('${id}',this.value)">
+            <option value="true"  ${activo?'selected':''}>✅ Visible — inscripciones abiertas</option>
+            <option value="false" ${!activo?'selected':''}>🔒 Oculto — próximamente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="adm-field">
+        <label>🖼 Imagen del taller</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;padding:10px 12px;background:#2a2420;border:1.5px dashed rgba(196,138,58,.4);border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;color:#c48a3a;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;" for="file-t-${id}">
+            <span>📸</span><span>Elegir foto desde mi dispositivo</span>
+          </label>
+          <input type="file" id="file-t-${id}" accept="image/*" style="display:none;" onchange="admSubirImagenTaller('${id}',this)">
+        </div>
+        <input class="adm-input" id="t-img-${id}" value="${escHtml(data.imagen||'')}" placeholder="O pega aquí un enlace de imagen (URL)" oninput="admPrevImgT('${id}',this.value)">
+      </div>
     </div>`;
   container.appendChild(card);
 }
+
+window.admActualizarEstadoTaller = (id, val) => {
+  const lbl = document.querySelector(`#tcard-${id} .adm-card-subtitle span:first-child`);
+  if (!lbl) return;
+  const activo = val === "true";
+  lbl.style.background = activo ? "rgba(34,197,94,.15)" : "rgba(255,255,255,.08)";
+  lbl.style.color = activo ? "#22c55e" : "#888";
+  lbl.textContent = activo ? "✅ Activo" : "🔒 Inactivo";
+};
 
 window.admPrevImgT = (id, url) => {
   const prev = document.getElementById(`img-prev-t-${id}`);
@@ -1236,7 +1444,10 @@ window.admGuardarTaller = async (id, btn) => {
     } else {
       await updateDoc(doc(_db,"config_talleres",id), data);
     }
-    toast("✓ Taller guardado");
+    toast("✓ Taller guardado correctamente");
+    // Actualizar subtitle en card
+    const sub = document.querySelector(`#tcard-${id} .adm-card-subtitle`);
+    if (sub) sub.innerHTML = `<span style="padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600;${activo?'background:rgba(34,197,94,.15);color:#22c55e;':'background:rgba(255,255,255,.08);color:#888;'}">${activo?'✅ Activo':'🔒 Inactivo'}</span><span>S/ ${precio} · ${cupos} cupos máx.</span>`;
   } catch(e) { toast("Error: "+e.message, false); }
   btn.textContent = "💾 Guardar"; btn.disabled = false;
 };
@@ -1455,8 +1666,9 @@ function admRenderPedidos() {
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
         <span class="adm-table-badge" style="background:${eDots[p.estado]||'#f59e0b'}22;color:${eDots[p.estado]||'#f59e0b'};">${p.estado||"—"}</span>
-        ${p.estado==="pendiente"?`<button onclick="admConfPed('${p.id}',this)" style="padding:4px 10px;background:#22c55e;color:white;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✓ OK</button>
-        <button onclick="admRechPed('${p.id}',this)" style="padding:4px 10px;background:#7f1d1d;color:#fca5a5;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✕</button>`:""}
+        ${p.estado==="pendiente"?`
+          <button onclick="admConfPed('${p.id}',this)" style="padding:5px 11px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:4px;">✓ Confirmar</button>
+          <button onclick="admRechPed('${p.id}',this)" style="padding:5px 11px;background:rgba(127,29,29,.5);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✕ Rechazar</button>`:""}
       </div>`;
     if (p.comprobanteURL) {
       const imgDiv = document.createElement("div");
@@ -1519,8 +1731,9 @@ function admRenderMemb() {
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
         <span class="adm-table-badge" style="background:${eDots[m.estado]||'#f59e0b'}22;color:${eDots[m.estado]||'#f59e0b'};">${m.estado||"—"}</span>
-        ${m.estado==="pendiente"?`<button onclick="admConfMemb('${m.id}',this)" style="padding:4px 10px;background:#22c55e;color:white;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✓ OK</button>
-        <button onclick="admRechMemb('${m.id}',this)" style="padding:4px 10px;background:#7f1d1d;color:#fca5a5;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✕</button>`:""}
+        ${m.estado==="pendiente"?`
+          <button onclick="admConfMemb('${m.id}',this)" style="padding:5px 11px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:8px;font-size:10px;cursor:pointer;font-weight:700;">✓ Confirmar</button>
+          <button onclick="admRechMemb('${m.id}',this)" style="padding:5px 11px;background:rgba(127,29,29,.5);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:10px;cursor:pointer;font-weight:600;">✕ Rechazar</button>`:""}
       </div>`;
     lista.appendChild(row);
   });
@@ -1720,19 +1933,22 @@ function renderTallerCard(data) {
   const img = data.imagen || "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80";
   const art = document.createElement("article");
   art.className = "ix-card";
-  if (!activo) art.style.opacity = "0.55";
+  if (!activo) art.style.opacity = "0.6";
+  const cupos = data.cupos || 0;
   art.innerHTML = `
     <div class="ix-card-img">
       <img src="${img}" alt="${data.nombre||''}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80'" style="width:100%;height:100%;object-fit:cover;">
-      <span class="ix-card-badge">${data.cupos||0} cupos</span>
-      ${!activo ? '<span style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:4px 10px;border-radius:20px;font-family:Inter,sans-serif;">Próximamente</span>' : ''}
+      ${activo
+        ? `<span class="ix-card-badge" style="background:var(--gold);color:white;">${cupos} cupos</span>`
+        : `<span class="ix-card-badge" style="background:rgba(0,0,0,.7);color:#fff;">Próximamente</span>`
+      }
     </div>
     <div class="ix-card-body">
       <h3>${data.nombre||"Taller"}</h3>
-      <p>${data.descripcion||""}</p>
+      <p>${data.descripcion||"Taller de cerámica artesanal."}</p>
       <div class="ix-card-footer">
         <span class="ix-precio">S/ ${data.precio||0}</span>
-        <a href="historial-De_Talleres.html" class="ix-link">Ver más →</a>
+        <a href="historial-De_Talleres.html" class="ix-link">${activo?'Inscribirme →':'Ver más →'}</a>
       </div>
     </div>`;
   return art;
