@@ -64,55 +64,30 @@ onAuthStateChanged(_auth, (user) => {
     <div class="ht-hero-deco"><div class="ht-hero-line"></div></div>
   </section>
 
+  <!-- ═══ TALLERES ACTIVOS (dinámicos desde Firestore) ═══ -->
   <section class="ht-seccion" id="actuales">
     <div class="ht-seccion-header">
       <span class="ht-label ht-label-activo">Inscripciones abiertas</span>
       <h2>Talleres actuales</h2>
     </div>
-    <div class="ht-grid">
-      <article class="ht-card">
-        <div class="ht-card-img">
-          <img src="Assets/Img/Taller1.jpg" alt="Arcilla Nocturna" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
-          <span class="ht-badge ht-badge-open">Abierto</span>
-        </div>
-        <div class="ht-card-body">
-          <h3>Arcilla Nocturna</h3>
-          <p>Taller semanal para experimentar técnicas de modelado en un ambiente creativo y relajado.</p>
-          <div class="ht-cupos-resumen">
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="num-h0"></div></div>
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="num-h1"></div></div>
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
-          </div>
-          <div class="ht-card-footer">
-            <button class="ht-btn-solid" onclick="abrirPagoMembresia()">Pagar membresía</button>
-          </div>
-        </div>
-      </article>
+    <div class="ht-grid" id="ht-talleres-activos-grid">
+      <!-- Cargando desde Firestore... -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;font-family:'Inter',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:12px;">
+        <div style="width:20px;height:20px;border:2px solid #e8d5b7;border-top-color:#c48a3a;border-radius:50%;animation:htSpin .8s linear infinite;"></div>
+        Cargando talleres...
+      </div>
     </div>
   </section>
 
-  <div class="ht-divisor"></div>
+  <div class="ht-divisor" id="ht-div-pronto" style="display:none;"></div>
 
-  <section class="ht-seccion ht-seccion-pronto" id="proximos">
+  <!-- ═══ TALLERES PRÓXIMOS (dinámicos) ═══ -->
+  <section class="ht-seccion ht-seccion-pronto" id="proximos" style="display:none;">
     <div class="ht-seccion-header">
       <span class="ht-label ht-label-pronto">Próximamente</span>
       <h2>Talleres por venir</h2>
     </div>
-    <div class="ht-grid">
-      <article class="ht-card ht-card-dim">
-        <div class="ht-card-img">
-          <img src="Assets/Img/Taller2.jpg" alt="Iniciación al Torno" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
-          <span class="ht-badge ht-badge-soon">Pronto</span>
-        </div>
-        <div class="ht-card-body">
-          <h3>Iniciación al Torno</h3>
-          <p>Curso intensivo para aprender desde cero el trabajo en torno cerámico.</p>
-          <div class="ht-card-footer ht-card-footer-soon">
-            <span class="ht-aviso">Avisarme cuando abra</span>
-          </div>
-        </div>
-      </article>
-    </div>
+    <div class="ht-grid" id="ht-talleres-proximos-grid"></div>
   </section>
 </main>
 <footer class="footer"><p>© 2026 Gato Miel Estudio</p></footer>
@@ -1051,6 +1026,102 @@ document.addEventListener("keydown", e => {
 </script>
 
 <script type="module" src="Js/src/chat.js"></script>
+
+<!-- ═══ CARGA DINÁMICA DE TALLERES DESDE FIRESTORE ═══ -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const _fc = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _app = getApps().length ? getApps()[0] : initializeApp(_fc);
+const _db  = getFirestore(_app);
+
+// Taller principal Arcilla Nocturna hardcodeado para el modal de pago
+const TALLER_PRINCIPAL_ID = "arcilla-nocturna";
+
+onSnapshot(collection(_db, "config_talleres"), snap => {
+  const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  const activos  = docs.filter(d => d.activo !== false);
+  const proximos = docs.filter(d => d.activo === false);
+
+  // ── Grilla de talleres ACTIVOS ──
+  const gridA = document.getElementById("ht-talleres-activos-grid");
+  if (!gridA) return;
+  gridA.innerHTML = "";
+
+  if (activos.length === 0) {
+    gridA.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay talleres activos por ahora 🐱</div>`;
+  } else {
+    activos.forEach(t => {
+      const img = t.imagen || "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80";
+      const esPrincipal = t.nombre?.toLowerCase().includes("arcilla");
+
+      const art = document.createElement("article");
+      art.className = "ht-card";
+      art.innerHTML = `
+        <div class="ht-card-img">
+          <img src="${img}" alt="${t.nombre||''}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
+          <span class="ht-badge ht-badge-open">Abierto · ${t.cupos||0} cupos</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>${t.nombre||"Taller"}</h3>
+          <p>${t.descripcion||"Taller de cerámica artesanal."}</p>
+          ${esPrincipal ? `
+          <div class="ht-cupos-resumen">
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="num-h0"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="num-h1"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
+          </div>
+          <div class="ht-card-footer">
+            <span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ ${t.precio||150}</span>
+            <button class="ht-btn-solid" onclick="abrirPagoMembresia()" style="width:auto;padding:11px 24px;">Inscribirme →</button>
+          </div>` : `
+          <div class="ht-card-footer">
+            <span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ ${t.precio||0}</span>
+            <a href="#" class="ht-btn-solid" style="width:auto;padding:11px 24px;text-decoration:none;" onclick="alert('Próximamente disponible para inscripción 🐱')">Ver horarios</a>
+          </div>`}
+        </div>`;
+      gridA.appendChild(art);
+    });
+  }
+
+  // ── Sección PRÓXIMOS ──
+  const secProx  = document.getElementById("proximos");
+  const divProx  = document.getElementById("ht-div-pronto");
+  const gridProx = document.getElementById("ht-talleres-proximos-grid");
+  if (!secProx || !gridProx) return;
+
+  if (proximos.length > 0) {
+    secProx.style.display = "";
+    if (divProx) divProx.style.display = "";
+    gridProx.innerHTML = "";
+    proximos.forEach(t => {
+      const img = t.imagen || "https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80";
+      const art = document.createElement("article");
+      art.className = "ht-card ht-card-dim";
+      art.innerHTML = `
+        <div class="ht-card-img">
+          <img src="${img}" alt="${t.nombre||''}" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=700&q=80'">
+          <span class="ht-badge ht-badge-soon">Pronto</span>
+        </div>
+        <div class="ht-card-body">
+          <h3>${t.nombre||"Próximo taller"}</h3>
+          <p>${t.descripcion||"Taller de cerámica artesanal."}</p>
+          <div class="ht-card-footer ht-card-footer-soon">
+            <span style="font-family:'Playfair Display',serif;font-size:17px;color:#bbb;">S/ ${t.precio||0}</span>
+            <span class="ht-aviso">Próximamente</span>
+          </div>
+        </div>`;
+      gridProx.appendChild(art);
+    });
+  } else {
+    secProx.style.display = "none";
+    if (divProx) divProx.style.display = "none";
+  }
+});
+</script>
+
 <script src="movil-ui.js"></script>
 </body>
 </html>
