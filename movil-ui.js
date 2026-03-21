@@ -162,8 +162,7 @@
 
       var html = '<img class="mu-topbar-avatar" id="mu-topbar-avatar" src="' + src + '" onerror="this.src=\'Assets/Img/Avatares/GatoMiel.jpeg\'">';
       if (isAdmin) {
-        html += '<button class="mu-admin-btn" id="mu-admin-btn-topbar" title="Panel admin">' +
-          '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07"/><path d="M4.93 4.93A10 10 0 0 1 19.07 19.07"/></svg>' +
+        html += '<button class="mu-admin-btn" id="mu-admin-btn-topbar" title="Panel admin">⚙️' +
           '<span id="mu-admin-badge"></span>' +
           '</button>';
       }
@@ -175,8 +174,9 @@
       // Admin button opens admin panel
       var adminTopBtn = document.getElementById("mu-admin-btn-topbar");
       if (adminTopBtn) {
+        adminTopBtn.style.cssText = "background:rgba(196,138,58,.15);border:1.5px solid rgba(196,138,58,.35);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative;";
         adminTopBtn.addEventListener("click", function() {
-          if (typeof window.abrirModoAdmin === "function") {
+          if (paginaActual === "inicio" && typeof window.abrirModoAdmin === "function") {
             window.abrirModoAdmin();
           } else {
             window.location.href = "index.html#admin";
