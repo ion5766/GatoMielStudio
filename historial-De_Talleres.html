@@ -562,6 +562,8 @@ let currentUser      = null;
 
 // ── Cargar cupos máximos dinámicos desde config_talleres ──
 let _precioTaller = 150;
+// Expose setter so external scripts can update the price
+window._setPrecioTaller = (p) => { _precioTaller = p; };
 (async () => {
   try {
     const { getDocs: _gd, collection: _col } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -692,7 +694,19 @@ window.abrirPagoMembresia = function() {
     return;
   }
   horarioElegidoId = null; horarioElegido = null;
-  renderHorarios();
+  // If opening for a different taller, reload cupos from Firestore
+  const docId = window._tallerActualDocId || "arcilla-nocturna";
+  if (docId !== TALLER_ID) {
+    // Load cupos for this taller on the fly
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({doc:fd,getDoc:fg}) => {
+      fg(fd(db,"talleres",docId)).then(snap => {
+        cuposData = snap.exists() ? snap.data() : {};
+        renderHorarios();
+      }).catch(() => { cuposData = {}; renderHorarios(); });
+    });
+  } else {
+    renderHorarios();
+  }
   document.getElementById("modalHorario").style.display = "flex";
   document.body.style.overflow = "hidden";
 };
@@ -1180,17 +1194,20 @@ function _updateCuposCard(data, cuposMax, h0id, h1id, h2id) {
 
 // ── Abrir modal para CUALQUIER taller ──
 window.abrirPagoMembresiaTaller = function(tallerId, nombre, precio, cuposDocId) {
-  // Reusar el modal existente de Arcilla Nocturna
-  // Actualizar precio dinámicamente
+  // Guardar IDs en window para que el módulo principal los lea
   window._tallerActualId    = tallerId;
   window._tallerActualDocId = cuposDocId;
-  _precioTaller = precio;
-  _actualizarPrecioUI(precio);
-  // Actualizar título en el modal
-  const titulos = document.querySelectorAll(".ht-modal-hero-title");
-  titulos.forEach(t => t.textContent = nombre || "Taller");
-  // Abrir el modal de horarios normal
-  abrirPagoMembresia();
+  // Pasar precio al módulo principal via window bridge
+  if (window._setPrecioTaller) window._setPrecioTaller(Number(precio));
+  // Actualizar precio en UI directamente
+  const p = Number(precio) || 150;
+  document.querySelectorAll(".ht-monto-pill strong").forEach(el => el.textContent = "S/ " + p);
+  const subH = document.querySelector("#modalHorario .ht-modal-hero-sub");
+  if (subH) subH.textContent = "elige tu horario · S/ " + p;
+  // Actualizar título en ambos modales
+  document.querySelectorAll(".ht-modal-hero-title").forEach(el => el.textContent = nombre || "Taller");
+  // Abrir el modal de horarios
+  window.abrirPagoMembresia();
 };
 </script>
 
