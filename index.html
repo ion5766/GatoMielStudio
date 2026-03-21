@@ -856,7 +856,17 @@ window.abrirModoAdmin = () => {
 window.cerrarModoAdmin = () => {
   document.getElementById("modoAdminOverlay").classList.remove("open");
   document.body.style.overflow = "";
+  history.replaceState(null, "", window.location.pathname);
 };
+
+// Auto-open admin if navigated with #admin hash
+if (window.location.hash === "#admin") {
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      if (window.abrirModoAdmin) window.abrirModoAdmin();
+    }, 800);
+  });
+}
 
 
 // ══════════════════════════════
