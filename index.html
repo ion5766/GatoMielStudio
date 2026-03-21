@@ -835,6 +835,10 @@ window.abrirModoAdmin = () => {
   admIniciarDestacados();
 };
 window.cerrarModoAdmin = () => {
+  // Close chat modal if open
+  if (document.getElementById("adm-chat-modal")?.style.display !== "none") {
+    window.cerrarChatAdmin?.();
+  }
   document.getElementById("modoAdminOverlay").classList.remove("open");
   document.body.style.overflow = "";
   history.replaceState(null, "", window.location.pathname);
@@ -1670,24 +1674,121 @@ async function admCargarChats() {
   } catch(e) { lista.innerHTML=`<p style="color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`; }
 }
 
+// ── MODAL CHAT COMPLETO ──────────────────────────────────────────────────
+let _chatUID = null;
+let _chatUnsub = null;
+
 window.admVerChat = async (uid) => {
-  const box = document.getElementById("chat-msgs-"+uid);
-  if (!box) return;
-  if (box.style.display==="flex") { box.style.display="none"; return; }
-  box.style.display="flex"; box.style.flexDirection="column";
-  box.innerHTML=`<p style="color:rgba(255,255,255,.4);font-size:12px;font-family:'Inter',sans-serif;text-align:center;">Cargando...</p>`;
-  const snap = await getDocs(collection(_db,"chats",uid,"mensajes"));
-  const msgs = snap.docs.map(d=>d.data()).sort((a,b)=>(a.fecha?.toMillis?.()??0)-(b.fecha?.toMillis?.()??0));
-  box.innerHTML="";
-  msgs.forEach(m => {
-    const isAdmin = m.rol==="admin";
-    const div = document.createElement("div");
-    div.style.cssText=`align-self:${isAdmin?'flex-end':'flex-start'};background:${isAdmin?'#c48a3a22':'#2a2420'};border-radius:10px;padding:8px 12px;max-width:80%;`;
-    div.innerHTML=`<div style="font-family:'Inter',sans-serif;font-size:12px;color:white;">${m.texto||""}</div>
-      <div style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;">${isAdmin?"Admin":"Cliente"} · ${m.fecha?.toDate?.().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"})||""}</div>`;
-    box.appendChild(div);
+  _chatUID = uid;
+  const modal = document.getElementById("adm-chat-modal");
+  const msgsBox = document.getElementById("adm-chat-msgs");
+  if (!modal) return;
+
+  // Show modal
+  modal.style.display = "flex";
+  modal.style.flexDirection = "column";
+  document.body.style.overflow = "hidden";
+
+  // Load user info
+  try {
+    const chatDoc = await getDoc(doc(_db,"chats",uid));
+    const data = chatDoc.exists() ? chatDoc.data() : {};
+    document.getElementById("adm-chat-nombre").textContent = data.nombre || uid.slice(0,8);
+    document.getElementById("adm-chat-email").textContent = data.email || "";
+    // Avatar
+    const avatarImg = document.getElementById("adm-chat-avatar-img");
+    const avatarEmoji = document.getElementById("adm-chat-avatar-emoji");
+    if (data.foto) {
+      avatarImg.src = data.foto;
+      avatarImg.style.display = "block";
+      avatarEmoji.style.display = "none";
+    }
+  } catch(e) {}
+
+  // Real-time messages listener
+  if (_chatUnsub) _chatUnsub();
+  msgsBox.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:24px;height:24px;border:2px solid rgba(196,138,58,.2);border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando...</div>`;
+
+  const q = query(collection(_db,"chats",uid,"mensajes"), orderBy("fecha","asc"));
+  _chatUnsub = onSnapshot(q, snap => {
+    const msgs = snap.docs.map(d => d.data());
+    const wasAtBottom = msgsBox.scrollHeight - msgsBox.scrollTop - msgsBox.clientHeight < 60;
+    msgsBox.innerHTML = "";
+
+    if (!msgs.length) {
+      msgsBox.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,.25);font-family:'Playfair Display',serif;font-size:18px;font-style:italic;">Sin mensajes aún 🐱</div>`;
+      return;
+    }
+
+    msgs.forEach(m => {
+      const isAdmin = m.rol === "admin";
+      const hora = m.fecha?.toDate?.().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"}) || "";
+      const wrap = document.createElement("div");
+      wrap.style.cssText = `display:flex;flex-direction:column;align-items:${isAdmin?'flex-end':'flex-start'};`;
+
+      const bubble = document.createElement("div");
+      bubble.style.cssText = `
+        max-width:78%;padding:10px 14px;border-radius:${isAdmin?'18px 18px 4px 18px':'18px 18px 18px 4px'};
+        background:${isAdmin?'linear-gradient(135deg,#c48a3a,#8a5e22)':'rgba(255,255,255,.06)'};
+        border:${isAdmin?'none':'1px solid rgba(255,255,255,.08)'};
+      `;
+      bubble.innerHTML = `
+        <div style="font-family:'Inter',sans-serif;font-size:13px;color:white;line-height:1.5;">${m.texto||""}</div>
+        <div style="font-family:'Inter',sans-serif;font-size:9px;color:${isAdmin?'rgba(255,255,255,.6)':'rgba(255,255,255,.3)'};margin-top:4px;text-align:right;">${isAdmin?"Tú":"Cliente"} · ${hora}</div>
+      `;
+      wrap.appendChild(bubble);
+      msgsBox.appendChild(wrap);
+    });
+
+    if (wasAtBottom || msgs.length <= 5) msgsBox.scrollTop = msgsBox.scrollHeight;
   });
-  box.scrollTop=box.scrollHeight;
+
+  // Mark as read
+  try {
+    await updateDoc(doc(_db,"chats",uid), { noLeidosAdmin: false });
+  } catch(e) {}
+};
+
+window.cerrarChatAdmin = () => {
+  if (_chatUnsub) { _chatUnsub(); _chatUnsub = null; }
+  _chatUID = null;
+  const modal = document.getElementById("adm-chat-modal");
+  if (modal) modal.style.display = "none";
+  document.body.style.overflow = "";
+  document.getElementById("adm-chat-input").value = "";
+  document.getElementById("adm-chat-send").style.opacity = "0.4";
+  // Reload chats list to update read status
+  admCargarChats();
+};
+
+window.enviarMensajeAdmin = async () => {
+  if (!_chatUID) return;
+  const inp = document.getElementById("adm-chat-input");
+  const texto = inp.value.trim();
+  if (!texto) return;
+  inp.value = "";
+  inp.style.height = "auto";
+  document.getElementById("adm-chat-send").style.opacity = "0.4";
+  try {
+    await addDoc(collection(_db,"chats",_chatUID,"mensajes"), {
+      texto,
+      rol: "admin",
+      fecha: serverTimestamp(),
+    });
+    await updateDoc(doc(_db,"chats",_chatUID), {
+      ultimoMensaje: texto,
+      noLeidosAdmin: false,
+      noLeidosCliente: true,
+    });
+  } catch(e) { console.error("Error enviando:", e); }
+};
+
+window.admVerFotoChat = () => {
+  const img = document.getElementById("adm-chat-avatar-img");
+  if (!img || img.style.display === "none") return;
+  const popup = document.getElementById("adm-foto-popup");
+  document.getElementById("adm-foto-popup-img").src = img.src;
+  popup.style.display = "flex";
 };
 
 // ══════════════════════════════
@@ -2002,6 +2103,21 @@ onSnapshot(collection(_db, "config_coleccion"), snap => {
 });
 </script>
 
+<script>
+// Close chat modal on Escape
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    if (document.getElementById("adm-foto-popup").style.display !== "none") {
+      document.getElementById("adm-foto-popup").style.display = "none";
+      return;
+    }
+    if (document.getElementById("adm-chat-modal").style.display !== "none") {
+      window.cerrarChatAdmin?.();
+      return;
+    }
+  }
+});
+</script>
 <script type="module" src="pwa.js"></script>
 <script type="module" src="JS/notifications.js"></script>
 <script src="pwa-gate.js"></script>
@@ -2825,4 +2941,51 @@ window.admToggleDestacado = async (tallerId, checked, checkbox) => {
 <script src="pwa-gate.js"></script>
 
 <script src="movil-ui.js"></script>
+
+<!-- ════════════════════════════════════
+     MODAL CHAT COMPLETO — Admin
+════════════════════════════════════ -->
+<div id="adm-chat-modal" style="display:none;position:fixed;inset:0;z-index:55000;flex-direction:column;background:#0d0b09;">
+
+  <!-- Header -->
+  <div style="flex-shrink:0;background:linear-gradient(135deg,#1a1510,#221c14);border-bottom:1px solid rgba(196,138,58,.22);padding:0 16px;height:58px;display:flex;align-items:center;gap:12px;">
+    <button onclick="cerrarChatAdmin()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">←</button>
+    <div id="adm-chat-avatar-wrap" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#c48a3a,#8a5e22);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;cursor:pointer;border:2px solid rgba(196,138,58,.4);" onclick="admVerFotoChat()">
+      <span id="adm-chat-avatar-emoji">🐱</span>
+      <img id="adm-chat-avatar-img" src="" style="display:none;width:100%;height:100%;border-radius:50%;object-fit:cover;position:absolute;top:0;left:0;" onerror="this.style.display='none'">
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div id="adm-chat-nombre" style="font-family:'Playfair Display',serif;font-size:15px;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+      <div id="adm-chat-email" style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+    </div>
+    <!-- Temporizador -->
+    <div id="adm-chat-timer" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(196,138,58,.08);border:1px solid rgba(196,138,58,.2);border-radius:20px;flex-shrink:0;">
+      <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:livePulse 1.5s ease infinite;"></div>
+      <span id="adm-timer-txt" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:rgba(196,138,58,.9);">En vivo</span>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div id="adm-chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:rgba(196,138,58,.2) transparent;">
+    <div style="text-align:center;padding:40px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:13px;">Cargando conversación...</div>
+  </div>
+
+  <!-- Input responder -->
+  <div style="flex-shrink:0;background:linear-gradient(0deg,#1a1510,#141008);border-top:1px solid rgba(255,255,255,.07);padding:12px 14px;display:flex;gap:10px;align-items:flex-end;">
+    <textarea id="adm-chat-input" placeholder="Escribe tu respuesta..." rows="1"
+      style="flex:1;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:11px 14px;font-family:'Inter',sans-serif;font-size:13px;color:white;outline:none;resize:none;max-height:120px;overflow-y:auto;line-height:1.5;transition:.2s;"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';document.getElementById('adm-chat-send').style.opacity=this.value.trim()?'1':'0.4';"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensajeAdmin();}"
+      onfocus="this.style.borderColor='rgba(196,138,58,.5)'"
+      onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+    <button id="adm-chat-send" onclick="enviarMensajeAdmin()" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#c48a3a,#8a5e22);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.4;transition:.2s;box-shadow:0 4px 12px rgba(196,138,58,.3);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Popup foto avatar -->
+<div id="adm-foto-popup" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:60000;align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="adm-foto-popup-img" src="" style="max-width:88vw;max-height:88vh;border-radius:16px;object-fit:contain;box-shadow:0 24px 60px rgba(0,0,0,.6);" onclick="event.stopPropagation()">
+</div>
 </body></html>
