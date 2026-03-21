@@ -1633,46 +1633,123 @@ window.admRechMemb = async (id, btn) => {
 // ══════════════════════════════
 async function admCargarChats() {
   const lista = document.getElementById("adm-chats-lista");
-  lista.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #3a3028;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>Cargando conversaciones...</div>`;
+  lista.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:13px;"><div style="width:18px;height:18px;border:2px solid rgba(196,138,58,.2);border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div></div>`;
   try {
     const snap = await getDocs(collection(_db,"chats"));
-    if (snap.empty) { lista.innerHTML=`<p style="color:rgba(255,255,255,.4);font-family:'Inter',sans-serif;text-align:center;padding:20px;">Sin conversaciones aún.</p>`; return; }
-    lista.innerHTML="";
+    if (snap.empty) {
+      lista.innerHTML = `<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,.25);font-family:'Inter',sans-serif;font-size:14px;">Sin conversaciones aún 🐱</div>`;
+      return;
+    }
+
+    // Build list sorted by last message date
+    const chats = [];
     for (const chatDoc of snap.docs) {
       const uid = chatDoc.id;
       const data = chatDoc.data();
       const mensSnap = await getDocs(collection(_db,"chats",uid,"mensajes"));
       const msgs = mensSnap.docs.map(d=>d.data()).sort((a,b)=>(a.fecha?.toMillis?.()??0)-(b.fecha?.toMillis?.()??0));
       const ultimo = msgs[msgs.length-1];
+      chats.push({ uid, data, msgs, ultimo });
+    }
+    chats.sort((a,b)=>(b.ultimo?.fecha?.toMillis?.()??0)-(a.ultimo?.fecha?.toMillis?.()??0));
+
+    lista.innerHTML = "";
+
+    // WhatsApp-style container
+    const container = document.createElement("div");
+    container.style.cssText = "background:#111009;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);";
+
+    chats.forEach(({ uid, data, msgs, ultimo }, idx) => {
       const esNoLeido = data.noLeidosAdmin === true;
-      const card = document.createElement("div");
-      card.className="adm-panel";
-      card.style.cssText = esNoLeido ? "border-color:rgba(196,138,58,.4);box-shadow:0 0 0 1px rgba(196,138,58,.15);" : "";
-      card.innerHTML=`
-        <div class="adm-panel-header">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-            ${esNoLeido ? '<span style="width:8px;height:8px;border-radius:50%;background:#c48a3a;flex-shrink:0;box-shadow:0 0 6px rgba(196,138,58,.6);"></span>' : '<span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></span>'}
-            <div style="min-width:0;">
-              <div style="font-family:'Playfair Display',serif;font-size:15px;color:white;font-weight:400;">${data.nombre||uid.slice(0,8)}</div>
-              <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.35);">${data.email||""} · ${msgs.length} mensajes</div>
-            </div>
+      const nombre = data.nombre || uid.slice(0,8);
+      const inicial = nombre.charAt(0).toUpperCase();
+
+      // Avatar color from name hash
+      const hue = [...nombre].reduce((s,c)=>s+c.charCodeAt(0),0) % 360;
+      const avatarBg = `hsl(${hue},40%,28%)`;
+      const avatarBorder = esNoLeido ? "2px solid #c48a3a" : "2px solid transparent";
+
+      // Time display
+      const fechaMs = ultimo?.fecha?.toMillis?.() ?? 0;
+      const hoy = new Date(); hoy.setHours(0,0,0,0);
+      const ayer = new Date(hoy); ayer.setDate(hoy.getDate()-1);
+      const msgDate = fechaMs ? new Date(fechaMs) : null;
+      let hora = "";
+      if (msgDate) {
+        if (msgDate >= hoy) hora = msgDate.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+        else if (msgDate >= ayer) hora = "Ayer";
+        else hora = msgDate.toLocaleDateString("es-PE",{day:"2-digit",month:"short"});
+      }
+
+      // Last message preview
+      const prevTexto = ultimo?.texto || "";
+      const prevRol   = ultimo?.rol === "admin" ? "Tú: " : "";
+      const preview   = (prevRol + prevTexto).slice(0,48) + (prevTexto.length>48?"…":"");
+
+      // Unread badge count (use msgs from client not yet read by admin)
+      const noLeidosCount = msgs.filter(m => m.rol !== "admin" && data.noLeidosAdmin).length;
+
+      const row = document.createElement("div");
+      row.setAttribute("data-chat-row","1");
+      row.setAttribute("data-chat-search",(nombre+" "+(data.email||"")).toLowerCase());
+      row.style.cssText = `
+        display:flex;align-items:center;gap:14px;
+        padding:13px 16px;cursor:pointer;
+        background:${esNoLeido?'rgba(196,138,58,.04)':'transparent'};
+        border-bottom:${idx<chats.length-1?'1px solid rgba(255,255,255,.04)':'none'};
+        transition:background .15s;
+        position:relative;
+      `;
+      row.onmouseover = ()=>row.style.background="rgba(255,255,255,.04)";
+      row.onmouseout  = ()=>row.style.background=esNoLeido?"rgba(196,138,58,.04)":"transparent";
+      row.onclick = ()=>window.admVerChat(uid);
+
+      row.innerHTML = `
+        <!-- Avatar -->
+        <div style="position:relative;flex-shrink:0;">
+          <div style="width:52px;height:52px;border-radius:50%;background:${avatarBg};border:${avatarBorder};
+            display:flex;align-items:center;justify-content:center;
+            font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:rgba(255,255,255,.75);
+            box-sizing:border-box;overflow:hidden;">
+            ${data.foto
+              ? `<img src="${data.foto}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${inicial}'">`
+              : inicial}
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-            <span style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);">${ultimo?.fecha?.toDate?.().toLocaleDateString("es-PE",{day:"2-digit",month:"short"})||""}</span>
-            ${esNoLeido ? '<span style="font-family:Inter,sans-serif;font-size:9px;font-weight:700;color:#c48a3a;background:rgba(196,138,58,.15);padding:2px 8px;border-radius:20px;border:1px solid rgba(196,138,58,.3);">• nuevo</span>' : ''}
+          ${esNoLeido ? `<div style="position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:2px solid #111009;"></div>` : ""}
+        </div>
+
+        <!-- Info -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-family:'Inter',sans-serif;font-size:15px;font-weight:${esNoLeido?'600':'400'};color:${esNoLeido?'white':'rgba(255,255,255,.85)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;">${nombre}</span>
+            <span style="font-family:'Inter',sans-serif;font-size:11px;color:${esNoLeido?'#c48a3a':'rgba(255,255,255,.3)'};flex-shrink:0;margin-left:8px;">${hora}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-family:'Inter',sans-serif;font-size:13px;color:${esNoLeido?'rgba(255,255,255,.65)':'rgba(255,255,255,.3)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:${esNoLeido?'500':'400'};">${preview||"Sin mensajes"}</span>
+            ${esNoLeido && noLeidosCount>0 ? `<div style="flex-shrink:0;min-width:20px;height:20px;border-radius:10px;background:#c48a3a;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:white;padding:0 5px;">${noLeidosCount>9?"9+":noLeidosCount}</div>` : ""}
           </div>
         </div>
-        <div class="adm-panel-body" style="padding-top:8px;">
-          ${ultimo ? `<div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.4);font-style:italic;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${ultimo.texto?.slice(0,60)||"..."}"</div>` : ""}
-          <div id="chat-msgs-${uid}" style="display:none;max-height:280px;overflow-y:auto;background:rgba(0,0,0,.3);border-radius:12px;padding:12px;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
-          <button onclick="admVerChat('${uid}')" class="adm-btn-ghost" style="width:100%;">
-            💬 Ver conversación completa
-          </button>
-        </div>`;
-      lista.appendChild(card);
-    }
-  } catch(e) { lista.innerHTML=`<p style="color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`; }
+      `;
+
+      container.appendChild(row);
+    });
+
+    lista.appendChild(container);
+  } catch(e) {
+    lista.innerHTML = `<p style="color:#e55;font-family:'Inter',sans-serif;padding:20px;">Error: ${e.message}</p>`;
+    console.error(e);
+  }
 }
+
+// ── FILTRO DE CHATS ─────────────────────────────────────────────
+window.filtrarChats = (q) => {
+  const rows = document.querySelectorAll("#adm-chats-lista [data-chat-row]");
+  q = q.toLowerCase().trim();
+  rows.forEach(row => {
+    const txt = row.getAttribute("data-chat-search") || "";
+    row.style.display = !q || txt.includes(q) ? "" : "none";
+  });
+};
 
 // ── MODAL CHAT COMPLETO ──────────────────────────────────────────────────
 let _chatUID = null;
@@ -2851,8 +2928,27 @@ document.addEventListener("keydown", function(e) {
       </div>
 
       <!-- ════ CHATS ════ -->
-      <div id="adm-chats" class="adm-section">
-        <div id="adm-chats-lista"></div>
+      <div id="adm-chats" class="adm-section" style="padding:0;">
+        <!-- WhatsApp-style header -->
+        <div style="padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:20px;color:white;"><em>Chats</em> activos</div>
+            <div style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);margin-top:2px;">Conversaciones con clientas</div>
+          </div>
+          <button onclick="admCargarChats()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s;" title="Actualizar" onmouseover="this.style.background='rgba(196,138,58,.1)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">↻</button>
+        </div>
+        <!-- Search bar -->
+        <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);">
+          <div style="position:relative;">
+            <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:14px;pointer-events:none;">🔍</div>
+            <input id="adm-chat-search" type="text" placeholder="Buscar conversación..."
+              oninput="filtrarChats(this.value)"
+              style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:9px 14px 9px 36px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.7);outline:none;box-sizing:border-box;transition:.2s;"
+              onfocus="this.style.borderColor='rgba(196,138,58,.3)'"
+              onblur="this.style.borderColor='rgba(255,255,255,.07)'">
+          </div>
+        </div>
+        <div id="adm-chats-lista" style="overflow-y:auto;max-height:calc(100vh - 280px);"></div>
       </div>
 
       <!-- ════ COMUNIDAD ════ -->
