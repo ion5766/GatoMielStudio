@@ -570,7 +570,7 @@ import {
 
 const ADMIN_EMAILS = ["jhonanibal576@gmail.com","gatomielstudio@gmail.com"];
 const TALLER_ID    = "arcilla-nocturna";
-const CUPOS_MAX    = 4;
+let CUPOS_MAX    = 4; // se actualiza desde config_talleres
 const MP_PUBLIC_KEY = "APP_USR-4362f159-fd72-4caf-871a-6a6b98384795"; // tu clave pública
 const HORARIOS = [
   {id:"h0", dia:"Sábado",  fecha:"7 de marzo",  hora:"10:00 AM", label:"Sáb 7 mar · 10:00 AM"},
@@ -584,6 +584,26 @@ const db      = getFirestore(app);
 const storage = getStorage(app);
 
 let currentUser      = null;
+
+// ── Cargar cupos máximos dinámicos desde config_talleres ──
+let _precioTaller = 150;
+(async () => {
+  try {
+    const { getDocs: _gd, collection: _col } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const snap = await _gd(_col(db, "config_talleres"));
+    if (!snap.empty) {
+      const arcilla = snap.docs.find(d => (d.data().nombre||"").toLowerCase().includes("arcilla")) || snap.docs[0];
+      if (arcilla) {
+        if (arcilla.data().cupos) CUPOS_MAX = Number(arcilla.data().cupos);
+        if (arcilla.data().precio) _precioTaller = Number(arcilla.data().precio);
+        // Actualizar precio en UI
+        document.querySelectorAll(".ht-monto-pill strong").forEach(el => el.textContent = `S/ ${_precioTaller}`);
+        const sub = document.querySelector("#modalHorario .ht-modal-hero-sub");
+        if (sub) sub.textContent = `elige tu horario · S/ ${_precioTaller}`;
+      }
+    }
+  } catch(e) {}
+})();
 let cuposData        = {};
 let horarioElegidoId = null;
 let horarioElegido   = null;
@@ -626,15 +646,25 @@ function actualizarCuposCard() {
   HORARIOS.forEach((h, i) => {
     const el = document.getElementById(`num-h${i}`);
     if (!el) return;
-    const libres = CUPOS_MAX - (cuposData[h.id] || 0);
+    const ocupados = cuposData[h.id] || 0;
+    const libres   = Math.max(0, CUPOS_MAX - ocupados);
     el.innerHTML = "";
-    if (libres <= 0) {
+    if (CUPOS_MAX <= 0 || libres <= 0) {
       el.innerHTML = `<span class="ht-cupo-agotado">Agotado</span>`;
     } else {
-      for (let j = 0; j < CUPOS_MAX; j++) {
+      // Máximo 12 bolitas visibles para no desbordar
+      const maxVis = Math.min(CUPOS_MAX, 12);
+      for (let j = 0; j < maxVis; j++) {
         const dot = document.createElement("span");
-        dot.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
+        const propLibre = (CUPOS_MAX - j - 1) < libres;
+        dot.className = "ht-cupo-dot" + (propLibre ? "" : " vacio");
         el.appendChild(dot);
+      }
+      if (CUPOS_MAX > 12) {
+        const lbl = document.createElement("span");
+        lbl.style.cssText = "font-family:'Inter',sans-serif;font-size:10px;color:#c48a3a;font-weight:600;margin-left:4px;";
+        lbl.textContent = `${libres}/${CUPOS_MAX}`;
+        el.appendChild(lbl);
       }
     }
   });
@@ -652,7 +682,12 @@ function renderHorarios() {
     div.className = `ht-horario${selec?" seleccionado":""}${sinCupo?" sin-cupo":""}`;
     if (!sinCupo) div.onclick = () => _elegirHorario(div, h);
     let dots = "";
-    for (let j = 0; j < CUPOS_MAX; j++) dots += `<span class="ht-cupo-dot-mini${j<libres?"":" vacio"}"></span>`;
+    const maxDots = Math.min(CUPOS_MAX, 8);
+    for (let j = 0; j < maxDots; j++) {
+      const propLibre = (CUPOS_MAX - j - 1) < libres;
+      dots += `<span class="ht-cupo-dot-mini${propLibre?"":" vacio"}"></span>`;
+    }
+    if (CUPOS_MAX > 8) dots += `<span style="font-size:9px;color:#c48a3a;font-weight:700;margin-left:2px;">${libres}L</span>`;
     div.innerHTML = `
       <div class="ht-horario-left">
         <span class="ht-horario-dia">${h.dia}</span>
