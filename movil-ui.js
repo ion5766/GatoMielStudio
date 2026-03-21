@@ -106,9 +106,12 @@
     if (!swipeOK) return;
     var dx = e.changedTouches[0].clientX - touchX;
     var dy = e.changedTouches[0].clientY - touchY;
-    if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
-    // Don't swipe if a modal is open
-    if (document.querySelector('.cl-modal.open, .ht-modal[style*="flex"], [id*="overlay"][style*="flex"]')) return;
+    if (Math.abs(dx) < 120 || Math.abs(dx) < Math.abs(dy) * 2.2) return;
+    // Don't swipe if a modal is open OR admin panel is open
+    if (document.querySelector('.cl-modal.open, .ht-modal[style*="flex"]')) return;
+    if (document.getElementById('modoAdminOverlay')?.classList.contains('open')) return;
+    // Don't swipe if any overlay panel is open
+    if (document.querySelector('[id*="overlay"][style*="flex"], .adm-overlay.open')) return;
     var destIdx = dx < 0 ? idxActual + 1 : idxActual - 1;
     if (destIdx < 0 || destIdx >= ORDEN.length) return;
     // Animate out
