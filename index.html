@@ -777,7 +777,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){window.cerrarModalC
 </script>
 
 <!-- ═══ MOVIL-UI JS (navbar Clash Royale móvil) ═══ -->
-<script src="movil-ui.js"></script>
 
 <script type="module" src="pwa.js"></script>
 
@@ -1806,6 +1805,93 @@ window.admEliminarRespuesta = async (pid, ci, ri) => {
 
 // ── Mostrar botón modo admin también en auth state ──
 window.abrirModalMembresias = window.abrirModalMembresias || function(){};
+
+window.admCargarResumen = async () => {
+  try {
+    const [pedSnap, membSnap, chatSnap] = await Promise.all([
+      getDocs(collection(_db,"pedidos")),
+      getDocs(collection(_db,"membresias")),
+      getDocs(collection(_db,"chats")),
+    ]);
+    const pend = [...pedSnap.docs,...membSnap.docs].filter(d=>d.data().estado==="pendiente").length;
+    // KPI numbers
+    const s = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    s("adm-st-pedidos", pedSnap.size);
+    s("adm-st-memb", membSnap.size);
+    s("adm-st-pend", pend);
+    s("adm-st-chats", chatSnap.size);
+    // KPI sub-text
+    const pConf = pedSnap.docs.filter(d=>d.data().estado==="confirmado").length;
+    const mConf = membSnap.docs.filter(d=>d.data().estado==="confirmado").length;
+    const sub = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    sub("adm-st-pedidos-sub", `${pConf} confirmados`);
+    sub("adm-st-memb-sub", `${mConf} confirmadas`);
+
+    // Badges in sidebar
+    const showBadge = (id, n) => {
+      const b = document.getElementById(id);
+      if (!b) return;
+      b.textContent = n > 0 ? (n > 9 ? "9+" : n) : "";
+      b.style.display = n > 0 ? "inline-flex" : "none";
+    };
+    const pPend = pedSnap.docs.filter(d=>d.data().estado==="pendiente").length;
+    const mPend = membSnap.docs.filter(d=>d.data().estado==="pendiente").length;
+    showBadge("badge-tab-pedidos", pPend);
+    showBadge("badge-tab-memb", mPend);
+    showBadge("badge-tab-chats", chatSnap.size);
+
+    // Side stats panel
+    const side = document.getElementById("adm-resumen-stats-side");
+    if (side) {
+      const items = [
+        {n:pedSnap.size, label:"Pedidos totales", sub:"compras de colección"},
+        {n:membSnap.size, label:"Membresías", sub:"inscripciones a talleres"},
+        {n:pend, label:"Pendientes", sub:"esperan confirmación", color:"var(--amber)"},
+        {n:chatSnap.size, label:"Conversaciones", sub:"chats con clientas", color:"var(--green)"},
+      ];
+      side.innerHTML = items.map(it => `
+        <div class="adm-mini-stat">
+          <div class="adm-mini-stat-num" style="${it.color?'color:'+it.color:''}">${it.n}</div>
+          <div class="adm-mini-stat-info">
+            <div class="adm-mini-stat-label">${it.label}</div>
+            <div class="adm-mini-stat-sub">${it.sub}</div>
+          </div>
+        </div>`).join("");
+    }
+
+    // Activity feed — últimos 6 docs recientes
+    const recents = [
+      ...pedSnap.docs.map(d=>({...d.data(), _tipo:"pedido", _id:d.id})),
+      ...membSnap.docs.map(d=>({...d.data(), _tipo:"membresia", _id:d.id})),
+    ].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0)).slice(0,8);
+
+    const feed = document.getElementById("adm-resumen-ultimos");
+    if (feed) {
+      if (!recents.length) {
+        feed.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-dim);font-size:13px;">Aún no hay actividad registrada</div>';
+      } else {
+        feed.innerHTML = recents.map(r => {
+          const icon = r._tipo==="pedido" ? "📦" : "🎫";
+          const bg = r._tipo==="pedido" ? "rgba(196,138,58,.12)" : "rgba(34,197,94,.1)";
+          const nombre = r.nombre || r.usuarioNombre || r.email || "Cliente";
+          const estado = r.estado || "pendiente";
+          const chipCls = estado==="confirmado"?"adm-chip-green":estado==="rechazado"?"adm-chip-red":"adm-chip-amber";
+          const t = r.fecha?.toDate ? r.fecha.toDate().toLocaleDateString("es-PE",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "—";
+          return `<div class="adm-activity-item">
+            <div class="adm-activity-dot" style="background:${bg}">${icon}</div>
+            <div class="adm-activity-text">
+              <div class="adm-activity-title">${nombre} · S/ ${r.monto||0}</div>
+              <div class="adm-activity-time">${r.producto||r.horarioLabel||""} · ${t}</div>
+            </div>
+            <span class="adm-chip ${chipCls}">${estado}</span>
+          </div>`;
+        }).join("");
+      }
+    }
+  } catch(e) { console.error(e); }
+};
+
+
 window.abrirModalCompras    = window.abrirModalCompras    || function(){};
 </script>
 
@@ -2338,6 +2424,127 @@ onSnapshot(collection(_db, "config_coleccion"), snap => {
   transition:opacity .3s,transform .3s;
   pointer-events:none;white-space:nowrap;
 }
+
+/* ═══ ADMIN DASHBOARD — MÓVIL ═══ */
+@media (max-width: 700px) {
+  .adm-overlay { flex-direction: column !important; }
+
+  /* Sidebar becomes a top horizontal scrollable nav */
+  .adm-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    flex-direction: row !important;
+    flex-shrink: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,.07) !important;
+    overflow: hidden !important;
+    max-height: 96px !important;
+  }
+
+  /* Brand: compact */
+  .adm-brand {
+    padding: 10px 14px !important;
+    flex-shrink: 0 !important;
+    border-bottom: none !important;
+    border-right: 1px solid rgba(255,255,255,.06) !important;
+    min-width: 120px !important;
+  }
+  .adm-brand-name { font-size: 12px !important; }
+  .adm-brand-sub { display: none !important; }
+
+  /* Nav becomes horizontal scroll */
+  .adm-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 8px !important;
+    gap: 4px !important;
+    align-items: center !important;
+    flex: 1 !important;
+    scrollbar-width: none !important;
+  }
+  .adm-nav::-webkit-scrollbar { display: none !important; }
+
+  .adm-nav-group {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+    margin-bottom: 0 !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+  }
+  .adm-nav-group-label { display: none !important; }
+
+  .adm-nav-btn {
+    padding: 8px 12px !important;
+    border-radius: 20px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    font-size: 11px !important;
+    margin-bottom: 0 !important;
+  }
+  .adm-nav-btn .label { display: none !important; }
+  .adm-nav-btn .icon { font-size: 18px !important; width: auto !important; }
+  .adm-nav-btn.active { padding: 8px 14px !important; }
+
+  /* Show label only for active */
+  .adm-nav-btn.active .label {
+    display: inline !important;
+    font-size: 11px !important;
+  }
+
+  .adm-badge {
+    top: 2px !important; right: 2px !important;
+  }
+
+  /* Sidebar footer: hide on mobile */
+  .adm-sidebar-footer { display: none !important; }
+
+  /* Main area: full width */
+  .adm-main { flex: 1 !important; overflow: hidden !important; min-height: 0 !important; }
+
+  /* Topbar */
+  .adm-topbar-content {
+    height: 44px !important;
+    padding: 0 14px !important;
+  }
+  .adm-topbar-title { font-size: 15px !important; }
+
+  /* Content scroll */
+  .adm-content { padding: 0 !important; }
+  .adm-section { padding: 14px !important; }
+
+  /* KPI grid: 2 cols */
+  .adm-kpis {
+    grid-template-columns: repeat(2,1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  .adm-kpi { padding: 14px !important; }
+  .adm-kpi-num { font-size: 24px !important; }
+  .adm-kpi-icon { font-size: 18px !important; margin-bottom: 6px !important; }
+
+  /* Grid main: single col */
+  .adm-grid-main { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+  /* Cards */
+  .adm-panel { margin-bottom: 12px !important; }
+  .adm-panel-header { padding: 12px 14px !important; }
+  .adm-panel-body { padding: 12px 14px !important; }
+
+  /* Taller cards: simplify */
+  .adm-img-preview { height: 90px !important; }
+  .adm-2col { grid-template-columns: 1fr !important; }
+
+  /* Row actions: wrap */
+  .adm-row { flex-wrap: wrap !important; gap: 8px !important; }
+
+  /* Filters: scroll */
+  .adm-filters { overflow-x: auto !important; flex-wrap: nowrap !important; padding-bottom: 4px !important; }
+  .adm-filter { flex-shrink: 0 !important; font-size: 10px !important; padding: 6px 12px !important; }
+}
 </style>
 
 <!-- ════════════════════════════════════
@@ -2618,87 +2825,6 @@ window.admToggleDestacado = async (tallerId, checked, checkbox) => {
 <script type="module" src="pwa.js"></script>
 <script type="module" src="JS/notifications.js"></script>
 <script src="pwa-gate.js"></script>
-</body></html>window.admCargarResumen = async () => {
-  try {
-    const [pedSnap, membSnap, chatSnap] = await Promise.all([
-      getDocs(collection(_db,"pedidos")),
-      getDocs(collection(_db,"membresias")),
-      getDocs(collection(_db,"chats")),
-    ]);
-    const pend = [...pedSnap.docs,...membSnap.docs].filter(d=>d.data().estado==="pendiente").length;
-    // KPI numbers
-    const s = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-    s("adm-st-pedidos", pedSnap.size);
-    s("adm-st-memb", membSnap.size);
-    s("adm-st-pend", pend);
-    s("adm-st-chats", chatSnap.size);
-    // KPI sub-text
-    const pConf = pedSnap.docs.filter(d=>d.data().estado==="confirmado").length;
-    const mConf = membSnap.docs.filter(d=>d.data().estado==="confirmado").length;
-    const sub = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-    sub("adm-st-pedidos-sub", `${pConf} confirmados`);
-    sub("adm-st-memb-sub", `${mConf} confirmadas`);
 
-    // Badges in sidebar
-    const showBadge = (id, n) => {
-      const b = document.getElementById(id);
-      if (!b) return;
-      b.textContent = n > 0 ? (n > 9 ? "9+" : n) : "";
-      b.style.display = n > 0 ? "inline-flex" : "none";
-    };
-    const pPend = pedSnap.docs.filter(d=>d.data().estado==="pendiente").length;
-    const mPend = membSnap.docs.filter(d=>d.data().estado==="pendiente").length;
-    showBadge("badge-tab-pedidos", pPend);
-    showBadge("badge-tab-memb", mPend);
-    showBadge("badge-tab-chats", chatSnap.size);
-
-    // Side stats panel
-    const side = document.getElementById("adm-resumen-stats-side");
-    if (side) {
-      const items = [
-        {n:pedSnap.size, label:"Pedidos totales", sub:"compras de colección"},
-        {n:membSnap.size, label:"Membresías", sub:"inscripciones a talleres"},
-        {n:pend, label:"Pendientes", sub:"esperan confirmación", color:"var(--amber)"},
-        {n:chatSnap.size, label:"Conversaciones", sub:"chats con clientas", color:"var(--green)"},
-      ];
-      side.innerHTML = items.map(it => `
-        <div class="adm-mini-stat">
-          <div class="adm-mini-stat-num" style="${it.color?'color:'+it.color:''}">${it.n}</div>
-          <div class="adm-mini-stat-info">
-            <div class="adm-mini-stat-label">${it.label}</div>
-            <div class="adm-mini-stat-sub">${it.sub}</div>
-          </div>
-        </div>`).join("");
-    }
-
-    // Activity feed — últimos 6 docs recientes
-    const recents = [
-      ...pedSnap.docs.map(d=>({...d.data(), _tipo:"pedido", _id:d.id})),
-      ...membSnap.docs.map(d=>({...d.data(), _tipo:"membresia", _id:d.id})),
-    ].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0)).slice(0,8);
-
-    const feed = document.getElementById("adm-resumen-ultimos");
-    if (feed) {
-      if (!recents.length) {
-        feed.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-dim);font-size:13px;">Aún no hay actividad registrada</div>';
-      } else {
-        feed.innerHTML = recents.map(r => {
-          const icon = r._tipo==="pedido" ? "📦" : "🎫";
-          const bg = r._tipo==="pedido" ? "rgba(196,138,58,.12)" : "rgba(34,197,94,.1)";
-          const nombre = r.nombre || r.usuarioNombre || r.email || "Cliente";
-          const estado = r.estado || "pendiente";
-          const chipCls = estado==="confirmado"?"adm-chip-green":estado==="rechazado"?"adm-chip-red":"adm-chip-amber";
-          const t = r.fecha?.toDate ? r.fecha.toDate().toLocaleDateString("es-PE",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "—";
-          return `<div class="adm-activity-item">
-            <div class="adm-activity-dot" style="background:${bg}">${icon}</div>
-            <div class="adm-activity-text">
-              <div class="adm-activity-title">${nombre} · S/ ${r.monto||0}</div>
-              <div class="adm-activity-time">${r.producto||r.horarioLabel||""} · ${t}</div>
-            </div>
-            <span class="adm-chip ${chipCls}">${estado}</span>
-          </div>`;
-        }).join("");
-      }
-    }
-  } catch(e) { console.error(e); }
-};
+<script src="movil-ui.js"></script>
+</body></html>
