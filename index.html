@@ -982,14 +982,14 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){window.cerrarModalC
     <div id="adm-talleres" class="adm-section">
 
       <!-- ═══ DESTACADOS ═══ -->
-      <div class="adm-card" style="margin-bottom:20px;">
-        <div class="adm-card-top">
+      <div class="adm-panel" style="margin-bottom:20px;">
+        <div class="adm-panel-header">
           <div>
-            <div class="adm-card-title">⭐ Talleres destacados en el inicio</div>
-            <div class="adm-card-subtitle">Elige cuáles aparecen en la página de inicio · marca o desmarca para actualizar al instante</div>
+            <div class="adm-panel-title">⭐ Talleres destacados en el inicio</div>
+            <div class="adm-panel-meta">Elige cuáles aparecen en la página de inicio · marca o desmarca para actualizar al instante</div>
           </div>
         </div>
-        <div class="adm-card-body">
+        <div class="adm-panel-body">
           <div class="adm-tip" style="margin-bottom:12px;">
             <span class="adm-tip-icon">🌟</span>
             <span>Selecciona los talleres que quieres mostrar en la página de inicio. Solo los marcados aparecerán ahí. Puedes cambiarlos cuando quieras.</span>
@@ -1114,12 +1114,23 @@ function toast(msg, ok=true) {
 }
 
 // ── Tabs ──
+const _SECTION_TITLES = {
+  resumen:"Panel de <span>control</span>",
+  talleres:"Mis <span>talleres</span>",
+  coleccion:"Mi <span>colección</span>",
+  pedidos:"<span>Pedidos</span> de clientas",
+  membresias:"<span>Membresías</span> inscritas",
+  chats:"<span>Chats</span> activos",
+  comunidad:"<span>Comunidad</span> creativa",
+};
 window.admTab = (id, btn) => {
   document.querySelectorAll(".adm-section").forEach(s => s.classList.remove("active"));
-  document.querySelectorAll(".adm-nav-item").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".adm-nav-btn").forEach(b => b.classList.remove("active"));
   const sec = document.getElementById("adm-"+id);
   if (sec) sec.classList.add("active");
   if (btn) btn.classList.add("active");
+  const ttl = document.getElementById("adm-topbar-title");
+  if (ttl) ttl.innerHTML = _SECTION_TITLES[id] || "Panel de <span>control</span>";
   if (id==="talleres")   { admCargarTalleres(); admIniciarDestacados(); }
   if (id==="coleccion")  admCargarColeccion();
   if (id==="pedidos")    admCargarPedidos();
@@ -1133,6 +1144,9 @@ window.admTab = (id, btn) => {
 window.abrirModoAdmin = () => {
   document.getElementById("modoAdminOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
+  // Show user email in sidebar
+  const emailEl = document.getElementById("adm-user-email");
+  if (emailEl && window._firebaseUser) emailEl.textContent = window._firebaseUser.email?.split("@")[0] || "Admin";
   admCargarResumen();
   admIniciarDestacados();
 };
@@ -1264,13 +1278,13 @@ async function admCargarResumen() {
       const eDot = p.estado==="confirmado"?"#22c55e":p.estado==="rechazado"?"#ef4444":"#f59e0b";
       const eText = p.estado==="confirmado"?"✅ Confirmado":p.estado==="rechazado"?"❌ Rechazado":"⏳ Pendiente";
       const d = document.createElement("div");
-      d.className = "adm-table-row";
-      d.innerHTML = `<div class="adm-table-dot" style="background:${eDot}"></div>
-        <div class="adm-table-info">
-          <div class="adm-table-title">${p.producto||"—"} · <span style="color:#c48a3a;">S/ ${p.monto||"—"}</span></div>
-          <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div>
+      d.className = "adm-row";
+      d.innerHTML = `<div class="adm-row-dot" style="background:${eDot}"></div>
+        <div class="adm-row-info">
+          <div class="adm-row-title">${p.producto||"—"} · <span style="color:#c48a3a;">S/ ${p.monto||"—"}</span></div>
+          <div class="adm-row-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"}</div>
         </div>
-        <span class="adm-table-badge" style="background:${eDot}22;color:${eDot};">${eText}</span>`;
+        <span class="adm-chip" style="background:${eDot}22;color:${eDot};">${eText}</span>`;
       ul.appendChild(d);
     });
   } catch(e) { console.error("Resumen error:", e); }
@@ -1337,13 +1351,13 @@ function admRenderTallerCard(id, data, container, esTemp=false) {
   const imgSrc = data.imagen || "";
   const activo = data.activo !== false;
   card.innerHTML = `
-    <div class="adm-card-top">
+    <div class="adm-panel-header">
       <div>
-        <div class="adm-card-title">🏺 <span id="t-title-lbl-${id}">${data.nombre||"Nuevo taller"}</span></div>
-        <div class="adm-card-subtitle" style="margin-top:4px;display:flex;gap:8px;align-items:center;">
+        <div class="adm-panel-title">🏺 <span id="t-title-lbl-${id}">${data.nombre||"Nuevo taller"}</span></div>
+        <div class="adm-panel-meta" style="margin-top:4px;display:flex;gap:8px;align-items:center;">
           <span style="padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600;${activo?'background:rgba(34,197,94,.15);color:#22c55e;':'background:rgba(255,255,255,.08);color:#888;'}">${activo?'✅ Activo':'🔒 Inactivo'}</span>
           <span>S/ ${data.precio||0} · ${data.cupos||0} cupos máx.</span>
-          ${esTemp?'<span style="background:#f59e0b22;color:#f59e0b;padding:2px 8px;border-radius:20px;font-size:9px;">sin guardar</span>':''}
+          ${esTemp?'<span class="adm-chip adm-chip-amber">sin guardar</span>':''}
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
@@ -1351,33 +1365,33 @@ function admRenderTallerCard(id, data, container, esTemp=false) {
         ${!esTemp ? `<button class="adm-btn-danger" onclick="admEliminarTaller('${id}',this)">🗑</button>` : ''}
       </div>
     </div>
-    <div class="adm-card-body">
+    <div class="adm-panel-body">
       ${imgSrc ? `<img id="img-prev-t-${id}" src="${imgSrc}" class="adm-img-preview" onerror="this.style.display='none'">` : `<div id="img-prev-t-${id}" style="width:100%;height:110px;background:#2a2420;border-radius:10px;border:1px dashed #3a3028;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:12px;font-family:Inter,sans-serif;margin-bottom:12px;gap:8px;"><span style="font-size:24px">📷</span><span>Sin imagen todavía</span></div>`}
 
       <div class="adm-grid-2">
         <div class="adm-field">
-          <label>📌 Nombre del taller <span class="adm-field-hint">Lo ven los clientes</span></label>
+          <label class="adm-label">📌 Nombre del taller <span class="adm-hint">Lo ven los clientes</span></label>
           <input class="adm-input" id="t-nom-${id}" value="${escHtml(data.nombre||'')}"
             oninput="document.getElementById('t-title-lbl-${id}').textContent=this.value||'Nuevo taller'">
         </div>
         <div class="adm-field">
-          <label>💰 Precio <span class="adm-field-hint">en S/ (soles)</span></label>
+          <label class="adm-label">💰 Precio <span class="adm-hint">en S/ (soles)</span></label>
           <input class="adm-input" type="number" id="t-precio-${id}" value="${data.precio||0}" min="0" placeholder="150">
         </div>
       </div>
 
       <div class="adm-field">
-        <label>📝 Descripción <span class="adm-field-hint">Aparece en la card del taller</span></label>
+        <label class="adm-label">📝 Descripción <span class="adm-hint">Aparece en la card del taller</span></label>
         <textarea class="adm-textarea" id="t-desc-${id}" placeholder="Describe el taller: qué se aprende, para quién es, qué incluye...">${escHtml(data.descripcion||'')}</textarea>
       </div>
 
       <div class="adm-grid-2">
         <div class="adm-field">
-          <label>🪑 Cupos máximos <span class="adm-field-hint">Total de lugares</span></label>
+          <label class="adm-label">🪑 Cupos máximos <span class="adm-hint">Total de lugares</span></label>
           <input class="adm-input" type="number" id="t-cupos-${id}" value="${data.cupos||0}" min="1" placeholder="8">
         </div>
         <div class="adm-field">
-          <label>📣 Visibilidad <span class="adm-field-hint">¿Se muestra en la web?</span></label>
+          <label class="adm-label">📣 Visibilidad <span class="adm-hint">¿Se muestra en la web?</span></label>
           <select class="adm-input" id="t-activo-${id}" onchange="admActualizarEstadoTaller('${id}',this.value)">
             <option value="true"  ${activo?'selected':''}>✅ Visible — inscripciones abiertas</option>
             <option value="false" ${!activo?'selected':''}>🔒 Oculto — próximamente</option>
@@ -1386,7 +1400,7 @@ function admRenderTallerCard(id, data, container, esTemp=false) {
       </div>
 
       <div class="adm-field">
-        <label>🖼 Imagen del taller</label>
+        <label class="adm-label">🖼 Imagen del taller</label>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
           <label style="flex:1;padding:10px 12px;background:#2a2420;border:1.5px dashed rgba(196,138,58,.4);border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;color:#c48a3a;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;" for="file-t-${id}">
             <span>📸</span><span>Elegir foto desde mi dispositivo</span>
@@ -1668,7 +1682,7 @@ function admRenderPiezaCard(id, data, container, esTemp=false) {
   card.innerHTML = `
     <div class="adm-card-header">
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
-        <span class="adm-card-title">🏺 <span id="p-title-lbl-${id}">${escHtml(data.nombre||"Pieza")}</span></span>
+        <span class="adm-panel-title">🏺 <span id="p-title-lbl-${id}">${escHtml(data.nombre||"Pieza")}</span></span>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
           ${(data.stock??1) > 0
             ? `<span id="p-stock-badge-${id}" style="font-family:'Inter',sans-serif;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;background:#d1fae5;color:#065f46;">✅ En stock · ${data.stock??1} pzas</span>`
@@ -1805,8 +1819,8 @@ async function admCargarPedidos() {
 
 window.admFiltrarP = (f, btn) => {
   _filP = f;
-  document.querySelectorAll("[id^='adm-fp-']").forEach(b=>b.classList.remove("active"));
-  if(btn) btn.classList.add("active");
+  document.querySelectorAll("[id^='adm-fp-']").forEach(b=>b.classList.remove("on"));
+  if(btn) btn.classList.add("on");
   admRenderPedidos();
 };
 
@@ -1819,17 +1833,17 @@ function admRenderPedidos() {
   items.forEach(p => {
     const fecha = p.fecha?.toDate?p.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}):"—";
     const row = document.createElement("div");
-    row.className="adm-table-row";
+    row.className="adm-row";
     row.style.cursor="pointer";
-    row.innerHTML=`<div class="adm-table-dot" style="background:${eDots[p.estado]||'#f59e0b'}"></div>
-      <div class="adm-table-info">
-        <div class="adm-table-title">${p.producto||"—"} · <span style="color:#c48a3a;">S/ ${p.monto||"—"}</span></div>
-        <div class="adm-table-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"} · ${fecha}</div>
-        ${p.celular?`<div class="adm-table-sub">📱 ${p.celular}</div>`:""}
-        ${p.tipoEntrega?`<div class="adm-table-sub">${p.tipoEntrega==='recoger'?'🏺 Recojo en estudio':'🚚 '+p.direccion}</div>`:""}
+    row.innerHTML=`<div class="adm-row-dot" style="background:${eDots[p.estado]||'#f59e0b'}"></div>
+      <div class="adm-row-info">
+        <div class="adm-row-title">${p.producto||"—"} · <span style="color:#c48a3a;">S/ ${p.monto||"—"}</span></div>
+        <div class="adm-row-sub">${p.nombre||p.email||"—"} · ${p.metodo||"—"} · ${fecha}</div>
+        ${p.celular?`<div class="adm-row-sub">📱 ${p.celular}</div>`:""}
+        ${p.tipoEntrega?`<div class="adm-row-sub">${p.tipoEntrega==='recoger'?'🏺 Recojo en estudio':'🚚 '+p.direccion}</div>`:""}
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-        <span class="adm-table-badge" style="background:${eDots[p.estado]||'#f59e0b'}22;color:${eDots[p.estado]||'#f59e0b'};">${p.estado||"—"}</span>
+        <span class="adm-chip" style="background:${eDots[p.estado]||'#f59e0b'}22;color:${eDots[p.estado]||'#f59e0b'};">${p.estado||"—"}</span>
         ${p.estado==="pendiente"?`
           <button onclick="admConfPed('${p.id}',this)" style="padding:6px 12px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:9px;font-family:Inter,sans-serif;font-size:10px;cursor:pointer;font-weight:700;box-shadow:0 3px 10px rgba(34,197,94,.25);">✓ Confirmar</button>
           <button onclick="admRechPed('${p.id}',this)" style="padding:6px 12px;background:rgba(127,29,29,.4);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:9px;font-family:Inter,sans-serif;font-size:10px;cursor:pointer;font-weight:600;">✕ Rechazar</button>`:""}
@@ -1872,8 +1886,8 @@ async function admCargarMembresias() {
 
 window.admFiltrarM = (f, btn) => {
   _filM = f;
-  document.querySelectorAll("[id^='adm-fm-']").forEach(b=>b.classList.remove("active"));
-  if(btn) btn.classList.add("active");
+  document.querySelectorAll("[id^='adm-fm-']").forEach(b=>b.classList.remove("on"));
+  if(btn) btn.classList.add("on");
   admRenderMemb();
 };
 
@@ -1886,15 +1900,15 @@ function admRenderMemb() {
   items.forEach(m => {
     const fecha = m.fecha?.toDate?m.fecha.toDate().toLocaleDateString("es-PE",{day:"2-digit",month:"short",year:"numeric"}):"—";
     const row = document.createElement("div");
-    row.className="adm-table-row";
-    row.innerHTML=`<div class="adm-table-dot" style="background:${eDots[m.estado]||'#f59e0b'}"></div>
-      <div class="adm-table-info">
-        <div class="adm-table-title">${m.tallerId||"Taller"} · ${m.horarioLabel||"—"}</div>
-        <div class="adm-table-sub">${m.usuarioNombre||m.usuarioEmail||"—"} · ${m.metodo||"—"} · ${fecha}</div>
+    row.className="adm-row";
+    row.innerHTML=`<div class="adm-row-dot" style="background:${eDots[m.estado]||'#f59e0b'}"></div>
+      <div class="adm-row-info">
+        <div class="adm-row-title">${m.tallerId||"Taller"} · ${m.horarioLabel||"—"}</div>
+        <div class="adm-row-sub">${m.usuarioNombre||m.usuarioEmail||"—"} · ${m.metodo||"—"} · ${fecha}</div>
         ${m.comprobanteURL?`<div style="margin-top:6px;"><img src="${m.comprobanteURL}" style="max-height:70px;border-radius:8px;cursor:zoom-in;" onclick="window.open('${m.comprobanteURL}','_blank')"></div>`:""}
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-        <span class="adm-table-badge" style="background:${eDots[m.estado]||'#f59e0b'}22;color:${eDots[m.estado]||'#f59e0b'};">${m.estado||"—"}</span>
+        <span class="adm-chip" style="background:${eDots[m.estado]||'#f59e0b'}22;color:${eDots[m.estado]||'#f59e0b'};">${m.estado||"—"}</span>
         ${m.estado==="pendiente"?`
           <button onclick="admConfMemb('${m.id}',this)" style="padding:6px 12px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:9px;font-family:Inter,sans-serif;font-size:10px;cursor:pointer;font-weight:700;box-shadow:0 3px 10px rgba(34,197,94,.25);">✓ Confirmar</button>
           <button onclick="admRechMemb('${m.id}',this)" style="padding:6px 12px;background:rgba(127,29,29,.4);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:9px;font-family:Inter,sans-serif;font-size:10px;cursor:pointer;font-weight:600;">✕ Rechazar</button>`:""}
@@ -2195,440 +2209,574 @@ onSnapshot(collection(_db, "config_coleccion"), snap => {
 <script type="module" src="JS/notifications.js"></script>
 <script src="pwa-gate.js"></script>
 <style>
-/* ══════════════════════════════════════════
-   PANEL ADMIN — Gato Miel Estudio
-   Diseño artesanal · oscuro · elegante
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   GATO MIEL — Dashboard Admin
+   Dark luxury · ceramic studio · artisanal feel
+═══════════════════════════════════════════════ */
+:root {
+  --gold: #c48a3a;
+  --gold-light: #e0a84e;
+  --gold-dim: rgba(196,138,58,.15);
+  --gold-border: rgba(196,138,58,.22);
+  --bg-base: #0d0b09;
+  --bg-surface: #141210;
+  --bg-card: #1a1714;
+  --bg-card2: #1f1c18;
+  --bg-hover: rgba(255,255,255,.04);
+  --border: rgba(255,255,255,.07);
+  --border-soft: rgba(255,255,255,.04);
+  --text: #f0ebe4;
+  --text-sub: rgba(240,235,228,.45);
+  --text-dim: rgba(240,235,228,.25);
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* ── Overlay ── */
 .adm-overlay {
   position:fixed;inset:0;z-index:50000;
-  display:none;flex-direction:column;overflow:hidden;
-  background:rgba(10,8,6,.97);
+  background:var(--bg-base);
+  display:none;flex-direction:row;overflow:hidden;
+  font-family:'Inter',sans-serif;
 }
-.adm-overlay.open { display:flex; animation:admFadeIn .3s ease; }
-@keyframes admFadeIn { from{opacity:0} to{opacity:1} }
+.adm-overlay.open {
+  display:flex;
+  animation:admOpen .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes admOpen { from{opacity:0;transform:scale(.98)} to{opacity:1;transform:scale(1)} }
 
-/* ── Topbar ── */
-.adm-topbar {
-  flex-shrink:0;
-  background:linear-gradient(135deg,#1a1510 0%,#221c14 100%);
-  border-bottom:1px solid rgba(196,138,58,.25);
-  padding:0 20px;
-  height:62px;
-  display:flex;align-items:center;gap:14px;
-}
-.adm-topbar-logo {
-  width:38px;height:38px;border-radius:10px;
-  object-fit:cover;border:2px solid rgba(196,138,58,.5);flex-shrink:0;
-  box-shadow:0 4px 12px rgba(196,138,58,.2);
-}
-.adm-topbar-info { flex:1; }
-.adm-topbar-eyebrow {
-  font-family:'Inter',sans-serif;font-size:9px;font-weight:600;
-  letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(196,138,58,.55);display:block;margin-bottom:2px;
-}
-.adm-topbar h1 {
-  font-family:'Playfair Display',serif;font-size:18px;
-  font-weight:400;color:white;margin:0;line-height:1;
-}
-.adm-topbar h1 em { color:#c48a3a;font-style:italic; }
-.adm-close-btn {
-  width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);
-  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
-  transition:.2s;flex-shrink:0;
-}
-.adm-close-btn:hover { background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5; }
-
-/* ── Layout: sidebar + contenido ── */
-.adm-layout { display:flex;flex:1;overflow:hidden; }
-
-/* ── Sidebar de navegación ── */
+/* ═══ SIDEBAR ═══ */
 .adm-sidebar {
-  width:200px;flex-shrink:0;
-  background:linear-gradient(180deg,#141210 0%,#100e0c 100%);
-  border-right:1px solid rgba(255,255,255,.06);
-  padding:16px 12px;
-  display:flex;flex-direction:column;gap:4px;
-  overflow-y:auto;
+  width:220px;flex-shrink:0;
+  background:var(--bg-surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
 }
-.adm-nav-item {
+
+.adm-brand {
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:10px;
-  padding:11px 14px;border-radius:12px;
+  flex-shrink:0;
+}
+.adm-brand-logo {
+  width:34px;height:34px;border-radius:9px;
+  object-fit:cover;border:1.5px solid var(--gold-border);
+  flex-shrink:0;box-shadow:0 0 12px rgba(196,138,58,.15);
+}
+.adm-brand-name {
+  font-family:'Playfair Display',serif;
+  font-size:14px;color:var(--text);line-height:1.2;
+}
+.adm-brand-sub {
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:.15em;text-transform:uppercase;display:block;margin-top:1px;
+}
+.adm-brand-close {
+  margin-left:auto;width:28px;height:28px;border-radius:7px;
+  border:1px solid var(--border);background:none;
+  color:var(--text-dim);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;flex-shrink:0;
+}
+.adm-brand-close:hover { background:rgba(239,68,68,.12);color:#fca5a5;border-color:rgba(239,68,68,.25); }
+
+.adm-nav { flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:none; }
+.adm-nav::-webkit-scrollbar{display:none}
+
+.adm-nav-group { margin-bottom:20px; }
+.adm-nav-group-label {
+  font-size:9px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--text-dim);
+  padding:0 10px;margin-bottom:4px;display:block;
+}
+.adm-nav-btn {
+  display:flex;align-items:center;gap:9px;
+  padding:9px 12px;border-radius:var(--radius-sm);
   border:none;background:none;cursor:pointer;
   font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
-  color:rgba(255,255,255,.4);text-align:left;width:100%;
-  transition:all .2s;position:relative;
+  color:var(--text-sub);text-align:left;width:100%;
+  transition:all .15s;position:relative;margin-bottom:2px;
 }
-.adm-nav-item:hover { background:rgba(255,255,255,.05);color:rgba(255,255,255,.75); }
-.adm-nav-item.active {
-  background:linear-gradient(135deg,rgba(196,138,58,.18),rgba(196,138,58,.08));
-  color:#c48a3a;border:1px solid rgba(196,138,58,.2);
+.adm-nav-btn:hover { background:var(--bg-hover);color:var(--text); }
+.adm-nav-btn.active {
+  background:var(--gold-dim);
+  color:var(--gold);
+  border:1px solid var(--gold-border);
 }
-.adm-nav-item .adm-nav-icon { font-size:16px;flex-shrink:0; }
-.adm-nav-badge {
-  position:absolute;top:8px;right:10px;
-  background:#ef4444;color:white;border-radius:50%;
-  min-width:17px;height:17px;font-size:9px;font-weight:700;
-  display:none;align-items:center;justify-content:center;padding:0 3px;
-  animation:adm-pulse 2s ease infinite;
+.adm-nav-btn .icon { font-size:15px;flex-shrink:0;width:20px;text-align:center; }
+.adm-nav-btn .label { flex:1; }
+.adm-badge {
+  min-width:18px;height:18px;border-radius:50%;
+  background:var(--red);color:white;
+  font-size:9px;font-weight:700;
+  display:none;align-items:center;justify-content:center;
+  padding:0 4px;box-shadow:0 0 8px rgba(239,68,68,.4);
+  animation:pulse-badge 2s ease infinite;
 }
-@keyframes adm-pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.15)} }
-.adm-nav-sep {
-  height:1px;background:rgba(255,255,255,.06);
-  margin:8px 4px;
+@keyframes pulse-badge {0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+.adm-sidebar-footer {
+  padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0;
 }
-.adm-nav-label {
-  font-family:'Inter',sans-serif;font-size:9px;font-weight:600;
-  letter-spacing:.15em;text-transform:uppercase;
-  color:rgba(255,255,255,.2);padding:8px 14px 4px;
+.adm-user-pill {
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;background:var(--gold-dim);
+  border:1px solid var(--gold-border);border-radius:var(--radius-sm);
+}
+.adm-user-dot { width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,.5); }
+.adm-user-name { font-size:11px;font-weight:600;color:var(--gold);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.adm-user-role { font-size:9px;color:var(--text-dim);white-space:nowrap; }
+
+/* ═══ CONTENIDO PRINCIPAL ═══ */
+.adm-main {
+  flex:1;display:flex;flex-direction:column;overflow:hidden;
 }
 
-/* ── Área de contenido ── */
-.adm-content { flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3a3028 #141210; }
-.adm-section { display:none;padding:24px; }
-.adm-section.active { display:block;animation:admSectionIn .25s ease; }
-@keyframes admSectionIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
-/* ── Cabecera de sección ── */
-.adm-section-header { margin-bottom:20px; }
-.adm-section-title {
-  font-family:'Playfair Display',serif;font-size:24px;
-  font-weight:400;color:white;margin-bottom:4px;
+/* Topbar del contenido */
+.adm-topbar-content {
+  height:52px;flex-shrink:0;
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+  padding:0 24px;
 }
-.adm-section-sub {
-  font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);
+.adm-topbar-title {
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:400;color:var(--text);flex:1;
 }
-
-/* ── Cards ── */
-.adm-card {
-  background:linear-gradient(135deg,#1c1814,#191512);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:18px;margin-bottom:16px;overflow:hidden;
-  transition:border-color .2s;
-}
-.adm-card:hover { border-color:rgba(196,138,58,.15); }
-.adm-card-header {
-  padding:16px 20px;
-  background:linear-gradient(135deg,#231e18,#1c1814);
-  border-bottom:1px solid rgba(255,255,255,.06);
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-}
-.adm-card-body { padding:18px 20px; }
-.adm-card-title {
-  font-family:'Playfair Display',serif;font-size:16px;
-  color:white;font-weight:400;margin-bottom:3px;
-}
-.adm-card-meta {
-  font-family:'Inter',sans-serif;font-size:11px;
-  color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-}
-
-/* ── Stats ── */
-.adm-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px; }
-.adm-stat {
-  background:linear-gradient(135deg,#1c1814,#191512);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:16px;padding:20px 16px;text-align:center;
-  transition:border-color .2s,transform .2s;
-}
-.adm-stat:hover { border-color:rgba(196,138,58,.2);transform:translateY(-2px); }
-.adm-stat-num {
-  font-family:'Playfair Display',serif;font-size:32px;
-  color:#c48a3a;margin-bottom:4px;font-weight:400;
-}
-.adm-stat-lbl {
-  font-family:'Inter',sans-serif;font-size:10px;
-  color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em;
-}
-
-/* ── Tip ── */
-.adm-tip {
-  background:rgba(196,138,58,.07);border:1px solid rgba(196,138,58,.18);
-  border-radius:12px;padding:13px 16px;margin-bottom:16px;
-  font-family:'Inter',sans-serif;font-size:12px;color:rgba(196,138,58,.85);
-  display:flex;gap:10px;align-items:flex-start;line-height:1.6;
-}
-.adm-tip-icon { font-size:15px;flex-shrink:0;margin-top:1px; }
-
-/* ── Campos ── */
-.adm-field { margin-bottom:14px; }
-.adm-field > label {
+.adm-topbar-title span { color:var(--gold);font-style:italic; }
+.adm-live-pill {
   display:flex;align-items:center;gap:6px;
-  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
-  letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(196,138,58,.65);margin-bottom:7px;
+  padding:5px 12px;border-radius:50px;
+  border:1px solid rgba(34,197,94,.25);
+  background:rgba(34,197,94,.08);
+  font-size:10px;font-weight:700;color:var(--green);
 }
-.adm-field-hint {
-  font-family:'Inter',sans-serif;font-size:10px;
-  color:rgba(255,255,255,.2);font-weight:400;
-  text-transform:none;letter-spacing:0;margin-left:auto;
+.adm-live-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 6px rgba(34,197,94,.6);
+  animation:livePulse 1.5s ease infinite;
 }
-.adm-input {
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,.04);
-  border:1.5px solid rgba(255,255,255,.08);
-  border-radius:11px;font-family:'Inter',sans-serif;
-  font-size:13px;color:white;outline:none;
-  box-sizing:border-box;transition:.2s;
-}
-.adm-input:focus { border-color:rgba(196,138,58,.6);background:rgba(196,138,58,.04); }
-.adm-textarea {
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,.04);
-  border:1.5px solid rgba(255,255,255,.08);
-  border-radius:11px;font-family:'Inter',sans-serif;
-  font-size:13px;color:white;outline:none;
-  box-sizing:border-box;resize:vertical;min-height:76px;transition:.2s;
-}
-.adm-textarea:focus { border-color:rgba(196,138,58,.6);background:rgba(196,138,58,.04); }
-.adm-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ── Botones ── */
-.adm-btn-primary {
-  padding:11px 20px;
-  background:linear-gradient(135deg,#c48a3a,#a8742f);
-  color:white;border:none;border-radius:11px;
+/* Área de scroll del contenido */
+.adm-content {
+  flex:1;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(196,138,58,.2) transparent;
+}
+.adm-section {
+  display:none;padding:24px;
+  animation:sectionIn .2s ease;
+}
+.adm-section.active { display:block; }
+@keyframes sectionIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ KPI CARDS ═══ */
+.adm-kpis {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  margin-bottom:20px;
+}
+@media(max-width:900px){.adm-kpis{grid-template-columns:repeat(2,1fr)}}
+.adm-kpi {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,transform .2s;cursor:default;
+}
+.adm-kpi:hover { border-color:var(--gold-border);transform:translateY(-2px); }
+.adm-kpi::after {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(196,138,58,.04),transparent);
+  pointer-events:none;
+}
+.adm-kpi-icon { font-size:22px;margin-bottom:10px;display:block; }
+.adm-kpi-num {
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:400;color:var(--gold);
+  line-height:1;margin-bottom:4px;
+}
+.adm-kpi-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim); }
+.adm-kpi-trend { font-size:10px;color:var(--text-dim);margin-top:8px; }
+.adm-kpi-bar {
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-light));
+  transform-origin:left;transition:transform .4s ease;
+}
+
+/* ═══ GRID LAYOUT ═══ */
+.adm-grid-main { display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:16px; }
+@media(max-width:900px){.adm-grid-main{grid-template-columns:1fr}}
+.adm-grid-3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px; }
+@media(max-width:900px){.adm-grid-3{grid-template-columns:1fr}}
+
+/* ═══ PANEL CARD ═══ */
+.adm-panel {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  margin-bottom:16px;
+}
+.adm-panel-header {
+  padding:14px 18px;
+  background:linear-gradient(135deg,var(--bg-card2),var(--bg-card));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.adm-panel-title { font-family:'Playfair Display',serif;font-size:15px;color:var(--text);font-weight:400; }
+.adm-panel-meta { font-size:11px;color:var(--text-sub);margin-top:2px; }
+.adm-panel-body { padding:16px 18px; }
+.adm-panel-actions { display:flex;gap:8px;align-items:center;flex-shrink:0; }
+
+/* ═══ TIP ═══ */
+.adm-tip {
+  background:rgba(196,138,58,.06);
+  border:1px solid var(--gold-border);
+  border-radius:var(--radius-sm);padding:11px 14px;
+  font-size:12px;color:rgba(196,138,58,.85);
+  display:flex;gap:9px;align-items:flex-start;
+  line-height:1.6;margin-bottom:14px;
+}
+
+/* ═══ INPUTS ═══ */
+.adm-field { margin-bottom:13px; }
+.adm-label {
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(196,138,58,.6);
+  margin-bottom:6px;
+}
+.adm-hint { font-size:10px;color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0;margin-left:auto; }
+.adm-input {
+  width:100%;padding:10px 13px;
+  background:rgba(255,255,255,.04);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:13px;
+  color:var(--text);outline:none;box-sizing:border-box;
+  transition:.2s;
+}
+.adm-input:focus { border-color:rgba(196,138,58,.5);background:rgba(196,138,58,.04); }
+.adm-textarea {
+  width:100%;padding:10px 13px;
+  background:rgba(255,255,255,.04);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:13px;
+  color:var(--text);outline:none;box-sizing:border-box;
+  resize:vertical;min-height:72px;transition:.2s;
+}
+.adm-textarea:focus { border-color:rgba(196,138,58,.5); }
+.adm-2col { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+
+/* ═══ BOTONES ═══ */
+.adm-btn-gold {
+  padding:10px 18px;
+  background:linear-gradient(135deg,var(--gold),#9a6b2b);
+  color:white;border:none;border-radius:var(--radius-sm);
   font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
   cursor:pointer;transition:.2s;
   display:inline-flex;align-items:center;gap:7px;
-  box-shadow:0 4px 14px rgba(196,138,58,.25);
+  box-shadow:0 4px 14px rgba(196,138,58,.2);
 }
-.adm-btn-primary:hover { transform:translateY(-2px);box-shadow:0 8px 20px rgba(196,138,58,.35); }
-.adm-btn-save { padding:11px 20px;background:linear-gradient(135deg,#c48a3a,#a8742f);color:white;border:none;border-radius:11px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px; }
-.adm-btn-save:hover { transform:translateY(-1px);box-shadow:0 6px 16px rgba(196,138,58,.3); }
-.adm-btn-danger {
-  padding:11px 18px;
-  background:rgba(127,29,29,.4);color:#fca5a5;
-  border:1px solid rgba(239,68,68,.2);border-radius:11px;
-  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
-  cursor:pointer;transition:.2s;
-}
-.adm-btn-danger:hover { background:#7f1d1d;border-color:rgba(239,68,68,.4); }
+.adm-btn-gold:hover { transform:translateY(-1px);box-shadow:0 8px 20px rgba(196,138,58,.3); }
+.adm-btn-save { padding:10px 18px;background:linear-gradient(135deg,var(--gold),#9a6b2b);color:white;border:none;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px; }
+.adm-btn-save:hover { transform:translateY(-1px);box-shadow:0 6px 16px rgba(196,138,58,.25); }
+.adm-btn-danger { padding:10px 16px;background:rgba(127,29,29,.35);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s; }
+.adm-btn-danger:hover { background:#7f1d1d; }
+.adm-btn-ghost { padding:8px 14px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--text-sub);cursor:pointer;transition:.2s; }
+.adm-btn-ghost:hover { border-color:var(--gold-border);color:var(--gold); }
 .adm-btn-add {
-  width:100%;padding:15px;background:transparent;
-  border:1.5px dashed rgba(196,138,58,.25);border-radius:14px;
-  color:rgba(196,138,58,.7);font-family:'Inter',sans-serif;font-size:13px;
-  font-weight:600;cursor:pointer;margin-top:6px;
-  display:flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;padding:14px;background:transparent;
+  border:1.5px dashed rgba(196,138,58,.2);
+  border-radius:var(--radius);
+  color:rgba(196,138,58,.6);
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;margin-top:6px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
   transition:.2s;
 }
-.adm-btn-add:hover { background:rgba(196,138,58,.06);border-color:rgba(196,138,58,.5);color:#c48a3a; }
+.adm-btn-add:hover { background:var(--gold-dim);border-color:rgba(196,138,58,.5);color:var(--gold); }
+.adm-btn-confirm { padding:7px 14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(34,197,94,.2); }
+.adm-btn-reject { padding:7px 14px;background:rgba(127,29,29,.3);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer; }
 
-/* ── Imagen preview ── */
-.adm-img-preview {
-  width:100%;height:130px;border-radius:12px;object-fit:cover;
-  border:1px solid rgba(255,255,255,.08);margin-bottom:12px;
+/* ═══ FILTROS ═══ */
+.adm-filters { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px; }
+.adm-filter {
+  padding:7px 14px;border-radius:50px;
+  border:1.5px solid var(--border);
   background:rgba(255,255,255,.03);
-}
-
-/* ── Rows tabla ── */
-.adm-table-row {
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:13px;padding:14px 16px;margin-bottom:8px;
-  display:flex;align-items:center;gap:10px;
-  transition:border-color .2s;
-}
-.adm-table-row:hover { border-color:rgba(196,138,58,.15); }
-.adm-table-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
-.adm-table-info { flex:1;min-width:0; }
-.adm-table-title { font-family:'Inter',sans-serif;font-size:13px;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.adm-table-sub { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.28);margin-top:2px; }
-.adm-table-badge { font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0; }
-
-/* ── Filtros tabs ── */
-.adm-filter-row { display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap; }
-.adm-filter-btn {
-  padding:8px 16px;border-radius:50px;
-  border:1.5px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.04);
   font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
-  color:rgba(255,255,255,.4);cursor:pointer;transition:.2s;
+  color:var(--text-sub);cursor:pointer;transition:.15s;
 }
-.adm-filter-btn:hover { border-color:rgba(196,138,58,.3);color:rgba(196,138,58,.7); }
-.adm-filter-btn.active { background:rgba(196,138,58,.12);border-color:rgba(196,138,58,.4);color:#c48a3a; }
+.adm-filter:hover { border-color:var(--gold-border);color:var(--gold); }
+.adm-filter.on { background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold); }
 
-/* ── Destacados ── */
-.adm-dest-item {
-  display:flex;align-items:center;gap:12px;
-  padding:13px 16px;border-radius:13px;cursor:pointer;
-  border:1.5px solid rgba(255,255,255,.07);
-  background:rgba(255,255,255,.03);
-  transition:all .2s;margin-bottom:8px;
+/* ═══ ROWS ═══ */
+.adm-row {
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  padding:13px 16px;margin-bottom:7px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:border-color .15s;
 }
-.adm-dest-item:hover { border-color:rgba(196,138,58,.2); }
-.adm-dest-item.checked {
-  background:rgba(196,138,58,.08);
-  border-color:rgba(196,138,58,.35);
+.adm-row:hover { border-color:var(--gold-border); }
+.adm-row-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px; }
+.adm-row-info { flex:1;min-width:0; }
+.adm-row-title { font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.adm-row-sub { font-size:10px;color:var(--text-dim);margin-top:2px; }
+.adm-row-actions { display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap; }
+.adm-chip {
+  font-size:10px;font-weight:600;
+  padding:3px 9px;border-radius:50px;white-space:nowrap;
 }
-.adm-dest-check {
-  width:20px;height:20px;border-radius:6px;
-  border:2px solid rgba(255,255,255,.2);
-  background:transparent;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  transition:.2s;
-}
-.adm-dest-item.checked .adm-dest-check {
-  background:#c48a3a;border-color:#c48a3a;
-}
+.adm-chip-gold { background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border); }
+.adm-chip-green { background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2); }
+.adm-chip-red { background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2); }
+.adm-chip-amber { background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2); }
+.adm-chip-gray { background:rgba(255,255,255,.06);color:var(--text-sub);border:1px solid var(--border); }
 
-/* ── Cupos admin ── */
+/* ═══ CUPOS DENTRO DE CADA TALLER ═══ */
 .adm-cupo-row {
   background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:13px;padding:14px 16px;
-  display:flex;align-items:center;gap:14px;
-  margin-bottom:8px;
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  padding:11px 14px;display:flex;align-items:center;gap:12px;
+  margin-bottom:7px;
 }
 .adm-cupo-bar-wrap { flex:1;min-width:0; }
-.adm-cupo-label { font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:white;margin-bottom:5px; }
-.adm-cupo-bar-bg { height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden; }
-.adm-cupo-bar { height:100%;border-radius:3px;transition:width .4s ease; }
-.adm-cupo-sub { font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);margin-top:4px; }
-.adm-cupo-controls { display:flex;align-items:center;gap:8px;flex-shrink:0; }
+.adm-cupo-label { font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px; }
+.adm-cupo-bg { height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px; }
+.adm-cupo-fill { height:100%;border-radius:3px;transition:width .4s ease; }
+.adm-cupo-sub { font-size:10px;color:var(--text-dim); }
+.adm-cupo-controls { display:flex;align-items:center;gap:7px;flex-shrink:0; }
 .adm-cupo-btn {
-  width:32px;height:32px;border-radius:50%;
-  border:1.5px solid rgba(196,138,58,.3);
-  background:rgba(196,138,58,.08);
-  color:#c48a3a;font-size:18px;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:.2s;
+  width:30px;height:30px;border-radius:50%;
+  border:1.5px solid var(--gold-border);
+  background:var(--gold-dim);color:var(--gold);
+  font-size:17px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
 }
-.adm-cupo-btn:hover { background:rgba(196,138,58,.2);border-color:#c48a3a; }
-.adm-cupo-btn:disabled { opacity:.35;cursor:not-allowed; }
-.adm-cupo-num { font-family:'Playfair Display',serif;font-size:22px;color:#c48a3a;font-weight:400;min-width:28px;text-align:center; }
+.adm-cupo-btn:hover { background:rgba(196,138,58,.25); }
+.adm-cupo-btn:disabled { opacity:.3;cursor:not-allowed; }
+.adm-cupo-val { font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);min-width:26px;text-align:center; }
 
-/* ── Toast ── */
+/* ═══ IMAGEN PREVIEW ═══ */
+.adm-img-preview { width:100%;height:120px;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border);margin-bottom:12px; }
+
+/* ═══ DESTACADOS ═══ */
+.adm-dest-row {
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;border-radius:var(--radius-sm);cursor:pointer;
+  border:1.5px solid var(--border-soft);
+  background:rgba(255,255,255,.02);
+  transition:all .15s;margin-bottom:7px;
+}
+.adm-dest-row:hover { border-color:var(--gold-border); }
+.adm-dest-row.on { background:var(--gold-dim);border-color:var(--gold-border); }
+.adm-dest-check {
+  width:20px;height:20px;border-radius:5px;flex-shrink:0;
+  border:2px solid rgba(255,255,255,.2);background:transparent;
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.adm-dest-row.on .adm-dest-check { background:var(--gold);border-color:var(--gold); }
+
+/* ═══ STATS MINI (sidebar resumen) ═══ */
+.adm-mini-stat {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:rgba(255,255,255,.025);
+  border:1px solid var(--border-soft);border-radius:var(--radius-sm);
+  margin-bottom:8px;
+}
+.adm-mini-stat-num { font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);flex-shrink:0;width:44px;text-align:center; }
+.adm-mini-stat-info { flex:1;min-width:0; }
+.adm-mini-stat-label { font-size:11px;font-weight:600;color:var(--text);margin-bottom:1px; }
+.adm-mini-stat-sub { font-size:10px;color:var(--text-dim); }
+
+/* ═══ ACTIVIDAD RECIENTE ═══ */
+.adm-activity-item {
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border-soft);
+}
+.adm-activity-item:last-child { border-bottom:none; }
+.adm-activity-dot {
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+.adm-activity-text { flex:1;min-width:0; }
+.adm-activity-title { font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.adm-activity-time { font-size:10px;color:var(--text-dim); }
+
+/* ═══ TOAST ═══ */
 .adm-toast {
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(10px);
   padding:12px 26px;border-radius:50px;
   font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
-  z-index:60000;opacity:0;transition:opacity .3s,transform .3s;
+  z-index:60000;opacity:0;
+  transition:opacity .3s,transform .3s;
   pointer-events:none;white-space:nowrap;
-}
-
-/* ── Responsive (mobile: sidebar colapsa) ── */
-@media(max-width:700px) {
-  .adm-sidebar { display:none; }
-  .adm-nav-bottom {
-    display:flex!important;position:absolute;bottom:0;left:0;right:0;
-    background:#141210;border-top:1px solid rgba(255,255,255,.08);
-    padding:8px;gap:2px;z-index:10;
-  }
 }
 </style>
 
-<!-- ══════════════════════════════════════════
-     PANEL ADMIN — Gato Miel Estudio
-══════════════════════════════════════════ -->
+<!-- ════════════════════════════════════
+     PANEL ADMIN — Gato Miel Dashboard
+════════════════════════════════════ -->
 <div id="modoAdminOverlay" class="adm-overlay">
 
-  <!-- Topbar -->
-  <div class="adm-topbar">
-    <img src="Assets/Img/Logo.jpg" class="adm-topbar-logo" alt="GM" onerror="this.style.display='none'">
-    <div class="adm-topbar-info">
-      <span class="adm-topbar-eyebrow">Panel de administración · Gato Miel Estudio</span>
-      <h1>Control <em>total</em></h1>
+  <!-- ── Sidebar ── -->
+  <aside class="adm-sidebar">
+    <div class="adm-brand">
+      <img src="Assets/Img/Logo.jpg" class="adm-brand-logo" alt="GM" onerror="this.style.display='none'">
+      <div>
+        <span class="adm-brand-name">Gato Miel</span>
+        <span class="adm-brand-sub">Dashboard</span>
+      </div>
+      <button class="adm-brand-close" onclick="cerrarModoAdmin()" title="Cerrar">✕</button>
     </div>
-    <button class="adm-close-btn" onclick="cerrarModoAdmin()" title="Cerrar">✕</button>
-  </div>
 
-  <!-- Layout: sidebar + contenido -->
-  <div class="adm-layout">
-
-    <!-- Sidebar de navegación -->
-    <nav class="adm-sidebar">
-      <div class="adm-nav-label">Inicio</div>
-      <button class="adm-nav-item active" onclick="admTab('resumen',this)" id="nav-resumen">
-        <span class="adm-nav-icon">📊</span> Resumen
-      </button>
-
-      <div class="adm-nav-sep"></div>
-      <div class="adm-nav-label">Mi Estudio</div>
-
-      <button class="adm-nav-item" onclick="admTab('talleres',this)" id="nav-talleres">
-        <span class="adm-nav-icon">🏺</span> Talleres
-      </button>
-      <button class="adm-nav-item" onclick="admTab('coleccion',this)" id="nav-coleccion">
-        <span class="adm-nav-icon">🛍</span> Colección
-      </button>
-
-      <div class="adm-nav-sep"></div>
-      <div class="adm-nav-label">Clientes</div>
-
-      <button class="adm-nav-item" onclick="admTab('pedidos',this)" id="nav-pedidos">
-        <span class="adm-nav-icon">📦</span> Pedidos
-        <span class="adm-nav-badge" id="badge-tab-pedidos"></span>
-      </button>
-      <button class="adm-nav-item" onclick="admTab('membresias',this)" id="nav-membresias">
-        <span class="adm-nav-icon">🎫</span> Membresías
-        <span class="adm-nav-badge" id="badge-tab-memb"></span>
-      </button>
-      <button class="adm-nav-item" onclick="admTab('chats',this)" id="nav-chats">
-        <span class="adm-nav-icon">💬</span> Chats
-        <span class="adm-nav-badge" id="badge-tab-chats"></span>
-      </button>
-      <button class="adm-nav-item" onclick="admTab('comunidad',this)" id="nav-comunidad">
-        <span class="adm-nav-icon">🖼</span> Comunidad
-      </button>
+    <nav class="adm-nav">
+      <div class="adm-nav-group">
+        <span class="adm-nav-group-label">General</span>
+        <button class="adm-nav-btn active" onclick="admTab('resumen',this)" id="nav-resumen">
+          <span class="icon">📊</span><span class="label">Resumen</span>
+        </button>
+      </div>
+      <div class="adm-nav-group">
+        <span class="adm-nav-group-label">Mi Estudio</span>
+        <button class="adm-nav-btn" onclick="admTab('talleres',this)" id="nav-talleres">
+          <span class="icon">🏺</span><span class="label">Talleres</span>
+        </button>
+        <button class="adm-nav-btn" onclick="admTab('coleccion',this)" id="nav-coleccion">
+          <span class="icon">🛍</span><span class="label">Colección</span>
+        </button>
+      </div>
+      <div class="adm-nav-group">
+        <span class="adm-nav-group-label">Clientes</span>
+        <button class="adm-nav-btn" onclick="admTab('pedidos',this)" id="nav-pedidos">
+          <span class="icon">📦</span><span class="label">Pedidos</span>
+          <span class="adm-badge" id="badge-tab-pedidos"></span>
+        </button>
+        <button class="adm-nav-btn" onclick="admTab('membresias',this)" id="nav-membresias">
+          <span class="icon">🎫</span><span class="label">Membresías</span>
+          <span class="adm-badge" id="badge-tab-memb"></span>
+        </button>
+        <button class="adm-nav-btn" onclick="admTab('chats',this)" id="nav-chats">
+          <span class="icon">💬</span><span class="label">Chats</span>
+          <span class="adm-badge" id="badge-tab-chats"></span>
+        </button>
+        <button class="adm-nav-btn" onclick="admTab('comunidad',this)" id="nav-comunidad">
+          <span class="icon">🖼</span><span class="label">Comunidad</span>
+        </button>
+      </div>
     </nav>
 
-    <!-- Área de contenido -->
+    <div class="adm-sidebar-footer">
+      <div class="adm-user-pill">
+        <div class="adm-user-dot"></div>
+        <span class="adm-user-name" id="adm-user-email">Administradora</span>
+        <span class="adm-user-role">Admin</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="adm-main">
+
+    <!-- Topbar -->
+    <div class="adm-topbar-content">
+      <div class="adm-topbar-title" id="adm-topbar-title">Panel de <span>control</span></div>
+      <div class="adm-live-pill">
+        <div class="adm-live-dot"></div>
+        En vivo
+      </div>
+    </div>
+
+    <!-- Contenido scrolleable -->
     <div class="adm-content">
 
       <!-- ════ RESUMEN ════ -->
       <div id="adm-resumen" class="adm-section active">
-        <div class="adm-section-header">
-          <div class="adm-section-title">👋 Bienvenida, directora</div>
-          <div class="adm-section-sub">Aquí tienes un resumen rápido de tu estudio · todo en un vistazo</div>
+        <div class="adm-kpis">
+          <div class="adm-kpi">
+            <span class="adm-kpi-icon">📦</span>
+            <div class="adm-kpi-num" id="adm-st-pedidos">—</div>
+            <div class="adm-kpi-label">Pedidos totales</div>
+            <div class="adm-kpi-trend" id="adm-st-pedidos-sub"></div>
+            <div class="adm-kpi-bar"></div>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-icon">🎫</span>
+            <div class="adm-kpi-num" id="adm-st-memb">—</div>
+            <div class="adm-kpi-label">Membresías</div>
+            <div class="adm-kpi-trend" id="adm-st-memb-sub"></div>
+            <div class="adm-kpi-bar"></div>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-icon">⏳</span>
+            <div class="adm-kpi-num" id="adm-st-pend" style="color:var(--amber)">—</div>
+            <div class="adm-kpi-label">Pendientes hoy</div>
+            <div class="adm-kpi-trend">Requieren tu atención</div>
+            <div class="adm-kpi-bar" style="background:linear-gradient(90deg,var(--amber),#fbbf24)"></div>
+          </div>
+          <div class="adm-kpi">
+            <span class="adm-kpi-icon">💬</span>
+            <div class="adm-kpi-num" id="adm-st-chats" style="color:var(--green)">—</div>
+            <div class="adm-kpi-label">Chats activos</div>
+            <div class="adm-kpi-trend">Mensajes de clientas</div>
+            <div class="adm-kpi-bar" style="background:linear-gradient(90deg,var(--green),#4ade80)"></div>
+          </div>
         </div>
-        <div class="adm-stats">
-          <div class="adm-stat">
-            <div class="adm-stat-num" id="adm-st-pedidos">—</div>
-            <div class="adm-stat-lbl">Pedidos totales</div>
+        <div class="adm-grid-main">
+          <div>
+            <div class="adm-panel">
+              <div class="adm-panel-header">
+                <div>
+                  <div class="adm-panel-title">🕐 Actividad reciente</div>
+                  <div class="adm-panel-meta">Últimas acciones de tus clientas</div>
+                </div>
+              </div>
+              <div class="adm-panel-body">
+                <div id="adm-resumen-ultimos"></div>
+              </div>
+            </div>
           </div>
-          <div class="adm-stat">
-            <div class="adm-stat-num" id="adm-st-memb">—</div>
-            <div class="adm-stat-lbl">Membresías</div>
-          </div>
-          <div class="adm-stat">
-            <div class="adm-stat-num" id="adm-st-pend" style="color:#f59e0b;">—</div>
-            <div class="adm-stat-lbl">⏳ Pendientes</div>
+          <div>
+            <div class="adm-panel">
+              <div class="adm-panel-header">
+                <div class="adm-panel-title">📈 Totales</div>
+              </div>
+              <div class="adm-panel-body" id="adm-resumen-stats-side"></div>
+            </div>
           </div>
         </div>
-        <div id="adm-resumen-ultimos"></div>
       </div>
 
       <!-- ════ TALLERES ════ -->
       <div id="adm-talleres" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">🏺 Mis talleres</div>
-          <div class="adm-section-sub">Gestiona tus talleres, cupos y qué aparece en la portada</div>
-        </div>
-
-        <!-- Talleres destacados en portada -->
-        <div class="adm-card" style="margin-bottom:20px;">
-          <div class="adm-card-header">
+        <!-- Destacados -->
+        <div class="adm-panel" style="margin-bottom:16px;">
+          <div class="adm-panel-header">
             <div>
-              <div class="adm-card-title">⭐ Destacados en la portada</div>
-              <div class="adm-card-meta">Selecciona cuáles aparecen en la página de inicio · marca y se actualiza al instante</div>
+              <div class="adm-panel-title">⭐ Destacados en portada</div>
+              <div class="adm-panel-meta">Marca los talleres que aparecen en la página de inicio</div>
             </div>
           </div>
-          <div class="adm-card-body">
-            <div class="adm-tip">
-              <span class="adm-tip-icon">🌟</span>
-              <span>Solo los talleres marcados con ✓ aparecen en la página de inicio. Puedes cambiarlos cuando quieras.</span>
-            </div>
+          <div class="adm-panel-body">
+            <div class="adm-tip"><span>🌟</span><span>Solo los marcados aparecen en la portada del sitio. Cambios en tiempo real.</span></div>
             <div id="adm-destacados-lista"></div>
           </div>
         </div>
-
-        <!-- Lista de talleres editables -->
-        <div class="adm-tip" style="margin-bottom:16px;">
-          <span class="adm-tip-icon">📝</span>
-          <span>Edita el nombre, precio, descripción, cupos máximos e imagen de cada taller. Los cambios se ven en la web al instante.</span>
-        </div>
+        <!-- Cards editables -->
+        <div class="adm-tip"><span>📝</span><span>Edita nombre, precio, descripción, cupos e imagen. Los cupos inscritos de cada horario aparecen dentro de la card.</span></div>
         <div id="adm-talleres-lista"></div>
         <button class="adm-btn-add" onclick="admNuevoTaller()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -2638,14 +2786,7 @@ onSnapshot(collection(_db, "config_coleccion"), snap => {
 
       <!-- ════ COLECCIÓN ════ -->
       <div id="adm-coleccion" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">🛍 Colección de piezas</div>
-          <div class="adm-section-sub">Gestiona tus piezas de cerámica · precios, stock e imágenes</div>
-        </div>
-        <div class="adm-tip">
-          <span class="adm-tip-icon">🏺</span>
-          <span>Cuando el stock llega a 0, la pieza aparece como "Agotada" en la tienda y no se puede comprar. Puedes ocultarla o dejarla visible.</span>
-        </div>
+        <div class="adm-tip"><span>🏺</span><span>Cuando stock = 0, la pieza aparece como "Agotada" y no se puede comprar.</span></div>
         <div id="adm-coleccion-lista"></div>
         <button class="adm-btn-add" onclick="admNuevaPieza()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -2655,58 +2796,43 @@ onSnapshot(collection(_db, "config_coleccion"), snap => {
 
       <!-- ════ PEDIDOS ════ -->
       <div id="adm-pedidos" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">📦 Pedidos de colección</div>
-          <div class="adm-section-sub">Compras de piezas · revisa el comprobante y confirma o rechaza</div>
-        </div>
-        <div class="adm-filter-row">
-          <button class="adm-filter-btn active" id="adm-fp-pend" onclick="admFiltrarP('pendiente',this)">⏳ Pendientes</button>
-          <button class="adm-filter-btn" id="adm-fp-conf" onclick="admFiltrarP('confirmado',this)">✅ Confirmados</button>
-          <button class="adm-filter-btn" id="adm-fp-rech" onclick="admFiltrarP('rechazado',this)">❌ Rechazados</button>
-          <button class="adm-filter-btn" id="adm-fp-todos" onclick="admFiltrarP('todos',this)">Ver todos</button>
+        <div class="adm-filters">
+          <button class="adm-filter on"  id="adm-fp-pend" onclick="admFiltrarP('pendiente',this)">⏳ Pendientes</button>
+          <button class="adm-filter" id="adm-fp-conf" onclick="admFiltrarP('confirmado',this)">✅ Confirmados</button>
+          <button class="adm-filter" id="adm-fp-rech" onclick="admFiltrarP('rechazado',this)">❌ Rechazados</button>
+          <button class="adm-filter" id="adm-fp-todos" onclick="admFiltrarP('todos',this)">Ver todos</button>
         </div>
         <div id="adm-pedidos-lista"></div>
       </div>
 
       <!-- ════ MEMBRESÍAS ════ -->
       <div id="adm-membresias" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">🎫 Inscripciones a talleres</div>
-          <div class="adm-section-sub">Pagos de membresías · confirma para reservar la plaza</div>
-        </div>
-        <div class="adm-filter-row">
-          <button class="adm-filter-btn active" id="adm-fm-pend" onclick="admFiltrarM('pendiente',this)">⏳ Pendientes</button>
-          <button class="adm-filter-btn" id="adm-fm-conf" onclick="admFiltrarM('confirmado',this)">✅ Confirmadas</button>
-          <button class="adm-filter-btn" id="adm-fm-rech" onclick="admFiltrarM('rechazado',this)">❌ Rechazadas</button>
-          <button class="adm-filter-btn" id="adm-fm-todos" onclick="admFiltrarM('todos',this)">Ver todas</button>
+        <div class="adm-filters">
+          <button class="adm-filter on"  id="adm-fm-pend" onclick="admFiltrarM('pendiente',this)">⏳ Pendientes</button>
+          <button class="adm-filter" id="adm-fm-conf" onclick="admFiltrarM('confirmado',this)">✅ Confirmadas</button>
+          <button class="adm-filter" id="adm-fm-rech" onclick="admFiltrarM('rechazado',this)">❌ Rechazadas</button>
+          <button class="adm-filter" id="adm-fm-todos" onclick="admFiltrarM('todos',this)">Ver todas</button>
         </div>
         <div id="adm-membresias-lista"></div>
       </div>
 
       <!-- ════ CHATS ════ -->
       <div id="adm-chats" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">💬 Mensajes de clientas</div>
-          <div class="adm-section-sub">Historial de conversaciones del chat</div>
-        </div>
         <div id="adm-chats-lista"></div>
       </div>
 
       <!-- ════ COMUNIDAD ════ -->
       <div id="adm-comunidad" class="adm-section">
-        <div class="adm-section-header">
-          <div class="adm-section-title">🖼 Comunidad creativa</div>
-          <div class="adm-section-sub">Publicaciones y comentarios de tu comunidad</div>
-        </div>
         <div id="adm-comunidad-lista"></div>
       </div>
 
     </div><!-- /adm-content -->
-  </div><!-- /adm-layout -->
-</div><!-- /modoAdminOverlay -->
+  </div><!-- /adm-main -->
+</div><!-- /overlay -->
 
 <!-- Toast -->
 <div id="adm-toast" class="adm-toast"></div>
+
 
 
 
@@ -2779,4 +2905,87 @@ window.admToggleDestacado = async (tallerId, checked, checkbox) => {
 <script type="module" src="pwa.js"></script>
 <script type="module" src="JS/notifications.js"></script>
 <script src="pwa-gate.js"></script>
-</body></html>
+</body></html>window.admCargarResumen = async () => {
+  try {
+    const [pedSnap, membSnap, chatSnap] = await Promise.all([
+      getDocs(collection(_db,"pedidos")),
+      getDocs(collection(_db,"membresias")),
+      getDocs(collection(_db,"chats")),
+    ]);
+    const pend = [...pedSnap.docs,...membSnap.docs].filter(d=>d.data().estado==="pendiente").length;
+    // KPI numbers
+    const s = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    s("adm-st-pedidos", pedSnap.size);
+    s("adm-st-memb", membSnap.size);
+    s("adm-st-pend", pend);
+    s("adm-st-chats", chatSnap.size);
+    // KPI sub-text
+    const pConf = pedSnap.docs.filter(d=>d.data().estado==="confirmado").length;
+    const mConf = membSnap.docs.filter(d=>d.data().estado==="confirmado").length;
+    const sub = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    sub("adm-st-pedidos-sub", `${pConf} confirmados`);
+    sub("adm-st-memb-sub", `${mConf} confirmadas`);
+
+    // Badges in sidebar
+    const showBadge = (id, n) => {
+      const b = document.getElementById(id);
+      if (!b) return;
+      b.textContent = n > 0 ? (n > 9 ? "9+" : n) : "";
+      b.style.display = n > 0 ? "inline-flex" : "none";
+    };
+    const pPend = pedSnap.docs.filter(d=>d.data().estado==="pendiente").length;
+    const mPend = membSnap.docs.filter(d=>d.data().estado==="pendiente").length;
+    showBadge("badge-tab-pedidos", pPend);
+    showBadge("badge-tab-memb", mPend);
+    showBadge("badge-tab-chats", chatSnap.size);
+
+    // Side stats panel
+    const side = document.getElementById("adm-resumen-stats-side");
+    if (side) {
+      const items = [
+        {n:pedSnap.size, label:"Pedidos totales", sub:"compras de colección"},
+        {n:membSnap.size, label:"Membresías", sub:"inscripciones a talleres"},
+        {n:pend, label:"Pendientes", sub:"esperan confirmación", color:"var(--amber)"},
+        {n:chatSnap.size, label:"Conversaciones", sub:"chats con clientas", color:"var(--green)"},
+      ];
+      side.innerHTML = items.map(it => `
+        <div class="adm-mini-stat">
+          <div class="adm-mini-stat-num" style="${it.color?'color:'+it.color:''}">${it.n}</div>
+          <div class="adm-mini-stat-info">
+            <div class="adm-mini-stat-label">${it.label}</div>
+            <div class="adm-mini-stat-sub">${it.sub}</div>
+          </div>
+        </div>`).join("");
+    }
+
+    // Activity feed — últimos 6 docs recientes
+    const recents = [
+      ...pedSnap.docs.map(d=>({...d.data(), _tipo:"pedido", _id:d.id})),
+      ...membSnap.docs.map(d=>({...d.data(), _tipo:"membresia", _id:d.id})),
+    ].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0)).slice(0,8);
+
+    const feed = document.getElementById("adm-resumen-ultimos");
+    if (feed) {
+      if (!recents.length) {
+        feed.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-dim);font-size:13px;">Aún no hay actividad registrada</div>';
+      } else {
+        feed.innerHTML = recents.map(r => {
+          const icon = r._tipo==="pedido" ? "📦" : "🎫";
+          const bg = r._tipo==="pedido" ? "rgba(196,138,58,.12)" : "rgba(34,197,94,.1)";
+          const nombre = r.nombre || r.usuarioNombre || r.email || "Cliente";
+          const estado = r.estado || "pendiente";
+          const chipCls = estado==="confirmado"?"adm-chip-green":estado==="rechazado"?"adm-chip-red":"adm-chip-amber";
+          const t = r.fecha?.toDate ? r.fecha.toDate().toLocaleDateString("es-PE",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "—";
+          return `<div class="adm-activity-item">
+            <div class="adm-activity-dot" style="background:${bg}">${icon}</div>
+            <div class="adm-activity-text">
+              <div class="adm-activity-title">${nombre} · S/ ${r.monto||0}</div>
+              <div class="adm-activity-time">${r.producto||r.horarioLabel||""} · ${t}</div>
+            </div>
+            <span class="adm-chip ${chipCls}">${estado}</span>
+          </div>`;
+        }).join("");
+      }
+    }
+  } catch(e) { console.error(e); }
+};
