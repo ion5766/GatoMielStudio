@@ -883,7 +883,7 @@ async function _registrarPago(metodoLabel, archivo) {
     comprobanteURL: comprobanteURL,
     estado:         "pendiente",
     fecha:          serverTimestamp(),
-    tallerId:       TALLER_ID,
+    tallerId:       window._tallerActualId || TALLER_ID,
   });
   const ref = docRef.id.slice(0,8).toUpperCase();
 
@@ -966,7 +966,7 @@ window.validarPago = async function(memId, horarioId, btn) {
   btn.disabled = true; btn.textContent = "Confirmando...";
   try {
     await runTransaction(db, async tx => {
-      const tallerRef = doc(db,"talleres",TALLER_ID);
+      const tallerRef = doc(db,"talleres", window._tallerActualDocId || "arcilla-nocturna");
       const snap      = await tx.get(tallerRef);
       const actuales  = snap.exists() ? (snap.data()[horarioId] || 0) : 0;
       if (actuales >= CUPOS_MAX) throw new Error("No quedan cupos.");
@@ -1053,12 +1053,22 @@ onSnapshot(collection(_db, "config_talleres"), snap => {
   if (activos.length === 0) {
     gridA.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;">No hay talleres activos por ahora 🐱</div>`;
   } else {
-    activos.forEach(t => {
+    // Guardar talleres en variable global para que el modal pueda acceder al precio
+    window._talleresActivos = activos;
+
+    activos.forEach((t, idx) => {
       const img = t.imagen || "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80";
       const esPrincipal = t.nombre?.toLowerCase().includes("arcilla");
+      // Cupos ID: Arcilla Nocturna → "arcilla-nocturna", otros → su ID de Firestore
+      const cuposDocId = esPrincipal ? "arcilla-nocturna" : t.id;
 
       const art = document.createElement("article");
       art.className = "ht-card";
+      // IDs únicos para los resúmenes de cupos de cada taller
+      const h0id = `num-${t.id}-h0`;
+      const h1id = `num-${t.id}-h1`;
+      const h2id = `num-${t.id}-h2`;
+
       art.innerHTML = `
         <div class="ht-card-img">
           <img src="${img}" alt="${t.nombre||''}" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80'">
@@ -1067,22 +1077,24 @@ onSnapshot(collection(_db, "config_talleres"), snap => {
         <div class="ht-card-body">
           <h3>${t.nombre||"Taller"}</h3>
           <p>${t.descripcion||"Taller de cerámica artesanal."}</p>
-          ${esPrincipal ? `
           <div class="ht-cupos-resumen">
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="num-h0"></div></div>
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="num-h1"></div></div>
-            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="num-h2"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Sáb 7 mar · 10:00 AM</span><div class="ht-cupo-num" id="${h0id}"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Dom 8 mar · 6:00 PM</span><div class="ht-cupo-num" id="${h1id}"></div></div>
+            <div class="ht-cupo-item"><span class="ht-cupo-label">Lun 9 mar · 12:00 PM</span><div class="ht-cupo-num" id="${h2id}"></div></div>
           </div>
           <div class="ht-card-footer">
             <span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ ${t.precio||150}</span>
-            <button class="ht-btn-solid" onclick="abrirPagoMembresia()" style="width:auto;padding:11px 24px;">Inscribirme →</button>
-          </div>` : `
-          <div class="ht-card-footer">
-            <span style="font-family:'Playfair Display',serif;font-size:18px;color:#c48a3a;">S/ ${t.precio||0}</span>
-            <a href="#" class="ht-btn-solid" style="width:auto;padding:11px 24px;text-decoration:none;" onclick="alert('Próximamente disponible para inscripción 🐱')">Ver horarios</a>
-          </div>`}
+            <button class="ht-btn-solid"
+              onclick="abrirPagoMembresiaTaller('${t.id}','${escapeStr(t.nombre)}',${t.precio||150},'${cuposDocId}')"
+              style="width:auto;padding:11px 24px;">
+              Inscribirme →
+            </button>
+          </div>
         </div>`;
       gridA.appendChild(art);
+
+      // Escuchar cupos en tiempo real para este taller
+      _escucharCuposTaller(t.id, cuposDocId, t.cupos||4, h0id, h1id, h2id);
     });
   }
 
@@ -1120,6 +1132,66 @@ onSnapshot(collection(_db, "config_talleres"), snap => {
     if (divProx) divProx.style.display = "none";
   }
 });
+
+// ── Escape helper for onclick strings ──
+function escapeStr(s) { return (s||"").replace(/'/g,"\'").replace(/"/g,'\"'); }
+
+// ── Listen cupos per taller in historial page ──
+const _cuposListeners = {};
+function _escucharCuposTaller(tallerId, cuposDocId, cuposMax, h0id, h1id, h2id) {
+  if (_cuposListeners[tallerId]) return; // ya escuchando
+  _cuposListeners[tallerId] = true;
+  const { onSnapshot: _os2, doc: _d2, getFirestore: _g2 } = { onSnapshot, doc: _db.__proto__?.constructor ? undefined : undefined };
+  // Use re-import pattern
+  import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({ doc: fdoc, onSnapshot: fos }) => {
+    fos(fdoc(_db, "talleres", cuposDocId), snap => {
+      const data = snap.exists() ? snap.data() : {};
+      _updateCuposCard(data, cuposMax, h0id, h1id, h2id);
+    }, () => _updateCuposCard({}, cuposMax, h0id, h1id, h2id));
+  });
+}
+
+function _updateCuposCard(data, cuposMax, h0id, h1id, h2id) {
+  const max = cuposMax || 4;
+  [{id:"h0",elId:h0id},{id:"h1",elId:h1id},{id:"h2",elId:h2id}].forEach(h => {
+    const el = document.getElementById(h.elId);
+    if (!el) return;
+    const ocupados = data[h.id] || 0;
+    const libres = Math.max(0, max - ocupados);
+    el.innerHTML = "";
+    if (libres <= 0) {
+      el.innerHTML = '<span class="ht-cupo-agotado">Agotado</span>';
+    } else {
+      const maxVis = Math.min(max, 12);
+      for (let j = 0; j < maxVis; j++) {
+        const dot = document.createElement("span");
+        dot.className = "ht-cupo-dot" + (j < libres ? "" : " vacio");
+        el.appendChild(dot);
+      }
+      if (max > 12) {
+        const lbl = document.createElement("span");
+        lbl.style.cssText = "font-family:'Inter',sans-serif;font-size:10px;color:#c48a3a;font-weight:600;margin-left:4px;";
+        lbl.textContent = `${libres}/${max}`;
+        el.appendChild(lbl);
+      }
+    }
+  });
+}
+
+// ── Abrir modal para CUALQUIER taller ──
+window.abrirPagoMembresiaTaller = function(tallerId, nombre, precio, cuposDocId) {
+  // Reusar el modal existente de Arcilla Nocturna
+  // Actualizar precio dinámicamente
+  window._tallerActualId    = tallerId;
+  window._tallerActualDocId = cuposDocId;
+  _precioTaller = precio;
+  _actualizarPrecioUI(precio);
+  // Actualizar título en el modal
+  const titulos = document.querySelectorAll(".ht-modal-hero-title");
+  titulos.forEach(t => t.textContent = nombre || "Taller");
+  // Abrir el modal de horarios normal
+  abrirPagoMembresia();
+};
 </script>
 
 <script src="movil-ui.js"></script>
