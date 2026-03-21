@@ -120,7 +120,7 @@ onAuthStateChanged(auth, async (user) => {
   <span>Comunidad creativa</span>
 </div>
 
-<!-- ══ TALLERES ══ -->
+<!-- ══ TALLERES DESTACADOS ══ -->
 <section class="ix-talleres" id="talleres">
   <div class="ix-talleres-header">
     <span class="ix-eyebrow ix-eyebrow-dark">Nuestros talleres</span>
@@ -129,7 +129,6 @@ onAuthStateChanged(auth, async (user) => {
   </div>
 
   <div class="ix-cards" id="ix-talleres-grid">
-    <!-- Cargando desde Firestore... -->
     <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;font-family:'Inter',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <div style="width:20px;height:20px;border:2px solid #e8d5b7;border-top-color:#c48a3a;border-radius:50%;animation:spin .7s linear infinite;"></div>
       Cargando talleres...
@@ -1000,6 +999,25 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){window.cerrarModalC
         </div>
       </div>
 
+      <!-- ═══ DESTACADOS ═══ -->
+      <div class="adm-card" style="margin-bottom:20px;">
+        <div class="adm-card-top">
+          <div>
+            <div class="adm-card-title">⭐ Talleres destacados en el inicio</div>
+            <div class="adm-card-subtitle">Elige cuáles aparecen en la página de inicio · marca o desmarca para actualizar al instante</div>
+          </div>
+        </div>
+        <div class="adm-card-body">
+          <div class="adm-tip" style="margin-bottom:12px;">
+            <span class="adm-tip-icon">🌟</span>
+            <span>Selecciona los talleres que quieres mostrar en la página de inicio. Solo los marcados aparecerán ahí. Puedes cambiarlos cuando quieras.</span>
+          </div>
+          <div id="adm-destacados-lista" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:12px;text-align:center;padding:12px;">Cargando talleres...</div>
+          </div>
+        </div>
+      </div>
+
       <div class="adm-tip">
         <span class="adm-tip-icon">📝</span>
         <span>Aquí editas la información de tus talleres: nombre, precio, descripción, cupos máximos e imagen. Los cambios se reflejan en la web al instante.</span>
@@ -1119,7 +1137,7 @@ window.admTab = (id, btn) => {
   document.querySelectorAll(".adm-tab").forEach(b => b.classList.remove("active"));
   document.getElementById("adm-"+id).classList.add("active");
   btn.classList.add("active");
-  if (id==="talleres")   { admCargarTalleres(); admCargarCuposAdmin(); }
+  if (id==="talleres")   { admCargarTalleres(); admCargarCuposAdmin(); admCargarDestacados?.(); }
   if (id==="coleccion")  admCargarColeccion();
   if (id==="pedidos")    admCargarPedidos();
   if (id==="membresias") admCargarMembresias();
@@ -1134,6 +1152,7 @@ window.abrirModoAdmin = () => {
   document.body.style.overflow = "hidden";
   admCargarResumen();
   admCargarCuposAdmin(); // iniciar listener cupos
+  admCargarDestacados?.(); // iniciar listener destacados
 };
 window.cerrarModoAdmin = () => {
   document.getElementById("modoAdminOverlay").classList.remove("open");
@@ -1918,6 +1937,68 @@ window.abrirModalMembresias = window.abrirModalMembresias || function(){};
 window.abrirModalCompras    = window.abrirModalCompras    || function(){};
 </script>
 
+<!-- ═══ SISTEMA DE DESTACADOS ═══ -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const _fcD = {apiKey:"AIzaSyBiJkhAd08hv_fjqGMYOvr-vYXudlj5aSs",authDomain:"gato-miel-estudio.firebaseapp.com",projectId:"gato-miel-estudio",storageBucket:"gato-miel-estudio.firebasestorage.app",messagingSenderId:"150671559458",appId:"1:150671559458:web:6daaf4a78150706db0337b"};
+const _appD = getApps().length ? getApps()[0] : initializeApp(_fcD);
+const _dbD  = getFirestore(_appD);
+
+// Escuchar cambios en config_talleres para la lista de destacados en el admin
+let _talleresDocs = [];
+
+window.admCargarDestacados = function() {
+  const lista = document.getElementById("adm-destacados-lista");
+  if (!lista) return;
+
+  onSnapshot(collection(_dbD, "config_talleres"), snap => {
+    _talleresDocs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    lista.innerHTML = "";
+
+    if (!_talleresDocs.length) {
+      lista.innerHTML = `<div style="color:rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-size:12px;text-align:center;padding:16px;">Aún no tienes talleres creados. Créalos abajo primero.</div>`;
+      return;
+    }
+
+    _talleresDocs.forEach(t => {
+      const destacado = t.destacado === true;
+      const row = document.createElement("label");
+      row.style.cssText = "display:flex;align-items:center;gap:12px;padding:12px 14px;background:" + (destacado ? "rgba(196,138,58,.1)" : "#2a2420") + ";border-radius:12px;cursor:pointer;border:1.5px solid " + (destacado ? "rgba(196,138,58,.4)" : "#3a3028") + ";transition:.2s;";
+      row.innerHTML = `
+        <input type="checkbox" ${destacado?"checked":""} data-id="${t.id}"
+          style="width:18px;height:18px;accent-color:#c48a3a;cursor:pointer;flex-shrink:0;"
+          onchange="admToggleDestacado('${t.id}', this.checked, this)">
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:${destacado?"white":"rgba(255,255,255,.6)"};margin-bottom:2px;">${t.nombre||"Sin nombre"}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,.3);">
+            S/ ${t.precio||0} · ${t.cupos||0} cupos · ${t.activo!==false?"✅ Activo":"🔒 Inactivo"}
+          </div>
+        </div>
+        ${destacado ? '<span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:700;color:#c48a3a;background:rgba(196,138,58,.15);padding:3px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(196,138,58,.3);">⭐ En portada</span>' : '<span style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,.2);white-space:nowrap;">No visible</span>'}`;
+      lista.appendChild(row);
+    });
+  });
+};
+
+window.admToggleDestacado = async (tallerId, checked, checkbox) => {
+  // Deshabilitar temporalmente para evitar doble click
+  checkbox.disabled = true;
+  const row = checkbox.closest("label");
+  if (row) row.style.opacity = "0.5";
+  try {
+    await updateDoc(doc(_dbD, "config_talleres", tallerId), { destacado: checked });
+    // El onSnapshot lo actualizará automáticamente
+  } catch(e) {
+    // Revertir si falla
+    checkbox.checked = !checked;
+    alert("Error al guardar: " + e.message);
+  }
+  checkbox.disabled = false;
+  if (row) row.style.opacity = "1";
+};
+</script>
+
 <!-- ═══ CARGA DINÁMICA: TALLERES + COLECCIÓN ═══ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1980,15 +2061,31 @@ onSnapshot(collection(_db, "config_talleres"), snap => {
   const grid = document.getElementById("ix-talleres-grid");
   if (!grid) return;
   const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  // Solo mostrar los DESTACADOS (con destacado:true)
+  const destacados = docs.filter(d => d.destacado === true);
+
   if (!docs.length) {
-    // Si Firestore está vacío, mostrar cards hardcodeadas por defecto
+    // Firestore vacío — mostrar fallback
     grid.innerHTML = `
       <article class="ix-card"><div class="ix-card-img"><img src="Assets/Img/Escultura1.jpg" onerror="this.src='https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80'"><span class="ix-card-badge">Inscripciones abiertas</span></div><div class="ix-card-body"><h3>Arcilla Nocturna</h3><p>Taller semanal para experimentar técnicas de modelado en un ambiente creativo.</p><div class="ix-card-footer"><span class="ix-precio">S/ 150</span><a href="historial-De_Talleres.html" class="ix-link">Ver más →</a></div></div></article>
       <article class="ix-card"><div class="ix-card-img"><img src="Assets/Img/Escultura2.jpg" onerror="this.src='https://images.unsplash.com/photo-1604849329019-8e1148a81cd4?w=600&q=80'"><span class="ix-card-badge">Próximamente</span></div><div class="ix-card-body"><h3>Iniciación al Torno</h3><p>Curso intensivo para aprender el trabajo en torno cerámico.</p><div class="ix-card-footer"><span class="ix-precio">S/ 120</span><a href="historial-De_Talleres.html" class="ix-link">Ver más →</a></div></div></article>`;
     return;
   }
+
+  if (!destacados.length) {
+    // Hay talleres pero ninguno marcado como destacado
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:50px 20px;">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:#bbb;font-style:italic;margin-bottom:12px;">Elige qué talleres mostrar aquí</div>
+        <p style="font-family:'Inter',sans-serif;font-size:13px;color:#bbb;">Ve al modo administrador → Talleres → Destacados y selecciona los talleres a mostrar.</p>
+        <a href="historial-De_Talleres.html" style="display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 28px;background:#c48a3a;color:white;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Ver todos los talleres →</a>
+      </div>`;
+    return;
+  }
+
   grid.innerHTML = "";
-  docs.forEach(d => grid.appendChild(renderTallerCard(d)));
+  destacados.forEach(d => grid.appendChild(renderTallerCard(d)));
 });
 
 onSnapshot(collection(_db, "config_coleccion"), snap => {
