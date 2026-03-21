@@ -788,44 +788,32 @@ async function _initMpBrick() {
     container.innerHTML = "";
     if (loading) loading.style.display = "none";
 
-    _mpBrick = await _mpBuilder.create("payment", "mpCardBrick_container", {
+    const _monto = _precioTaller || 150;
+    _mpBrick = await _mpBuilder.create("cardPayment", "mpCardBrick_container", {
       initialization: {
-        amount: 150,
+        amount: _monto,
         payer: { email: currentUser?.email || "" }
       },
       customization: {
-        paymentMethods: {
-          creditCard: "all",
-          debitCard:  "all",
-          ticket:     "none",
-          bankTransfer: "none",
-          atm:        "none",
-          onboarding_credits: "none",
-          wallet_purchase:    "none"
-        },
         visual: {
           style: {
             theme: "default",
-            customVariables: { baseColor: "#c48a3a" }
-          }
-        }
+            customVariables: { baseColor: "#c48a3a", baseColorFirstVariant: "#a8742f" }
+          },
+          hideFormTitle: true
+        },
+        paymentMethods: { maxInstallments: 1 }
       },
       callbacks: {
         onReady: () => { if (loading) loading.style.display = "none"; },
         onError: (e) => {
           console.error("MP Brick error:", e);
           if (loading) loading.style.display = "none";
-          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:16px;font-family:'Inter',sans-serif;">Error al cargar el formulario. Usa Yape, Plin o Agencia.</p>`;
+          container.innerHTML = `<p style="text-align:center;color:#e55;font-size:13px;padding:24px 16px;font-family:'Inter',sans-serif;line-height:1.6;">⚠️ El formulario de tarjeta no pudo cargarse.<br>Por favor usa <strong>Yape</strong>, <strong>Plin</strong> o <strong>Agencia bancaria</strong>.</p>`;
         },
         onSubmit: async ({ formData }) => {
-          // Sin backend activo, registramos como pendiente igual que los otros métodos
-          // El admin validará manualmente (como acordado)
-          try {
-            await _registrarPago("Tarjeta", null);
-          } catch(e) {
-            console.error("Error registrando pago tarjeta:", e);
-          }
-          return Promise.resolve(); // necesario para que el Brick no quede en loading
+          try { await _registrarPago("Tarjeta", null); } catch(e) { console.error(e); }
+          return Promise.resolve();
         }
       }
     });
